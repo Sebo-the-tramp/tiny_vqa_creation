@@ -1,41 +1,4 @@
-{
-    "spatial":{
-        "F_SPATIAL_OBJECT_GROUND_DISTANCE": {
-            "question_type": "factual",
-            "category": "spatial",
-            "choice": "numeric",
-            "measurement": "estimation",
-            "question": "What is the distance between the center of mass of the <OBJECT> and the ground plane at time <TIME>?"
-        },
-        "F_SPATIAL_OBJECT_OBJECT_DISTANCE": {
-            "question_type": "factual",
-            "category": "spatial",
-            "choice": "numeric",
-            "measurement": "estimation",
-            "question": "What is the distance between the center of mass of the <OBJECT_1> and the center of mass of the <OBJECT_2> at time <TIME>?"
-        },
-        "F_SPATIAL_OBJECT_CAMERA_DISTANCE": {
-            "question_type": "factual",
-            "category": "spatial",
-            "choice": "numeric",
-            "measurement": "estimation",
-            "question": "What is the distance between the center of mass of the <OBJECT> and <CAMERA> at time <TIME>?"
-        },
-        "F_SPATIAL_CLOSEST_OBJECT": {
-            "question_type": "factual",
-            "category": "spatial",
-            "choice": "numeric",
-            "measurement": "estimation",
-            "question": "What is the closest object to <OBJECT> at time <TIME>?"
-        },
-        "F_SPATIAL_COUNTING_OBJECTS_CLOSE": {
-            "question_type": "factual",
-            "category": "spatial",
-            "choice": "numeric",
-            "measurement": "estimation",
-            "question": "How many objects are closer than <DISTANCE> meters to the camera at time <TIME>?"
-        }
-    },
+{   
     "collision":{
         "F_COLLISIONS_OBJ_OBJ": {
             "question_type": "factual",
@@ -72,7 +35,6 @@
             "measurement": "counting",
             "question": "With what force does <OBJECT_1> collides with <OBJECT_2> the first time?"
         }
-
     },
     "forces": {       
         "F_FORCES_ESTIMATION_SPEED_OBJECT": {
@@ -146,7 +108,60 @@
             "question": "What is the approximate angular velocity of the <OBJECT> in rad/s at time <TIME>?"
         }
     },
-    "materials":{
-        
+    "kinematics":{
+
+    },
+    "material":{
+        "F_MATERIALS_COUNTING": {
+            "question_type": "factual",
+            "category": "materials",
+            "choice": "mcq",
+            "measurement": "counting",
+            "question": "How many objects are made of <MATERIAL>?"
+        },
+        "F_MATERIALS_ATTRIBUTE": {
+            "question_type": "factual",
+            "category": "materials",
+            "choice": "mcq",
+            "measurement": "attribute",
+            "question": "What is the material of the <OBJECT>?"
+        }
+    },
+     "spatial":{
+        "F_SPATIAL_OBJECT_GROUND_DISTANCE": {
+            "question_type": "factual",
+            "category": "spatial",
+            "choice": "numeric",
+            "measurement": "estimation",
+            "question": "What is the distance between the center of mass of the <OBJECT> and the ground plane at time <TIME>?"
+        },
+        "F_SPATIAL_OBJECT_OBJECT_DISTANCE": {
+            "question_type": "factual",
+            "category": "spatial",
+            "choice": "numeric",
+            "measurement": "estimation",
+            "question": "What is the distance between the center of mass of the <OBJECT_1> and the center of mass of the <OBJECT_2> at time <TIME>?"
+        },
+        "F_SPATIAL_OBJECT_CAMERA_DISTANCE": {
+            "question_type": "factual",
+            "category": "spatial",
+            "choice": "numeric",
+            "measurement": "estimation",
+            "question": "What is the distance between the center of mass of the <OBJECT> and <CAMERA> at time <TIME>?"
+        },
+        "F_SPATIAL_CLOSEST_OBJECT": {
+            "question_type": "factual",
+            "category": "spatial",
+            "choice": "numeric",
+            "measurement": "estimation",
+            "question": "What is the closest object to <OBJECT> at time <TIME>?"
+        },
+        "F_SPATIAL_COUNTING_OBJECTS_CLOSE": {
+            "question_type": "factual",
+            "category": "spatial",
+            "choice": "numeric",
+            "measurement": "estimation",
+            "question": "How many objects are closer than <DISTANCE> meters to the camera at time <TIME>?"
+        }
     }
 }

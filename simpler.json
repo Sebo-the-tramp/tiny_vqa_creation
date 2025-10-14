@@ -272,7 +272,7 @@
             "category": "materials",
             "choice": "mcq",
             "measurement": "attribute",
-            "question": "What is the <MATERIAL> of the <OBJECT>?"
+            "question": "What is the material of the <OBJECT>?"
         },
         "F_DEFORMATION_ATTRIBUTE": {
             "question_type": "factual",

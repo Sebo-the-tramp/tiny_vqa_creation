@@ -32,9 +32,8 @@ from utils.helpers import (
 )
 
 from .material_helpers import (
-    _get_position,
-    point_to_plane_distance,
-    _get_position_camera,
+    get_all_materials,
+    get_all_materials_in_scene,
 )
 
 Number = Union[int, float]
@@ -44,3 +43,57 @@ QuestionPayload = Mapping[str, Any]
 Answer = Union[str, float, Vector, Mapping[str, Any], Sequence[str]]
 
 ## --- Resolver functions -- ##
+
+
+@with_resolved_attributes
+def F_MATERIALS_COUNTING(
+     world_state: WorldState, question: QuestionPayload, resolved_attributes, **kwargs
+) -> int:
+    assert (
+        len(resolved_attributes) == 1
+        and "MATERIAL" in resolved_attributes
+    )
+
+    material = resolved_attributes["MATERIAL"]["choice"]
+
+    count = 0
+    for obj in _iter_objects(world_state):
+        if "material" in obj and obj["material"] == material:
+            count += 1
+
+    _fill_template(question, resolved_attributes)
+
+    options, correct_idx = create_mc_options_around_gt(
+        count, num_answers=4, display_decimals=0, lo=0.0
+    )
+    labels = uniform_labels(options, integer=True, decimals=0)    
+
+    return question, labels, correct_idx
+
+@with_resolved_attributes
+def F_MATERIALS_ATTRIBUTE(
+     world_state: WorldState, question: QuestionPayload, resolved_attributes, **kwargs
+) -> int:
+    assert (
+        len(resolved_attributes) == 1
+        and "OBJECT" in resolved_attributes
+    )
+
+    object = resolved_attributes["OBJECT"]["choice"]
+
+    material = "unknown"
+    for obj in _iter_objects(world_state):
+        if obj["id"] == object["id"]:
+            material = obj.get("material", "unknown")
+            break
+
+    _fill_template(question, resolved_attributes)
+
+    DATASET = get_all_materials()
+    material_present = get_all_materials_in_scene(world_state)
+
+    labels, correct_idx = create_mc_object_names_from_dataset(
+        material,  material_present, DATASET
+    )
+
+    return question, labels, correct_idx

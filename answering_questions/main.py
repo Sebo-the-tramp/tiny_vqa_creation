@@ -111,37 +111,43 @@ def get_gt(question_key, question_category, mock=False):
 
 
 # ----- MAIN VQA CREATION LOGIC
-def create_vqa(questions, simulation_steps, arg_mock):
+def create_vqa(questions, simulation_steps, arg_mock, verbose=False):
     total_correct_per_category = {}
+
+    print("Starting VQA creation...")
 
     for category_key, category in questions.items():
         # current category dev
-        if category_key != "collision":
+        if category_key != "material":
             continue
 
-        print("###" * 10, f"Processing category: {category_key}", "###" * 10)
-        print(f"questions: \n{category}")
-        print("###" * 20)
+        if verbose:
+            print("###" * 10, f"Processing category: {category_key}", "###" * 10)
+            print(f"questions: \n{category}")
+            print("###" * 20)
         total_questions_in_category = len(category)
         total_correct_answers = 0
         not_implemented = 0
         for question_key, question_data in category.items():
-            print(f"  Question Key: {question_key}")
+            if verbose:
+                print(f"  Question Key: {question_key}")
             fn_to_answer_question = get_answer(
                 question_key, category_key, mock=arg_mock
             )
             question, labels, correct_idx = fn_to_answer_question(
                 simulation_steps, question_data
             )
-            print(f"  Question: {question}")
-            print(f"  Labels: {labels}")
-            print(f"  Correct Index: {correct_idx}")
+            if verbose:
+                print(f"  Question: {question}")
+                print(f"  Labels: {labels}")
+                print(f"  Correct Index: {correct_idx}")
 
             gt = get_gt(question_key, category_key, mock=arg_mock)
-            print(f"  Ground Truth: {gt}")
-            print(
-                f"  Answer from function: {labels[correct_idx]}\n  Should match GT: {gt}"
-            )
+            if verbose:
+                print(f"  Ground Truth: {gt}")
+                print(
+                    f"  Answer from function: {labels[correct_idx]}\n  Should match GT: {gt}"
+                )
 
             if str(labels[correct_idx]) != str(gt):
                 print("  WARNING: Answer does not match Ground Truth!")
@@ -151,22 +157,25 @@ def create_vqa(questions, simulation_steps, arg_mock):
                     not_implemented += 1
                 else:
                     total_correct_answers += 1
-            print("===" * 20)
+            if verbose:
+                print("===" * 20)
         total_correct_per_category[category_key] = (
             total_correct_answers,
             not_implemented,
             total_questions_in_category,
         )
 
-    print("Summary of correct answers per category:")
+    if verbose:
+        print("Summary of correct answers per category:")
     for category, (
         correct,
         not_implemented,
         total,
     ) in total_correct_per_category.items():
-        print(
-            f"Category '{category}': {correct}/{total - not_implemented} correct answers, {not_implemented} not implemented"
-        )
+        if verbose:
+            print(
+                f"Category '{category}': {correct}/{total - not_implemented} correct answers, {not_implemented} not implemented"
+            )
 
     all_questions = []
     all_answers = []
@@ -178,7 +187,9 @@ def main(args):
     questions = read_questions(args.vqa_path)
     simulation_steps = read_simulation(args.simulation_path)
 
-    all_questions, all_answers = create_vqa(questions, simulation_steps, args.mock)
+    all_questions, all_answers = create_vqa(
+        questions, simulation_steps, args.mock, verbose=args.verbose
+    )
     print(
         f"Saved {len(all_questions)} questions and {len(all_answers)} answers to {args.output_path}"
     )
@@ -212,6 +223,11 @@ if __name__ == "__main__":
         action="store_true",
         default=True,
         help="Use mock implementations for testing.",
+    )
+    parser.add_argument(
+        "--verbose",
+        action="store_true",
+        help="Enable verbose output for debugging.",
     )
     args = parser.parse_args()
 

@@ -1,7 +1,7 @@
 """
-Mock global reasoning resolvers.
+Mock meta reasoning resolvers.
 
-These helpers extract best-effort global answers from the provided world state.
+These helpers extract best-effort meta answers from the provided world state.
 They operate on lightweight metadata (positions, orientations, region tags, etc.)
 and fall back to sensible defaults when information is missing.
 """
@@ -31,7 +31,7 @@ from utils.helpers import (
     _fill_template,
 )
 
-from .global_helpers import (
+from .meta_helpers import (
     _get_position,
     point_to_plane_distance,
     _get_position_camera,

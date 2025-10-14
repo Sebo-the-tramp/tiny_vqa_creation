@@ -96,22 +96,22 @@ def _fill_template(
             )
 
 
-def get_random_object_type(world_state: Mapping[str, Any]) -> str:
-    object_types = set()
-    for obj in _iter_objects(world_state):
-        obj_type = _as_lower(obj.get("type"))
-        if obj_type:
-            object_types.add(obj_type)
-    if not object_types:
-        raise ValueError("No object types found in the world state.")
-    return rng.choice(list(object_types))
-
-
 def get_camera(world_state: Mapping[str, Any]) -> Mapping[str, Any]:
     camera = world_state.get("camera")
     if not camera:
         raise ValueError("No camera found in the world state.")
     return camera
+
+
+def get_random_material(world_state: Mapping[str, Any]) -> str:
+    materials = set()
+    for obj in _iter_objects(world_state):
+        material = _as_lower(obj.get("material"))
+        if material:
+            materials.add(material)
+    if not materials:
+        raise ValueError("No materials found in the world state.")
+    return rng.choice(list(materials))
 
 
 def get_random_object(
@@ -121,6 +121,17 @@ def get_random_object(
     if not objects:
         raise ValueError(f"No objects found of type '{object_type}'")
     return rng.choice(objects)
+
+
+def get_random_object_type(world_state: Mapping[str, Any]) -> str:
+    object_types = set()
+    for obj in _iter_objects(world_state):
+        obj_type = _as_lower(obj.get("type"))
+        if obj_type:
+            object_types.add(obj_type)
+    if not object_types:
+        raise ValueError("No object types found in the world state.")
+    return rng.choice(list(object_types))
 
 
 def get_random_time(world_state: Mapping[str, Any]) -> float:
@@ -136,6 +147,7 @@ resolver = {
     "DISTANCE": lambda ws: round(
         rng.uniform(1.0, 5.0), 1
     ),  # random distance between 1 and 5 meters, 1 decimal place
+    "MATERIAL": get_random_material,
     "OBJECT_TYPE": get_random_object_type,
     "OBJECT": get_random_object,
     "TIME": get_random_time,

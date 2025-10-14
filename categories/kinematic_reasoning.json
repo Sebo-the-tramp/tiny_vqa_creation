@@ -1,0 +1,44 @@
+{
+    "questions": [
+        {
+            "id": "F_VELOCITY",
+            "vqa_type": "multiple_choice",
+            "macro_category": "factual",
+            "category": "kinematic_reasoning",
+            "pattern": "What is the <VELOCITY_TYPE> of <OBJ_1> at time <TIME>?",
+            "code": "<F_VELOCITY>,<OBJ_1,foreign_object>,<VELOCITY_TYPE,velocity_type>",
+            "event": "VELOCITY",
+            "difficulty": "",
+            "fps": 25,
+            "args": [
+                {
+                    "name": "OBJ_1",
+                    "role": "main_object",
+                    "type": "foreign_object",
+                    "choices_from": "foreign_object_segmentation_label"
+                },
+                {
+                    "name": "VELOCITY_TYPE",
+                    "role": "velocity_type",
+                    "type": "velocity_type",
+                    "choices_from": ["SPEED", "DIRECTION", "ANGULAR_VELOCITY"]
+                },
+                {
+                    "name": "TIME",
+                    "role": "time",
+                    "type": "time",
+                    "constraints": {
+                        "type": "range",
+                        "min": 1,
+                        "max": 5,
+                        "step": 1
+                    }
+                }
+            ],
+            "answer": {                
+                "choices": [],
+                "correct_answer": ""
+            }
+        } 
+    ]
+}

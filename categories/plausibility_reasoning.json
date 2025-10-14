@@ -1,0 +1,38 @@
+{
+    "questions": [
+        {
+            "id": "F_GRAVITY",
+            "vqa_type": "multiple_choice",
+            "macro_category": "factual",
+            "category": "plausibility_reasoning",
+            "pattern": "Given the scene, is it plausible that <OBJ_1> defies gravity at time <TIME>?",
+            "code": "<F_GRAVITY>,<OBJ_1,foreign_object>",
+            "event": "GRAVITY",
+            "difficulty": "",
+            "fps": 25,
+            "args": [
+                {
+                    "name": "OBJ_1",
+                    "role": "main_object",
+                    "type": "foreign_object",
+                    "choices_from": "foreign_object_segmentation_label"
+                },              
+                {
+                    "name": "TIME",
+                    "role": "time",
+                    "type": "time",
+                    "constraints": {
+                        "type": "range",
+                        "min": 1,
+                        "max": 5,
+                        "step": 1
+                    }
+                }
+            ],
+            "answer": {                
+                "choices": [],
+                "correct_answer": ""
+            }
+        } 
+    ]
+}

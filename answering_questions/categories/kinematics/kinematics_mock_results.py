@@ -1,0 +1,2 @@
+def F_KINEMATICS_ACCELERATION_ESTIMATION() -> str:
+    return "1.5"

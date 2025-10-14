@@ -1,0 +1,38 @@
+{
+    "questions": [
+        {
+            "id": "F_COLLISION",
+            "vqa_type": "multiple_choice",
+            "macro_category": "factual",
+            "category": "collision_reasoning",
+            "pattern": "With what object does <OBJ_1> collide at time <TIME>?",
+            "code": "<F_COLLISION>,<OBJ_1,foreign_object>",
+            "event": "COLLISION",
+            "difficulty": "",
+            "fps": 25,
+            "args": [
+                {
+                    "name": "OBJ_1",
+                    "role": "main_object",
+                    "type": "foreign_object",
+                    "choices_from": "foreign_object_segmentation_label"
+                },              
+                {
+                    "name": "TIME",
+                    "role": "time",
+                    "type": "time",
+                    "constraints": {
+                        "type": "range",
+                        "min": 1,
+                        "max": 5,
+                        "step": 1
+                    }
+                }
+            ],
+            "answer": {                
+                "choices": [],
+                "correct_answer": ""
+            }
+        } 
+    ]
+}

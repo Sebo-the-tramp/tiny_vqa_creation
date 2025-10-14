@@ -1,0 +1,84 @@
+{
+    "questions": [
+        {
+            "id": "F_PROXIMITY_CAMERA",
+            "vqa_type": "multiple_choice",
+            "macro_category": "factual",
+            "category": "spatial_reasoning",
+            "pattern": "How many meters away is <OBJ_1> from <CAMERA> at time <TIME>?",
+            "code": "<F_PROXIMITY>,<OBJ_1,foreign_object>,<CAMERA,camera_object>",
+            "event": "PROXIMITY",
+            "difficulty": "",
+            "fps": 25,
+            "args": [
+                {
+                    "name": "OBJ_1",
+                    "role": "main_object",
+                    "type": "foreign_object",
+                    "choices_from": "foreign_object_segmentation_label"
+                },
+                {
+                    "name": "CAMERA",
+                    "role": "reference",
+                    "type": "camera",
+                    "choices_from": ["camera"]
+                },
+                {
+                    "name": "TIME",
+                    "role": "time",
+                    "type": "time",
+                    "constraints": {
+                        "type": "range",
+                        "min": 1,
+                        "max": 5,
+                        "step": 1
+                    }
+                }
+            ],
+            "answer": {                
+                "choices": [],
+                "correct_answer": ""
+            }
+        },
+        {
+            "id": "F_PROXIMITY_OBJECT",
+            "vqa_type": "multiple_choice",
+            "macro_category": "factual",
+            "category": "spatial_reasoning",
+            "pattern": "How many meters away is <OBJ_1> from <OBJ_2> at time <TIME>?",
+            "code": "<F_PROXIMITY>,<OBJ_1,foreign_object>,<OBJ_2,foreign_object>",
+            "event": "PROXIMITY",
+            "difficulty": "",
+            "fps": 25,
+            "args": [
+                {
+                    "name": "OBJ_1",
+                    "role": "main_object",
+                    "type": "foreign_object",
+                    "choices_from": "foreign_object_segmentation_label"
+                },
+                {
+                    "name": "OBJ_2",
+                    "role": "reference",
+                    "type": "foreign_object",
+                    "choices_from": "foreign_object_segmentation_label"
+                },
+                {
+                    "name": "TIME",
+                    "role": "time",
+                    "type": "time",
+                    "constraints": {
+                        "type": "range",
+                        "min": 1,
+                        "max": 5,
+                        "step": 1
+                    }
+                }
+            ],
+            "answer": {                
+                "choices": [],
+                "correct_answer": ""
+            }
+        }
+    ]
+}

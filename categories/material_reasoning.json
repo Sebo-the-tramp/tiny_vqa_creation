@@ -1,0 +1,44 @@
+{
+    "questions": [
+        {
+            "id": "F_STIFFNESS",
+            "vqa_type": "multiple_choice",
+            "macro_category": "factual",
+            "category": "material_reasoning",
+            "pattern": "Between <OBJ_1> and <OBJ_2>, which object is stiffer?",
+            "code": "<F_STIFFNESS>,<OBJ_1,foreign_object>,<OBJ_2,foreign_object>",
+            "event": "STIFFNESS",
+            "difficulty": "",
+            "fps": 25,
+            "args": [
+                {
+                    "name": "OBJ_1",
+                    "role": "main_object",
+                    "type": "foreign_object",
+                    "choices_from": "foreign_object_segmentation_label"
+                },              
+                {
+                    "name": "OBJ_2",
+                    "role": "comparison_object",
+                    "type": "foreign_object",
+                    "choices_from": "foreign_object_segmentation_label"
+                },
+                {
+                    "name": "TIME",
+                    "role": "time",
+                    "type": "time",
+                    "constraints": {
+                        "type": "range",
+                        "min": 1,
+                        "max": 5,
+                        "step": 1
+                    }
+                }
+            ],
+            "answer": {                
+                "choices": [],
+                "correct_answer": ""
+            }
+        } 
+    ]
+}

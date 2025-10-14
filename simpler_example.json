@@ -1,0 +1,152 @@
+{
+    "spatial":{
+        "F_SPATIAL_OBJECT_GROUND_DISTANCE": {
+            "question_type": "factual",
+            "category": "spatial",
+            "choice": "numeric",
+            "measurement": "estimation",
+            "question": "What is the distance between the center of mass of the <OBJECT> and the ground plane at time <TIME>?"
+        },
+        "F_SPATIAL_OBJECT_OBJECT_DISTANCE": {
+            "question_type": "factual",
+            "category": "spatial",
+            "choice": "numeric",
+            "measurement": "estimation",
+            "question": "What is the distance between the center of mass of the <OBJECT_1> and the center of mass of the <OBJECT_2> at time <TIME>?"
+        },
+        "F_SPATIAL_OBJECT_CAMERA_DISTANCE": {
+            "question_type": "factual",
+            "category": "spatial",
+            "choice": "numeric",
+            "measurement": "estimation",
+            "question": "What is the distance between the center of mass of the <OBJECT> and <CAMERA> at time <TIME>?"
+        },
+        "F_SPATIAL_CLOSEST_OBJECT": {
+            "question_type": "factual",
+            "category": "spatial",
+            "choice": "numeric",
+            "measurement": "estimation",
+            "question": "What is the closest object to <OBJECT> at time <TIME>?"
+        },
+        "F_SPATIAL_COUNTING_OBJECTS_CLOSE": {
+            "question_type": "factual",
+            "category": "spatial",
+            "choice": "numeric",
+            "measurement": "estimation",
+            "question": "How many objects are closer than <DISTANCE> meters to the camera at time <TIME>?"
+        }
+    },
+    "collision":{
+        "F_COLLISIONS_OBJ_OBJ": {
+            "question_type": "factual",
+            "category": "collision",
+            "choice": "mcq",
+            "measurement": "counting",
+            "question": "With what object is the <OBJECT> colliding first?"
+        },
+        "F_COLLISIONS_OBJ_OBJ_COUNT_GENERAL": {
+            "question_type": "factual",
+            "category": "collision",
+            "choice": "mcq",
+            "measurement": "counting",
+            "question": "How many times is <OBJECT> colliding with other objects?"
+        },
+        "F_COLLISIONS_OBJ_OBJ_COUNT_TYPE": {
+            "question_type": "factual",
+            "category": "collision",
+            "choice": "mcq",
+            "measurement": "counting",
+            "question": "How many times is <OBJECT_1> colliding with <OBJECT_2>?"
+        },
+        "F_COLLISIONS_OBJ_OBJ_TIME": {
+            "question_type": "factual",
+            "category": "collision",
+            "choice": "mcq",
+            "measurement": "counting",
+            "question": "At what time does <OBJECT> collides first?"
+        },
+        "F_COLLISIONS_OBJ_OBJ_FORCE": {
+            "question_type": "factual",
+            "category": "collision",
+            "choice": "mcq",
+            "measurement": "counting",
+            "question": "With what force does <OBJECT_1> collides with <OBJECT_2> the first time?"
+        }
+
+    },
+    "forces": {       
+        "F_FORCES_ESTIMATION_SPEED_OBJECT": {
+            "question_type": "factual",
+            "category": "forces",
+            "choice": "mcq",
+            "measurement": "estimation",
+            "question": "What is the approximate speed of the <OBJECT> at time <TIME> in meters/second?"
+        },
+        "F_FORCES_COUNTING_MOVEMENT_OBJECT_TYPE": {
+            "question_type": "factual",
+            "category": "forces",
+            "choice": "mcq",
+            "measurement": "counting",
+            "question": "How many objects of type <OBJECT_TYPE> have moved?"
+        },
+        "F_FORCES_COUNTING_MOVEMENT_OBJECT_TYPE_TIME": {
+            "question_type": "factual",
+            "category": "forces",
+            "choice": "mcq",
+            "measurement": "counting",
+            "question": "How many objects of type <OBJECT_TYPE> are moving at time <TIME>?"
+        },
+        "F_FORCES_COUNTING_MOVEMENT_UPWARD": {
+            "question_type": "factual",
+            "category": "forces",
+            "choice": "mcq",
+            "measurement": "counting",
+            "question": "How many objects of type <OBJECT_TYPE> are moving upwards?"
+        },
+        "F_FORCES_COUNTING_MOVEMENT_METRIC": {
+            "question_type": "factual",
+            "category": "forces",
+            "choice": "mcq",
+            "measurement": "counting",
+            "question": "How many objects of type <OBJECT_TYPE> moved by more than <DISTANCE> meters from beginning to end?"
+        },
+        "F_FORCES_COUNTING_STILL": {
+            "question_type": "factual",
+            "category": "forces",
+            "choice": "mcq",
+            "measurement": "counting",
+            "question": "How many objects are still during the scene?"
+        },
+        "F_FORCES_COUNTING_STILL_OBJECT_TYPE": {
+            "question_type": "factual",
+            "category": "forces",
+            "choice": "mcq",
+            "measurement": "counting",
+            "question": "How many objects of type <OBJECT_TYPE> are still during the scene?"
+        },
+            "F_FORCES_ESTIMATION_FASTEST_SPEED": {
+            "question_type": "factual",
+            "category": "forces",
+            "choice": "mcq",
+            "measurement": "estimation",
+            "question": "What is the approximate speed of the fastest moving object?"
+        },
+        "F_FORCES_ESTIMATION_ACCELERATION_OBJECT": {
+            "question_type": "factual",
+            "category": "forces",
+            "choice": "mcq",
+            "measurement": "estimation",
+            "question": "What is the approximate acceleration of the <OBJECT> in meters/second^2 at time <TIME>?"
+        },
+         "F_FORCES_ESTIMATION_ANGULAR_VELOCITY_OBJECT": {
+            "question_type": "factual",
+            "category": "forces",
+            "choice": "mcq",
+            "measurement": "estimation",
+            "question": "What is the approximate angular velocity of the <OBJECT> in rad/s at time <TIME>?"
+        }
+    },
+    "materials":{
+        
+    }
+}

@@ -21,7 +21,14 @@
             "measurement": "counting",
             "question": "How many times is <OBJECT_1> colliding with <OBJECT_2>?"
         },
-        "F_COLLISIONS_OBJ_OBJ_TIME": {
+        "F_COLLISIONS_OBJ_OBJ_TIME_FIRST": {
+            "question_type": "factual",
+            "category": "collision",
+            "choice": "mcq",
+            "measurement": "counting",
+            "question": "At what time does <OBJECT> collides first?"
+        },
+        "F_COLLISIONS_OBJ_OBJ_TIME_LAST": {
             "question_type": "factual",
             "category": "collision",
             "choice": "mcq",
@@ -36,80 +43,166 @@
             "question": "With what force does <OBJECT_1> collides with <OBJECT_2> the first time?"
         }
     },
-    "forces": {       
-        "F_FORCES_ESTIMATION_SPEED_OBJECT": {
+    "force": {        
+        "F_FORCES_NET_FORCE_OBJECT_TIME": {
             "question_type": "factual",
-            "category": "forces",
+            "category": "force",
+            "choice": "mcq",
+            "measurement": "estimation",
+            "question": "What is the net force magnitude on <OBJECT> at <TIME> in Newtowns?"
+        },
+        "F_FORCES_TORQUE_OBJECT_TIME": {
+            "question_type": "factual",
+            "category": "force",
+            "choice": "mcq",
+            "measurement": "estimation",
+            "question": "What is the torque about <OBJECT>’s COM at <TIME> in N·m?"
+        },
+        "F_FORCES_NORMAL_FORCE_OBJECT_TIME":{
+            "question_type": "factual",
+            "category": "force",
+            "choice": "mcq",
+            "measurement": "estimation",
+            "question": "What is the normal force on <OBJECT> at <TIME> in N?"
+        },
+        "F_FORCES_HIGHEST_FORCE_OBJECT":{
+            "question_type": "factual",
+            "category": "force",
+            "choice": "mcq",
+            "measurement": "attribute",
+            "question": "Which object appears to have the greatest net force at time <TIME>?"
+        }
+    },
+    "kinematic":{
+        "F_KINEMATICS_SPEED_OBJECT_TIME": {
+            "question_type": "factual",
+            "category": "kinematic",
             "choice": "mcq",
             "measurement": "estimation",
             "question": "What is the approximate speed of the <OBJECT> at time <TIME> in meters/second?"
         },
-        "F_FORCES_COUNTING_MOVEMENT_OBJECT_TYPE": {
+        "F_KINEMATICS_FASTEST_OBJECT":{
             "question_type": "factual",
-            "category": "forces",
-            "choice": "mcq",
-            "measurement": "counting",
-            "question": "How many objects of type <OBJECT_TYPE> have moved?"
-        },
-        "F_FORCES_COUNTING_MOVEMENT_OBJECT_TYPE_TIME": {
-            "question_type": "factual",
-            "category": "forces",
-            "choice": "mcq",
-            "measurement": "counting",
-            "question": "How many objects of type <OBJECT_TYPE> are moving at time <TIME>?"
-        },
-        "F_FORCES_COUNTING_MOVEMENT_UPWARD": {
-            "question_type": "factual",
-            "category": "forces",
-            "choice": "mcq",
-            "measurement": "counting",
-            "question": "How many objects of type <OBJECT_TYPE> are moving upwards?"
-        },
-        "F_FORCES_COUNTING_MOVEMENT_METRIC": {
-            "question_type": "factual",
-            "category": "forces",
-            "choice": "mcq",
-            "measurement": "counting",
-            "question": "How many objects of type <OBJECT_TYPE> moved by more than <DISTANCE> meters from beginning to end?"
-        },
-        "F_FORCES_COUNTING_STILL": {
-            "question_type": "factual",
-            "category": "forces",
-            "choice": "mcq",
-            "measurement": "counting",
-            "question": "How many objects are still during the scene?"
-        },
-        "F_FORCES_COUNTING_STILL_OBJECT_TYPE": {
-            "question_type": "factual",
-            "category": "forces",
-            "choice": "mcq",
-            "measurement": "counting",
-            "question": "How many objects of type <OBJECT_TYPE> are still during the scene?"
-        },
-            "F_FORCES_ESTIMATION_FASTEST_SPEED": {
-            "question_type": "factual",
-            "category": "forces",
+            "category": "kinematic",
             "choice": "mcq",
             "measurement": "estimation",
-            "question": "What is the approximate speed of the fastest moving object?"
-        },
-        "F_FORCES_ESTIMATION_ACCELERATION_OBJECT": {
+            "question": "which object is moving fastes at time <TIME>?"
+        },        
+        "F_KINEMATICS_ACCEL_OBJECT_TIME": {
             "question_type": "factual",
-            "category": "forces",
+            "category": "kinematic",
             "choice": "mcq",
             "measurement": "estimation",
             "question": "What is the approximate acceleration of the <OBJECT> in meters/second^2 at time <TIME>?"
         },
-         "F_FORCES_ESTIMATION_ANGULAR_VELOCITY_OBJECT": {
+         "F_KINEMATICS_ANGULAR_VELOCITY_OBJECT_TIME": {
             "question_type": "factual",
-            "category": "forces",
+            "category": "kinematic",
             "choice": "mcq",
             "measurement": "estimation",
             "question": "What is the approximate angular velocity of the <OBJECT> in rad/s at time <TIME>?"
+        },
+        "F_KINEMATICS_PEAK_SPEED_TIME": {
+            "question_type": "factual",
+            "category": "kinematic",
+            "choice": "mcq",
+            "measurement": "estimation",
+            "question": "At what time does <OBJECT> object reach its peak speed?"
+        },
+        "F_KINEMATICS_DISTANCE_TRAVELED_INTERVAL":{
+            "question_type": "factual",
+            "category": "kinematic",
+            "choice": "mcq",
+            "measurement": "estimation",
+            "question": "How far does <OBJECT> travel between <T_1> and <T_2>"
+        },
+        "F_KINEMATICS_DIRECTION_CHANGE_COUNT":{
+            "question_type": "factual",
+            "category": "kinematic",
+            "choice": "mcq",
+            "measurement": "estimation",
+            "question": "How many times does <OBJECT> reverse its direction?",
+            "hint": "Sign Change in velocity component"
+        },
+        "F_FKINEMATICS_COUNTING_MOVEMENT_OBJECT_CATEGORY": {
+            "question_type": "factual",
+            "category": "kinematic",
+            "choice": "mcq",
+            "measurement": "counting",
+            "question": "How many objects of type <OBJECT_CATEGORY> have moved?"
+        },
+        "F_FKINEMATICS_COUNTING_MOVEMENT_OBJECT_CATEGORY_TIME": {
+            "question_type": "factual",
+            "category": "kinematic",
+            "choice": "mcq",
+            "measurement": "counting",
+            "question": "How many objects of type <OBJECT_CATEGORY> are moving at time <TIME>?"
         }
     },
-    "kinematics":{
-
+    "mass":{
+         "F_MASS_COUNTING": {
+            "question_type": "factual",
+            "category": "masses",
+            "choice": "mcq",
+            "measurement": "counting",
+            "question": "How many objects have mass more than the <MASS> at time <TIME>?"
+        },
+        "F_MASS_ATTRIBUTE": {
+            "question_type": "factual",
+            "category": "masses",
+            "choice": "mcq",
+            "measurement": "estimation",
+            "question": "What is the mass of the <OBJECT>?"
+        },
+        "F_MASS_ATTRIBUTE_HEAVIEST": {
+            "question_type": "factual",
+            "category": "masses",
+            "choice": "mcq",
+            "measurement": "attribute",
+            "question": "Which object appears to have the greatest mass?"
+        },        
+        "F_MASS_ATTRIBUTE_LIGHTEST": {
+            "question_type": "factual",
+            "category": "masses",
+            "choice": "mcq",
+            "measurement": "attribute",
+            "question": "Which object appears to have the smallest mass?"
+        },
+        "F_VOLUME_COUNTING": {
+            "question_type": "factual",
+            "category": "masses",
+            "choice": "mcq",
+            "measurement": "counting",
+            "question": "How many visible objects have volume more than <VOLUME> at time <TIME>?"
+        },
+        "F_VOLUME_ATTRIBUTE": {
+            "question_type": "factual",
+            "category": "masses",
+            "choice": "mcq",
+            "measurement": "attribute",
+            "question": "What is the volume of the <OBJECT> at time <TIME>?"
+        },
+        "F_VOLUME_ATTRIBUTE_MOST_VOLUME": {
+            "question_type": "factual",
+            "category": "masses",
+            "choice": "mcq",
+            "measurement": "attribute",
+            "question": "Which object occupies the greatest volume at time <TIME>?"
+        },
+        "F_DENSITY_COUNTING": {
+            "question_type": "factual",
+            "category": "masses",
+            "choice": "mcq",
+            "measurement": "counting",
+            "question": "How many objects have average/overall density more than <DENSITY> kg_per_m3 at time <TIME>?"
+        },
+        "F_DENSITY_ATTRIBUTE": {
+            "question_type": "factual",
+            "category": "masses",
+            "choice": "mcq",
+            "measurement": "attribute",
+            "question": "What is the average/overall density of the <OBJECT> in kg_per_m3 at time <TIME>?"
+        }
     },
     "material":{
         "F_MATERIALS_COUNTING": {
@@ -125,6 +218,50 @@
             "choice": "mcq",
             "measurement": "attribute",
             "question": "What is the material of the <OBJECT>?"
+        },
+        "F_DEFORMATION_ATTRIBUTE": {
+            "question_type": "factual",
+            "category": "deformations",
+            "choice": "mcq",
+            "measurement": "estimation",
+            "question": "What is the deformation stress of the <OBJECT> at time <TIME>?"
+        },
+        "F_DEFORMATION_COUNTING": {
+            "question_type": "factual",
+            "category": "deformations",
+            "choice": "mcq",
+            "measurement": "counting",
+            "question": "How many objects are deformed at time <TIME>?"
+        },
+         "F_DEFORMATION_COUNTING_THRESHOLD": {
+            "question_type": "factual",
+            "category": "deformations",
+            "choice": "mcq",
+            "measurement": "counting",
+            "question": "How many objects are deformed more than <STRESS-THRESHOLD> MPa at time <TIME>?"
+        },
+        "F_DEFORMATION_OBJECT_IMAGE_MOST": {
+            "question_type": "factual",
+            "category": "deformations",
+            "choice": "mcq",
+            "measurement": "attribute",
+            "question": "What of the images depicts the most deformed state of <OBJECT>?"
+        },
+        "F_DEFORMATION_ANY_OBJECT_IMAGE_MOST": {
+            "question_type": "factual",
+            "category": "deformations",
+            "choice": "mcq",
+            "measurement": "attribute",
+            "question": "What of the images depicts the most deformed object?"
+        }
+    },
+    "meta":{
+        "F_META_PLAUSIBILITY_PHYSICAL_SANITY": {
+            "question_type": "factual",
+            "category": "global_plausibility",
+            "choice": "mcq",
+            "measurement": "attribute",
+            "question": "Is the scene physically plausible?"
         }
     },
      "spatial":{
@@ -162,6 +299,52 @@
             "choice": "numeric",
             "measurement": "estimation",
             "question": "How many objects are closer than <DISTANCE> meters to the camera at time <TIME>?"
+        },
+        "F_SPATIAL_HEIGHEST_ABOVE_GROUND": {
+            "question_type": "factual",
+            "category": "spatial",
+            "choice": "numeric",
+            "measurement": "attribute",
+            "question": "Which object is the highest above the ground at <TIME>?"
+        }
+    },
+    "temporal":{
+        "F_TEMPORAL_SEQUENCE_IMAGES": {
+            "question_type": "factual",
+            "category": "temporal",
+            "choice": "mcq",
+            "measurement": "prediction",
+            "question": "What is the correct sequence of images showing the events in the scene?"
+        },
+        "F_TEMPORAL_PREDICTION_NEXT_IMAGE": {
+            "question_type": "factual",
+            "category": "temporal",
+            "choice": "mcq",
+            "measurement": "prediction",
+            "question": "What event is most likely to happen next in the scene?"
+        },
+        "F_TEMPORAL_PREDICTION_PREVIOUS_IMAGE": {
+            "question_type": "factual",
+            "category": "temporal",
+            "choice": "mcq",
+            "measurement": "prediction",
+            "question": "What event is most likely to happen next in the scene?"
+        }
+    },
+    "visibility":{
+         "F_VISIBILITY_COUNTING": {
+            "question_type": "factual",
+            "category": "visibility",
+            "choice": "mcq",
+            "measurement": "counting",
+            "question": "How many visible objects are there at time <TIME>?"
+        },
+        "F_VISIBILITY_COUNTING_CATEGORY": {
+            "question_type": "factual",
+            "category": "visibility",
+            "choice": "mcq",
+            "measurement": "counting",
+            "question": "How many visible objects of <CATEGORY> are there at time <TIME>?"
         }
     }
 }

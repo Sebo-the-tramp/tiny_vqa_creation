@@ -280,7 +280,6 @@ def compute_kinematics(
         alpha = gradient_with_time(w, times)
     else:
         # Fallback: from unwrapped Euler (approximate)
-        eulers = np.zeros_like(positions)  # reuse shape (N,3)
         # Placeholder: we don't have the raw Euler series here. Users who only
         # store Euler should convert to quats first. We will return zeros.
         w = np.zeros_like(positions)

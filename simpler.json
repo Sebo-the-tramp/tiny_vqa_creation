@@ -130,40 +130,40 @@
         }
     },
     "forces": {
-        "F_FORCES_COUNTING_MOVEMENT_OBJECT_TYPE": {
+        "F_FORCES_COUNTING_MOVEMENT_OBJECT_CATEGORY": {
             "question_type": "factual",
             "category": "forces",
             "choice": "mcq",
             "measurement": "counting",
-            "question": "How many objects of type <OBJECT_TYPE> are moving?"
+            "question": "How many objects of type <OBJECT_CATEGORY> are moving?"
         },
-        "F_FORCES_COUNTING_MOVEMENT_OBJECT_TYPE_TIME": {
+        "F_FORCES_COUNTING_MOVEMENT_OBJECT_CATEGORY_TIME": {
             "question_type": "factual",
             "category": "forces",
             "choice": "mcq",
             "measurement": "counting",
-            "question": "How many objects of type <OBJECT_TYPE> are moving at time <TIME>?"
+            "question": "How many objects of type <OBJECT_CATEGORY> are moving at time <TIME>?"
         },
         "F_FORCES_COUNTING_MOVEMENT_UPWARD": {
             "question_type": "factual",
             "category": "forces",
             "choice": "mcq",
             "measurement": "counting",
-            "question": "How many objects of type <OBJECT_TYPE> are moving upwards?"
+            "question": "How many objects of type <OBJECT_CATEGORY> are moving upwards?"
         },
         "F_FORCES_COUNTING_MOVEMENT_METRIC": {
             "question_type": "factual",
             "category": "forces",
             "choice": "mcq",
             "measurement": "counting",
-            "question": "How many objects of type <OBJECT_TYPE> moved by more than <DISTANCE> meters from beginning to end?"
+            "question": "How many objects of type <OBJECT_CATEGORY> moved by more than <DISTANCE> meters from beginning to end?"
         },
         "F_FORCES_COUNTING_STILL": {
             "question_type": "factual",
             "category": "forces",
             "choice": "mcq",
             "measurement": "counting",
-            "question": "How many objects of type <OBJECT_TYPE> are still during the scene?"
+            "question": "How many objects of type <OBJECT_CATEGORY> are still during the scene?"
         },
         "F_FORCES_ESTIMATION_FASTEST_SPEED": {
             "question_type": "factual",
@@ -344,7 +344,7 @@
             "category": "masses",
             "choice": "mcq",
             "measurement": "counting",
-            "question": "How many objects have mass more than the <MASS>?"
+            "question": "How many objects have mass more than the <MASS> at time <TIME>?"
         },
         "F_MASS_ATTRIBUTE": {
             "question_type": "factual",
@@ -409,14 +409,14 @@
             "category": "visibility",
             "choice": "mcq",
             "measurement": "counting",
-            "question": "How many visible objects are there?"
+            "question": "How many visible objects are there at time <TIME>?"
         },
         "F_VISIBILITY_COUNTING_CATEGORY": {
             "question_type": "factual",
             "category": "visibility",
             "choice": "mcq",
             "measurement": "counting",
-            "question": "How many visible objects of <OBJECT_TYPE> are there?"
+            "question": "How many visible objects of <OBJECT_CATEGORY> are there at time <TIME>?"
         },
         "F_HIDDEN_BY": {
             "question_type": "factual",

@@ -1,9 +1,7 @@
 {
   "initialization": {
     "some_parameter": "some_value",
-    "fps": 100,
-    "dt_seconds": 0.01,
-    "units": "meters_radians"
+    "fps": 100
   },
   "segments": {
     "ground": {
@@ -20,8 +18,12 @@
       "id": "object_ID_1",
       "shape": "sphere",
       "name": "ball",
-      "type": "toys",
-      "mass": 2.0,
+      "category_GSO": "toys",
+      "mass": 2.0,      
+      "volume_m3": 1.5,
+      "density_kg_per_m3": 1.33,
+      "poisson_ratio": 0.5,
+      "youngs_modulus_pa": 250000000,
       "scale": [
         0.05,
         0.05,
@@ -34,7 +36,11 @@
       "shape": "cube",
       "name": "box",
       "mass": 1.0,
-      "type": "utensils",
+      "category_GSO": "utensils",
+      "volume_m3": 1.5,
+      "density_kg_per_m3": 1.33,
+      "poisson_ratio": 0.5,
+      "youngs_modulus_pa": 250000000,
       "scale": [
         0.1,
         0.1,
@@ -46,8 +52,12 @@
       "id": "object_ID_3",
       "shape": "cylinder",
       "name": "glass",
-      "type": "utensils",
+      "category_GSO": "utensils",
       "mass": 3.0,
+      "volume_m3": 1.5,
+      "density_kg_per_m3": 1.33,
+      "poisson_ratio": 0.5,
+      "youngs_modulus_pa": 250000000,
       "scale": [
         0.03,
         0.03,

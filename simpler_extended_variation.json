@@ -1269,280 +1269,280 @@
             "category": "forces",
             "choice": "mcq",
             "measurement": "counting",
-            "question": "How many objects of type <OBJECT_TYPE> are moving?"
+            "question": "How many objects of type <OBJECT_CATEGORY> are moving?"
         },
         "F_FORCES_COUNTING_MOVEMENT_2": {
             "question_type": "factual",
             "category": "forces",
             "choice": "mcq",
             "measurement": "counting",
-            "question": "Approximately how many objects of type <OBJECT_TYPE> are moving?"
+            "question": "Approximately how many objects of type <OBJECT_CATEGORY> are moving?"
         },
         "F_FORCES_COUNTING_MOVEMENT_3": {
             "question_type": "factual",
             "category": "forces",
             "choice": "mcq",
             "measurement": "counting",
-            "question": "About how many objects of type <OBJECT_TYPE> are moving?"
+            "question": "About how many objects of type <OBJECT_CATEGORY> are moving?"
         },
         "F_FORCES_COUNTING_MOVEMENT_4": {
             "question_type": "factual",
             "category": "forces",
             "choice": "mcq",
             "measurement": "counting",
-            "question": "What is the count of objects of type <OBJECT_TYPE> are moving?"
+            "question": "What is the count of objects of type <OBJECT_CATEGORY> are moving?"
         },
         "F_FORCES_COUNTING_MOVEMENT_5": {
             "question_type": "factual",
             "category": "forces",
             "choice": "mcq",
             "measurement": "counting",
-            "question": "What number of objects of type <OBJECT_TYPE> are moving do you observe?"
+            "question": "What number of objects of type <OBJECT_CATEGORY> are moving do you observe?"
         },
         "F_FORCES_COUNTING_MOVEMENT_6": {
             "question_type": "factual",
             "category": "forces",
             "choice": "mcq",
             "measurement": "counting",
-            "question": "Could you tally the objects of type <OBJECT_TYPE> are moving?"
+            "question": "Could you tally the objects of type <OBJECT_CATEGORY> are moving?"
         },
         "F_FORCES_COUNTING_MOVEMENT_7": {
             "question_type": "factual",
             "category": "forces",
             "choice": "mcq",
             "measurement": "counting",
-            "question": "Can you count the objects of type <OBJECT_TYPE> are moving?"
+            "question": "Can you count the objects of type <OBJECT_CATEGORY> are moving?"
         },
         "F_FORCES_COUNTING_MOVEMENT_8": {
             "question_type": "factual",
             "category": "forces",
             "choice": "mcq",
             "measurement": "counting",
-            "question": "Could you state how many objects of type <OBJECT_TYPE> are moving there are?"
+            "question": "Could you state how many objects of type <OBJECT_CATEGORY> are moving there are?"
         },
         "F_FORCES_COUNTING_MOVEMENT_9": {
             "question_type": "factual",
             "category": "forces",
             "choice": "mcq",
             "measurement": "counting",
-            "question": "Would you report the number of objects of type <OBJECT_TYPE> are moving?"
+            "question": "Would you report the number of objects of type <OBJECT_CATEGORY> are moving?"
         },
         "F_FORCES_COUNTING_MOVEMENT_10": {
             "question_type": "factual",
             "category": "forces",
             "choice": "mcq",
             "measurement": "counting",
-            "question": "Could you give the total of objects of type <OBJECT_TYPE> are moving?"
+            "question": "Could you give the total of objects of type <OBJECT_CATEGORY> are moving?"
         },
         "F_FORCES_COUNTING_MOVEMENT_UPWARD_1": {
             "question_type": "factual",
             "category": "forces",
             "choice": "mcq",
             "measurement": "counting",
-            "question": "How many objects of type <OBJECT_TYPE> are moving upwards?"
+            "question": "How many objects of type <OBJECT_CATEGORY> are moving upwards?"
         },
         "F_FORCES_COUNTING_MOVEMENT_UPWARD_2": {
             "question_type": "factual",
             "category": "forces",
             "choice": "mcq",
             "measurement": "counting",
-            "question": "Approximately how many objects of type <OBJECT_TYPE> are moving upwards?"
+            "question": "Approximately how many objects of type <OBJECT_CATEGORY> are moving upwards?"
         },
         "F_FORCES_COUNTING_MOVEMENT_UPWARD_3": {
             "question_type": "factual",
             "category": "forces",
             "choice": "mcq",
             "measurement": "counting",
-            "question": "About how many objects of type <OBJECT_TYPE> are moving upwards?"
+            "question": "About how many objects of type <OBJECT_CATEGORY> are moving upwards?"
         },
         "F_FORCES_COUNTING_MOVEMENT_UPWARD_4": {
             "question_type": "factual",
             "category": "forces",
             "choice": "mcq",
             "measurement": "counting",
-            "question": "What is the count of objects of type <OBJECT_TYPE> are moving upwards?"
+            "question": "What is the count of objects of type <OBJECT_CATEGORY> are moving upwards?"
         },
         "F_FORCES_COUNTING_MOVEMENT_UPWARD_5": {
             "question_type": "factual",
             "category": "forces",
             "choice": "mcq",
             "measurement": "counting",
-            "question": "What number of objects of type <OBJECT_TYPE> are moving upwards do you observe?"
+            "question": "What number of objects of type <OBJECT_CATEGORY> are moving upwards do you observe?"
         },
         "F_FORCES_COUNTING_MOVEMENT_UPWARD_6": {
             "question_type": "factual",
             "category": "forces",
             "choice": "mcq",
             "measurement": "counting",
-            "question": "Could you tally the objects of type <OBJECT_TYPE> are moving upwards?"
+            "question": "Could you tally the objects of type <OBJECT_CATEGORY> are moving upwards?"
         },
         "F_FORCES_COUNTING_MOVEMENT_UPWARD_7": {
             "question_type": "factual",
             "category": "forces",
             "choice": "mcq",
             "measurement": "counting",
-            "question": "Can you count the objects of type <OBJECT_TYPE> are moving upwards?"
+            "question": "Can you count the objects of type <OBJECT_CATEGORY> are moving upwards?"
         },
         "F_FORCES_COUNTING_MOVEMENT_UPWARD_8": {
             "question_type": "factual",
             "category": "forces",
             "choice": "mcq",
             "measurement": "counting",
-            "question": "Could you state how many objects of type <OBJECT_TYPE> are moving upwards there are?"
+            "question": "Could you state how many objects of type <OBJECT_CATEGORY> are moving upwards there are?"
         },
         "F_FORCES_COUNTING_MOVEMENT_UPWARD_9": {
             "question_type": "factual",
             "category": "forces",
             "choice": "mcq",
             "measurement": "counting",
-            "question": "Would you report the number of objects of type <OBJECT_TYPE> are moving upwards?"
+            "question": "Would you report the number of objects of type <OBJECT_CATEGORY> are moving upwards?"
         },
         "F_FORCES_COUNTING_MOVEMENT_UPWARD_10": {
             "question_type": "factual",
             "category": "forces",
             "choice": "mcq",
             "measurement": "counting",
-            "question": "Could you give the total of objects of type <OBJECT_TYPE> are moving upwards?"
+            "question": "Could you give the total of objects of type <OBJECT_CATEGORY> are moving upwards?"
         },
         "F_FORCES_COUNTING_MOVEMENT_METRIC_1": {
             "question_type": "factual",
             "category": "forces",
             "choice": "mcq",
             "measurement": "counting",
-            "question": "How many objects of type <OBJECT_TYPE> moved by more than 2 meters?"
+            "question": "How many objects of type <OBJECT_CATEGORY> moved by more than 2 meters?"
         },
         "F_FORCES_COUNTING_MOVEMENT_METRIC_2": {
             "question_type": "factual",
             "category": "forces",
             "choice": "mcq",
             "measurement": "counting",
-            "question": "Approximately how many objects of type <OBJECT_TYPE> moved by more than 2 meters?"
+            "question": "Approximately how many objects of type <OBJECT_CATEGORY> moved by more than 2 meters?"
         },
         "F_FORCES_COUNTING_MOVEMENT_METRIC_3": {
             "question_type": "factual",
             "category": "forces",
             "choice": "mcq",
             "measurement": "counting",
-            "question": "About how many objects of type <OBJECT_TYPE> moved by more than 2 meters?"
+            "question": "About how many objects of type <OBJECT_CATEGORY> moved by more than 2 meters?"
         },
         "F_FORCES_COUNTING_MOVEMENT_METRIC_4": {
             "question_type": "factual",
             "category": "forces",
             "choice": "mcq",
             "measurement": "counting",
-            "question": "What is the count of objects of type <OBJECT_TYPE> moved by more than 2 meters?"
+            "question": "What is the count of objects of type <OBJECT_CATEGORY> moved by more than 2 meters?"
         },
         "F_FORCES_COUNTING_MOVEMENT_METRIC_5": {
             "question_type": "factual",
             "category": "forces",
             "choice": "mcq",
             "measurement": "counting",
-            "question": "What number of objects of type <OBJECT_TYPE> moved by more than 2 meters do you observe?"
+            "question": "What number of objects of type <OBJECT_CATEGORY> moved by more than 2 meters do you observe?"
         },
         "F_FORCES_COUNTING_MOVEMENT_METRIC_6": {
             "question_type": "factual",
             "category": "forces",
             "choice": "mcq",
             "measurement": "counting",
-            "question": "Could you tally the objects of type <OBJECT_TYPE> moved by more than 2 meters?"
+            "question": "Could you tally the objects of type <OBJECT_CATEGORY> moved by more than 2 meters?"
         },
         "F_FORCES_COUNTING_MOVEMENT_METRIC_7": {
             "question_type": "factual",
             "category": "forces",
             "choice": "mcq",
             "measurement": "counting",
-            "question": "Can you count the objects of type <OBJECT_TYPE> moved by more than 2 meters?"
+            "question": "Can you count the objects of type <OBJECT_CATEGORY> moved by more than 2 meters?"
         },
         "F_FORCES_COUNTING_MOVEMENT_METRIC_8": {
             "question_type": "factual",
             "category": "forces",
             "choice": "mcq",
             "measurement": "counting",
-            "question": "Could you state how many objects of type <OBJECT_TYPE> moved by more than 2 meters there are?"
+            "question": "Could you state how many objects of type <OBJECT_CATEGORY> moved by more than 2 meters there are?"
         },
         "F_FORCES_COUNTING_MOVEMENT_METRIC_9": {
             "question_type": "factual",
             "category": "forces",
             "choice": "mcq",
             "measurement": "counting",
-            "question": "Would you report the number of objects of type <OBJECT_TYPE> moved by more than 2 meters?"
+            "question": "Would you report the number of objects of type <OBJECT_CATEGORY> moved by more than 2 meters?"
         },
         "F_FORCES_COUNTING_MOVEMENT_METRIC_10": {
             "question_type": "factual",
             "category": "forces",
             "choice": "mcq",
             "measurement": "counting",
-            "question": "Could you give the total of objects of type <OBJECT_TYPE> moved by more than 2 meters?"
+            "question": "Could you give the total of objects of type <OBJECT_CATEGORY> moved by more than 2 meters?"
         },
         "F_FORCES_COUNTING_STILL_1": {
             "question_type": "factual",
             "category": "forces",
             "choice": "mcq",
             "measurement": "counting",
-            "question": "How many objects of type <OBJECT_TYPE> are still?"
+            "question": "How many objects of type <OBJECT_CATEGORY> are still?"
         },
         "F_FORCES_COUNTING_STILL_2": {
             "question_type": "factual",
             "category": "forces",
             "choice": "mcq",
             "measurement": "counting",
-            "question": "Approximately how many objects of type <OBJECT_TYPE> are still?"
+            "question": "Approximately how many objects of type <OBJECT_CATEGORY> are still?"
         },
         "F_FORCES_COUNTING_STILL_3": {
             "question_type": "factual",
             "category": "forces",
             "choice": "mcq",
             "measurement": "counting",
-            "question": "About how many objects of type <OBJECT_TYPE> are still?"
+            "question": "About how many objects of type <OBJECT_CATEGORY> are still?"
         },
         "F_FORCES_COUNTING_STILL_4": {
             "question_type": "factual",
             "category": "forces",
             "choice": "mcq",
             "measurement": "counting",
-            "question": "What is the count of objects of type <OBJECT_TYPE> are still?"
+            "question": "What is the count of objects of type <OBJECT_CATEGORY> are still?"
         },
         "F_FORCES_COUNTING_STILL_5": {
             "question_type": "factual",
             "category": "forces",
             "choice": "mcq",
             "measurement": "counting",
-            "question": "What number of objects of type <OBJECT_TYPE> are still do you observe?"
+            "question": "What number of objects of type <OBJECT_CATEGORY> are still do you observe?"
         },
         "F_FORCES_COUNTING_STILL_6": {
             "question_type": "factual",
             "category": "forces",
             "choice": "mcq",
             "measurement": "counting",
-            "question": "Could you tally the objects of type <OBJECT_TYPE> are still?"
+            "question": "Could you tally the objects of type <OBJECT_CATEGORY> are still?"
         },
         "F_FORCES_COUNTING_STILL_7": {
             "question_type": "factual",
             "category": "forces",
             "choice": "mcq",
             "measurement": "counting",
-            "question": "Can you count the objects of type <OBJECT_TYPE> are still?"
+            "question": "Can you count the objects of type <OBJECT_CATEGORY> are still?"
         },
         "F_FORCES_COUNTING_STILL_8": {
             "question_type": "factual",
             "category": "forces",
             "choice": "mcq",
             "measurement": "counting",
-            "question": "Could you state how many objects of type <OBJECT_TYPE> are still there are?"
+            "question": "Could you state how many objects of type <OBJECT_CATEGORY> are still there are?"
         },
         "F_FORCES_COUNTING_STILL_9": {
             "question_type": "factual",
             "category": "forces",
             "choice": "mcq",
             "measurement": "counting",
-            "question": "Would you report the number of objects of type <OBJECT_TYPE> are still?"
+            "question": "Would you report the number of objects of type <OBJECT_CATEGORY> are still?"
         },
         "F_FORCES_COUNTING_STILL_10": {
             "question_type": "factual",
             "category": "forces",
             "choice": "mcq",
             "measurement": "counting",
-            "question": "Could you give the total of objects of type <OBJECT_TYPE> are still?"
+            "question": "Could you give the total of objects of type <OBJECT_CATEGORY> are still?"
         },
         "F_FORCES_ESTIMATION_FASTEST_SPEED_1": {
             "question_type": "factual",
@@ -3867,70 +3867,70 @@
             "category": "visibility",
             "choice": "mcq",
             "measurement": "counting",
-            "question": "How many visible objects of <OBJECT_TYPE> are there?"
+            "question": "How many visible objects of <OBJECT_CATEGORY> are there?"
         },
         "F_VISIBILITY_COUNTING_CATEGORY_2": {
             "question_type": "factual",
             "category": "visibility",
             "choice": "mcq",
             "measurement": "counting",
-            "question": "Approximately how many visible objects of <OBJECT_TYPE> are there?"
+            "question": "Approximately how many visible objects of <OBJECT_CATEGORY> are there?"
         },
         "F_VISIBILITY_COUNTING_CATEGORY_3": {
             "question_type": "factual",
             "category": "visibility",
             "choice": "mcq",
             "measurement": "counting",
-            "question": "About how many visible objects of <OBJECT_TYPE> are there?"
+            "question": "About how many visible objects of <OBJECT_CATEGORY> are there?"
         },
         "F_VISIBILITY_COUNTING_CATEGORY_4": {
             "question_type": "factual",
             "category": "visibility",
             "choice": "mcq",
             "measurement": "counting",
-            "question": "What is the count of visible objects of <OBJECT_TYPE>?"
+            "question": "What is the count of visible objects of <OBJECT_CATEGORY>?"
         },
         "F_VISIBILITY_COUNTING_CATEGORY_5": {
             "question_type": "factual",
             "category": "visibility",
             "choice": "mcq",
             "measurement": "counting",
-            "question": "What number of visible objects of <OBJECT_TYPE> do you observe?"
+            "question": "What number of visible objects of <OBJECT_CATEGORY> do you observe?"
         },
         "F_VISIBILITY_COUNTING_CATEGORY_6": {
             "question_type": "factual",
             "category": "visibility",
             "choice": "mcq",
             "measurement": "counting",
-            "question": "Could you tally the visible objects of <OBJECT_TYPE>?"
+            "question": "Could you tally the visible objects of <OBJECT_CATEGORY>?"
         },
         "F_VISIBILITY_COUNTING_CATEGORY_7": {
             "question_type": "factual",
             "category": "visibility",
             "choice": "mcq",
             "measurement": "counting",
-            "question": "Can you count the visible objects of <OBJECT_TYPE>?"
+            "question": "Can you count the visible objects of <OBJECT_CATEGORY>?"
         },
         "F_VISIBILITY_COUNTING_CATEGORY_8": {
             "question_type": "factual",
             "category": "visibility",
             "choice": "mcq",
             "measurement": "counting",
-            "question": "Could you state how many visible objects of <OBJECT_TYPE> there are?"
+            "question": "Could you state how many visible objects of <OBJECT_CATEGORY> there are?"
         },
         "F_VISIBILITY_COUNTING_CATEGORY_9": {
             "question_type": "factual",
             "category": "visibility",
             "choice": "mcq",
             "measurement": "counting",
-            "question": "Would you report the number of visible objects of <OBJECT_TYPE>?"
+            "question": "Would you report the number of visible objects of <OBJECT_CATEGORY>?"
         },
         "F_VISIBILITY_COUNTING_CATEGORY_10": {
             "question_type": "factual",
             "category": "visibility",
             "choice": "mcq",
             "measurement": "counting",
-            "question": "Could you give the total of visible objects of <OBJECT_TYPE>?"
+            "question": "Could you give the total of visible objects of <OBJECT_CATEGORY>?"
         },
         "F_HIDDEN_BY_1": {
             "question_type": "factual",

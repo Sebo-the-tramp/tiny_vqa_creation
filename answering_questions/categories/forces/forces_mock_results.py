@@ -1,8 +1,8 @@
-def F_FORCES_COUNTING_MOVEMENT_OBJECT_TYPE() -> str:
+def F_FORCES_COUNTING_MOVEMENT_OBJECT_CATEGORY() -> str:
     return "1"
 
 
-def F_FORCES_COUNTING_MOVEMENT_OBJECT_TYPE_TIME() -> str:
+def F_FORCES_COUNTING_MOVEMENT_OBJECT_CATEGORY_TIME() -> str:
     return "1"
 
 
@@ -18,7 +18,7 @@ def F_FORCES_COUNTING_STILL() -> str:
     return "1"
 
 
-def F_FORCES_COUNTING_STILL_OBJECT_TYPE() -> str:
+def F_FORCES_COUNTING_STILL_OBJECT_CATEGORY() -> str:
     return "1"
 
 

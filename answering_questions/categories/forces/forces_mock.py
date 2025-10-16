@@ -7,6 +7,8 @@ an answer using the provided ``world_state`` and ``question`` payloads.
 
 from __future__ import annotations
 
+import math
+
 from typing import Any, Mapping, Union
 
 from utils.bin_creation import create_mc_options_around_gt, uniform_labels
@@ -16,7 +18,7 @@ from utils.helpers import (
     _get_displacement,
     _get_speed,
     _get_acceleration,
-    get_angular_velocity,
+    get_angular_velocity_vector,
     _is_moving,
     _iter_objects,
     _objects_of_type,
@@ -35,20 +37,20 @@ DEFAULT_DISPLACEMENT_THRESHOLD = 2.0
 
 
 @with_resolved_attributes
-def F_FORCES_COUNTING_MOVEMENT_OBJECT_TYPE(
+def F_FORCES_COUNTING_MOVEMENT_OBJECT_CATEGORY(
     world_state: WorldState, question: QuestionPayload, resolved_attributes, **kwargs
 ) -> int:
     """Count objects of a specific type that are currently moving."""
 
-    assert len(resolved_attributes) == 1 and "OBJECT_TYPE" in resolved_attributes
+    assert len(resolved_attributes) == 1 and "OBJECT_CATEGORY" in resolved_attributes
 
     # core logic
-    object_data = resolved_attributes["OBJECT_TYPE"]["choice"]
+    object_data = resolved_attributes["OBJECT_CATEGORY"]["choice"]
     object_id_has_moved = {
-        obj["id"]: False for obj in _objects_of_type(world_state, object_data["type"])
+        obj["id"]: False for obj in _objects_of_type(world_state, object_data["category_GSO"])
     }
     for timestep in world_state["simulation_steps"]:
-        for obj in _objects_of_type(world_state, object_data["type"]):
+        for obj in _objects_of_type(world_state, object_data["category_GSO"]):
             if not object_id_has_moved[obj["id"]] and _is_moving(
                 obj["id"], timestep, world_state
             ):
@@ -66,23 +68,23 @@ def F_FORCES_COUNTING_MOVEMENT_OBJECT_TYPE(
 
 
 @with_resolved_attributes
-def F_FORCES_COUNTING_MOVEMENT_OBJECT_TYPE_TIME(
+def F_FORCES_COUNTING_MOVEMENT_OBJECT_CATEGORY_TIME(
     world_state: WorldState, question: QuestionPayload, resolved_attributes, **kwargs
 ) -> int:
     """Count objects of a specific type that are currently moving."""
 
     assert (
         len(resolved_attributes) == 2
-        and "OBJECT_TYPE" in resolved_attributes
+        and "OBJECT_CATEGORY" in resolved_attributes
         and "TIME" in resolved_attributes
     )
 
     # core logic
-    object_data = resolved_attributes["OBJECT_TYPE"]["choice"]
+    object_data = resolved_attributes["OBJECT_CATEGORY"]["choice"]
     timestep = resolved_attributes["TIME"]["choice"]
     count_moving = sum(
         1
-        for obj in _objects_of_type(world_state, object_data["type"])
+        for obj in _objects_of_type(world_state, object_data["category_GSO"])
         if _is_moving(obj["id"], timestep, world_state)
     )
     _fill_template(question, resolved_attributes)
@@ -110,15 +112,15 @@ def F_FORCES_COUNTING_MOVEMENT_METRIC(
     """Count objects of a specific type that moved more than a given metric distance."""
     assert (
         len(resolved_attributes) == 2
-        and "OBJECT_TYPE" in resolved_attributes
+        and "OBJECT_CATEGORY" in resolved_attributes
         and "DISTANCE" in resolved_attributes
     )
 
-    object_type = resolved_attributes["OBJECT_TYPE"]["choice"]["type"]
+    OBJECT_CATEGORY = resolved_attributes["OBJECT_CATEGORY"]["choice"]["category_GSO"]
     distance = resolved_attributes["DISTANCE"]["choice"]
 
     count = 0
-    for obj in _objects_of_type(world_state, object_type):
+    for obj in _objects_of_type(world_state, OBJECT_CATEGORY):
         displacement = _get_displacement(
             obj["id"], kwargs["timestep_start"], kwargs["timestep_end"], world_state
         )
@@ -166,16 +168,16 @@ def F_FORCES_COUNTING_STILL(
 
 
 @with_resolved_attributes
-def F_FORCES_COUNTING_STILL_OBJECT_TYPE(
+def F_FORCES_COUNTING_STILL_OBJECT_CATEGORY(
     world_state: WorldState, question: QuestionPayload, resolved_attributes, **kwargs
 ) -> int:
     """Count objects of a specific type that are effectively still."""
 
-    assert len(resolved_attributes) == 1 and "OBJECT_TYPE" in resolved_attributes
-    object_type = resolved_attributes["OBJECT_TYPE"]["choice"]["type"]
+    assert len(resolved_attributes) == 1 and "OBJECT_CATEGORY" in resolved_attributes
+    OBJECT_CATEGORY = resolved_attributes["OBJECT_CATEGORY"]["choice"]["category_GSO"]
 
     still_objects = 0
-    for obj in _objects_of_type(world_state, object_type):
+    for obj in _objects_of_type(world_state, OBJECT_CATEGORY):
         obj_displacement = _get_displacement(
             obj["id"], kwargs["timestep_start"], kwargs["timestep_end"], world_state
         )
@@ -283,16 +285,19 @@ def F_FORCES_ESTIMATION_ANGULAR_VELOCITY_OBJECT(
     timestep = resolved_attributes["TIME"]["choice"]
     object_id = resolved_attributes["OBJECT"]["choice"]["id"]
 
-    angular_velocity_object_at_timestep = get_angular_velocity(
+    angular_velocity_object_at_timestep = get_angular_velocity_vector(
         object_id, timestep, world_state
     )
 
+    # convert from 3_vector to scalar (magnitude)
+    magnitude = math.sqrt(sum(x**2 for x in angular_velocity_object_at_timestep))
+
     _fill_template(question, resolved_attributes)
 
-    options, correct_idx = create_mc_options_around_gt(
-        angular_velocity_object_at_timestep, num_answers=4
-    )
-    options_with_units = [f"{opt} deg/s" for opt in options]
+    options, correct_idx = create_mc_options_around_gt(magnitude, num_answers=4)
+    options_with_units = [
+        f"{opt} deg/s" for opt in options
+    ]  # TODO also need to agree on units
     return question, options_with_units, correct_idx
 
 

@@ -43,28 +43,28 @@ def point_to_plane_distance(point, normal, d):
 def _get_position(
     world_state: Mapping[str, Any], object_id: str, timestep: str
 ) -> Optional[Tuple[float, ...]]:
-    timestamp_world = world_state["simulation_steps"][timestep]
-    current_timestamp_involved_object = [0, 0, 0]
-    current_timestamp_involved_object[0] = timestamp_world["objects"][object_id][
+    timestep_world = world_state["simulation_steps"][timestep]
+    current_timestep_involved_object = [0, 0, 0]
+    current_timestep_involved_object[0] = timestep_world["objects"][object_id][
         "transform"
     ][0]
-    current_timestamp_involved_object[1] = timestamp_world["objects"][object_id][
+    current_timestep_involved_object[1] = timestep_world["objects"][object_id][
         "transform"
     ][2]
-    current_timestamp_involved_object[2] = timestamp_world["objects"][object_id][
+    current_timestep_involved_object[2] = timestep_world["objects"][object_id][
         "transform"
     ][1]
     # TODO change back to correct vecottr format now -> XZY, should be XYZ
-    return _as_vector(current_timestamp_involved_object)
+    return _as_vector(current_timestep_involved_object)
 
 
 def _get_position_camera(
     world_state: Mapping[str, Any], timestep: str
 ) -> Optional[Tuple[float, ...]]:
-    timestamp_world = world_state["simulation_steps"][timestep]
-    current_timestamp_involved_object = [0, 0, 0]
-    current_timestamp_involved_object[0] = timestamp_world["camera"]["transform"][0]
-    current_timestamp_involved_object[1] = timestamp_world["camera"]["transform"][2]
-    current_timestamp_involved_object[2] = timestamp_world["camera"]["transform"][1]
+    timestep_world = world_state["simulation_steps"][timestep]
+    current_timestep_involved_object = [0, 0, 0]
+    current_timestep_involved_object[0] = timestep_world["camera"]["transform"][0]
+    current_timestep_involved_object[1] = timestep_world["camera"]["transform"][2]
+    current_timestep_involved_object[2] = timestep_world["camera"]["transform"][1]
     # TODO change back to correct vecottr format now -> XZY, should be XYZ
-    return _as_vector(current_timestamp_involved_object)
+    return _as_vector(current_timestep_involved_object)

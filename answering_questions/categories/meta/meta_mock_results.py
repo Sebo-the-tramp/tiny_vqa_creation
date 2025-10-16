@@ -1,2 +1,2 @@
-def F_GLOBAL_PLAUSIBILITY_OBJECT_COUNT() -> str:
+def F_META_PLAUSIBILITY_PHYSICAL_SANITY() -> str:
     return "5"

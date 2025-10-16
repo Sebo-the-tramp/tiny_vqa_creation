@@ -56,14 +56,14 @@ def F_SPATIAL_OBJECT_GROUND_DISTANCE(
         and "TIME" in resolved_attributes
     )
 
-    timestamp = resolved_attributes["TIME"]["choice"]
+    timestep = resolved_attributes["TIME"]["choice"]
     object = resolved_attributes["OBJECT"]["choice"]
     ground_normal = world_state["segments"]["ground"].get(
         "plane_normal", [0, 0, 1]
     )  # TODO change the format eventually
     ground_height = world_state["segments"]["ground"].get("ground_height", 0.0)
 
-    object_position_at_time = _get_position(world_state, object["id"], timestamp)
+    object_position_at_time = _get_position(world_state, object["id"], timestep)
 
     distance = point_to_plane_distance(
         object_position_at_time, ground_normal, ground_height
@@ -90,12 +90,12 @@ def F_SPATIAL_OBJECT_OBJECT_DISTANCE(
         and "TIME" in resolved_attributes
     )
 
-    timestamp = resolved_attributes["TIME"]["choice"]
+    timestep = resolved_attributes["TIME"]["choice"]
     object_1 = resolved_attributes["OBJECT_1"]["choice"]
     object_2 = resolved_attributes["OBJECT_2"]["choice"]
 
-    object_1_position_at_time = _get_position(world_state, object_1["id"], timestamp)
-    object_2_position_at_time = _get_position(world_state, object_2["id"], timestamp)
+    object_1_position_at_time = _get_position(world_state, object_1["id"], timestep)
+    object_2_position_at_time = _get_position(world_state, object_2["id"], timestep)
 
     distance = _distance_between(object_1_position_at_time, object_2_position_at_time)
 
@@ -120,11 +120,11 @@ def F_SPATIAL_OBJECT_CAMERA_DISTANCE(
         and "CAMERA" in resolved_attributes
     )
 
-    timestamp = resolved_attributes["TIME"]["choice"]
+    timestep = resolved_attributes["TIME"]["choice"]
     object = resolved_attributes["OBJECT"]["choice"]
 
-    object_position_at_time = _get_position(world_state, object["id"], timestamp)
-    camera_position_at_time = _get_position_camera(world_state, timestamp)
+    object_position_at_time = _get_position(world_state, object["id"], timestep)
+    camera_position_at_time = _get_position_camera(world_state, timestep)
 
     distance = _distance_between(object_position_at_time, camera_position_at_time)
 
@@ -144,9 +144,9 @@ def F_SPATIAL_CLOSEST_OBJECT(
 ) -> int:
     assert len(resolved_attributes) == 2 and "OBJECT" in resolved_attributes and "TIME"
 
-    timestamp = resolved_attributes["TIME"]["choice"]
+    timestep = resolved_attributes["TIME"]["choice"]
     object = resolved_attributes["OBJECT"]["choice"]
-    object_position_at_time = _get_position(world_state, object["id"], timestamp)
+    object_position_at_time = _get_position(world_state, object["id"], timestep)
 
     closest_object = None
     closest_distance = float("inf")
@@ -156,14 +156,14 @@ def F_SPATIAL_CLOSEST_OBJECT(
         if object_iter["id"] != object["id"]:
             distance = _distance_between(
                 object_position_at_time,
-                _get_position(world_state, object_iter["id"], timestamp),
+                _get_position(world_state, object_iter["id"], timestep),
             )
             if distance < closest_distance:
                 closest_distance = distance
                 closest_object = object_iter
 
     print(
-        f"Closest object to {object['id']} at time {timestamp} is {closest_object} at distance {closest_distance}"
+        f"Closest object to {object['id']} at time {timestep} is {closest_object} at distance {closest_distance}"
     )
 
     _fill_template(question, resolved_attributes)
@@ -175,7 +175,6 @@ def F_SPATIAL_CLOSEST_OBJECT(
     labels, idx = create_mc_object_names_from_dataset(
         closest_object["name"], present, DATASET
     )
-    print(f"Labels: {labels}, idx: {idx}")
 
     return question, labels, idx
 
@@ -190,15 +189,15 @@ def F_SPATIAL_COUNTING_OBJECTS_CLOSE(
         and "DISTANCE" in resolved_attributes
     )
 
-    timestamp = resolved_attributes["TIME"]["choice"]
+    timestep = resolved_attributes["TIME"]["choice"]
     distance_threshold = resolved_attributes["DISTANCE"]["choice"]
 
-    camera_position_at_time = _get_position_camera(world_state, timestamp)
+    camera_position_at_time = _get_position_camera(world_state, timestep)
 
     count = 0
     for object_iter in _iter_objects(world_state):
         object_position_at_time = _get_position(
-            world_state, object_iter["id"], timestamp
+            world_state, object_iter["id"], timestep
         )
         distance = _distance_between(object_position_at_time, camera_position_at_time)
         if distance <= distance_threshold:

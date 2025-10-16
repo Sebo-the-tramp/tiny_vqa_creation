@@ -1,6 +1,8 @@
 # Categories description file 
 
 
+https://chatgpt.com/c/68f09dab-d678-8330-9a61-f95f3e94192c -> here there are some useful thoughts on the objects
+
 ## in short
 
 Spatial reasoning, Kinematics, Forces, Contact, Material, Mass, Visibility, Event ordering, Global.
@@ -62,7 +64,7 @@ The file name is /vqa/simpler_extended.json and you should save it as /vqa/simpl
 So far we have the following attributes:
 - <OBJECT> -> defines any unique object
     <OBJECT_1> -> if there are multiple objects, _N will define the ID of the object
-- <OBJECT_TYPE> -> defines the category of objects (multiple unique <OBJECT>)
+- <OBJECT_CATEGORY> -> defines the category of objects (multiple unique <OBJECT>)
 - <TIME> -> the timestamp we want to measure
 - <MATERIAL> -> the material of the object
 - <MASS> -> the mass of the object.

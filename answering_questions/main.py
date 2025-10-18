@@ -4,6 +4,10 @@ import csv
 import argparse
 import string
 
+from PIL import Image
+
+from utils.encoding_vlm import encode_image_file_to_base64
+
 # Import categories - alphabetically
 
 from categories.collision.collision import (
@@ -103,25 +107,6 @@ def read_simulation(simulation_path):
 },
 """
 
-def _normalize_question_records(questions, image_output):
-    normalized = []
-    for idx, q in enumerate(questions):
-        record = dict(q) if isinstance(q, dict) else {"question": q}
-        record.setdefault("index", idx)
-        if image_output == "path":
-            image_path = record.get("image_path") or record.get("image")
-            if image_path is not None:
-                record["image_path"] = image_path
-            record.pop("image", None)
-        else:
-            image_data = record.get("image") or record.get("image_path")
-            if image_data is not None:
-                record["image"] = image_data
-            if "image_path" in record:
-                record.pop("image_path")
-        normalized.append(record)
-    return normalized
-
 
 def _determine_tsv_fieldnames(question_records, answer_records):
     preferred_order = [
@@ -194,7 +179,7 @@ def _build_tsv_row(record, answer, fieldnames):
     return row
 
 
-def save_questions_answers(
+def save_questions_answers_json(
     all_vqa,
     simulation_steps,
     output_path,
@@ -209,7 +194,7 @@ def save_questions_answers(
     answers = []
 
     for idx, entry in enumerate(all_vqa):
-        question_record, answer_record = normalize_question(
+        question_record, answer_record = normalize_question_json(
             entry,
             idx=idx,
             simulation_steps=simulation_steps,
@@ -218,19 +203,18 @@ def save_questions_answers(
             root_image_path=root_image_path,
         )
 
-        normalized_questions.append(question_record)
-        print(answer_record)
+        normalized_questions.append(question_record) 
         answers.append(answer_record)
 
-    if "json" in export_targets:
-        questions_path = os.path.join(output_path, "test.json")
-        answers_path = os.path.join(output_path, "val_answer.json")
+    
+    questions_path = os.path.join(output_path, "test.json")
+    answers_path = os.path.join(output_path, "val_answer.json")
 
-        with open(questions_path, "w") as f:
-            json.dump(normalized_questions, f, indent=4)
+    with open(questions_path, "w") as f:
+        json.dump(normalized_questions, f, indent=4)
 
-        with open(answers_path, "w") as f:
-            json.dump(answers, f, indent=4)
+    with open(answers_path, "w") as f:
+        json.dump(answers, f, indent=4)
 
     if "tsv" in export_targets:
         fieldnames = _determine_tsv_fieldnames(normalized_questions, answers)
@@ -243,8 +227,7 @@ def save_questions_answers(
                 row = _build_tsv_row(record, answer, fieldnames)
                 writer.writerow(row)
 
-
-def normalize_question(
+def normalize_question_json(
     vqa_entry,
     idx,
     simulation_steps,
@@ -327,7 +310,7 @@ def normalize_question(
         "file_name": file_names,
         "description": question_payload.get("description"),
         "question": formatted_question,
-        "mode": question_payload.get("mode", "general"),
+        "mode": "image-only",
         "idx": idx,
         "split": question_payload.get("split", "val"),
     }
@@ -343,6 +326,133 @@ def normalize_question(
 
     return question_record, answer_record
 
+def save_questions_answers_tsv(
+    all_vqa,
+    simulation_steps,
+    output_path,
+    export_format="json",
+    image_output="base64",
+    number_of_images_max=8,
+    root_image_path="",
+):
+    os.makedirs(output_path, exist_ok=True)
+    export_targets = {"json", "tsv"} if export_format == "both" else {export_format}
+    normalized_questions = []
+    answers = []
+
+    for idx, entry in enumerate(all_vqa):
+        question_record = normalize_question_tsv(
+            entry,
+            idx=idx,
+            simulation_steps=simulation_steps,
+            image_output=image_output,
+            number_of_images_max=number_of_images_max,
+            root_image_path=root_image_path,
+        )
+
+        normalized_questions.append(question_record) 
+    
+    fieldnames = _determine_tsv_fieldnames(normalized_questions, answers)
+    tsv_path = os.path.join(output_path, "questions.tsv")
+    with open(tsv_path, "w", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames, delimiter="\t")
+        writer.writeheader()
+        for idx, record in enumerate(normalized_questions):
+            answer = answers[idx] if idx < len(answers) else None
+            row = _build_tsv_row(record, answer, fieldnames)
+            writer.writerow(row)
+
+
+def normalize_question_tsv(
+    vqa_entry,
+    idx,
+    simulation_steps,
+    image_output="base64",
+    number_of_images_max=8,
+    root_image_path="",
+):
+    question_payload = vqa_entry.get("question", {})
+    question_text = question_payload.get("question", "").strip()
+    labels = vqa_entry.get("labels", [])
+    answer_index = vqa_entry.get("answer_index")
+    image_indexes = vqa_entry.get("image_indexes", []) or []
+
+    scene_info = simulation_steps.get("scene", {}) if simulation_steps else {}
+    scene_name = scene_info.get("scene") or scene_info.get("name") or "simulation_scene"
+
+    objects_metadata = simulation_steps.get("objects", {}) if simulation_steps else {}
+    detected_objects = set()
+    lowered_question = question_text.lower()
+    for obj in objects_metadata.values():
+        description = obj.get("description", {}) or {}
+        object_name = description.get("object_name") or obj.get("model") or obj.get(
+            "name"
+        )
+        if not object_name:
+            continue
+        if object_name.lower() in lowered_question:
+            detected_objects.add(object_name)
+
+    label_lookup = {
+        obj.get("model", "").lower(): obj
+        for obj in objects_metadata.values()
+        if obj.get("model")
+    }
+    for label in labels:
+        label_key = label.replace(" ", "_").lower()
+        if label_key in label_lookup:
+            obj = label_lookup[label_key]
+            description = obj.get("description", {}) or {}
+            object_name = (
+                description.get("object_name") or obj.get("model") or obj.get("name")
+            )
+            if object_name:
+                detected_objects.add(object_name)
+
+    file_names = [root_image_path + f"/render/{int(frame_idx):06d}.png" for frame_idx in image_indexes]
+    images_base64 = [encode_image_file_to_base64(image_path) for image_path in file_names]
+
+    ability_map = {
+        "prediction": "prediction",
+        "counting": "counting",
+        "estimation": "estimation",
+        "attribute": "attribute",
+    }
+    measurement = question_payload.get("measurement")
+    ability_type = ability_map.get(measurement, "general")
+
+    """
+    Full row (raw values):
+    index: '1000205'
+    question: 'Based on the description, how are the people in the image engaging with the game?'
+    hint: ''
+    A: 'The group of people is engaging with the game by playing a board game.'
+    B: 'The group of people is physically engaging with the game by using Nintendo Wii controllers.'
+    C: 'The group of people is physically engaging with the game by using traditional gaming controllers.'
+    D: 'The group of people is engaging with the game by watching a screen passively.'
+    answer: 'B'
+    category: 'function_reasoning'
+    image: <base64 image omitted>
+    source: 'reasoning'
+    l2-category: 'attribute_reasoning'
+    comment: ''
+    split: 'dev'
+    """
+
+    question_record = {
+        "index": idx,
+        "images": images_base64,
+        "A": labels[0] if len(labels) > 0 else "",
+        "B": labels[1] if len(labels) > 1 else "",
+        "C": labels[2] if len(labels) > 2 else "",
+        "D": labels[3] if len(labels) > 3 else "",
+        "answer": ["A", "B", "C", "D"][answer_index] if answer_index is not None and 0 <= answer_index < 4 else "",
+        "category": question_payload.get("category"),
+        "source": "simulation",
+        "l2-category": question_payload.get("ability_type", ability_type),
+    }
+
+    return question_record
 
 # ----- FUNCTION TO GET ANSWER FROM SIMULTAION
 
@@ -479,18 +589,29 @@ def main(args):
         f"Saved {len(all_vqa)} questions and answers."
     )
 
-    save_questions_answers(
-        all_vqa,
-        simulation_steps,
-        args.output_path,
-        export_format=args.export_format,
-        image_output=args.image_output,
-        number_of_images_max=args.number_of_images_max,
-        root_image_path=args.simulation_path,
-    )
-    format_label = "json+tsv" if args.export_format == "both" else args.export_format
-    print(f"Saved questions and answers to {args.output_path} ({format_label})")
+    if args.export_format in ["json", "both"]:
+        save_questions_answers_json(
+            all_vqa,
+            simulation_steps,
+            args.output_path,
+            export_format=args.export_format,
+            image_output=args.image_output,
+            number_of_images_max=args.number_of_images_max,
+            root_image_path=args.simulation_path,
+        )
+        print(f"Saved questions and answers to {args.output_path} ({args.export_format})")
 
+    if args.export_format in ["tsv", "both"]:
+        save_questions_answers_tsv(
+            all_vqa,
+            simulation_steps,
+            args.output_path,
+            export_format=args.export_format,
+            image_output=args.image_output,
+            number_of_images_max=args.number_of_images_max,
+            root_image_path=args.simulation_path,
+        )
+        print(f"Saved questions and answers to {args.output_path} ({args.export_format})")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -517,7 +638,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--export_format",
         choices=["json", "tsv", "both"],
-        default="json",
+        default="tsv",
         help="Output format for generated questions and answers.",
     )
     parser.add_argument(

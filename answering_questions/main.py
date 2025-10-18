@@ -561,14 +561,27 @@ def create_vqa(questions, simulation_steps, arg_mock, verbose=False):
     return all_vqa
 
 def main(args):
-    questions = read_questions(args.vqa_path)
-    simulation_steps = read_simulation(
-        args.simulation_path + "/simulation_kinematics.json"
-    )
 
-    all_vqa = create_vqa(
-        questions, simulation_steps, args.mock, verbose=args.verbose
-    )
+    all_vqa = []
+
+    for simulation_folder in os.listdir(args.simulation_path):
+        if not os.path.isdir(os.path.join(args.simulation_path, simulation_folder)):
+            continue
+        else:
+            print("Found simulation folder:", simulation_folder)
+
+            questions = read_questions(args.vqa_path)
+            simulation_steps = read_simulation(
+                args.simulation_path + simulation_folder + "/simulation_kinematics.json"
+            )
+
+            simulation_vqa = create_vqa(
+                questions, simulation_steps, args.mock, verbose=args.verbose
+            )
+            all_vqa.extend(simulation_vqa)
+    
+
+    # Finally save the questions and answers
     print(
         f"Saved {len(all_vqa)} questions and answers."
     )
@@ -609,7 +622,8 @@ if __name__ == "__main__":
         "--simulation_path",
         type=str,
         # default="./sample_simulation_1000_steps_v2_kinematics.json
-        default="/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/output/sims/dl3dv-hf-gso2/3-cg/c-0_no-3_d-3_s-dl3dv-1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_dbgsub-1_20251016_013244",
+        # default="/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/output/sims/dl3dv-hf-gso2/3-cg/c-0_no-3_d-3_s-dl3dv-1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_dbgsub-1_20251016_013244",
+        default="/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/output/sims/dl3dv-hf-gso2/3-cg/",
         # default="/Users/sebastiancavada/Desktop/tmp_Paris/vqa/answering_questions/",
         help="Path to the simulation file containing the scenes.",
     )

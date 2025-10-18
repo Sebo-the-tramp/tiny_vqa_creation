@@ -653,3 +653,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+# to run:
+# python augment_kinematics.py --search-root /Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/output/sims/dl3dv-hf-gso2/3-cg/

@@ -3,24 +3,12 @@ def F_MATERIALS_COUNTING() -> str:
 
 
 def F_MATERIALS_ATTRIBUTE() -> str:
-    return "Rubber"
+    return "Paper/cardboard"
 
 
-def F_DEFORMATION_ATTRIBUTE() -> str:
-    return "0.0 MPa"
+def F_MATERIALS_COMPARISON_HARD() -> str:
+    return "Spiderman_titan_hero_12inch_action_figure_5hnn4mtkfsp"
 
 
-def F_DEFORMATION_COUNTING() -> str:
-    return "0"
-
-
-def F_DEFORMATION_COUNTING_THRESHOLD() -> str:
-    return "0"
-
-
-def F_DEFORMATION_OBJECT_IMAGE_MOST() -> str:
-    return "Image 1"
-
-
-def F_DEFORMATION_ANY_OBJECT_IMAGE_MOST() -> str:
-    return "Image 0"
+def F_MATERIALS_COMPARISON_SOFT() -> str:
+    return "Olive_kids_dinosaur_land_sidekick_backpack"

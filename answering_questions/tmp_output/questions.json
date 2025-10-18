@@ -1,0 +1,1176 @@
+[
+    {
+        "scene": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5",
+        "object": [
+            "Hollow Spider-Man action figure (approx. 25\u201332 cm tall)",
+            "Packaged board game box (Sorry! Sliders)",
+            "children\u2019s soft backpack"
+        ],
+        "source": "dl3dv",
+        "file_name": [
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5.mp4",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0000.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0037.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0074.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0111.png"
+        ],
+        "description": null,
+        "question": "With what object is the Hollow Spider-Man action figure (approx. 25\u201332 cm tall) colliding first?\nA. No Object\nB. Sorry_sliders_board_game\nC. Connect_4_launcher\nD. Olive_kids_dinosaur_land_sidekick_backpack",
+        "mode": "general",
+        "idx": 0,
+        "split": "val",
+        "option_files": {
+            "A": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0000.png",
+            "B": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0037.png",
+            "C": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0074.png",
+            "D": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0111.png"
+        },
+        "options": {
+            "A": "No Object",
+            "B": "Sorry_sliders_board_game",
+            "C": "Connect_4_launcher",
+            "D": "Olive_kids_dinosaur_land_sidekick_backpack"
+        }
+    },
+    {
+        "scene": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5",
+        "object": [
+            "Packaged board game box (Sorry! Sliders)"
+        ],
+        "source": "dl3dv",
+        "file_name": [
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5.mp4",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0000.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0037.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0074.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0111.png"
+        ],
+        "description": null,
+        "question": "How many times is Packaged board game box (Sorry! Sliders) colliding with other objects?\nA. 0\nB. 1\nC. 3\nD. 2",
+        "mode": "general",
+        "idx": 1,
+        "split": "val",
+        "option_files": {
+            "A": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0000.png",
+            "B": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0037.png",
+            "C": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0074.png",
+            "D": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0111.png"
+        },
+        "options": {
+            "A": "0",
+            "B": "1",
+            "C": "3",
+            "D": "2"
+        }
+    },
+    {
+        "scene": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5",
+        "object": [
+            "Hollow Spider-Man action figure (approx. 25\u201332 cm tall)",
+            "Packaged board game box (Sorry! Sliders)"
+        ],
+        "source": "dl3dv",
+        "file_name": [
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5.mp4",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0000.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0037.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0074.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0111.png"
+        ],
+        "description": null,
+        "question": "How many times is Packaged board game box (Sorry! Sliders) colliding with Hollow Spider-Man action figure (approx. 25\u201332 cm tall)?\nA. 3\nB. 2\nC. 0\nD. 1",
+        "mode": "general",
+        "idx": 2,
+        "split": "val",
+        "option_files": {
+            "A": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0000.png",
+            "B": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0037.png",
+            "C": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0074.png",
+            "D": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0111.png"
+        },
+        "options": {
+            "A": "3",
+            "B": "2",
+            "C": "0",
+            "D": "1"
+        }
+    },
+    {
+        "scene": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5",
+        "object": [
+            "children\u2019s soft backpack"
+        ],
+        "source": "dl3dv",
+        "file_name": [
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5.mp4",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0000.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0037.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0074.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0111.png"
+        ],
+        "description": null,
+        "question": "At what time does children\u2019s soft backpack collides with anything first?\nA. 0.77 seconds\nB. 0.29 seconds\nC. 0.19 seconds\nD. 0.48 seconds",
+        "mode": "general",
+        "idx": 3,
+        "split": "val",
+        "option_files": {
+            "A": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0000.png",
+            "B": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0037.png",
+            "C": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0074.png",
+            "D": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0111.png"
+        },
+        "options": {
+            "A": "0.77 seconds",
+            "B": "0.29 seconds",
+            "C": "0.19 seconds",
+            "D": "0.48 seconds"
+        }
+    },
+    {
+        "scene": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5",
+        "object": [
+            "Packaged board game box (Sorry! Sliders)"
+        ],
+        "source": "dl3dv",
+        "file_name": [
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5.mp4",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0000.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0037.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0074.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0111.png"
+        ],
+        "description": null,
+        "question": "At what time does Packaged board game box (Sorry! Sliders) collides with anything last?\nA. 3.00 seconds\nB. 2.26 seconds\nC. 2.75 seconds\nD. 2.83 seconds",
+        "mode": "general",
+        "idx": 4,
+        "split": "val",
+        "option_files": {
+            "A": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0000.png",
+            "B": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0037.png",
+            "C": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0074.png",
+            "D": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0111.png"
+        },
+        "options": {
+            "A": "3.00 seconds",
+            "B": "2.26 seconds",
+            "C": "2.75 seconds",
+            "D": "2.83 seconds"
+        }
+    },
+    {
+        "scene": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5",
+        "object": [
+            "Packaged board game box (Sorry! Sliders)"
+        ],
+        "source": "dl3dv",
+        "file_name": [
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5.mp4",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0000.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0037.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0074.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0111.png"
+        ],
+        "description": null,
+        "question": "With what force does Packaged board game box (Sorry! Sliders) collides with Packaged board game box (Sorry! Sliders) the first time?\nA. 4.5 Newtons\nB. 3.8 Newtons\nC. 4.0 Newtons\nD. No Collision",
+        "mode": "general",
+        "idx": 5,
+        "split": "val",
+        "option_files": {
+            "A": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0000.png",
+            "B": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0037.png",
+            "C": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0074.png",
+            "D": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0111.png"
+        },
+        "options": {
+            "A": "4.5 Newtons",
+            "B": "3.8 Newtons",
+            "C": "4.0 Newtons",
+            "D": "No Collision"
+        }
+    },
+    {
+        "scene": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5",
+        "object": [
+            "Hollow Spider-Man action figure (approx. 25\u201332 cm tall)"
+        ],
+        "source": "dl3dv",
+        "file_name": [
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5.mp4",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0000.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0037.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0074.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0111.png"
+        ],
+        "description": null,
+        "question": "What is the approximate velocity of the Hollow Spider-Man action figure (approx. 25\u201332 cm tall) at time 0000.530 in meters/second?\nA. 4.17 m/s\nB. 1.67 m/s\nC. 2.78 m/s\nD. 1.39 m/s",
+        "mode": "general",
+        "idx": 6,
+        "split": "val",
+        "option_files": {
+            "A": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0000.png",
+            "B": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0037.png",
+            "C": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0074.png",
+            "D": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0111.png"
+        },
+        "options": {
+            "A": "4.17 m/s",
+            "B": "1.67 m/s",
+            "C": "2.78 m/s",
+            "D": "1.39 m/s"
+        }
+    },
+    {
+        "scene": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5",
+        "object": [
+            "Hollow Spider-Man action figure (approx. 25\u201332 cm tall)",
+            "Packaged board game box (Sorry! Sliders)",
+            "children\u2019s soft backpack"
+        ],
+        "source": "dl3dv",
+        "file_name": [
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5.mp4",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0000.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0037.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0074.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0111.png"
+        ],
+        "description": null,
+        "question": "which object is moving fastes at time 0002.800?\nA. Sorry_sliders_board_game\nB. Spiderman_titan_hero_12inch_action_figure_5hnn4mtkfsp\nC. They All Have The Same Speed\nD. Olive_kids_dinosaur_land_sidekick_backpack",
+        "mode": "general",
+        "idx": 7,
+        "split": "val",
+        "option_files": {
+            "A": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0000.png",
+            "B": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0037.png",
+            "C": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0074.png",
+            "D": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0111.png"
+        },
+        "options": {
+            "A": "Sorry_sliders_board_game",
+            "B": "Spiderman_titan_hero_12inch_action_figure_5hnn4mtkfsp",
+            "C": "They All Have The Same Speed",
+            "D": "Olive_kids_dinosaur_land_sidekick_backpack"
+        }
+    },
+    {
+        "scene": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5",
+        "object": [],
+        "source": "dl3dv",
+        "file_name": [
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5.mp4",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0000.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0037.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0074.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0111.png"
+        ],
+        "description": null,
+        "question": "What is the velocity of the fastest object?\nA. 5.17 m/s\nB. 5.87 m/s\nC. 4.1 m/s\nD. 5.59 m/s",
+        "mode": "general",
+        "idx": 8,
+        "split": "val",
+        "option_files": {
+            "A": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0000.png",
+            "B": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0037.png",
+            "C": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0074.png",
+            "D": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0111.png"
+        },
+        "options": {
+            "A": "5.17 m/s",
+            "B": "5.87 m/s",
+            "C": "4.1 m/s",
+            "D": "5.59 m/s"
+        }
+    },
+    {
+        "scene": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5",
+        "object": [
+            "Packaged board game box (Sorry! Sliders)"
+        ],
+        "source": "dl3dv",
+        "file_name": [
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5.mp4",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0000.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0037.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0074.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0111.png"
+        ],
+        "description": null,
+        "question": "What is the approximate acceleration of the Packaged board game box (Sorry! Sliders) in meters/second^2 at time 0002.170?\nA. 0.02 m/s^2\nB. 0.04 m/s^2\nC. 0.03 m/s^2\nD. 0.01 m/s^2",
+        "mode": "general",
+        "idx": 9,
+        "split": "val",
+        "option_files": {
+            "A": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0000.png",
+            "B": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0037.png",
+            "C": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0074.png",
+            "D": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0111.png"
+        },
+        "options": {
+            "A": "0.02 m/s^2",
+            "B": "0.04 m/s^2",
+            "C": "0.03 m/s^2",
+            "D": "0.01 m/s^2"
+        }
+    },
+    {
+        "scene": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5",
+        "object": [
+            "Packaged board game box (Sorry! Sliders)"
+        ],
+        "source": "dl3dv",
+        "file_name": [
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5.mp4",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0000.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0037.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0074.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0111.png"
+        ],
+        "description": null,
+        "question": "What is the approximate angular velocity of the Packaged board game box (Sorry! Sliders) in rad/s at time 0000.160?\nA. 0.00479 deg/s\nB. 0.00159 deg/s\nC. 0.00319 deg/s\nD. 0.00223 deg/s",
+        "mode": "general",
+        "idx": 10,
+        "split": "val",
+        "option_files": {
+            "A": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0000.png",
+            "B": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0037.png",
+            "C": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0074.png",
+            "D": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0111.png"
+        },
+        "options": {
+            "A": "0.00479 deg/s",
+            "B": "0.00159 deg/s",
+            "C": "0.00319 deg/s",
+            "D": "0.00223 deg/s"
+        }
+    },
+    {
+        "scene": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5",
+        "object": [
+            "Packaged board game box (Sorry! Sliders)"
+        ],
+        "source": "dl3dv",
+        "file_name": [
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5.mp4",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0000.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0037.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0074.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0111.png"
+        ],
+        "description": null,
+        "question": "At what time does Packaged board game box (Sorry! Sliders) object reach its peak velocity?\nA. 7.8 m/s^2\nB. 3.1 m/s^2\nC. 2.6 m/s^2\nD. 5.2 m/s^2",
+        "mode": "general",
+        "idx": 11,
+        "split": "val",
+        "option_files": {
+            "A": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0000.png",
+            "B": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0037.png",
+            "C": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0074.png",
+            "D": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0111.png"
+        },
+        "options": {
+            "A": "7.8 m/s^2",
+            "B": "3.1 m/s^2",
+            "C": "2.6 m/s^2",
+            "D": "5.2 m/s^2"
+        }
+    },
+    {
+        "scene": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5",
+        "object": [
+            "Packaged board game box (Sorry! Sliders)"
+        ],
+        "source": "dl3dv",
+        "file_name": [
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5.mp4",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0000.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0037.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0074.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0111.png"
+        ],
+        "description": null,
+        "question": "How far does Packaged board game box (Sorry! Sliders) travel between 0001.200 and 0002.590\nA. 0.3 meters\nB. 0.2 meters\nC. 0.0 meters\nD. 0.1 meters",
+        "mode": "general",
+        "idx": 12,
+        "split": "val",
+        "option_files": {
+            "A": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0000.png",
+            "B": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0037.png",
+            "C": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0074.png",
+            "D": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0111.png"
+        },
+        "options": {
+            "A": "0.3 meters",
+            "B": "0.2 meters",
+            "C": "0.0 meters",
+            "D": "0.1 meters"
+        }
+    },
+    {
+        "scene": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5",
+        "object": [
+            "Hollow Spider-Man action figure (approx. 25\u201332 cm tall)"
+        ],
+        "source": "dl3dv",
+        "file_name": [
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5.mp4",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0000.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0037.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0074.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0111.png"
+        ],
+        "description": null,
+        "question": "How many times does Hollow Spider-Man action figure (approx. 25\u201332 cm tall) reverse its direction?\nA. 16\nB. 17\nC. 14\nD. 12",
+        "mode": "general",
+        "idx": 13,
+        "split": "val",
+        "option_files": {
+            "A": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0000.png",
+            "B": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0037.png",
+            "C": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0074.png",
+            "D": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0111.png"
+        },
+        "options": {
+            "A": "16",
+            "B": "17",
+            "C": "14",
+            "D": "12"
+        }
+    },
+    {
+        "scene": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5",
+        "object": [],
+        "source": "dl3dv",
+        "file_name": [
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5.mp4",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0000.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0037.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0074.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0111.png"
+        ],
+        "description": null,
+        "question": "How many objects of type board games have moved?\nA. 0\nB. 1\nC. 3\nD. 2",
+        "mode": "general",
+        "idx": 14,
+        "split": "val",
+        "option_files": {
+            "A": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0000.png",
+            "B": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0037.png",
+            "C": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0074.png",
+            "D": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0111.png"
+        },
+        "options": {
+            "A": "0",
+            "B": "1",
+            "C": "3",
+            "D": "2"
+        }
+    },
+    {
+        "scene": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5",
+        "object": [],
+        "source": "dl3dv",
+        "file_name": [
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5.mp4",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0000.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0037.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0074.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0111.png"
+        ],
+        "description": null,
+        "question": "How many objects of type action figures are moving at time 0001.020?\nA. 2\nB. 3\nC. 1\nD. 0",
+        "mode": "general",
+        "idx": 15,
+        "split": "val",
+        "option_files": {
+            "A": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0000.png",
+            "B": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0037.png",
+            "C": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0074.png",
+            "D": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0111.png"
+        },
+        "options": {
+            "A": "2",
+            "B": "3",
+            "C": "1",
+            "D": "0"
+        }
+    },
+    {
+        "scene": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5",
+        "object": [],
+        "source": "dl3dv",
+        "file_name": [
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5.mp4",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0000.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0037.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0074.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0111.png"
+        ],
+        "description": null,
+        "question": "How many objects have mass more than the 2.2 at time 0002.800?\nA. 2\nB. 0\nC. 3\nD. 1",
+        "mode": "general",
+        "idx": 16,
+        "split": "val",
+        "option_files": {
+            "A": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0000.png",
+            "B": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0037.png",
+            "C": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0074.png",
+            "D": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0111.png"
+        },
+        "options": {
+            "A": "2",
+            "B": "0",
+            "C": "3",
+            "D": "1"
+        }
+    },
+    {
+        "scene": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5",
+        "object": [
+            "children\u2019s soft backpack"
+        ],
+        "source": "dl3dv",
+        "file_name": [
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5.mp4",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0000.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0037.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0074.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0111.png"
+        ],
+        "description": null,
+        "question": "What is the mass of the children\u2019s soft backpack?\nA. 0.6\nB. 0.4\nC. 1.0\nD. 0.3",
+        "mode": "general",
+        "idx": 17,
+        "split": "val",
+        "option_files": {
+            "A": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0000.png",
+            "B": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0037.png",
+            "C": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0074.png",
+            "D": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0111.png"
+        },
+        "options": {
+            "A": "0.6",
+            "B": "0.4",
+            "C": "1.0",
+            "D": "0.3"
+        }
+    },
+    {
+        "scene": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5",
+        "object": [
+            "Hollow Spider-Man action figure (approx. 25\u201332 cm tall)",
+            "Packaged board game box (Sorry! Sliders)",
+            "children\u2019s soft backpack"
+        ],
+        "source": "dl3dv",
+        "file_name": [
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5.mp4",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0000.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0037.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0074.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0111.png"
+        ],
+        "description": null,
+        "question": "Which object appears to have the greatest mass?\nA. Olive_kids_dinosaur_land_sidekick_backpack\nB. Spiderman_titan_hero_12inch_action_figure_5hnn4mtkfsp\nC. Sorry_sliders_board_game\nD. My_monopoly_board_game",
+        "mode": "general",
+        "idx": 18,
+        "split": "val",
+        "option_files": {
+            "A": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0000.png",
+            "B": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0037.png",
+            "C": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0074.png",
+            "D": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0111.png"
+        },
+        "options": {
+            "A": "Olive_kids_dinosaur_land_sidekick_backpack",
+            "B": "Spiderman_titan_hero_12inch_action_figure_5hnn4mtkfsp",
+            "C": "Sorry_sliders_board_game",
+            "D": "My_monopoly_board_game"
+        }
+    },
+    {
+        "scene": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5",
+        "object": [
+            "Hollow Spider-Man action figure (approx. 25\u201332 cm tall)",
+            "Packaged board game box (Sorry! Sliders)",
+            "children\u2019s soft backpack"
+        ],
+        "source": "dl3dv",
+        "file_name": [
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5.mp4",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0000.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0037.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0074.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0111.png"
+        ],
+        "description": null,
+        "question": "Which object appears to have the smallest mass?\nA. Sorry_sliders_board_game\nB. Spiderman_titan_hero_12inch_action_figure_5hnn4mtkfsp\nC. Olive_kids_dinosaur_land_sidekick_backpack\nD. Spiderman_titan_hero_12inch_action_figure_oo1qph4wwiw",
+        "mode": "general",
+        "idx": 19,
+        "split": "val",
+        "option_files": {
+            "A": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0000.png",
+            "B": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0037.png",
+            "C": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0074.png",
+            "D": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0111.png"
+        },
+        "options": {
+            "A": "Sorry_sliders_board_game",
+            "B": "Spiderman_titan_hero_12inch_action_figure_5hnn4mtkfsp",
+            "C": "Olive_kids_dinosaur_land_sidekick_backpack",
+            "D": "Spiderman_titan_hero_12inch_action_figure_oo1qph4wwiw"
+        }
+    },
+    {
+        "scene": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5",
+        "object": [],
+        "source": "dl3dv",
+        "file_name": [
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5.mp4",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0000.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0037.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0074.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0111.png"
+        ],
+        "description": null,
+        "question": "How many objects have average/overall density more than 140.1 kg_per_m3?\nA. 1\nB. 2\nC. 3\nD. 4",
+        "mode": "general",
+        "idx": 20,
+        "split": "val",
+        "option_files": {
+            "A": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0000.png",
+            "B": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0037.png",
+            "C": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0074.png",
+            "D": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0111.png"
+        },
+        "options": {
+            "A": "1",
+            "B": "2",
+            "C": "3",
+            "D": "4"
+        }
+    },
+    {
+        "scene": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5",
+        "object": [
+            "Hollow Spider-Man action figure (approx. 25\u201332 cm tall)"
+        ],
+        "source": "dl3dv",
+        "file_name": [
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5.mp4",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0000.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0037.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0074.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0111.png"
+        ],
+        "description": null,
+        "question": "What is the average/overall density of the Hollow Spider-Man action figure (approx. 25\u201332 cm tall) in kg_per_m3?\nA. 364.0\nB. 516.0\nC. 425.0\nD. 467.0",
+        "mode": "general",
+        "idx": 21,
+        "split": "val",
+        "option_files": {
+            "A": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0000.png",
+            "B": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0037.png",
+            "C": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0074.png",
+            "D": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0111.png"
+        },
+        "options": {
+            "A": "364.0",
+            "B": "516.0",
+            "C": "425.0",
+            "D": "467.0"
+        }
+    },
+    {
+        "scene": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5",
+        "object": [],
+        "source": "dl3dv",
+        "file_name": [
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5.mp4",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0000.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0037.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0074.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0111.png"
+        ],
+        "description": null,
+        "question": "How many visible objects have volume more than 0.1 cm^3?\nA. 0\nB. 3\nC. 1\nD. 2",
+        "mode": "general",
+        "idx": 22,
+        "split": "val",
+        "option_files": {
+            "A": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0000.png",
+            "B": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0037.png",
+            "C": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0074.png",
+            "D": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0111.png"
+        },
+        "options": {
+            "A": "0",
+            "B": "3",
+            "C": "1",
+            "D": "2"
+        }
+    },
+    {
+        "scene": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5",
+        "object": [
+            "Packaged board game box (Sorry! Sliders)"
+        ],
+        "source": "dl3dv",
+        "file_name": [
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5.mp4",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0000.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0037.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0074.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0111.png"
+        ],
+        "description": null,
+        "question": "What is the volume of the Packaged board game box (Sorry! Sliders) in cm^3?\nA. 4920.0 cm^3\nB. 8200.0 cm^3\nC. 27900.0 cm^3\nD. 16400.0 cm^3",
+        "mode": "general",
+        "idx": 23,
+        "split": "val",
+        "option_files": {
+            "A": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0000.png",
+            "B": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0037.png",
+            "C": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0074.png",
+            "D": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0111.png"
+        },
+        "options": {
+            "A": "4920.0 cm^3",
+            "B": "8200.0 cm^3",
+            "C": "27900.0 cm^3",
+            "D": "16400.0 cm^3"
+        }
+    },
+    {
+        "scene": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5",
+        "object": [
+            "Hollow Spider-Man action figure (approx. 25\u201332 cm tall)",
+            "Packaged board game box (Sorry! Sliders)",
+            "children\u2019s soft backpack"
+        ],
+        "source": "dl3dv",
+        "file_name": [
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5.mp4",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0000.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0037.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0074.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0111.png"
+        ],
+        "description": null,
+        "question": "Which object occupies the greatest volume?\nA. Spiderman_titan_hero_12inch_action_figure_5hnn4mtkfsp\nB. Olive_kids_dinosaur_land_pack_n_snack\nC. Sorry_sliders_board_game\nD. Olive_kids_dinosaur_land_sidekick_backpack",
+        "mode": "general",
+        "idx": 24,
+        "split": "val",
+        "option_files": {
+            "A": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0000.png",
+            "B": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0037.png",
+            "C": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0074.png",
+            "D": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0111.png"
+        },
+        "options": {
+            "A": "Spiderman_titan_hero_12inch_action_figure_5hnn4mtkfsp",
+            "B": "Olive_kids_dinosaur_land_pack_n_snack",
+            "C": "Sorry_sliders_board_game",
+            "D": "Olive_kids_dinosaur_land_sidekick_backpack"
+        }
+    },
+    {
+        "scene": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5",
+        "object": [],
+        "source": "dl3dv",
+        "file_name": [
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5.mp4",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0217.png"
+        ],
+        "description": null,
+        "question": "How many objects are made of plastic?\nA. 2\nB. 3\nC. 0\nD. 1",
+        "mode": "general",
+        "idx": 25,
+        "split": "val",
+        "option_files": {
+            "A": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0217.png"
+        },
+        "options": {
+            "A": "2",
+            "B": "3",
+            "C": "0",
+            "D": "1"
+        }
+    },
+    {
+        "scene": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5",
+        "object": [
+            "children\u2019s soft backpack"
+        ],
+        "source": "dl3dv",
+        "file_name": [
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5.mp4",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0143.png"
+        ],
+        "description": null,
+        "question": "What is the material of the children\u2019s soft backpack?\nA. Fabric/textile\nB. Plastic\nC. Paper/cardboard\nD. Mixed (paper + Plastic)",
+        "mode": "general",
+        "idx": 26,
+        "split": "val",
+        "option_files": {
+            "A": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0143.png"
+        },
+        "options": {
+            "A": "Fabric/textile",
+            "B": "Plastic",
+            "C": "Paper/cardboard",
+            "D": "Mixed (paper + Plastic)"
+        }
+    },
+    {
+        "scene": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5",
+        "object": [
+            "Hollow Spider-Man action figure (approx. 25\u201332 cm tall)",
+            "Packaged board game box (Sorry! Sliders)",
+            "children\u2019s soft backpack"
+        ],
+        "source": "dl3dv",
+        "file_name": [
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5.mp4",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0080.png"
+        ],
+        "description": null,
+        "question": "Which object is made of a harder material?\nA. Sorry_sliders_board_game\nB. Olive_kids_dinosaur_land_sidekick_backpack\nC. Spiderman_titan_hero_12inch_action_figure_oo1qph4wwiw\nD. Spiderman_titan_hero_12inch_action_figure_5hnn4mtkfsp",
+        "mode": "general",
+        "idx": 27,
+        "split": "val",
+        "option_files": {
+            "A": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0080.png"
+        },
+        "options": {
+            "A": "Sorry_sliders_board_game",
+            "B": "Olive_kids_dinosaur_land_sidekick_backpack",
+            "C": "Spiderman_titan_hero_12inch_action_figure_oo1qph4wwiw",
+            "D": "Spiderman_titan_hero_12inch_action_figure_5hnn4mtkfsp"
+        }
+    },
+    {
+        "scene": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5",
+        "object": [
+            "Hollow Spider-Man action figure (approx. 25\u201332 cm tall)",
+            "Packaged board game box (Sorry! Sliders)",
+            "children\u2019s soft backpack"
+        ],
+        "source": "dl3dv",
+        "file_name": [
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5.mp4",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0111.png"
+        ],
+        "description": null,
+        "question": "Which object is made of a softer material?\nA. Sorry_sliders_board_game\nB. Olive_kids_dinosaur_land_pack_n_snack\nC. Olive_kids_dinosaur_land_sidekick_backpack\nD. Spiderman_titan_hero_12inch_action_figure_5hnn4mtkfsp",
+        "mode": "general",
+        "idx": 28,
+        "split": "val",
+        "option_files": {
+            "A": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0111.png"
+        },
+        "options": {
+            "A": "Sorry_sliders_board_game",
+            "B": "Olive_kids_dinosaur_land_pack_n_snack",
+            "C": "Olive_kids_dinosaur_land_sidekick_backpack",
+            "D": "Spiderman_titan_hero_12inch_action_figure_5hnn4mtkfsp"
+        }
+    },
+    {
+        "scene": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5",
+        "object": [],
+        "source": "dl3dv",
+        "file_name": [
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5.mp4",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0000.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0037.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0074.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0111.png"
+        ],
+        "description": null,
+        "question": "What physical constraint is violated in the scene?\nA. Gravity\nB. Mass\nC. Collision\nD. Restitution",
+        "mode": "general",
+        "idx": 29,
+        "split": "val",
+        "option_files": {
+            "A": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0000.png",
+            "B": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0037.png",
+            "C": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0074.png",
+            "D": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0111.png"
+        },
+        "options": {
+            "A": "Gravity",
+            "B": "Mass",
+            "C": "Collision",
+            "D": "Restitution"
+        }
+    },
+    {
+        "scene": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5",
+        "object": [
+            "children\u2019s soft backpack"
+        ],
+        "source": "dl3dv",
+        "file_name": [
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5.mp4",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0053.png"
+        ],
+        "description": null,
+        "question": "What is the distance between the center of mass of the children\u2019s soft backpack and the ground plane at time 0000.530?\nA. 1.0 meters\nB. 0.9 meters\nC. 1.2 meters\nD. 0.8 meters",
+        "mode": "general",
+        "idx": 30,
+        "split": "val",
+        "option_files": {
+            "A": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0053.png"
+        },
+        "options": {
+            "A": "1.0 meters",
+            "B": "0.9 meters",
+            "C": "1.2 meters",
+            "D": "0.8 meters"
+        }
+    },
+    {
+        "scene": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5",
+        "object": [
+            "Packaged board game box (Sorry! Sliders)",
+            "children\u2019s soft backpack"
+        ],
+        "source": "dl3dv",
+        "file_name": [
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5.mp4",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0050.png"
+        ],
+        "description": null,
+        "question": "What is the distance between the center of mass of the Packaged board game box (Sorry! Sliders) and the center of mass of the children\u2019s soft backpack at time 0000.500?\nA. 1.2 meters\nB. 2.0 meters\nC. 1.8 meters\nD. 1.6 meters",
+        "mode": "general",
+        "idx": 31,
+        "split": "val",
+        "option_files": {
+            "A": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0050.png"
+        },
+        "options": {
+            "A": "1.2 meters",
+            "B": "2.0 meters",
+            "C": "1.8 meters",
+            "D": "1.6 meters"
+        }
+    },
+    {
+        "scene": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5",
+        "object": [
+            "children\u2019s soft backpack"
+        ],
+        "source": "dl3dv",
+        "file_name": [
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5.mp4",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0177.png"
+        ],
+        "description": null,
+        "question": "What is the distance between the center of mass of the children\u2019s soft backpack and the camera at time 0001.770?\nA. 6.6 meters\nB. 9.5 meters\nC. 7.7 meters\nD. 8.2 meters",
+        "mode": "general",
+        "idx": 32,
+        "split": "val",
+        "option_files": {
+            "A": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0177.png"
+        },
+        "options": {
+            "A": "6.6 meters",
+            "B": "9.5 meters",
+            "C": "7.7 meters",
+            "D": "8.2 meters"
+        }
+    },
+    {
+        "scene": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5",
+        "object": [
+            "Hollow Spider-Man action figure (approx. 25\u201332 cm tall)",
+            "Packaged board game box (Sorry! Sliders)",
+            "children\u2019s soft backpack"
+        ],
+        "source": "dl3dv",
+        "file_name": [
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5.mp4",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0136.png"
+        ],
+        "description": null,
+        "question": "What is the closest object to Hollow Spider-Man action figure (approx. 25\u201332 cm tall) at time 0001.360?\nA. Olive_kids_dinosaur_land_sidekick_backpack\nB. My_monopoly_board_game\nC. Hasbro_life_board_game\nD. Sorry_sliders_board_game",
+        "mode": "general",
+        "idx": 33,
+        "split": "val",
+        "option_files": {
+            "A": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0136.png"
+        },
+        "options": {
+            "A": "Olive_kids_dinosaur_land_sidekick_backpack",
+            "B": "My_monopoly_board_game",
+            "C": "Hasbro_life_board_game",
+            "D": "Sorry_sliders_board_game"
+        }
+    },
+    {
+        "scene": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5",
+        "object": [],
+        "source": "dl3dv",
+        "file_name": [
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5.mp4",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0236.png"
+        ],
+        "description": null,
+        "question": "How many objects are closer than 4.2 meters to the camera at time 0002.360?\nA. 2\nB. 1\nC. 3\nD. 0",
+        "mode": "general",
+        "idx": 34,
+        "split": "val",
+        "option_files": {
+            "A": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0236.png"
+        },
+        "options": {
+            "A": "2",
+            "B": "1",
+            "C": "3",
+            "D": "0"
+        }
+    },
+    {
+        "scene": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5",
+        "object": [
+            "Hollow Spider-Man action figure (approx. 25\u201332 cm tall)",
+            "Packaged board game box (Sorry! Sliders)",
+            "children\u2019s soft backpack"
+        ],
+        "source": "dl3dv",
+        "file_name": [
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5.mp4",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0275.png"
+        ],
+        "description": null,
+        "question": "Which object is the highest above the ground at 0002.750?\nA. Olive_kids_dinosaur_land_pack_n_snack\nB. Sorry_sliders_board_game\nC. Olive_kids_dinosaur_land_sidekick_backpack\nD. Spiderman_titan_hero_12inch_action_figure_5hnn4mtkfsp",
+        "mode": "general",
+        "idx": 35,
+        "split": "val",
+        "option_files": {
+            "A": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0275.png"
+        },
+        "options": {
+            "A": "Olive_kids_dinosaur_land_pack_n_snack",
+            "B": "Sorry_sliders_board_game",
+            "C": "Olive_kids_dinosaur_land_sidekick_backpack",
+            "D": "Spiderman_titan_hero_12inch_action_figure_5hnn4mtkfsp"
+        }
+    },
+    {
+        "scene": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5",
+        "object": [],
+        "source": "dl3dv",
+        "file_name": [
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5.mp4",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0106.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0056.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0031.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0081.png"
+        ],
+        "description": null,
+        "question": "What is the correct sequence of images showing the events in the scene?\nA. D.C.B.A.\nB. D.C.A.B.\nC. A.B.D.C.\nD. D.B.A.C.",
+        "mode": "general",
+        "idx": 36,
+        "split": "val",
+        "option_files": {
+            "A": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0106.png",
+            "B": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0056.png",
+            "C": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0031.png",
+            "D": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0081.png"
+        },
+        "options": {
+            "A": "D.C.B.A.",
+            "B": "D.C.A.B.",
+            "C": "A.B.D.C.",
+            "D": "D.B.A.C."
+        }
+    },
+    {
+        "scene": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5",
+        "object": [],
+        "source": "dl3dv",
+        "file_name": [
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5.mp4",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0025.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0050.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0075.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0100.png"
+        ],
+        "description": null,
+        "question": "What event is most likely to happen next in the scene?\nA. 000225\nB. 000000\nC. 000125\nD. 000200",
+        "mode": "general",
+        "idx": 37,
+        "split": "val",
+        "option_files": {
+            "A": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0025.png",
+            "B": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0050.png",
+            "C": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0075.png",
+            "D": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0100.png"
+        },
+        "options": {
+            "A": "000225",
+            "B": "000000",
+            "C": "000125",
+            "D": "000200"
+        }
+    },
+    {
+        "scene": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5",
+        "object": [],
+        "source": "dl3dv",
+        "file_name": [
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5.mp4",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0150.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0175.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0200.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0225.png"
+        ],
+        "description": null,
+        "question": "What event is most likely to happen next in the scene?\nA. 000050\nB. 000125\nC. 000250\nD. 000025",
+        "mode": "general",
+        "idx": 38,
+        "split": "val",
+        "option_files": {
+            "A": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0150.png",
+            "B": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0175.png",
+            "C": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0200.png",
+            "D": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0225.png"
+        },
+        "options": {
+            "A": "000050",
+            "B": "000125",
+            "C": "000250",
+            "D": "000025"
+        }
+    },
+    {
+        "scene": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5",
+        "object": [],
+        "source": "dl3dv",
+        "file_name": [
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5.mp4",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0075.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0100.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0125.png",
+            "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0150.png"
+        ],
+        "description": null,
+        "question": "What image has been removed from the scene?\nA. 000275\nB. 000100\nC. 000200\nD. 000250",
+        "mode": "general",
+        "idx": 39,
+        "split": "val",
+        "option_files": {
+            "A": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0075.png",
+            "B": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0100.png",
+            "C": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0125.png",
+            "D": "1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_0150.png"
+        },
+        "options": {
+            "A": "000275",
+            "B": "000100",
+            "C": "000200",
+            "D": "000250"
+        }
+    }
+]

@@ -1,0 +1,2802 @@
+{
+    "Supernatural_Ouija_Board_Game": {
+        "object_name": "Retail Ouija board game box with contents",
+        "thinking": "The object appears to be a retail board-game box (Ouija-themed) made of printed paperboard/corrugated fiberboard and containing game components. Estimations are for the whole boxed product as a bulk object (outer volume of the box), accounting for the hollow interior and included contents.",
+        "assumptions": "Approx outer size ~45 x 30 x 5 cm (0.00675 m^3). Typical packed mass ~0.5\u20131.5 kg for a game with a foldable board and small plastic parts. Box walls are paperboard/corrugated; interior mostly air with some cardboard/plastic components. Effective stiffness much lower than solid paperboard due to voids and loose contents.",
+        "material": {
+            "name": "game box + contents (effective bulk)",
+            "density_kg_per_m3": {
+                "min": 70.0,
+                "max": 230.0
+            },
+            "youngs_modulus_pa": {
+                "min": 20000000.0,
+                "max": 300000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.2,
+                "max": 0.35
+            }
+        },
+        "object_name_short": "board game box",
+        "visible_material_name": "printed paperboard/corrugated fiberboard",
+        "version": "materials_v2.0",
+        "vlm_category": "paper/cardboard packaging (toy/game)",
+        "category": "Board Games",
+        "vlm_version": "gpt-5",
+        "material_group": "paper/cardboard",
+        "categories_gso": "Board Games"
+    },
+    "Diet_Pepsi_Soda_Cola12_Pack_12_oz_Cans": {
+        "object_name": "12-pack carton of diet cola cans (filled) in a paperboard sleeve",
+        "thinking": "The object is a long rectangular 12-pack carton containing aluminum beverage cans filled with diet soda. Whole-object properties should reflect the combined carton, cans, and liquid. Estimate mass from 12\u00d7355 mL of near-water-density liquid plus can and carton weights; estimate external volume from typical 2\u00d76 can arrangement dimensions; derive effective density. Effective stiffness is governed by the pack as a structural assembly (cans in parallel within a paperboard sleeve), much lower than solid aluminum and higher than empty cardboard alone.",
+        "assumptions": "\u2022 12 cans \u00d7 355 mL each; diet soda density \u2248 0.995\u20131.010 g/mL. \u2022 Empty can mass \u2248 12\u201315 g each. \u2022 Carton mass \u2248 0.20\u20130.35 kg. \u2022 External size for a 2\u00d76 fridge-pack \u2248 L 0.39\u20130.41 m, W 0.13\u20130.14 m, H 0.12\u20130.13 m (volume 0.0061\u20130.0075 m\u00b3). \u2022 Whole-object mass \u2248 4.6\u20134.9 kg. \u2022 Effective Young\u2019s modulus reflects stacked filled cans constrained by a paperboard box; choose a conservative range for small elastic strains before local buckling or denting. \u2022 Effective Poisson ratio of the packed assembly is modest due to constrained lateral expansion.",
+        "material": {
+            "name": "Composite: filled aluminum cans in paperboard carton (effective bulk)",
+            "density_kg_per_m3": {
+                "min": 620.0,
+                "max": 800.0
+            },
+            "youngs_modulus_pa": {
+                "min": 30000000.0,
+                "max": 200000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.15,
+                "max": 0.35
+            }
+        },
+        "object_name_short": "12-pack soda carton",
+        "visible_material_name": "printed paperboard (carton)",
+        "version": "materials_v2.0",
+        "vlm_category": "packaged beverage carton (12-pack cans)",
+        "category": "Consumer Goods",
+        "vlm_version": "gpt-5",
+        "material_group": "paper/cardboard",
+        "categories_gso": "Consumer Goods"
+    },
+    "Sorry_Sliders_Board_Game": {
+        "object_name": "Sorry! Sliders board game (boxed retail package)",
+        "thinking": "The item is a boxed board game. The bulk object is a printed paperboard/cardboard box containing lightweight cardboard/plastic game components with substantial internal air volume. Whole-object properties should reflect a mostly hollow, partially filled package rather than solid cardboard.",
+        "assumptions": "Typical retail board game box size ~40\u00d727\u00d76 cm; contents are mostly chipboard/cardboard boards and some plastic sliders/tokens; 40\u201360% internal void; total mass roughly 0.8\u20131.5 kg. Effective stiffness governed by the paperboard shell and loosely packed contents, not solid material.",
+        "material": {
+            "name": "Composite bulk: paperboard box with mixed paper/plastic contents (mostly air)",
+            "density_kg_per_m3": {
+                "min": 120.0,
+                "max": 260.0
+            },
+            "youngs_modulus_pa": {
+                "min": 10000000.0,
+                "max": 80000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.2,
+                "max": 0.35
+            }
+        },
+        "object_name_short": "Board game box",
+        "visible_material_name": "Printed paperboard/cardboard",
+        "version": "materials_v2.0",
+        "vlm_category": "paper/cardboard packaging",
+        "category": "Board Games",
+        "vlm_version": "gpt-5",
+        "material_group": "paper/cardboard",
+        "categories_gso": "Board Games"
+    },
+    "Reebok_REESCULPT_TRAINER_II": {
+        "object_name": "Athletic sneaker (white with teal accents)",
+        "thinking": "Object is a single athletic sneaker. Whole-object properties should account for the hollow interior, soft foam midsole, rubber outsole, textile/synthetic upper, and laces. Typical single-shoe mass \u22480.25\u20130.40 kg. Outer-envelope volume roughly 0.27\u20130.30 m \u00d7 0.095\u20130.11 m \u00d7 0.10\u20130.12 m \u2248 0.0027\u20130.0036 m^3. Bulk density = mass/outer volume \u2192 about 70\u2013150 kg/m^3. Global stiffness dominated by EVA foam and the overall hollow structure, giving an effective Young\u2019s modulus on the order of 0.1\u20135 MPa; effective Poisson\u2019s ratio of foams/textiles ~0.15\u20130.40.",
+        "assumptions": "Adult-size sneaker; EVA foam midsole, rubber outsole, synthetic leather/textile upper; no water fill; normal cushioning (not carbon plate); bulk properties taken over full exterior envelope including hollow cavity.",
+        "material": {
+            "name": "Composite (shoe: EVA foam + rubber + textile + air voids)",
+            "density_kg_per_m3": {
+                "min": 70.0,
+                "max": 150.0
+            },
+            "youngs_modulus_pa": {
+                "min": 100000.0,
+                "max": 5000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.15,
+                "max": 0.4
+            }
+        },
+        "object_name_short": "sneaker",
+        "visible_material_name": "synthetic textile/leather upper with EVA foam midsole and rubber outsole",
+        "version": "materials_v2.0",
+        "vlm_category": "footwear",
+        "category": "Shoe",
+        "vlm_version": "gpt-5",
+        "material_group": "leather",
+        "categories_gso": "Shoe"
+    },
+    "Womens_Bluefish_2Eye_Boat_Shoe_in_Linen_Oat_IbrSyJdpT3h": {
+        "object_name": "Leather boat shoe with rubber sole",
+        "thinking": "The object is a tan boat shoe with leather upper, mesh/textile side panels, foam midsole, and rubber outsole. Whole-object properties should average the composite layers and the internal hollow cavity. Typical single-shoe mass is a few hundred grams and the envelope volume is about 1.7\u20132.3 liters, yielding a low bulk density. Stiffness is dominated by foam/rubber sole; overall behaves as a soft composite.",
+        "assumptions": "Adult size boat shoe (US men\u2019s 9\u201310). Mass \u22480.30\u20130.45 kg per shoe. Outer envelope volume \u22481.7e-3\u20132.3e-3 m^3. Upper: leather + textile; midsole: EVA-like foam; outsole: rubber. No water inside; dry condition.",
+        "material": {
+            "name": "Whole-object effective composite (leather upper + textile + EVA foam midsole + rubber outsole, with hollow interior)",
+            "density_kg_per_m3": {
+                "min": 120.0,
+                "max": 260.0
+            },
+            "youngs_modulus_pa": {
+                "min": 2000000.0,
+                "max": 30000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.3,
+                "max": 0.48
+            }
+        },
+        "object_name_short": "boat shoe",
+        "visible_material_name": "leather upper with mesh textile panels and rubber/EVA sole",
+        "version": "materials_v2.0",
+        "vlm_category": "footwear",
+        "category": "Shoe",
+        "vlm_version": "gpt-5",
+        "material_group": "leather",
+        "categories_gso": "Shoe"
+    },
+    "Unmellow_Yellow_Tieks_Neon_Patent_Leather_Ballet_Flats": {
+        "object_name": "Lightweight synthetic ballet flat shoe",
+        "thinking": "Object is a lightweight ballet-flat style shoe with a thin rubber-like outsole (teal), soft/springy foam insole/midsole, and a synthetic fabric/PU upper (neon yellow). As a whole it is mostly hollow, so effective bulk density is far below solid polymers. Overall stiffness dominated by the flexible rubber sole and foam, giving a low effective Young\u2019s modulus typical of soft footwear composites.",
+        "assumptions": "Adult-size flat (~24\u201326 cm long). Mass ~0.12\u20130.25 kg per shoe. Exterior envelope volume ~0.9\u20131.4 L; large internal cavity and porous foam reduce effective density. Materials: textile/PU upper, EVA/PU foam insole, rubber or TPR outsole. No rigid shank present.",
+        "material": {
+            "name": "composite: textile/PU upper + polymer foam midsole/insole + rubber/TPR outsole (whole-object effective)",
+            "density_kg_per_m3": {
+                "min": 90.0,
+                "max": 300.0
+            },
+            "youngs_modulus_pa": {
+                "min": 500000.0,
+                "max": 20000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.25,
+                "max": 0.45
+            }
+        },
+        "object_name_short": "ballet flat",
+        "visible_material_name": "synthetic fabric/PU upper with foam insole and rubber/TPR outsole",
+        "version": "materials_v2.0",
+        "vlm_category": "footwear",
+        "category": "Shoe",
+        "vlm_version": "gpt-5",
+        "material_group": "leather",
+        "categories_gso": "Shoe"
+    },
+    "JUNGLE_HEIGHT": {
+        "object_name": "Baby/kids hanging scroll toy or height chart with wooden dowels",
+        "thinking": "The object looks like a roll-up hanging baby/kid activity/height-chart style scroll: a thin printed flexible sheet with two wooden dowels/balls at the ends and a few small plastic rings/buttons. For whole-object properties, I treat it as a composite (coated fabric or thin vinyl sheet + small wood components + a few plastic parts). I estimate bulk density by volume fractions of a 0.3\u20131.0 mm sheet plus two small wooden rods and balls; stiffness is governed by the flexible sheet (polymer-coated fabric/vinyl) with minor contribution from wood localized at the ends.",
+        "assumptions": "Approx size ~0.6 m \u00d7 0.3 m; sheet thickness 0.3\u20131.0 mm; sheet material is PVC/PU-coated polyester or soft vinyl; end pieces are light hardwood (e.g., birch) with ~15\u201320 mm diameter dowels and small wooden spheres; small ABS/PP rings. The object is mostly a thin sheet (some porosity in fabric if coated), with no internal foam; hollow spaces negligible. Whole-object estimates average all components by volume; uncertainty dominated by sheet thickness and coating type.",
+        "material": {
+            "name": "composite (coated fabric/vinyl sheet + wood dowels/balls + small plastic parts)",
+            "density_kg_per_m3": {
+                "min": 350.0,
+                "max": 900.0
+            },
+            "youngs_modulus_pa": {
+                "min": 100000000.0,
+                "max": 2000000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.25,
+                "max": 0.45
+            }
+        },
+        "object_name_short": "fabric/vinyl scroll toy",
+        "visible_material_name": "printed coated fabric or vinyl sheet with wooden dowels and beads",
+        "version": "materials_v2.0",
+        "vlm_category": "toy",
+        "category": "Toys",
+        "vlm_version": "gpt-5",
+        "material_group": "wood",
+        "categories_gso": "Toys"
+    },
+    "Brother_Printing_Cartridge_PC501": {
+        "object_name": "Brother PC-501 printer/fax cartridge retail box (with contents)",
+        "thinking": "The photos show a retail cardboard box labeled Brother PC-501 (a printer/fax cartridge). Assess the whole boxed item (box + internal cartridge + voids) as a single bulk object.",
+        "assumptions": "Typical package size ~36 x 13 x 8 cm with a single cartridge and some void space; total mass roughly 0.5\u20130.9 kg; outer shell is printed paperboard/corrugated; contents mainly plastic parts and film; estimate effective properties averaged over the full outer volume.",
+        "material": {
+            "name": "Effective bulk of boxed printer cartridge (cardboard box + cartridge + voids)",
+            "density_kg_per_m3": {
+                "min": 120.0,
+                "max": 300.0
+            },
+            "youngs_modulus_pa": {
+                "min": 100000000.0,
+                "max": 1200000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.15,
+                "max": 0.35
+            }
+        },
+        "object_name_short": "Printer cartridge box",
+        "visible_material_name": "Printed paperboard/corrugated cardboard",
+        "version": "materials_v2.0",
+        "vlm_category": "packaged_product",
+        "category": "Consumer Goods",
+        "vlm_version": "gpt-5",
+        "material_group": "paper/cardboard",
+        "categories_gso": "Consumer Goods"
+    },
+    "Reebok_EASYTONE_CL_LEATHER": {
+        "object_name": "Athletic sneaker with synthetic upper, EVA foam midsole, and rubber outsole",
+        "thinking": "Estimate whole-object properties by treating the shoe as a composite with large air voids: synthetic/leather-like upper, EVA foam midsole, rubber outsole, fabric lining/laces. Use typical single-shoe mass and outer volume to get bulk density; use foam/rubber composite behavior for effective stiffness.",
+        "assumptions": "Adult-size athletic sneaker; mass 0.28\u20130.40 kg; outer geometric volume 1.8\u20132.6 L; interior mostly air; midsole EVA-like, outsole rubber, upper synthetic leather/textile; dry, unfilled with water.",
+        "material": {
+            "name": "Composite shoe (synthetic upper + EVA foam midsole + rubber outsole, with internal air voids)",
+            "density_kg_per_m3": {
+                "min": 100.0,
+                "max": 250.0
+            },
+            "youngs_modulus_pa": {
+                "min": 300000.0,
+                "max": 20000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.32,
+                "max": 0.48
+            }
+        },
+        "object_name_short": "athletic sneaker",
+        "visible_material_name": "synthetic leather upper with EVA foam midsole and rubber outsole",
+        "version": "materials_v2.0",
+        "vlm_category": "footwear/sneaker",
+        "category": "Shoe",
+        "vlm_version": "gpt-5",
+        "material_group": "leather",
+        "categories_gso": "Shoe"
+    },
+    "Cootie_Game_tDhURNbfU5J": {
+        "object_name": "Cootie board game retail box with contents",
+        "thinking": "The object is a retail game box (Cootie) made of printed paperboard and presumably containing lightweight plastic game pieces and air gaps. As a whole object, its effective density is much lower than solid paperboard or plastic because the interior is largely void. Its global stiffness under compression is governed mostly by the paperboard shell plus partially supported contents, so the effective Young\u2019s modulus is orders of magnitude lower than solid paperboard, closer to lightweight packaging composites.",
+        "assumptions": "Box dimensions roughly 30 x 15 x 7 cm; mass ~0.3\u20130.7 kg including plastic pieces and instructions; interior mostly air with loosely packed plastic parts; standard folding carton (paperboard) outer shell with printed coating.",
+        "material": {
+            "name": "filled cardboard game box (paperboard shell with plastic pieces and air gaps)",
+            "density_kg_per_m3": {
+                "min": 80.0,
+                "max": 250.0
+            },
+            "youngs_modulus_pa": {
+                "min": 5000000.0,
+                "max": 80000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.2,
+                "max": 0.35
+            }
+        },
+        "object_name_short": "game box",
+        "visible_material_name": "printed paperboard/cardboard carton",
+        "version": "materials_v2.0",
+        "vlm_category": "packaging_box_cardboard",
+        "category": "Consumer Goods",
+        "vlm_version": "gpt-5",
+        "material_group": "paper/cardboard",
+        "categories_gso": "Consumer Goods"
+    },
+    "Olive_Kids_Mermaids_Pack_n_Snack_Backpack": {
+        "object_name": "Children\u2019s softshell backpack (mermaid print)",
+        "thinking": "Object is a small children\u2019s backpack with two compartments. As a whole object it is mostly air volume enclosed by thin polyester fabric with light foam padding and zippers. Bulk properties therefore reflect a lightweight, highly compliant, hollow softgood rather than solid polymer.",
+        "assumptions": "Size about 30\u00d725\u00d712 cm main body plus front pocket (total 10\u201318 L). Empty or lightly filled; no internal frame. Shell is printed polyester (PU-coated) with thin foam/backing and plastic zippers/webbing. Dry conditions, room temperature.",
+        "material": {
+            "name": "empty softshell backpack (polyester fabric shell with foam padding, zippers; mostly air inside)",
+            "density_kg_per_m3": {
+                "min": 10.0,
+                "max": 80.0
+            },
+            "youngs_modulus_pa": {
+                "min": 20000.0,
+                "max": 2000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.2,
+                "max": 0.45
+            }
+        },
+        "object_name_short": "kids backpack",
+        "visible_material_name": "printed polyester fabric with light foam padding and plastic zippers",
+        "version": "materials_v2.0",
+        "vlm_category": "textile/fabric",
+        "category": "Bag",
+        "vlm_version": "gpt-5",
+        "material_group": "fabric/textile",
+        "categories_gso": "Bag"
+    },
+    "Winning_Moves_1180_Aggravation_Board_Game": {
+        "object_name": "Aggravation board game retail box (closed, with contents)",
+        "thinking": "The object is a closed retail board-game box made of printed paperboard, containing a folded cardboard game board, instructions, a plastic tray/insert, and several glass/plastic marbles. The bulk object is mostly air with layered cardboard walls and internal items loosely filling the volume, so its effective density is far below solid paperboard. The effective stiffness is governed by the thin cardboard shell and internal packing rather than solid material properties.",
+        "assumptions": "Approx. outer size ~40 x 27 x 5 cm (~5.4 L). Total mass likely ~0.5\u20131.2 kg (box + board + marbles + inserts). Box is standard paperboard/corrugated style with printed wrap. Internal packing not tightly load-bearing; compliance dominated by hollow shell and tray. Marbles contribute mass but little to structural stiffness unless tightly constrained.",
+        "material": {
+            "name": "Composite: cardboard box with folded cardboard board, plastic tray, paper inserts, and glass/plastic marbles (bulk/whole-object)",
+            "density_kg_per_m3": {
+                "min": 80.0,
+                "max": 300.0
+            },
+            "youngs_modulus_pa": {
+                "min": 50000000.0,
+                "max": 300000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.15,
+                "max": 0.35
+            }
+        },
+        "object_name_short": "board game box",
+        "visible_material_name": "printed paperboard/cardboard",
+        "version": "materials_v2.0",
+        "vlm_category": "cardboard retail box with contents",
+        "category": "Board Games",
+        "vlm_version": "gpt-5",
+        "material_group": "paper/cardboard",
+        "categories_gso": "Board Games"
+    },
+    "Olive_Kids_Trains_Planes_Trucks_Bogo_Backpack": {
+        "object_name": "Children\u2019s fabric backpack (empty, hollow)",
+        "thinking": "Object is a small children\u2019s backpack made of printed polyester fabric with foam padding, mesh side pocket, zippers and straps. As a whole object it is mostly hollow/air when empty, so bulk density is far below solid polymer density and effective stiffness is very low, closer to soft foams or a flexible shell.",
+        "assumptions": "Backpack is empty (no contents). Dimensions roughly 0.35 m \u00d7 0.25 m \u00d7 0.16 m (~14 L). Mass typical for kids backpack ~0.3\u20130.5 kg. Multiple fabric layers with thin foam insert and plastic hardware; negligible metal parts.",
+        "material": {
+            "name": "hollow fabric backpack (polyester with foam) \u2014 bulk/effective",
+            "density_kg_per_m3": {
+                "min": 8.0,
+                "max": 50.0
+            },
+            "youngs_modulus_pa": {
+                "min": 50000.0,
+                "max": 3000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.2,
+                "max": 0.45
+            }
+        },
+        "object_name_short": "backpack",
+        "visible_material_name": "polyester fabric with foam padding, mesh, plastic zippers/buckles",
+        "version": "materials_v2.0",
+        "vlm_category": "textile/bag",
+        "category": "Bag",
+        "vlm_version": "gpt-5",
+        "material_group": "fabric/textile",
+        "categories_gso": "Bag"
+    },
+    "Frozen_Olafs_In_Trouble_PopOMatic_Game": {
+        "object_name": "Disney Frozen \u2018Olaf\u2019s in Trouble\u2019 board game retail box with contents",
+        "thinking": "The images show a retail board-game package (\u201cOlaf\u2019s in Trouble\u201d) made of printed paperboard, containing lightweight plastic parts and paper/board inserts. As a whole object it is mostly air with thin paperboard walls and mixed contents. I model the effective bulk properties of the filled box (not base paperboard) under small compressive strains.",
+        "assumptions": "Approx. outer size ~0.30 m \u00d7 0.30 m \u00d7 0.05 m (volume \u2248 0.0045 m\u00b3). Typical mass for this type of game 0.3\u20130.7 kg (plastic pop-dome, pegs, folded board, leaflet). Box walls are 0.8\u20131.5 mm paperboard; interior has voids. Properties represent effective bulk response of the closed, filled carton in compression/shear, not the intrinsic paper fibers or solid plastics.",
+        "material": {
+            "name": "filled paperboard game box (carton + mixed plastic/paper components + air)",
+            "density_kg_per_m3": {
+                "min": 60.0,
+                "max": 180.0
+            },
+            "youngs_modulus_pa": {
+                "min": 5000000.0,
+                "max": 100000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.2,
+                "max": 0.4
+            }
+        },
+        "object_name_short": "board game box (filled)",
+        "visible_material_name": "printed paperboard/cardboard carton with mixed plastic/paper contents",
+        "version": "materials_v2.0",
+        "vlm_category": "paper/cardboard packaging (filled)",
+        "category": "Board Games",
+        "vlm_version": "gpt-5",
+        "material_group": "mixed (paper + plastic)",
+        "categories_gso": "Board Games"
+    },
+    "My_Little_Pony_Princess_Celestia": {
+        "object_name": "My Little Pony-style unicorn/pegasus toy figurine with brushable hair and translucent wings",
+        "thinking": "The object appears to be a My Little Pony-style toy figurine with a hollow molded plastic body, thin translucent plastic wings, and brushable synthetic hair. Such toys are typically injection-molded PVC/ABS with thin shells and are mostly air inside; hair is polyester/nylon and adds little mass. Estimations use typical toy scale (~15\u201325 cm tall), common masses (~0.1\u20130.25 kg), and external volume on the order of 0.3\u20130.6 L, giving a low effective bulk density. Effective Young\u2019s modulus is much lower than solid plastic because global stiffness is governed by thin-shell bending and joints, not solid polymer stiffness.",
+        "assumptions": "Object height ~0.18\u20130.22 m; body is hollow injection-molded PVC or ABS with painted surfaces; wings are thin PET/PP sheet; hair is polyester/nylon; no internal metal weights or electronics; overall mass ~0.12\u20130.22 kg.",
+        "material": {
+            "name": "Effective bulk composite of hollow PVC/ABS body + PET/PP wings + polyester/nylon hair",
+            "density_kg_per_m3": {
+                "min": 150.0,
+                "max": 450.0
+            },
+            "youngs_modulus_pa": {
+                "min": 30000000.0,
+                "max": 400000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.25,
+                "max": 0.43
+            }
+        },
+        "object_name_short": "toy pony figurine",
+        "visible_material_name": "painted molded plastic body, translucent plastic wings, synthetic hair",
+        "version": "materials_v2.0",
+        "vlm_category": "plastic composite (toy)",
+        "category": "Toys",
+        "vlm_version": "gpt-5",
+        "material_group": "plastic",
+        "categories_gso": "Toys"
+    },
+    "Olive_Kids_Birdie_Lunch_Box": {
+        "object_name": "Insulated soft lunch bag",
+        "thinking": "The object is a small insulated lunch bag: fabric outer shell, zipper, handle, thin polymer foam insulation, and an inner liner. As a whole it\u2019s mostly hollow air with a lightweight composite shell. Estimated outer size ~25\u00d720\u00d710 cm (0.005 m^3). Typical empty mass 0.2\u20130.5 kg, giving a bulk density on the order of tens of kg/m^3. Effective stiffness is governed by soft foam/fabric layers rather than solid plastics; thus modulus is in the tens of kPa to low MPa range. Poisson\u2019s ratio for such soft composites is moderate (foam-like).",
+        "assumptions": "Bag is empty; foam thickness ~5\u201310 mm; outer is coated polyester; inner liner is thin polymer (PEVA/PVC); no rigid inserts; dimensions within typical lunch bag range; properties reported as bulk/effective of the whole object including void space.",
+        "material": {
+            "name": "Composite: polyester fabric + polymer foam + thin liner (mostly air, soft-sided)",
+            "density_kg_per_m3": {
+                "min": 25.0,
+                "max": 120.0
+            },
+            "youngs_modulus_pa": {
+                "min": 50000.0,
+                "max": 2000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.2,
+                "max": 0.45
+            }
+        },
+        "object_name_short": "lunch bag",
+        "visible_material_name": "printed coated polyester fabric with zipper; foam-insulated liner",
+        "version": "materials_v2.0",
+        "vlm_category": "soft_good/bag",
+        "category": "Bag",
+        "vlm_version": "gpt-5",
+        "material_group": "fabric/textile",
+        "categories_gso": "Bag"
+    },
+    "Leap_Frog_Paint_Dabber_Dot_Art_5_paint_bottles": {
+        "object_name": "LeapFrog Paint Dabber Dot Art paint-by-numbers kit in cardboard box (with bottles and paper)",
+        "thinking": "The item is a printed cardboard retail box containing five small paint dauber bottles and paper (paint-by-numbers kit). Bulk properties should reflect a mostly hollow box with several liquid-filled plastic bottles and some paper sheets. The effective density is far below plastics/liquids due to void space; stiffness is governed by the paperboard box and the compliant HDPE bottles distributing load.",
+        "assumptions": "Approx. outer size ~0.23\u20130.28 m square and 0.04\u20130.05 m thick; contents: 5 bottles each ~40\u201375 mL water-based paint in HDPE bottles, plus paper sheets and inserts; fill fraction ~25\u201345% by volume; total mass ~0.4\u20130.9 kg.",
+        "material": {
+            "name": "Bulk-effective: cardboard retail box with mixed contents (plastic paint bottles, liquid, paper)",
+            "density_kg_per_m3": {
+                "min": 150.0,
+                "max": 500.0
+            },
+            "youngs_modulus_pa": {
+                "min": 30000000.0,
+                "max": 400000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.25,
+                "max": 0.45
+            }
+        },
+        "object_name_short": "paint dabber art kit box",
+        "visible_material_name": "printed paperboard outer box with plastic paint bottles and paper inside",
+        "version": "materials_v2.0",
+        "vlm_category": "packaged consumer product (cardboard box with mixed contents)",
+        "category": "Consumer Goods",
+        "vlm_version": "gpt-5",
+        "material_group": "mixed (paper + plastic)",
+        "categories_gso": "Consumer Goods"
+    },
+    "Mens_Wave_Driver_Kiltie_Moc_in_Tan_Leather": {
+        "object_name": "Leather moccasin/loafer shoe with rubber sole and laces",
+        "thinking": "Object is a single brown moccasin/loafer with leather upper and a rubber outsole. As a whole object it is mostly hollow (air-filled interior) with thin leather walls, a rubber sole, and laces. The bulk density is estimated from typical shoe masses (0.2\u20130.4 kg) and external volumes near 0.9\u20131.2 liters, giving roughly 180\u2013380 kg/m^3. Effective stiffness of the whole shoe under compression/bending is far lower than solid leather because of geometry, seams, and air gaps; dominated by rubber sole and flexible leather upper, giving an effective Young\u2019s modulus on the order of a few to a few tens of MPa. Poisson\u2019s ratio taken between leather-like (~0.3\u20130.4) and rubber-like (~0.49), reduced due to voids.",
+        "assumptions": "Adult-size loafer (length ~25\u201328 cm). Empty shoe (no foot), no metal shank. Typical leather thickness ~1\u20132 mm; rubber outsole ~3\u20138 mm; textile laces. No significant foam padding beyond thin insole.",
+        "material": {
+            "name": "Composite shoe (leather upper + rubber sole + air voids)",
+            "density_kg_per_m3": {
+                "min": 180.0,
+                "max": 380.0
+            },
+            "youngs_modulus_pa": {
+                "min": 3000000.0,
+                "max": 50000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.25,
+                "max": 0.45
+            }
+        },
+        "object_name_short": "leather loafer shoe",
+        "visible_material_name": "leather upper, rubber sole, textile laces",
+        "version": "materials_v2.0",
+        "vlm_category": "footwear",
+        "category": "Shoe",
+        "vlm_version": "gpt-5",
+        "material_group": "leather",
+        "categories_gso": "Shoe"
+    },
+    "My_Monopoly_Board_Game": {
+        "object_name": "My Monopoly board game retail box with contents (sealed)",
+        "thinking": "The object is a sealed retail board\u2011game box (My Monopoly). As a whole object it\u2019s a cardboard/paperboard box containing a folded game board, cards, paper money, small plastic tokens, and some void air space. The effective properties should reflect this loosely packed, layered, mostly-paper assembly rather than solid paperboard.",
+        "assumptions": "- Standard Monopoly-style box ~40 \u00d7 27 \u00d7 5 cm; packed with typical contents\n- Total mass roughly 0.8\u20131.5 kg based on similar products; yields low bulk density due to internal voids\n- Mechanical response considered as compressive/tensile behavior of the packed box as a block (not in-plane stiffness of individual sheets)\n- Dry indoor conditions; no shrink-wrap contribution considered",
+        "material": {
+            "name": "Packed board game (paperboard box with mixed paper/plastic pieces and voids)",
+            "density_kg_per_m3": {
+                "min": 120.0,
+                "max": 300.0
+            },
+            "youngs_modulus_pa": {
+                "min": 30000000.0,
+                "max": 250000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.15,
+                "max": 0.35
+            }
+        },
+        "object_name_short": "Monopoly game box",
+        "visible_material_name": "Printed paperboard (cardboard) box with mixed paper/plastic contents",
+        "version": "materials_v2.0",
+        "vlm_category": "packaged_goods/cardboard_box_with_contents",
+        "category": "Board Games",
+        "vlm_version": "gpt-5",
+        "material_group": "mixed (paper + plastic)",
+        "categories_gso": "Board Games"
+    },
+    "Big_Dot_Pink_Pencil_Case": {
+        "object_name": "Cylindrical fabric zip pencil case (empty)",
+        "thinking": "The object appears to be a small cylindrical zip pencil case made of woven synthetic fabric (likely polyester/nylon) with piping and a zipper. As a hollow softgood, its bulk properties are dominated by air volume and thin fabric shell, so the effective density is far below solid polymer values and stiffness is very low.",
+        "assumptions": "Approximate outer size: length 20\u201322 cm, diameter 7\u20138 cm (volume ~0.9\u20131.1e-3 m^3). Object is empty (no contents), made from thin woven polyester/nylon with lining and zipper, no rigid inserts. Fabric areal density typical of 400\u2013600D bag fabric; total mass ~40\u2013150 g. Properties reported are effective whole-object values under small compression, not base polymer values.",
+        "material": {
+            "name": "polyester/nylon fabric (empty pouch, whole-object effective)",
+            "density_kg_per_m3": {
+                "min": 30.0,
+                "max": 150.0
+            },
+            "youngs_modulus_pa": {
+                "min": 20000.0,
+                "max": 2000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.1,
+                "max": 0.4
+            }
+        },
+        "object_name_short": "pencil case",
+        "visible_material_name": "woven polyester/nylon fabric with zipper and piping",
+        "version": "materials_v2.0",
+        "vlm_category": "textile_softgood",
+        "category": "Bag",
+        "vlm_version": "gpt-5",
+        "material_group": "fabric/textile",
+        "categories_gso": "Bag"
+    },
+    "Schleich_Spinosaurus_Action_Figure": {
+        "object_name": "Hand-painted dinosaur toy figurine (Spinosaurus-style)",
+        "thinking": "The object appears to be a small, hand-painted dinosaur toy figurine with fine surface texture and slight flexibility implied by thin limbs and tail. Such figures are typically molded from plasticized PVC (vinyl), often mostly solid (not blow-mold hollow) to hold stance and detail, with thin paint layers.",
+        "assumptions": "Scale ~15\u201330 cm length; primarily solid plasticized PVC (vinyl) with thin acrylic paint; negligible internal cores or metal; if minor micro-voids exist from molding they have little effect on bulk density. No liquids or granular fill.",
+        "material": {
+            "name": "plasticized PVC (vinyl), solid figurine",
+            "density_kg_per_m3": {
+                "min": 1100.0,
+                "max": 1350.0
+            },
+            "youngs_modulus_pa": {
+                "min": 400000000.0,
+                "max": 2000000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.35,
+                "max": 0.45
+            }
+        },
+        "object_name_short": "dinosaur toy figurine",
+        "visible_material_name": "painted PVC vinyl",
+        "version": "materials_v2.0",
+        "vlm_category": "plastic",
+        "category": "Action Figures",
+        "vlm_version": "gpt-5",
+        "material_group": "plastic",
+        "categories_gso": "Action Figures"
+    },
+    "Remington_TStudio_Silk_Ceramic_Hair_Straightener_2_Inch_Floating_Plates": {
+        "object_name": "Corded electric hair straightener with protective cap",
+        "thinking": "Looks like a corded Remington hair straightener with a red heat-resistant cap. Bulk makeup is mostly hollow plastic shell with rubberized grips, internal ceramic/aluminum heater plates and small metal hardware, plus a flexible polymer cord. Whole-object behavior is dominated by the plastic shell and hollowness; effective density is well below solid plastics/metals.",
+        "assumptions": "Typical size ~30\u201333 cm long, ~4\u20135 cm wide, ~3\u20134 cm thick when closed; mass ~0.35\u20130.65 kg; internal void fraction ~40\u201360%. Outer shell is ABS/PC blend with elastomer overmold; plates are ceramic-coated aluminum; cord is PVC/rubber. Estimations reflect the assembled, mostly hollow object.",
+        "material": {
+            "name": "Composite assembly (plastic shell with rubber overmold, ceramic/aluminum heater plates, metal hardware; largely hollow)",
+            "density_kg_per_m3": {
+                "min": 700.0,
+                "max": 1200.0
+            },
+            "youngs_modulus_pa": {
+                "min": 900000000.0,
+                "max": 2500000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.3,
+                "max": 0.38
+            }
+        },
+        "object_name_short": "hair straightener",
+        "visible_material_name": "painted plastic (ABS/PC) with rubberized grips and polymer power cord",
+        "version": "materials_v2.0",
+        "vlm_category": "small_appliance",
+        "category": "Consumer Goods",
+        "vlm_version": "gpt-5",
+        "material_group": "plastic",
+        "categories_gso": "Consumer Goods"
+    },
+    "Womens_Betty_Chukka_Boot_in_Navy_aEE8OqvMII4": {
+        "object_name": "Canvas boat-style sneaker with rubber sole",
+        "thinking": "The object is a casual boat-style sneaker with a canvas/textile upper, rubber/vulcanized outsole, foam insole/midsole, and leather-like laces. As a whole object it is mostly hollow (air-filled interior) with layered soft components. Typical adult shoe mass ~0.3\u20130.6 kg and external volume ~0.003\u20130.004 m^3, giving a low effective bulk density. The overall stiffness is dominated by soft rubber outsole and foam, not the textile which is compliant in this geometry.",
+        "assumptions": "Adult-size shoe, empty and dry; conventional materials: canvas/textile upper, EVA/PU foam insole/midsole, vulcanized rubber outsole, leather/synthetic laces; no steel toe or rigid inserts.",
+        "material": {
+            "name": "homogenized shoe composite (textile + foam + rubber, hollow interior)",
+            "density_kg_per_m3": {
+                "min": 70.0,
+                "max": 200.0
+            },
+            "youngs_modulus_pa": {
+                "min": 800000.0,
+                "max": 25000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.25,
+                "max": 0.45
+            }
+        },
+        "object_name_short": "boat shoe",
+        "visible_material_name": "canvas textile upper with vulcanized rubber outsole",
+        "version": "materials_v2.0",
+        "vlm_category": "footwear",
+        "category": "Shoe",
+        "vlm_version": "gpt-5",
+        "material_group": "fabric/textile",
+        "categories_gso": "Shoe"
+    },
+    "Hasbro_Monopoly_Hotels_Game": {
+        "object_name": "Monopoly Hotels board game retail box with contents",
+        "thinking": "The images show a retail game package (Monopoly Hotels) made from printed paperboard with mixed contents (cards, small plastic pieces, rulebook) and substantial internal air. The request asks for whole-object effective properties, so I treat the boxed product as a lightweight, partially hollow composite where stiffness is governed by the paperboard shell and stacked paper/plastic inserts rather than solid base materials.",
+        "assumptions": "Approx. outer dimensions ~30 x 22 x 6 cm; mass likely 0.4\u20131.2 kg based on similar board/card games. Contents include paper cards/boards and small plastic parts; interior not tightly packed, leaving air gaps. Box is paperboard (chipboard or corrugated) with a printed wrap. Effective modulus reflects compressive response of a filled but mostly hollow carton, not solid paper or plastic.",
+        "material": {
+            "name": "Filled paperboard box (mixed paper/plastic contents, hollow)",
+            "density_kg_per_m3": {
+                "min": 120.0,
+                "max": 350.0
+            },
+            "youngs_modulus_pa": {
+                "min": 8000000.0,
+                "max": 150000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.15,
+                "max": 0.35
+            }
+        },
+        "object_name_short": "board game box",
+        "visible_material_name": "printed paperboard/cardboard carton",
+        "version": "materials_v2.0",
+        "vlm_category": "packaged consumer product (paperboard box with mixed contents, hollow)",
+        "category": "Board Games",
+        "vlm_version": "gpt-5",
+        "material_group": "paper/cardboard",
+        "categories_gso": "Board Games"
+    },
+    "Avengers_Thor_PLlrpYniaeB": {
+        "object_name": "Open-front stackable plastic storage bin (shelf bin)",
+        "thinking": "The object is a thin-walled, injection-molded open-front storage bin with ribs, typical of polypropylene shelf bins. It is hollow and currently empty; the effective (bulk) properties should be taken over the entire outer volume, not the solid plastic only. Such bins usually have wall thickness ~2.5\u20134 mm and dimensions on the order of 0.30\u20130.45 m long, 0.18\u20130.25 m wide, 0.12\u20130.20 m tall, giving a low overall relative density. Effective stiffness is far lower than solid PP when averaged over the bounding volume.",
+        "assumptions": "Bin is empty; made from PP or similar; outer volume ~0.01\u20130.02 m^3; mass ~0.3\u20131.0 kg; walls ~3 mm; no foam fill or metal reinforcements.",
+        "material": {
+            "name": "effective hollow polypropylene bin (bulk over outer volume)",
+            "density_kg_per_m3": {
+                "min": 25.0,
+                "max": 80.0
+            },
+            "youngs_modulus_pa": {
+                "min": 2000000.0,
+                "max": 60000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.15,
+                "max": 0.35
+            }
+        },
+        "object_name_short": "plastic storage bin",
+        "visible_material_name": "injection-molded polypropylene (opaque beige plastic)",
+        "version": "materials_v2.0",
+        "vlm_category": "container/bin",
+        "category": "Action Figures",
+        "vlm_version": "gpt-5",
+        "material_group": "plastic",
+        "categories_gso": "Action Figures"
+    },
+    "Frozen_Scrabble_Jr": {
+        "object_name": "Disney Frozen Scrabble board game retail box (sealed)",
+        "thinking": "The object is a sealed board-game retail box. Whole-object properties should reflect the filled box (paperboard box, folded game board, tiles/racks, instruction sheets, and air gaps). Estimate density from typical mass 0.7\u20131.1 kg and size about 0.27\u00d70.27\u00d70.05 m (V\u22480.0036 m\u00b3), giving ~190\u2013300 kg/m\u00b3. The box\u2019s effective stiffness is dominated by paperboard walls and loosely packed contents, so Young\u2019s modulus is far below solid plastics/wood and closer to compressed corrugated/paperboard assemblies; choose ~1\u00d710^7\u20135\u00d710^7 Pa. Poisson\u2019s ratio similar to cellular paper products, ~0.2\u20130.35.",
+        "assumptions": "Box is unopened; dimensions ~27\u00d727\u00d75 cm; contents include paper/cardboard board, small plastic/wood tiles, racks, rulebook, with notable air voids. Box material is printed paperboard/chipboard.",
+        "material": {
+            "name": "Boxed board game (paperboard box with mixed paper/plastic/wood contents and air gaps)",
+            "density_kg_per_m3": {
+                "min": 180.0,
+                "max": 320.0
+            },
+            "youngs_modulus_pa": {
+                "min": 10000000.0,
+                "max": 50000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.2,
+                "max": 0.35
+            }
+        },
+        "object_name_short": "board game box",
+        "visible_material_name": "printed paperboard/chipboard with glossy coating",
+        "version": "materials_v2.0",
+        "vlm_category": "consumer_goods/board_game_box",
+        "category": "Board Games",
+        "vlm_version": "gpt-5",
+        "material_group": "paper/cardboard",
+        "categories_gso": "Board Games"
+    },
+    "Big_Dot_Aqua_Pencil_Case": {
+        "object_name": "Cylindrical fabric zippered pencil case (empty)",
+        "thinking": "The object appears to be a small cylindrical zippered pencil case made from woven synthetic fabric (likely polyester/nylon) with a thin lining and zipper. It is largely hollow/air-filled when empty, so its effective bulk properties are dominated by the air volume and thin compliant textile shell rather than the polymer\u2019s intrinsic properties.",
+        "assumptions": "Assume the case is empty. Approximate dimensions: length \u2248 0.20 m, diameter \u2248 0.08 m (volume \u2248 1.0e-3 m^3). Mass of an empty fabric case of this size \u2248 0.05\u20130.12 kg. Shell is flexible textile with minimal structural support, so bulk stiffness is very low (deforms easily under compression).",
+        "material": {
+            "name": "effective bulk of hollow textile pouch (air + fabric shell)",
+            "density_kg_per_m3": {
+                "min": 30.0,
+                "max": 150.0
+            },
+            "youngs_modulus_pa": {
+                "min": 20000.0,
+                "max": 1000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.05,
+                "max": 0.35
+            }
+        },
+        "object_name_short": "fabric pencil case",
+        "visible_material_name": "woven polyester/nylon fabric with zipper",
+        "version": "materials_v2.0",
+        "vlm_category": "soft-textile-container",
+        "category": "Bag",
+        "vlm_version": "gpt-5",
+        "material_group": "fabric/textile",
+        "categories_gso": "Bag"
+    },
+    "Reebok_FUELTRAIN": {
+        "object_name": "Athletic running shoe with mesh upper, foam midsole, and rubber outsole",
+        "thinking": "The object is a lightweight athletic running shoe with mesh/textile upper, EVA/PU foam midsole, rubber outsole, fabric lining, insole foam, and hollow interior volume. Estimating whole-object (effective) properties including voids, layered construction, and typical mass-to-volume ratios for such footwear.",
+        "assumptions": "Adult size running shoe length ~26\u201329 cm, width ~9\u201310 cm, height ~10\u201312 cm; external volume ~1.4\u20132.0e-3 m^3. Typical mass 0.20\u20130.35 kg per shoe. Structure is mostly foam and fabric with rubber patches; significant internal air volume and porosity in foams and mesh. Effective properties represent the entire shoe as a bulk body, not any single constituent.",
+        "material": {
+            "name": "composite athletic shoe (textile + foam + rubber, hollow interior)",
+            "density_kg_per_m3": {
+                "min": 80.0,
+                "max": 220.0
+            },
+            "youngs_modulus_pa": {
+                "min": 500000.0,
+                "max": 15000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.25,
+                "max": 0.45
+            }
+        },
+        "object_name_short": "running shoe",
+        "visible_material_name": "mesh/textile upper, EVA/PU foam midsole, rubber outsole, fabric lining and laces",
+        "version": "materials_v2.0",
+        "vlm_category": "consumer_product/footwear",
+        "category": "Shoe",
+        "vlm_version": "gpt-5",
+        "material_group": "fabric/textile",
+        "categories_gso": "Shoe"
+    },
+    "Twinlab_100_Whey_Protein_Fuel_Chocolate": {
+        "object_name": "Sealed plastic jar of whey protein powder (supplement container)",
+        "thinking": "The item appears to be a sealed plastic supplement jar that is likely filled with whey protein powder. Whole-object properties should reflect the composite of a thin PET jar plus bulk granular powder and some headspace air.",
+        "assumptions": "Assume the jar is PET or similar clear rigid plastic with wall thickness ~1\u20132 mm; capacity roughly 1.5\u20133 L; filled 85\u201395% with whey protein powder (bulk density typically 350\u2013650 kg/m3) and a small headspace; shrink seal and label have negligible effect on bulk properties. Treat the object as a composite (plastic shell + packed powder) when estimating effective density and stiffness.",
+        "material": {
+            "name": "Composite: PET jar filled with whey protein powder (bulk/effective)",
+            "density_kg_per_m3": {
+                "min": 300.0,
+                "max": 700.0
+            },
+            "youngs_modulus_pa": {
+                "min": 50000000.0,
+                "max": 600000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.25,
+                "max": 0.35
+            }
+        },
+        "object_name_short": "protein powder jar",
+        "visible_material_name": "clear PET plastic jar with plastic cap and shrink seal, printed label; filled with granular protein powder",
+        "version": "materials_v2.0",
+        "vlm_category": "packaged_goods_plastic_jar_filled",
+        "category": "Bottles and Cans and Cups",
+        "vlm_version": "gpt-5",
+        "material_group": "plastic",
+        "categories_gso": "Bottles and Cans and Cups"
+    },
+    "Olive_Kids_Robots_Pencil_Case": {
+        "object_name": "Cylindrical zippered pencil case (empty, textile/foam shell)",
+        "thinking": "The object is a small cylindrical zippered pencil case made of printed textile with a soft, flexible body and a zipper. It appears empty and mostly hollow; bulk properties should include the large internal air volume, thin fabric/foam layers, stitching, and zipper hardware. Effective bulk density is therefore very low compared with solid plastics. Structural stiffness is dominated by the thin fabric/foam shell, so the effective Young\u2019s modulus is orders of magnitude lower than solid polymer sheets.",
+        "assumptions": "Approximate size: length 18\u201322 cm, diameter 7\u20139 cm; wall thickness ~1\u20132 mm fabric/foam laminate; mostly air inside; empty when weighed; zipper slider likely metal with plastic teeth; outer volume ~0.8\u20131.2 liters; mass ~50\u2013120 g.",
+        "material": {
+            "name": "polyester fabric + thin foam laminate, mostly hollow (empty pencil case)",
+            "density_kg_per_m3": {
+                "min": 30.0,
+                "max": 150.0
+            },
+            "youngs_modulus_pa": {
+                "min": 50000.0,
+                "max": 5000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.2,
+                "max": 0.45
+            }
+        },
+        "object_name_short": "fabric pencil case",
+        "visible_material_name": "printed polyester fabric with light foam backing and a plastic/metal zipper",
+        "version": "materials_v2.0",
+        "vlm_category": "textile soft case/pouch",
+        "category": "Bag",
+        "vlm_version": "gpt-5",
+        "material_group": "fabric/textile",
+        "categories_gso": "Bag"
+    },
+    "Olive_Kids_Paisley_Pencil_Case": {
+        "object_name": "Cylindrical zip pencil case (soft fabric, empty)",
+        "thinking": "Cylindrical zipper pencil case, soft-sided, appears to be printed polyester fabric with light foam/lining and piping; mostly hollow (air) when empty. Estimate size ~20 cm long, ~7 cm diameter. Mass likely ~40\u2013100 g. Whole-object properties dominated by thin flexible shell and large hollow volume.",
+        "assumptions": "Object is empty; shell is 600D polyester (or similar) with thin foam/liner and standard zipper/piping; no rigid insert. Dimensions ~L=0.20 m, D=0.07 m; volume \u22487.7e-4 m^3. Estimates reflect effective bulk properties of the entire empty pouch, not base polymer.",
+        "material": {
+            "name": "empty polyester-fabric pencil pouch (hollow soft shell)",
+            "density_kg_per_m3": {
+                "min": 40.0,
+                "max": 150.0
+            },
+            "youngs_modulus_pa": {
+                "min": 100000.0,
+                "max": 2000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.25,
+                "max": 0.45
+            }
+        },
+        "object_name_short": "pencil case",
+        "visible_material_name": "printed polyester fabric with zipper and piping",
+        "version": "materials_v2.0",
+        "vlm_category": "soft goods / textile-coated polymer",
+        "category": "Bag",
+        "vlm_version": "gpt-5",
+        "material_group": "fabric/textile",
+        "categories_gso": "Bag"
+    },
+    "Olive_Kids_Dinosaur_Land_Pack_n_Snack": {
+        "object_name": "Children\u2019s soft-shell backpack with dinosaur print",
+        "thinking": "The object is a small children\u2019s backpack made of printed coated fabric with zippers, thin foam padding, and fabric lining. As a whole object it is mostly hollow air with thin soft walls, so its bulk density and stiffness are far lower than the base polymer. Estimates reflect an empty backpack of ~10\u201320 L volume and ~0.3\u20130.7 kg mass.",
+        "assumptions": "Backpack is empty; shell is polyester (PU/PVC-coated) with light foam backing and fabric lining; minimal plastic reinforcement at base; no rigid internal frame; typical kids backpack size.",
+        "material": {
+            "name": "Empty polyester-fabric backpack (bulk/effective)",
+            "density_kg_per_m3": {
+                "min": 15.0,
+                "max": 60.0
+            },
+            "youngs_modulus_pa": {
+                "min": 10000.0,
+                "max": 1000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.25,
+                "max": 0.45
+            }
+        },
+        "object_name_short": "kids backpack",
+        "visible_material_name": "coated polyester fabric with zippers and light foam backing",
+        "version": "materials_v2.0",
+        "vlm_category": "textile/softgoods (bag)",
+        "category": "Bag",
+        "vlm_version": "gpt-5",
+        "material_group": "fabric/textile",
+        "categories_gso": "Bag"
+    },
+    "Black_Forest_Fruit_Snacks_Juicy_Filled_Centers_10_pouches_9_oz_total": {
+        "object_name": "Cardboard retail box filled with fruit snack pouches",
+        "thinking": "This is a small retail cardboard carton of fruit snacks (10 pouches). Typical net candy mass \u2248 0.20\u20130.26 kg; plus pouches and box \u2248 0.02\u20130.06 kg. Carton outer volume roughly 0.8\u20131.1 L. Bulk density therefore low because of air gaps and flexible pouches. Global stiffness governed by thin paperboard walls with mostly soft, nearly incompressible gel pieces and voids inside; behaves like a compliant, partially filled package under compression.",
+        "assumptions": "Assumed 10 snack pouches totaling ~200\u2013260 g; packaging/box mass ~20\u201360 g; exterior size about 18\u201320 cm \u00d7 4\u20135 cm \u00d7 12\u201314 cm; significant internal voids between pouches; no rigid inner tray.",
+        "material": {
+            "name": "effective composite: cardboard box with gel-candy pouches and air",
+            "density_kg_per_m3": {
+                "min": 200.0,
+                "max": 450.0
+            },
+            "youngs_modulus_pa": {
+                "min": 300000.0,
+                "max": 30000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.2,
+                "max": 0.45
+            }
+        },
+        "object_name_short": "fruit snacks box",
+        "visible_material_name": "printed paperboard (folding carton)",
+        "version": "materials_v2.0",
+        "vlm_category": "packaged_food_box_cardboard",
+        "category": "Consumer Goods",
+        "vlm_version": "gpt-5",
+        "material_group": "paper/cardboard",
+        "categories_gso": "Consumer Goods"
+    },
+    "Tetris_Link_Game": {
+        "object_name": "Tetris Link board game retail box with contents",
+        "thinking": "The images show a retail board\u2011game package (Tetris Link) made of printed paperboard containing plastic components and instructions. As a whole object it\u2019s mostly air inside a thin cardboard shell with several molded plastic parts, so bulk density is far below solid plastics or paperboard and stiffness is limited by the hollow box and compliant contents.",
+        "assumptions": "Approximate outer size ~0.30 x 0.30 x 0.06 m (volume \u2248 5.4e-3 m3). Estimated filled mass ~0.7\u20131.8 kg based on similar board games with molded plastic frames and tokens. Effective stiffness reflects compression/bending of a mostly hollow cardboard box with loosely packed plastic pieces; values given as equivalent bulk properties, not in-plane paperboard sheet properties.",
+        "material": {
+            "name": "filled cardboard retail box with plastic game components (bulk/effective)",
+            "density_kg_per_m3": {
+                "min": 120.0,
+                "max": 350.0
+            },
+            "youngs_modulus_pa": {
+                "min": 5000000.0,
+                "max": 100000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.15,
+                "max": 0.35
+            }
+        },
+        "object_name_short": "board game box",
+        "visible_material_name": "printed paperboard (cardboard) outer box",
+        "version": "materials_v2.0",
+        "vlm_category": "consumer_packaging_board_game_box",
+        "category": "Board Games",
+        "vlm_version": "gpt-5",
+        "material_group": "paper/cardboard",
+        "categories_gso": "Board Games"
+    },
+    "Twinlab_100_Whey_Protein_Fuel_Cookies_and_Cream": {
+        "object_name": "Filled whey protein powder plastic jar (Twinlab 100% Whey Fuel)",
+        "thinking": "The object is a filled plastic protein powder jar. Whole-object properties are dominated by the bulk-packed whey powder plus small contributions from the plastic shell and headspace air. Effective values reflect powder porosity, partial headspace, and thin-wall plastic container.",
+        "assumptions": "- Jar is PET or HDPE with shrink/adhesive label and sealed lid\n- Powder is dry whey-protein blend with bulk density ~0.35\u20130.60 g/cm\u00b3\n- Fill level near full with some headspace; jar mass ~0.1\u20130.2 kg\n- Effective modulus is governed by granular powder under low confining pressure with minor shell contribution",
+        "material": {
+            "name": "Composite: whey protein powder packed in plastic jar (PET/HDPE)",
+            "density_kg_per_m3": {
+                "min": 350.0,
+                "max": 650.0
+            },
+            "youngs_modulus_pa": {
+                "min": 20000000.0,
+                "max": 150000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.22,
+                "max": 0.38
+            }
+        },
+        "object_name_short": "protein powder jar",
+        "visible_material_name": "clear plastic jar (PET/HDPE) with printed label, filled with whey protein powder",
+        "version": "materials_v2.0",
+        "vlm_category": "food_container",
+        "category": "Bottles and Cans and Cups",
+        "vlm_version": "gpt-5",
+        "material_group": "plastic",
+        "categories_gso": "Bottles and Cans and Cups"
+    },
+    "LEGO_City_Advent_Calendar": {
+        "object_name": "LEGO City Advent Calendar boxed set (sealed retail package)",
+        "thinking": "The images show a sealed LEGO City Advent Calendar retail box: a thin printed paperboard carton containing many small ABS plastic parts in bags, plus much empty space. Treat the whole boxed product as a single bulk object. The effective density is low because most internal volume is air; stiffness is governed by the paperboard shell, inner trays, and loosely packed plastic contents, giving foam\u2011like bulk behavior rather than solid paper or plastic.",
+        "assumptions": "Approximate outer dimensions ~38 x 26 x 7 cm (\u22487.1 L). Typical mass for a LEGO advent calendar is ~0.5\u20130.9 kg. Box is folding carton/board with printed paperwrap; inside are plastic bags and a thin cardboard tray. No significant metals or liquids. Estimates reflect the combined, void\u2011rich package.",
+        "material": {
+            "name": "Effective bulk of paperboard box with plastic toy contents and internal air",
+            "density_kg_per_m3": {
+                "min": 60.0,
+                "max": 160.0
+            },
+            "youngs_modulus_pa": {
+                "min": 5000000.0,
+                "max": 80000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.15,
+                "max": 0.35
+            }
+        },
+        "object_name_short": "LEGO boxed set",
+        "visible_material_name": "printed paperboard/cardboard box",
+        "version": "materials_v2.0",
+        "vlm_category": "retail_paperboard_packaging_box",
+        "category": "Legos",
+        "vlm_version": "gpt-5",
+        "material_group": "paper/cardboard",
+        "categories_gso": "Legos"
+    },
+    "Timberland_Mens_Earthkeepers_Stormbuck_Plain_Toe_Oxford": {
+        "object_name": "Brown leather derby shoe with rubber sole",
+        "thinking": "Looks like a men\u2019s brown leather derby-style shoe with a black rubber outsole and likely foam insole/midsole. The object is largely hollow (foot cavity), so bulk properties are much lower/stiffer than solid leather/rubber alone. Estimated external volume ~1.6\u20132.2 liters; typical mass per shoe ~0.45\u20130.70 kg, giving bulk density a few hundred kg/m\u00b3. Effective stiffness dominated by rubber sole + foam layers and the compliant, hollow structure.",
+        "assumptions": "Adult single shoe (approx US men\u2019s 9\u201311). Leather or nubuck upper, molded rubber outsole, foam insole/midsole, textile lining and laces; dry and empty (no foot). No steel shank; standard construction. Estimations are bulk/effective for the whole shoe, not intrinsic base-material values.",
+        "material": {
+            "name": "composite shoe (leather upper + rubber outsole + foam insole/midsole + air voids)",
+            "density_kg_per_m3": {
+                "min": 200.0,
+                "max": 450.0
+            },
+            "youngs_modulus_pa": {
+                "min": 500000.0,
+                "max": 30000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.25,
+                "max": 0.48
+            }
+        },
+        "object_name_short": "leather dress shoe",
+        "visible_material_name": "brown leather upper with black rubber sole",
+        "version": "materials_v2.0",
+        "vlm_category": "footwear",
+        "category": "Shoe",
+        "vlm_version": "gpt-5",
+        "material_group": "leather",
+        "categories_gso": "Shoe"
+    },
+    "Balderdash_Game": {
+        "object_name": "Balderdash board game boxed set (sealed retail package)",
+        "thinking": "The images show a sealed retail boxed board game (Balderdash). Typical box size ~30\u00d724\u00d76 cm with stacks of paper cards, a folded board, rulebook, and some plastic/paper components plus air gaps. Overall mass commonly ~0.7\u20131.2 kg, giving bulk density roughly 150\u2013350 kg/m^3. The effective stiffness is dominated by the paperboard shell and compacted card stacks but reduced by internal voids; treat as a lightly compressible paper/card pack.",
+        "assumptions": "Standard game box filled mostly with paper/card components; no unusually heavy inserts; modest internal air space; box made of solid paperboard (not heavy corrugated). Dimensions approximated from common board game format.",
+        "material": {
+            "name": "Boxed board game (paperboard box with paper/card contents, partial voids)",
+            "density_kg_per_m3": {
+                "min": 150.0,
+                "max": 350.0
+            },
+            "youngs_modulus_pa": {
+                "min": 50000000.0,
+                "max": 400000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.2,
+                "max": 0.35
+            }
+        },
+        "object_name_short": "boxed board game",
+        "visible_material_name": "printed paperboard/cardboard",
+        "version": "materials_v2.0",
+        "vlm_category": "retail_boxed_product",
+        "category": "Board Games",
+        "vlm_version": "gpt-5",
+        "material_group": "paper/cardboard",
+        "categories_gso": "Board Games"
+    },
+    "Fresca_Peach_Citrus_Sparkling_Flavored_Soda_12_PK": {
+        "object_name": "12-pack paperboard carton of Fresca soda (with 12 filled aluminum cans)",
+        "thinking": "The object is a 12-pack \u2018fridge pack\u2019 of soda: a printed paperboard carton containing 12 aluminum cans filled with carbonated beverage. Whole-object properties should include the cans, liquid, air gaps, and carton. Typical external size for this pack is roughly 0.41\u20130.43 m (L) \u00d7 0.12\u20130.14 m (W) \u00d7 0.12\u20130.13 m (H), giving ~0.0065\u20130.0074 m\u00b3 volume. Mass is dominated by 12\u00d7355 mL of liquid (~4.26 kg) plus cans (~0.15\u20130.20 kg) and carton (~0.2\u20130.3 kg), totaling ~4.6\u20134.9 kg. That implies an effective bulk density around 600\u2013750 kg/m\u00b3. The effective Young\u2019s modulus of the whole pack is far below solid aluminum due to thin-walled cans, joints, carton compliance, and internal voids; small-strain stiffness for such packed assemblies is on the order of 0.3\u20131.5 GPa. Effective Poisson\u2019s ratio is moderate (carton+can shell structure with liquid contents), ~0.25\u20130.38.",
+        "assumptions": "All 12 cans present and full; standard 355 mL cans (\u00d8\u224866 mm, h\u2248122 mm); typical \u2018fridge pack\u2019 geometry (2\u00d76 cans). Beverage density \u22481000 kg/m\u00b3, can mass 12\u201315 g each, carton 0.2\u20130.3 kg. No significant deformation; room temperature.",
+        "material": {
+            "name": "Composite whole object: paperboard carton + 12 aluminum cans filled with carbonated beverage",
+            "density_kg_per_m3": {
+                "min": 550.0,
+                "max": 750.0
+            },
+            "youngs_modulus_pa": {
+                "min": 300000000.0,
+                "max": 1500000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.25,
+                "max": 0.38
+            }
+        },
+        "object_name_short": "12-pack soda carton",
+        "visible_material_name": "coated/printed paperboard (outer carton)",
+        "version": "materials_v2.0",
+        "vlm_category": "packaged beverage multipack",
+        "category": "Consumer Goods",
+        "vlm_version": "gpt-5",
+        "material_group": "paper/cardboard",
+        "categories_gso": "Consumer Goods"
+    },
+    "DPC_tropical_Trends_Hat": {
+        "object_name": "Woven straw sun hat with wide brim and red band",
+        "thinking": "The object is a woven straw sun hat with a wide brim and ventilated crown. As a thin, highly porous shell with a large hollow interior, its bulk/effective properties are far lower than solid plant fiber. I account for the open weave, thin walls (~1\u20132 mm), and overall envelope volume of a typical adult hat.",
+        "assumptions": "Typical adult straw hat; outer diameter ~0.35\u20130.40 m, crown height ~0.10\u20130.12 m, overall envelope volume ~8\u201315 L. Mass ~0.10\u20130.25 kg. High porosity (void fraction ~80\u201395%). Red band adds negligible mass/stiffness. Dry conditions.",
+        "material": {
+            "name": "woven straw hat (bulk/effective, porous shell including hollows)",
+            "density_kg_per_m3": {
+                "min": 6.0,
+                "max": 25.0
+            },
+            "youngs_modulus_pa": {
+                "min": 20000000.0,
+                "max": 300000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.2,
+                "max": 0.35
+            }
+        },
+        "object_name_short": "straw sun hat",
+        "visible_material_name": "woven straw/palm-leaf fibers with a red band",
+        "version": "materials_v2.0",
+        "vlm_category": "apparel_hat",
+        "category": "Hat",
+        "vlm_version": "gpt-5",
+        "material_group": "fabric/textile",
+        "categories_gso": "Hat"
+    },
+    "Tory_Burch_Kaitlin_Ballet_Mestico_in_BlackGold": {
+        "object_name": "Quilted leather ballet flat with metal cap toe",
+        "thinking": "The object is a lightweight, hollow ballet flat: quilted leather upper, thin rubber sole, and a small metallic cap toe. Most of the volume is air. Typical single-shoe mass ~0.15\u20130.25 kg and external envelope ~0.6\u20130.8 L, yielding a whole-object bulk density a few hundred kg/m^3. Global stiffness is governed by flexible leather/textile layers and rubber sole with minor local stiffening from the metal cap; the effective Young\u2019s modulus is in the soft polymer/foam range. Poisson\u2019s ratio is high due to rubber/leather dominance.",
+        "assumptions": "Adult women\u2019s size ~24\u201326 cm length; upper is leather or synthetic leather with quilted padding; thin rubber outsole; small decorative metal toe cap; no rigid midsole; mostly air inside; dry and empty.",
+        "material": {
+            "name": "composite shoe (leather + rubber + metal + air voids)",
+            "density_kg_per_m3": {
+                "min": 180.0,
+                "max": 450.0
+            },
+            "youngs_modulus_pa": {
+                "min": 5000000.0,
+                "max": 40000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.38,
+                "max": 0.49
+            }
+        },
+        "object_name_short": "ballet flat shoe",
+        "visible_material_name": "quilted leather upper, metallic toe cap, rubber sole",
+        "version": "materials_v2.0",
+        "vlm_category": "footwear",
+        "category": "Shoe",
+        "vlm_version": "gpt-5",
+        "material_group": "leather",
+        "categories_gso": "Shoe"
+    },
+    "Connect_4_Launchers": {
+        "object_name": "Retail board game box containing Connect 4 Launchers pieces",
+        "thinking": "The images show a closed retail board\u2011game box (Connect 4 Launchers). The exterior is printed paperboard; inside are mostly air plus lightweight plastic components and possibly a thin plastic tray. Whole-object properties should reflect a hollow, mostly-air interior with a stiff but thin paperboard shell and some plastic parts.",
+        "assumptions": "Typical game box size about 0.30 x 0.30 x 0.07\u20130.08 m (~0.006\u20130.007 m^3). Typical mass for such a game 0.5\u20131.5 kg depending on components and inserts. Box is paperboard (not corrugated) with a glossy print; inside includes plastic discs/parts and an insert. Effective stiffness dominated by the thin cardboard shell and hollow volume.",
+        "material": {
+            "name": "Whole boxed board game (paperboard shell + plastic components + air voids)",
+            "density_kg_per_m3": {
+                "min": 80.0,
+                "max": 220.0
+            },
+            "youngs_modulus_pa": {
+                "min": 5000000.0,
+                "max": 80000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.05,
+                "max": 0.35
+            }
+        },
+        "object_name_short": "Board game box",
+        "visible_material_name": "Printed paperboard (cardboard) outer box",
+        "version": "materials_v2.0",
+        "vlm_category": "Consumer packaged goods > Toy/board game box",
+        "category": "Board Games",
+        "vlm_version": "gpt-5",
+        "material_group": "paper/cardboard",
+        "categories_gso": "Board Games"
+    },
+    "Samsung_CLTC406S_Toner_Cartridge_Cyan_1pack": {
+        "object_name": "Samsung C406S cyan toner cartridge retail box with contents",
+        "thinking": "The images show a retail cardboard box for a Samsung C406S cyan toner cartridge, likely containing the plastic toner cartridge, toner powder, some air voids, and light packaging. I estimate bulk properties for the entire boxed product (box + contents + voids).",
+        "assumptions": "Approximate external size ~0.36\u20130.40 m x 0.10\u20130.12 m x 0.16\u20130.20 m (volume ~0.005\u20130.009 m\u00b3). Packaged mass commonly ~0.5\u20131.0 kg. Structure is a printed corrugated/paperboard outer box with internal plastic cartridge and air gaps; stiffness dominated by corrugated panels and internal bracing; overall behaves like a lightweight, void-rich package.",
+        "material": {
+            "name": "Bulk effective: cardboard box with plastic toner cartridge, toner powder, and voids",
+            "density_kg_per_m3": {
+                "min": 60.0,
+                "max": 170.0
+            },
+            "youngs_modulus_pa": {
+                "min": 15000000.0,
+                "max": 120000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.18,
+                "max": 0.35
+            }
+        },
+        "object_name_short": "toner cartridge box",
+        "visible_material_name": "printed corrugated cardboard/paperboard",
+        "version": "materials_v2.0",
+        "vlm_category": "retail_packaging_box",
+        "category": "Toys",
+        "vlm_version": "gpt-5",
+        "material_group": "paper/cardboard",
+        "categories_gso": "Toys"
+    },
+    "Paul_Frank_Dot_Lunch_Box": {
+        "object_name": "Insulated soft lunch bag with zipper and handle",
+        "thinking": "The object is a soft, zippered insulated lunch bag with a hollow interior. The visible shell is printed polyester fabric with a foam-backed structure and likely a plastic liner. For whole-object properties, I consider the entire volume (including the air-filled cavity) relative to typical mass of such bags. A typical size ~25 x 20 x 10 cm gives ~5 L volume; mass is usually ~0.25\u20130.5 kg, yielding an effective bulk density on the order of tens of kg/m^3. Global stiffness is dominated by thin fabric/foam walls and the hollow interior, so the effective Young\u2019s modulus is very low (soft, easily deformable), comparable to padded foam composites; Poisson\u2019s ratio reflects a compressible foam/fabric composite.",
+        "assumptions": "Bag is empty; dimensions approx. 25\u00d720\u00d710 cm; materials: polyester fabric shell, thin closed/open-cell foam insulation, polymer liner, zipper and handle. No rigid frame. Thin walls (5\u201310 mm) and mostly air by volume.",
+        "material": {
+            "name": "insulated fabric composite (polyester shell + foam + polymer liner + air voids)",
+            "density_kg_per_m3": {
+                "min": 30.0,
+                "max": 120.0
+            },
+            "youngs_modulus_pa": {
+                "min": 50000.0,
+                "max": 5000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.15,
+                "max": 0.45
+            }
+        },
+        "object_name_short": "insulated lunch bag",
+        "visible_material_name": "printed polyester fabric with foam insulation and polymer liner",
+        "version": "materials_v2.0",
+        "vlm_category": "softgoods_textile_bag",
+        "category": "Bag",
+        "vlm_version": "gpt-5",
+        "material_group": "fabric/textile",
+        "categories_gso": "Bag"
+    },
+    "Transformers_Age_of_Extinction_Stomp_and_Chomp_Grimlock_Figure": {
+        "object_name": "Articulated robot dinosaur toy (hollow plastic, transforming/action-figure style)",
+        "thinking": "The object appears to be an articulated robot-dinosaur toy made from thin molded plastic shells with many cavities and joints. The bulk properties should reflect a mostly hollow structure: much lower effective density and stiffness than solid ABS due to air gaps, thin sections, snap joints, and small metal pins/screws. Estimate whole-object (effective) properties accordingly.",
+        "assumptions": "- Predominantly injection-molded ABS (and/or similar toy-grade plastics), painted metallic bronze and dark gray.\n- Largely hollow shells with internal ribs; some small metal pins/screws and possibly POM joints, but negligible for bulk properties.\n- Articulation and segmented tail reduce global stiffness; effective modulus far below solid ABS.\n- No electronics or heavy batteries inside.",
+        "material": {
+            "name": "Hollow ABS plastic assembly (toy-grade, mostly air-filled)",
+            "density_kg_per_m3": {
+                "min": 250.0,
+                "max": 550.0
+            },
+            "youngs_modulus_pa": {
+                "min": 70000000.0,
+                "max": 400000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.25,
+                "max": 0.38
+            }
+        },
+        "object_name_short": "hollow plastic robot dinosaur toy",
+        "visible_material_name": "painted molded ABS plastic",
+        "version": "materials_v2.0",
+        "vlm_category": "toy > plastic action figure",
+        "category": "Consumer Goods",
+        "vlm_version": "gpt-5",
+        "material_group": "plastic",
+        "categories_gso": "Consumer Goods"
+    },
+    "Frozen_Olafs_In_Trouble_PopOMatic_Game_OEu83W9T8pD": {
+        "object_name": "Pop-o-matic style plastic board game with hollow board and plastic pegs",
+        "thinking": "The object is a lightweight plastic board game with a central pop-dice dome and hollow, thin-walled board plus small hollow/solid pegs. Most of the internal volume is air (ribs/cavities under the board, hollow pieces), so bulk density and stiffness are far below solid plastic. I treat the whole assembled game (board + dome + pegs) as a single bulk-effective material.",
+        "assumptions": "Approx. board size 30\u201340 cm square, thickness ~1\u20132 cm; thin injection\u2011molded ABS/HIPS board with ribs; clear PC or acrylic pop dome; small ABS/HIPS pegs; mostly air inside; no metal weights or dense fillers; typical toy manufacturing.",
+        "material": {
+            "name": "bulk-effective: hollow thin-walled ABS/HIPS shell with PC dome and plastic pegs (mostly air inside)",
+            "density_kg_per_m3": {
+                "min": 150.0,
+                "max": 400.0
+            },
+            "youngs_modulus_pa": {
+                "min": 80000000.0,
+                "max": 300000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.2,
+                "max": 0.4
+            }
+        },
+        "object_name_short": "plastic board game",
+        "visible_material_name": "colored plastic (ABS/HIPS) with clear plastic dome",
+        "version": "materials_v2.0",
+        "vlm_category": "plastic/polymer (toy/game)",
+        "category": "Board Games",
+        "vlm_version": "gpt-5",
+        "material_group": "plastic",
+        "categories_gso": "Board Games"
+    },
+    "Wishbone_Pencil_Case": {
+        "object_name": "Cylindrical zippered fabric pencil case (empty)",
+        "thinking": "The object is a small cylindrical zippered pouch/pencil case made from flexible synthetic fabric with a printed pattern, piping, and a zipper. It appears empty and has no rigid frame, so the effective properties should reflect a thin fabric shell enclosing air. Estimated size ~20 cm length and ~8 cm diameter (~1.0 L outer volume). Typical mass for such items is ~60\u2013150 g, giving a bulk density far below solid polymers. Structural stiffness is dominated by the compliant fabric/foam shell and seams; under compression it collapses easily, so an effective Young\u2019s modulus in the tens of kPa to a few MPa is appropriate.",
+        "assumptions": "Empty case; outer volume ~1.0\u00d710^-3 m^3; shell is polyester or nylon fabric possibly with thin PU/PVC coating and light padding (~1\u20132 mm foam); no rigid inserts; typical areal density 200\u2013400 g/m^2; zipper and trims minor mass contribution.",
+        "material": {
+            "name": "Empty soft fabric pencil case (polyester/nylon shell + air)",
+            "density_kg_per_m3": {
+                "min": 50.0,
+                "max": 200.0
+            },
+            "youngs_modulus_pa": {
+                "min": 50000.0,
+                "max": 5000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.1,
+                "max": 0.4
+            }
+        },
+        "object_name_short": "fabric pencil case",
+        "visible_material_name": "coated polyester/nylon fabric with zipper and piping",
+        "version": "materials_v2.0",
+        "vlm_category": "soft_bag_case",
+        "category": "Bag",
+        "vlm_version": "gpt-5",
+        "material_group": "fabric/textile",
+        "categories_gso": "Bag"
+    },
+    "Olive_Kids_Dinosaur_Land_Lunch_Box": {
+        "object_name": "Children's soft-sided insulated lunch box with dinosaur print",
+        "thinking": "The object is a soft-sided, insulated lunch box: printed polyester exterior, foam insulation, polymer liner, and nylon zipper/handle. It is mostly hollow when empty, so bulk properties should include the interior air volume, making effective density very low and stiffness closer to that of a thin fabric/foam shell.",
+        "assumptions": "Approx. outer size ~25 x 20 x 10 cm (~0.005 m^3). Empty mass ~0.15\u20130.45 kg based on similar products. Construction: polyester or PU-coated fabric outside, ~3\u20138 mm PE/EVA/PU foam core, PEVA liner. No rigid frame. Estimating effective properties for the whole object (including voids) under slow compression/bending.",
+        "material": {
+            "name": "Whole-object effective (fabric + foam + liner, mostly hollow)",
+            "density_kg_per_m3": {
+                "min": 30.0,
+                "max": 90.0
+            },
+            "youngs_modulus_pa": {
+                "min": 50000.0,
+                "max": 3000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.2,
+                "max": 0.45
+            }
+        },
+        "object_name_short": "insulated lunch bag",
+        "visible_material_name": "printed polyester fabric with foam insulation and polymer liner; nylon zipper",
+        "version": "materials_v2.0",
+        "vlm_category": "softgoods-insulated-bag",
+        "category": "Bag",
+        "vlm_version": "gpt-5",
+        "material_group": "fabric/textile",
+        "categories_gso": "Bag"
+    },
+    "CREATIVE_BLOCKS_35_MM": {
+        "object_name": "Assembled wooden toy castle made of stacked blocks",
+        "thinking": "Looks like a small castle built from solid, painted wooden blocks. The blocks appear to be hardwood (typical for toys: beech, rubberwood, birch). The assembly is mostly solid with small air gaps and crenellation cutouts; paint layers are thin. As a stacked, unglued assembly, effective stiffness is reduced by block-to-block slip, so whole-object Young\u2019s modulus is far below base-wood values; density remains close to wood minus small void fraction.",
+        "assumptions": "Blocks are solid hardwood with thin paint; no internal cavities within each block; blocks are not glued and can slip at contacts; estimate considers the assembled castle\u2019s bulk properties within its outer envelope, including small voids from crenellations and steps; moisture content near room conditions.",
+        "material": {
+            "name": "effective bulk of stacked painted wooden blocks",
+            "density_kg_per_m3": {
+                "min": 520.0,
+                "max": 700.0
+            },
+            "youngs_modulus_pa": {
+                "min": 200000000.0,
+                "max": 3000000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.2,
+                "max": 0.4
+            }
+        },
+        "object_name_short": "wooden block castle",
+        "visible_material_name": "painted hardwood (beech/rubberwood-like)",
+        "version": "materials_v2.0",
+        "vlm_category": "painted wood",
+        "category": "Toys",
+        "vlm_version": "gpt-5",
+        "material_group": "wood",
+        "categories_gso": "Toys"
+    },
+    "D_ROSE_45": {
+        "object_name": "High-top athletic sneaker with synthetic upper, foam midsole, and rubber outsole",
+        "thinking": "The object is a high-top athletic sneaker with a synthetic upper, foam midsole, rubber outsole, fabric lining and laces, and a large internal air cavity. For whole-object (bulk/effective) properties I consider the external envelope volume of the shoe, include the hollow interior and porosity of foams, and weight fractions from typical basketball sneakers (rubber outsole, EVA/PU foam midsole, synthetic upper). This yields a low bulk density and a soft effective modulus compared to solid rubber or plastics.",
+        "assumptions": "Adult size sneaker, mass ~0.35\u20130.55 kg; external volume ~3.0\u20134.5e-3 m^3; internal cavity mostly air; midsole primarily EVA/PU foam; outsole solid rubber; upper synthetic leather/mesh. Conditions: room temperature, small-strain effective modulus in compression/bending of the whole shoe.",
+        "material": {
+            "name": "Composite shoe (synthetic upper + EVA/PU foam midsole + rubber outsole + fabric, with internal air cavity)",
+            "density_kg_per_m3": {
+                "min": 80.0,
+                "max": 180.0
+            },
+            "youngs_modulus_pa": {
+                "min": 500000.0,
+                "max": 15000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.3,
+                "max": 0.49
+            }
+        },
+        "object_name_short": "athletic sneaker",
+        "visible_material_name": "synthetic upper with rubber outsole and EVA/PU foam midsole",
+        "version": "materials_v2.0",
+        "vlm_category": "footwear",
+        "category": "Shoe",
+        "vlm_version": "gpt-5",
+        "material_group": "fabric/textile",
+        "categories_gso": "Shoe"
+    },
+    "Reebok_FS_HI_MINI": {
+        "object_name": "High-top sneaker (multi-material footwear)",
+        "thinking": "The object is a high\u2011top sneaker with a rubber outsole (white), EVA/foam midsole, padded synthetic\u2011leather upper, laces and hook\u2011and\u2011loop straps. When considering whole\u2011object properties, most of the shoe\u2019s bounding volume is air (foot cavity), plus porous foams, so the effective bulk density and stiffness are much lower than any constituent solid polymer.",
+        "assumptions": "Adult high\u2011top sneaker, external approx 0.28 m \u00d7 0.10 m \u00d7 0.14 m (~3\u20134.5\u00d710^-3 m^3). Mass per shoe ~0.25\u20130.55 kg. Internal void fraction large (~60\u201375%). Materials: rubber outsole, EVA/PU foam midsole and padding, synthetic leather/textile upper. Estimate homogenized properties over the whole external volume, including hollows and porosity.",
+        "material": {
+            "name": "multi-material composite (rubber outsole + EVA/PU foam + synthetic leather/textile, with large internal void)",
+            "density_kg_per_m3": {
+                "min": 60.0,
+                "max": 200.0
+            },
+            "youngs_modulus_pa": {
+                "min": 100000.0,
+                "max": 5000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.25,
+                "max": 0.45
+            }
+        },
+        "object_name_short": "sneaker",
+        "visible_material_name": "synthetic leather upper with rubber outsole and foam padding",
+        "version": "materials_v2.0",
+        "vlm_category": "footwear_softgoods",
+        "category": "Shoe",
+        "vlm_version": "gpt-5",
+        "material_group": "leather",
+        "categories_gso": "Shoe"
+    },
+    "Poppin_File_Sorter_White": {
+        "object_name": "Powder-coated metal wire desk file sorter with base",
+        "thinking": "Object appears to be a powder\u2011coated metal wire desk file sorter on a flat base. For whole\u2011object properties, treat the rack as a highly voided, lattice\u2011like structure and use the outer bounding volume (including empty spaces) to estimate bulk density. Estimate effective stiffness using lattice scaling (E* ~ (rho*/rhos)^2 * Es for bending\u2011dominated structures).",
+        "assumptions": "Approx. outer dimensions 0.20\u20130.24 m (width) \u00d7 0.14\u20130.18 m (depth) \u00d7 0.12\u20130.16 m (height); steel wire diameter ~4\u20136 mm; 5\u20136 U\u2011shaped loops; base is a thin steel plate (~4\u20138 mm) of similar footprint; powder\u2011coat adds negligible mass; total mass roughly 0.9\u20132.0 kg. Relative solid volume fraction ~0.04\u20130.10. Whole\u2011object properties represent the rack plus voids within the outer envelope, not the steel itself.",
+        "material": {
+            "name": "Powder-coated steel wire rack (whole-object effective)",
+            "density_kg_per_m3": {
+                "min": 180.0,
+                "max": 600.0
+            },
+            "youngs_modulus_pa": {
+                "min": 300000000.0,
+                "max": 2500000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.15,
+                "max": 0.35
+            }
+        },
+        "object_name_short": "metal wire file sorter",
+        "visible_material_name": "powder-coated metal (likely steel)",
+        "version": "materials_v2.0",
+        "vlm_category": "metal",
+        "category": "Consumer Goods",
+        "vlm_version": "gpt-5",
+        "material_group": "metal",
+        "categories_gso": "Consumer Goods"
+    },
+    "Schleich_Therizinosaurus_ln9cruulPqc": {
+        "object_name": "Painted dinosaur toy figurine (Theropod/therizinosaur style)",
+        "thinking": "The object appears to be a small, painted dinosaur figurine (toy). Such figures are commonly made from plasticized PVC (soft vinyl) or similar TPE, often molded as a mostly solid piece with slight flexibility. The paint layer is thin and has negligible effect on bulk properties. No signs of metal or foam cores. Whole-object properties therefore approximate a solid soft-PVC figurine, allowing some range for possible minor hollows.",
+        "assumptions": "Size ~10\u201325 cm long; primarily solid plasticized PVC (soft vinyl) with thin acrylic paint; no internal metal frame; minimal hollow sections; not rigid PVC or hard ABS.",
+        "material": {
+            "name": "Plasticized PVC (soft vinyl), bulk of figurine",
+            "density_kg_per_m3": {
+                "min": 950.0,
+                "max": 1350.0
+            },
+            "youngs_modulus_pa": {
+                "min": 5000000.0,
+                "max": 100000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.45,
+                "max": 0.49
+            }
+        },
+        "object_name_short": "dinosaur toy figurine",
+        "visible_material_name": "painted soft vinyl plastic",
+        "version": "materials_v2.0",
+        "vlm_category": "polymer/plastic",
+        "category": "Toys",
+        "vlm_version": "gpt-5",
+        "material_group": "plastic",
+        "categories_gso": "Toys"
+    },
+    "Nightmare_Before_Christmas_Collectors_Edition_Operation": {
+        "object_name": "Operation board game retail box (sealed)",
+        "thinking": "The object is a sealed retail board game box. It\u2019s mostly an air-filled paperboard carton with a plastic tray and lightweight components inside. The effective (bulk) properties should reflect the hollow nature and contents, not solid paperboard. Bulk density is computed from typical mass of such a game divided by the external box volume. Bulk stiffness is low because the structure is a thin-walled box with air inside; effective Young\u2019s modulus is orders of magnitude lower than solid paperboard.",
+        "assumptions": "Approx exterior size \u2248 0.40 m \u00d7 0.27 m \u00d7 0.05 m (volume \u2248 5.4e-3 m^3). Typical mass for a board game like this \u2248 0.5\u20131.1 kg (contents: plastic game board, small parts, paper). Box is printed paperboard with thin shrink wrap. Object is intact and not tightly packed with dense items.",
+        "material": {
+            "name": "air-filled paperboard retail box with mixed plastic/paper contents",
+            "density_kg_per_m3": {
+                "min": 80.0,
+                "max": 220.0
+            },
+            "youngs_modulus_pa": {
+                "min": 50000.0,
+                "max": 10000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.05,
+                "max": 0.35
+            }
+        },
+        "object_name_short": "board game box",
+        "visible_material_name": "printed paperboard with shrink-wrap plastic",
+        "version": "materials_v2.0",
+        "vlm_category": "consumer_packaging_box_paperboard",
+        "category": "Board Games",
+        "vlm_version": "gpt-5",
+        "material_group": "paper/cardboard",
+        "categories_gso": "Board Games"
+    },
+    "Olive_Kids_Dinosaur_Land_Munch_n_Lunch": {
+        "object_name": "Soft insulated children\u2019s lunch bag made of fabric with foam insulation and polymer liner",
+        "thinking": "The object is a small, collapsible, soft-sided insulated lunch bag. It appears to have an outer printed polyester/nylon fabric, foam insulation (likely PE/EVA), and an inner polymer liner, with fabric binding around the edges. As a whole object it contains a large hollow air cavity and thin flexible walls, so its effective bulk density and stiffness are far lower than the base polymers. A typical bag of this size is 2.5\u20134 L volume and ~0.15\u20130.30 kg mass, giving an effective density on the order of tens of kg/m^3. The effective Young\u2019s modulus should reflect the easily compressible, non-rigid structure (foam + fabric shell), in the tens of kPa to a few MPa range. Poisson ratio for such soft foam/textile composites can vary but typically ~0.2\u20130.45.",
+        "assumptions": "Empty bag (no contents). Volume \u2248 2.5\u20134.0 L; mass \u2248 0.15\u20130.30 kg. Foam insulation thickness ~2\u20135 mm; no rigid frame; flexible textile shell. Interior mostly air; properties represent bulk/effective response under small compressive deformations.",
+        "material": {
+            "name": "Whole-object effective: soft insulated lunch bag (textile + foam + liner, mostly hollow)",
+            "density_kg_per_m3": {
+                "min": 30.0,
+                "max": 120.0
+            },
+            "youngs_modulus_pa": {
+                "min": 50000.0,
+                "max": 3000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.2,
+                "max": 0.45
+            }
+        },
+        "object_name_short": "insulated lunch bag",
+        "visible_material_name": "printed polyester/nylon fabric with PE/EVA foam insulation and polymer liner",
+        "version": "materials_v2.0",
+        "vlm_category": "soft insulated textile/foam bag",
+        "category": "Bag",
+        "vlm_version": "gpt-5",
+        "material_group": "fabric/textile",
+        "categories_gso": "Bag"
+    },
+    "Olive_Kids_Butterfly_Garden_Munch_n_Lunch_Bag": {
+        "object_name": "Soft-sided insulated lunch bag with butterfly pattern",
+        "thinking": "The object is a soft-sided insulated lunch bag with a hollow interior. The shell appears to be printed polyester fabric, likely with a thin closed-cell foam core and a wipeable PEVA/PVC lining. As a whole object, most of its bounding volume is air, so effective bulk density is very low compared with the base materials. The overall stiffness is governed by the thin foam/fabric laminate and stitching; the bag is easily compressible, so the effective Young\u2019s modulus is in the tens of kPa to a few MPa range.",
+        "assumptions": "Approximate outside size ~24 x 20 x 15 cm (\u22487 L). Empty and unpressurized; no rigid frame. Typical construction: 600D polyester outer, 3\u20136 mm closed-cell PE/EVA foam, PEVA/PVC lining. Mass roughly 0.2\u20130.4 kg. Estimations target bulk properties across the outer envelope, not intrinsic polymer values.",
+        "material": {
+            "name": "soft insulated fabric composite (polyester + closed-cell foam + PEVA/PVC lining)",
+            "density_kg_per_m3": {
+                "min": 20.0,
+                "max": 70.0
+            },
+            "youngs_modulus_pa": {
+                "min": 50000.0,
+                "max": 3000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.2,
+                "max": 0.45
+            }
+        },
+        "object_name_short": "insulated lunch bag",
+        "visible_material_name": "polyester fabric with foam insulation and PEVA/PVC lining",
+        "version": "materials_v2.0",
+        "vlm_category": "textile-composite",
+        "category": "Bag",
+        "vlm_version": "gpt-5",
+        "material_group": "fabric/textile",
+        "categories_gso": "Bag"
+    },
+    "Lego_Friends_Advent_Calendar": {
+        "object_name": "LEGO Friends Advent Calendar retail box with contents",
+        "thinking": "Estimate bulk properties of the entire retail box as seen: a printed paperboard carton containing many small ABS-plastic pieces in inner plastic bags with substantial air gaps. Whole-object density is far lower than solid plastic or paperboard due to voids; stiffness reflects a thin paperboard shell with loosely packed contents.",
+        "assumptions": "Box size roughly 0.38 \u00d7 0.26 \u00d7 0.05\u20130.06 m; total mass ~0.4\u20130.8 kg based on similar LEGO sets; interior is mostly air with small ABS parts and thin bags; no corrugation, just paperboard carton with inner tray. Properties reported are effective (bulk) for the full boxed product under small compressive/bending loads.",
+        "material": {
+            "name": "Composite: paperboard retail box with plastic toy contents and air voids (bulk)",
+            "density_kg_per_m3": {
+                "min": 80.0,
+                "max": 180.0
+            },
+            "youngs_modulus_pa": {
+                "min": 10000000.0,
+                "max": 100000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.2,
+                "max": 0.35
+            }
+        },
+        "object_name_short": "LEGO advent calendar box",
+        "visible_material_name": "printed paperboard (cardboard) carton",
+        "version": "materials_v2.0",
+        "vlm_category": "packaged_consumer_box",
+        "category": "Legos",
+        "vlm_version": "gpt-5",
+        "material_group": "paper/cardboard",
+        "categories_gso": "Legos"
+    },
+    "Womens_Teva_Capistrano_Bootie_ldjRT9yZ5Ht": {
+        "object_name": "Gray ankle boot with leather-like upper and rubber sole",
+        "thinking": "This is a gray ankle boot with a suede/nubuck-like leather upper, a rubber outsole, and likely textile/foam lining. The object is mostly hollow air inside. For an adult-size single boot, typical mass is ~0.45\u20130.8 kg and exterior volume ~1.3\u20131.8 L, giving a whole-object bulk density roughly 250\u2013620 kg/m3. The effective stiffness of the whole boot (considering the thin compliant upper, rubber sole, seams, foam, and interior voids) is much lower than base leather stiffness and is closer to a soft composite shell: on the order of 1\u201330 MPa. Poisson ratio is governed by rubber/leather composite behavior, trending toward rubber-like values.",
+        "assumptions": "Adult-size single boot; upper is leather or synthetic nubuck of similar stiffness; rubber/EVA-like sole; textile/foam lining; interior unfilled (air); no metal shank. Estimates reflect the effective homogenized properties of the entire object including voids.",
+        "material": {
+            "name": "Composite boot (leather or synthetic upper + rubber outsole + foam/textile lining, mostly air void)",
+            "density_kg_per_m3": {
+                "min": 250.0,
+                "max": 620.0
+            },
+            "youngs_modulus_pa": {
+                "min": 1000000.0,
+                "max": 30000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.35,
+                "max": 0.49
+            }
+        },
+        "object_name_short": "ankle boot",
+        "visible_material_name": "suede/nubuck leather upper with rubber outsole",
+        "version": "materials_v2.0",
+        "vlm_category": "footwear",
+        "category": "Shoe",
+        "vlm_version": "gpt-5",
+        "material_group": "leather",
+        "categories_gso": "Shoe"
+    },
+    "LEGO_Star_Wars_Advent_Calendar": {
+        "object_name": "LEGO Star Wars Advent Calendar boxed set (sealed, with contents)",
+        "thinking": "The images show a sealed LEGO Star Wars Advent Calendar retail box. The visible outer material is printed paperboard/cardboard; inside are many small ABS plastic pieces in plastic bags and likely a thin cardboard/plastic tray, with substantial air voids. Whole-object properties should reflect the boxed set as a volume (box walls + contents + air). Using typical advent calendar dimensions (~0.38 \u00d7 0.26 \u00d7 0.07 m \u2248 0.0069 m^3) and an estimated mass of roughly 0.5\u20130.7 kg, the effective bulk density is low (\u224870\u2013100 kg/m^3). The effective stiffness of the whole object is governed mainly by the cardboard box and loosely packed contents, giving a bulk Young\u2019s modulus far below solid ABS or solid paperboard.",
+        "assumptions": "Box is sealed and about 38\u00d726\u00d77 cm; contents are mostly ABS LEGO elements (plus thin PE bags and a lightweight inner tray); approximately 50\u201370% of the internal volume is air/voids between parts; mass of pieces \u22480.3\u20130.45 kg and packaging \u22480.15\u20130.25 kg; effective properties refer to the boxed set as a whole under small compressive strains; temperatures/humidity are normal indoor conditions.",
+        "material": {
+            "name": "Effective bulk of boxed set (cardboard box + ABS pieces + plastic bags + air voids)",
+            "density_kg_per_m3": {
+                "min": 60.0,
+                "max": 120.0
+            },
+            "youngs_modulus_pa": {
+                "min": 50000000.0,
+                "max": 800000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.15,
+                "max": 0.35
+            }
+        },
+        "object_name_short": "LEGO advent calendar box",
+        "visible_material_name": "Printed paperboard/cardboard outer box",
+        "version": "materials_v2.0",
+        "vlm_category": "packaged toy box",
+        "category": "Legos",
+        "vlm_version": "gpt-5",
+        "material_group": "paper/cardboard",
+        "categories_gso": "Legos"
+    },
+    "Hasbro_Trivial_Pursuit_Family_Edition_Game": {
+        "object_name": "Trivial Pursuit Family Edition boxed game (complete retail package)",
+        "thinking": "The object is a retail board game box containing cards and small plastic pieces. The outer shell is printed paperboard; inside there is a plastic tray and stacks of paper cards with some air gaps. Estimations target the whole boxed product as a bulk composite (paperboard + paper + plastic + voids).",
+        "assumptions": "Typical family board game box size ~25\u201330 cm \u00d7 20\u201327 cm \u00d7 4\u20137 cm (volume ~2\u20134 L). Total mass commonly ~0.5\u20131.2 kg depending on card count and plastic tray. Contents are mostly paper (cards, inserts) with a thin plastic organizer and significant air space. Effective stiffness considered for through-thickness compression of the sealed box, not intrinsic paper/plastic values.",
+        "material": {
+            "name": "Composite: paperboard box + paper cards + plastic tray + air voids",
+            "density_kg_per_m3": {
+                "min": 150.0,
+                "max": 350.0
+            },
+            "youngs_modulus_pa": {
+                "min": 100000000.0,
+                "max": 1000000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.25,
+                "max": 0.4
+            }
+        },
+        "object_name_short": "board game box",
+        "visible_material_name": "printed paperboard (cardboard) outer box with plastic tray and paper contents",
+        "version": "materials_v2.0",
+        "vlm_category": "composite packaged consumer product (cardboard box with paper/plastic contents)",
+        "category": "Board Games",
+        "vlm_version": "gpt-5",
+        "material_group": "mixed (paper + plastic)",
+        "categories_gso": "Board Games"
+    },
+    "ASICS_GELLinksmaster_WhiteCoffeeSand": {
+        "object_name": "Athletic running shoe (trail-style)",
+        "thinking": "The object is a single athletic shoe with a rubber outsole, EVA/PU foam midsole, and synthetic leather/mesh upper. The shoe has a large hollow interior where the foot goes plus porous foams, so the whole-object (bulk) density is far below solid rubber. Estimating outer shoe volume at ~2.0\u20132.6 L and mass at ~0.30\u20130.45 kg yields an effective density around 120\u2013225 kg/m^3. Effective Young\u2019s modulus is dominated by compressible foam and flexible construction, giving MPa-level stiffness; Poisson\u2019s ratio is similar to soft foams/rubbers.",
+        "assumptions": "Single adult running/trail shoe, size ~US 9\u201311; outer volume ~2.0\u20132.6 L; mass ~0.30\u20130.45 kg; materials typical of modern athletic shoes (rubber outsole, EVA/PU foam midsole, synthetic upper). Interior is mostly air; foams are closed/open-cell with significant porosity. Properties represent bulk response of the whole shoe under small-strain compression/tension.",
+        "material": {
+            "name": "composite footwear (rubber outsole + EVA/PU foam midsole + synthetic upper; hollow interior)",
+            "density_kg_per_m3": {
+                "min": 120.0,
+                "max": 250.0
+            },
+            "youngs_modulus_pa": {
+                "min": 1000000.0,
+                "max": 20000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.2,
+                "max": 0.45
+            }
+        },
+        "object_name_short": "running shoe",
+        "visible_material_name": "synthetic upper with rubber outsole and EVA foam midsole",
+        "version": "materials_v2.0",
+        "vlm_category": "footwear",
+        "category": "Shoe",
+        "vlm_version": "gpt-5",
+        "material_group": "fabric/textile",
+        "categories_gso": "Shoe"
+    },
+    "Horse_Dreams_Pencil_Case": {
+        "object_name": "Cylindrical fabric pencil case / zippered pouch (hollow, mostly air)",
+        "thinking": "The images show a small cylindrical zippered pouch/pencil case made of printed fabric. It appears mostly hollow/empty, so bulk properties are governed by the thin fabric shell plus air. Typical size ~18\u201322 cm long and 7\u20139 cm diameter; typical mass ~60\u2013120 g. Effective stiffness is very low because the shell collapses under compression unless tensioned.",
+        "assumptions": "Object is empty; single-layer woven polyester/nylon fabric with light piping and zipper; no rigid frame; dimensions ~0.8\u20131.4 L internal volume; mass ~50\u2013150 g; properties refer to quasi-static, small-strain bulk response of the whole pouch (air-filled, collapsible shell).",
+        "material": {
+            "name": "hollow fabric pouch (polyester canvas shell + air, empty)",
+            "density_kg_per_m3": {
+                "min": 30.0,
+                "max": 150.0
+            },
+            "youngs_modulus_pa": {
+                "min": 2000.0,
+                "max": 200000.0
+            },
+            "poisson_ratio": {
+                "min": 0.1,
+                "max": 0.4
+            }
+        },
+        "object_name_short": "fabric pencil case",
+        "visible_material_name": "printed polyester/nylon fabric with zipper and piping",
+        "version": "materials_v2.0",
+        "vlm_category": "bag/pouch (softgoods)",
+        "category": "Bag",
+        "vlm_version": "gpt-5",
+        "material_group": "fabric/textile",
+        "categories_gso": "Bag"
+    },
+    "FisherPrice_Make_A_Match_Game_Thomas_Friends": {
+        "object_name": "Boxed memory matching card game with printed paperboard packaging",
+        "thinking": "The item is a retail paperboard box for a kids\u2019 matching game, likely filled with a stack of thick chipboard tiles and some air voids. The effective (bulk) properties should reflect a mostly hollow paperboard shell with dense chipboard pieces inside. A typical box of this type is roughly 26\u00d720\u00d75 cm and weighs around 0.3\u20130.6 kg, giving an effective density near 120\u2013220 kg/m^3. Global stiffness under compression is far lower than solid paperboard because load paths are through the thin box walls and loosely packed contents, so an effective Young\u2019s modulus in the tens to low hundreds of MPa is reasonable; Poisson\u2019s ratio similar to paper materials.",
+        "assumptions": "Box contains ~60\u201380 chipboard cards/tiles plus insert; packing not tightly constrained; majority air volume; no plastic tray. Dimensions and mass estimated from common products of this type.",
+        "material": {
+            "name": "air-filled paperboard box with chipboard cards (whole-object effective)",
+            "density_kg_per_m3": {
+                "min": 120.0,
+                "max": 220.0
+            },
+            "youngs_modulus_pa": {
+                "min": 20000000.0,
+                "max": 200000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.15,
+                "max": 0.35
+            }
+        },
+        "object_name_short": "boxed card game",
+        "visible_material_name": "printed paperboard/cardboard (box) with chipboard cards inside",
+        "version": "materials_v2.0",
+        "vlm_category": "consumer_good: boxed game/toy (paperboard packaging)",
+        "category": "Toys",
+        "vlm_version": "gpt-5",
+        "material_group": "paper/cardboard",
+        "categories_gso": "Toys"
+    },
+    "Imaginext_Castle_Ogre": {
+        "object_name": "Green ogre/monster action figure toy (hollow plastic, painted, with flexible chains)",
+        "thinking": "The object is a green monster/ogre action figure toy. Surface sheen, seams, and thick limbs suggest a rigid, painted plastic shell with some softer PVC/TPE parts (chains/wraps). Such toys are commonly injection/blow-molded and mostly hollow to save weight, giving a much lower whole-object density and effective stiffness than solid base plastics. The whole-object Young\u2019s modulus reflects shell buckling and geometry rather than solid resin values.",
+        "assumptions": "Size roughly 10\u201320 cm tall; wall thickness ~2\u20134 mm; interior mostly air; mixed plastics (ABS/PP/PVC) with small flexible components; no internal metal weights; average paint layers negligible for mass.",
+        "material": {
+            "name": "Hollow molded plastic toy (ABS/PP/PVC blend, mostly air inside)",
+            "density_kg_per_m3": {
+                "min": 300.0,
+                "max": 900.0
+            },
+            "youngs_modulus_pa": {
+                "min": 20000000.0,
+                "max": 300000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.25,
+                "max": 0.45
+            }
+        },
+        "object_name_short": "hollow plastic monster toy",
+        "visible_material_name": "painted rigid plastic shell with some flexible PVC parts; mostly hollow",
+        "version": "materials_v2.0",
+        "vlm_category": "toy_figurine",
+        "category": "Action Figures",
+        "vlm_version": "gpt-5",
+        "material_group": "plastic",
+        "categories_gso": "Action Figures"
+    },
+    "LEGO_Bricks_More_Creative_Suitcase": {
+        "object_name": "Cardboard retail box filled with loose LEGO plastic bricks",
+        "thinking": "The object is a closed retail cardboard box containing many loose LEGO plastic bricks. The whole-object properties should reflect a cardboard carton plus a granular fill of ABS pieces with substantial air voids. Effective density is much lower than ABS due to voids and packaging; stiffness is governed by the corrugated box and the rearrangement/compression of the loose bricks inside.",
+        "assumptions": "Typical LEGO set box of roughly 30\u201340 cm by 20\u201330 cm by 7\u201312 cm, containing ~1000 mixed ABS bricks with significant packing voids (packing fraction about 0.25\u20130.45). Cardboard is standard single-wall corrugated. Contents are dry, not vacuum-packed. Estimations are for bulk response under small compressive strains at room temperature.",
+        "material": {
+            "name": "Composite: corrugated cardboard box with loosely packed ABS plastic bricks (granular fill with air voids)",
+            "density_kg_per_m3": {
+                "min": 80.0,
+                "max": 200.0
+            },
+            "youngs_modulus_pa": {
+                "min": 10000000.0,
+                "max": 200000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.15,
+                "max": 0.35
+            }
+        },
+        "object_name_short": "LEGO brick box",
+        "visible_material_name": "printed corrugated cardboard carton",
+        "version": "materials_v2.0",
+        "vlm_category": "packaging_box_cardboard_filled",
+        "category": "Legos",
+        "vlm_version": "gpt-5",
+        "material_group": "paper/cardboard",
+        "categories_gso": "Legos"
+    },
+    "DPC_Handmade_Hat_Brown": {
+        "object_name": "Waxed cotton outback hat (oilskin)",
+        "thinking": "The object appears to be an outback-style hat made from dark, weathered waxed cotton/oilskin with metal eyelets and stitching. As a hollow, flexible shell, the bulk (whole-object) properties are dominated by air volume inside and the thin fabric shell, leading to very low effective density and low overall stiffness.",
+        "assumptions": "Typical adult outback hat: brim ~32\u201335 cm diameter, crown height ~9\u201311 cm. Mass ~150\u2013300 g. Shell is waxed cotton canvas with stitching; no rigid reinforcements; largely hollow interior.",
+        "material": {
+            "name": "effective composite: waxed cotton canvas shell with air-filled hollow interior",
+            "density_kg_per_m3": {
+                "min": 15.0,
+                "max": 40.0
+            },
+            "youngs_modulus_pa": {
+                "min": 3000000.0,
+                "max": 25000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.25,
+                "max": 0.45
+            }
+        },
+        "object_name_short": "hat",
+        "visible_material_name": "waxed cotton canvas (oilskin)",
+        "version": "materials_v2.0",
+        "vlm_category": "apparel_hat",
+        "category": "Hat",
+        "vlm_version": "gpt-5",
+        "material_group": "fabric/textile",
+        "categories_gso": "Hat"
+    },
+    "Wrigley_Orbit_Mint_Variety_18_Count": {
+        "object_name": "Orbit mint variety chewing gum multi-pack retail carton (filled with gum packs)",
+        "thinking": "The object is a retail carton of Orbit chewing gum containing multiple smaller packs. The whole-object properties should reflect the filled box (gum + inner wrappers + outer paperboard) including packing voids and compliance of stacked packs. Typical pack weights suggest the carton is largely filled but still has voids and soft contents, giving an effective density well below solid gum and a low structural stiffness compared to solid paperboard.",
+        "assumptions": "Approx. 18 packs of gum inside; each pack ~30\u201335 g including wrapper. Total mass ~0.55\u20130.70 kg. Outer carton volume roughly 2.0\u20132.6 L (about 22\u201326 cm \u00d7 16\u201320 cm \u00d7 4\u20136 cm). Effective packing fraction ~70\u201385% with remaining space air. Internal layers include soft gum pieces in flexible wrappers and paper/plastic sleeves, within a thin printed paperboard carton. Estimations target small-strain, room\u2011temperature behavior.",
+        "material": {
+            "name": "Composite whole object: paperboard carton with multiple wrapped chewing gum packs (gum + plastic/paper/aluminum wrappers) and air gaps",
+            "density_kg_per_m3": {
+                "min": 200.0,
+                "max": 400.0
+            },
+            "youngs_modulus_pa": {
+                "min": 10000000.0,
+                "max": 200000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.25,
+                "max": 0.4
+            }
+        },
+        "object_name_short": "Gum multi-pack box",
+        "visible_material_name": "Printed paperboard carton",
+        "version": "materials_v2.0",
+        "vlm_category": "packaged food box",
+        "category": "Consumer Goods",
+        "vlm_version": "gpt-5",
+        "material_group": "paper/cardboard",
+        "categories_gso": "Consumer Goods"
+    },
+    "Mens_ASV_Billfish_Boat_Shoe_in_Tan_Leather_wmUJ5PbwANc": {
+        "object_name": "Leather boat shoe with EVA/rubber sole",
+        "thinking": "The object is a casual boat shoe with a leather upper, some mesh/textile panels, laces, an EVA foam midsole, and a rubber outsole. The shoe is mostly hollow inside and includes porous foam layers; thus the whole-object bulk density is far lower than solid leather or rubber. Typical single-shoe mass ~0.25\u20130.45 kg and external displaced volume ~1.5\u20133.0 L, giving an effective density on the order of 120\u2013300+ kg/m\u00b3. The homogenized stiffness of the whole shoe (dominated by EVA foam and rubber layers with leather contributing in tension) is in the soft polymer/foam range rather than leather\u2019s intrinsic stiffness. Poisson\u2019s ratio close to rubber for the sole but reduced by foam and voids.",
+        "assumptions": "Adult size (~US 9\u201311) boat shoe; dry condition (not waterlogged); EVA foam midsole, rubber outsole, leather upper with textile inserts; no steel shank or rigid plate; typical construction and thickness.",
+        "material": {
+            "name": "Composite footwear (leather upper + EVA foam midsole + rubber outsole + textile + internal air voids)",
+            "density_kg_per_m3": {
+                "min": 120.0,
+                "max": 400.0
+            },
+            "youngs_modulus_pa": {
+                "min": 3000000.0,
+                "max": 80000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.25,
+                "max": 0.48
+            }
+        },
+        "object_name_short": "boat shoe",
+        "visible_material_name": "leather upper, textile mesh, EVA foam midsole, rubber outsole, fabric laces",
+        "version": "materials_v2.0",
+        "vlm_category": "footwear",
+        "category": "Shoe",
+        "vlm_version": "gpt-5",
+        "material_group": "leather",
+        "categories_gso": "Shoe"
+    },
+    "SpiderMan_Titan_Hero_12Inch_Action_Figure_oo1qph4wwiW": {
+        "object_name": "Hollow painted plastic Spider-Man action figure/statue",
+        "thinking": "The object appears to be a glossy, rigid, painted plastic superhero action figure/statue. Such figures are typically made as a thin-walled hollow shell (rotomolded/blow-molded PVC or ABS with painted surface). Wall thickness is often ~1\u20133 mm for a ~30\u201345 cm tall figure, so the bulk of the interior is air. Therefore the effective whole-object density is far below the base polymer (~1050\u20131400 kg/m3). The global stiffness under compression/bending is dominated by the thin shell geometry, seams, and local buckling, yielding an effective Young\u2019s modulus well below the solid resin\u2019s 1\u20133 GPa.",
+        "assumptions": "Height ~30\u201345 cm; thin-walled hollow shell with 1\u20133 mm thickness; no internal metal frame or ballast; hard PVC/ABS-like plastic with glossy paint; mostly air inside.",
+        "material": {
+            "name": "Effective bulk of hollow ABS/PVC shell (air-filled)",
+            "density_kg_per_m3": {
+                "min": 150.0,
+                "max": 450.0
+            },
+            "youngs_modulus_pa": {
+                "min": 50000000.0,
+                "max": 400000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.25,
+                "max": 0.45
+            }
+        },
+        "object_name_short": "Hollow plastic action figure",
+        "visible_material_name": "Glossy painted hard plastic (ABS/PVC), hollow shell",
+        "version": "materials_v2.0",
+        "vlm_category": "plastic_hollow_object",
+        "category": "Action Figures",
+        "vlm_version": "gpt-5",
+        "material_group": "plastic",
+        "categories_gso": "Action Figures"
+    },
+    "Reebok_JR_ZIG_COOPERSTOWN_MR": {
+        "object_name": "Athletic training/running shoe with zigzag foam midsole and rubber lug outsole",
+        "thinking": "Object is a composite athletic shoe. Bulk properties should reflect the whole shoe, including hollow interior space for the foot, foam midsole with large voids, rubber outsole lugs, and textile upper. Typical single-shoe mass and external volume are used to estimate effective density; stiffness dominated by foam/rubber stack gives low-MPa bulk modulus; Poisson\u2019s ratio between foam (~0.2\u20130.4) and rubber (~0.49).",
+        "assumptions": "Adult-size athletic shoe; mass ~0.30\u20130.45 kg; external displaced volume ~1.8\u20132.6e-3 m^3 (approx 28\u00d710\u00d710 cm overall shape with non-full packing). Midsole is EVA/PU foam with large cutouts; outsole rubber lugs; upper is synthetic mesh/overlays; interior largely air. Properties reported are effective/bulk for the whole shoe, not base materials.",
+        "material": {
+            "name": "effective bulk composite (shoe: foam + rubber + textile + internal air voids)",
+            "density_kg_per_m3": {
+                "min": 120.0,
+                "max": 260.0
+            },
+            "youngs_modulus_pa": {
+                "min": 2000000.0,
+                "max": 30000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.25,
+                "max": 0.48
+            }
+        },
+        "object_name_short": "athletic shoe",
+        "visible_material_name": "synthetic textile/mesh upper with overlays, EVA/PU foam midsole, rubber outsole lugs",
+        "version": "materials_v2.0",
+        "vlm_category": "footwear",
+        "category": "Shoe",
+        "vlm_version": "gpt-5",
+        "material_group": "fabric/textile",
+        "categories_gso": "Shoe"
+    },
+    "Pepsi_Max_Cola_Zero_Calorie_12_12_fl_oz_355_ml_cans_144_fl_oz_426_lt": {
+        "object_name": "12-pack soda cans in paperboard carton (filled)",
+        "thinking": "The object is a 12\u2011pack carton of soda cans (Pepsi Max) in a printed paperboard sleeve. The bulk properties should reflect the filled aluminum cans plus liquid and the paperboard shell, not the intrinsic materials alone. I treat the pack as a rectangular block with internal voids between cans and carton walls.",
+        "assumptions": "Standard 12-pack of 355 mL (12 oz) aluminum cans arranged 2x6, filled with near\u2011water\u2011density soda; aluminum can mass ~12\u201315 g each; paperboard carton ~0.12\u20130.25 kg. Approx outer dimensions ~0.40\u00d70.14\u00d70.12 m (range 0.38\u20130.42 \u00d7 0.13\u20130.15 \u00d7 0.11\u20130.13 m). Total mass ~4.5\u20134.8 kg. Properties reported as effective, small\u2011strain, isotropic approximations for the whole pack.",
+        "material": {
+            "name": "bulk/effective property: filled 12-pack of aluminum soda cans in paperboard carton",
+            "density_kg_per_m3": {
+                "min": 600.0,
+                "max": 900.0
+            },
+            "youngs_modulus_pa": {
+                "min": 100000000.0,
+                "max": 3000000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.22,
+                "max": 0.35
+            }
+        },
+        "object_name_short": "12-pack soda carton",
+        "visible_material_name": "printed paperboard carton over aluminum cans with liquid",
+        "version": "materials_v2.0",
+        "vlm_category": "beverage multipack carton",
+        "category": "Consumer Goods",
+        "vlm_version": "gpt-5",
+        "material_group": "paper/cardboard",
+        "categories_gso": "Consumer Goods"
+    },
+    "US_Army_Stash_Lunch_Bag": {
+        "object_name": "Soft insulated camouflage lunch bag (empty)",
+        "thinking": "The object is a soft, insulated lunch bag with a camouflage fabric exterior. It is mostly hollow when empty and made from textile layers with thin foam insulation and a plastic liner. Bulk properties should reflect the empty bag\u2019s effective behavior (low average density; very compliant in compression/bending).",
+        "assumptions": "Approx. outer size ~24\u201328 cm tall, 18\u201322 cm wide, 12\u201315 cm deep (volume ~4.5\u20137.0 L). Empty mass ~0.2\u20130.4 kg. Outer shell is polyester/nylon fabric; core is thin closed\u2011cell PE/EVA foam; inner liner a plastic film. No rigid frame. Values given are effective bulk properties of the empty bag, not base polymer datasheet values.",
+        "material": {
+            "name": "insulated textile + foam composite (polyester/nylon outer, PE/EVA foam core, plastic liner), empty bag bulk",
+            "density_kg_per_m3": {
+                "min": 30.0,
+                "max": 80.0
+            },
+            "youngs_modulus_pa": {
+                "min": 100000.0,
+                "max": 3000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.2,
+                "max": 0.45
+            }
+        },
+        "object_name_short": "insulated lunch bag",
+        "visible_material_name": "camouflage polyester/nylon fabric with webbing",
+        "version": "materials_v2.0",
+        "vlm_category": "textile/foam softgood",
+        "category": "Bag",
+        "vlm_version": "gpt-5",
+        "material_group": "fabric/textile",
+        "categories_gso": "Bag"
+    },
+    "Hasbro_Life_Board_Game": {
+        "object_name": "The Game of Life board game retail box (sealed)",
+        "thinking": "The images show a sealed retail box for the board game \u201cThe Game of Life.\u201d The outer structure is a rigid printed paperboard/chipboard setup box with a cardboard insert holding a folded board, cards, and small plastic pieces. Approximate box size ~40 \u00d7 27 \u00d7 5 cm gives a volume ~0.0054 m^3. Typical mass for such games is ~0.8\u20131.5 kg, yielding an effective whole-object density roughly 150\u2013280 kg/m^3. Because the object is mostly air with thin paperboard walls and a cardboard insert, its bulk/effective stiffness is far below the intrinsic modulus of solid paperboard; pressing the box yields compliance similar to packed paper products, so an effective Young\u2019s modulus on the order of tens to a few hundred MPa is reasonable. Poisson\u2019s ratio for such a porous composite package is typically in the 0.2\u20130.35 range.",
+        "assumptions": "Sealed retail board game; standard chipboard/paperboard box with cardboard insert; contents include folded board (paperboard), cards (paper), and small plastic pieces; dry, room-temperature, not shrink-wrapped tightly; no corrugated outer shipping box present.",
+        "material": {
+            "name": "Bulk effective: boxed board game (paperboard box with mixed cardboard/plastic contents)",
+            "density_kg_per_m3": {
+                "min": 120.0,
+                "max": 350.0
+            },
+            "youngs_modulus_pa": {
+                "min": 20000000.0,
+                "max": 400000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.15,
+                "max": 0.35
+            }
+        },
+        "object_name_short": "Board game box",
+        "visible_material_name": "Printed paperboard/chipboard with cardboard insert and mixed contents",
+        "version": "materials_v2.0",
+        "vlm_category": "board_game_box",
+        "category": "Consumer Goods",
+        "vlm_version": "gpt-5",
+        "material_group": "mixed (paper + plastic)",
+        "categories_gso": "Consumer Goods"
+    },
+    "Olive_Kids_Game_On_Munch_n_Lunch": {
+        "object_name": "Insulated soft lunch bag (kids, printed fabric with foam insulation)",
+        "thinking": "The object appears to be a soft, insulated kids\u2019 lunch bag: printed coated-fabric exterior with fabric piping, likely a thin foam core and a wipeable polymer liner. The bag is mostly hollow air volume when empty, so the whole-object (bulk) density is far below solid plastics/fabrics. Effective stiffness is governed by the thin foam-laminate shell, giving foam-like bulk modulus rather than solid polymer values.",
+        "assumptions": "Typical size ~3\u20135 L internal volume; empty mass ~0.15\u20130.3 kg. Construction: polyester fabric with PU/PVC/PEVA coating, inner EPE/PU foam insulation a few millimeters thick, and a polymer liner. Properties provided reflect the overall empty bag as a lightweight foam-laminate shell with large internal void.",
+        "material": {
+            "name": "insulated fabric\u2013foam laminate (polyester outer + polymer liner + EPE/PU foam core), empty bag",
+            "density_kg_per_m3": {
+                "min": 30.0,
+                "max": 120.0
+            },
+            "youngs_modulus_pa": {
+                "min": 500000.0,
+                "max": 20000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.2,
+                "max": 0.45
+            }
+        },
+        "object_name_short": "insulated lunch bag",
+        "visible_material_name": "coated polyester fabric with printed pattern, fabric piping/trim",
+        "version": "materials_v2.0",
+        "vlm_category": "soft bag / lunch box",
+        "category": "Bag",
+        "vlm_version": "gpt-5",
+        "material_group": "fabric/textile",
+        "categories_gso": "Bag"
+    },
+    "Schleich_Allosaurus": {
+        "object_name": "Painted dinosaur toy figurine (T. rex style), mostly hollow flexible PVC",
+        "thinking": "The object appears to be a small dinosaur toy figurine with a painted, slightly matte, textured surface typical of flexible PVC/vinyl toys. Such figures are often thin-walled and partially hollow to save weight, sometimes with small solid sections (feet, head). I estimate the whole-object properties considering a thin PVC shell with air inside rather than solid plastic.",
+        "assumptions": "Approximate length 15\u201330 cm; mostly hollow thin-walled shell with air interior; flexible/soft PVC (vinyl) with paint; no metal core; small solid areas possible at limbs/feet.",
+        "material": {
+            "name": "effective whole-object (hollow) flexible PVC figurine",
+            "density_kg_per_m3": {
+                "min": 300.0,
+                "max": 1200.0
+            },
+            "youngs_modulus_pa": {
+                "min": 2000000.0,
+                "max": 40000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.42,
+                "max": 0.49
+            }
+        },
+        "object_name_short": "dinosaur toy figurine",
+        "visible_material_name": "painted flexible PVC (vinyl)",
+        "version": "materials_v2.0",
+        "vlm_category": "polymer-plastic",
+        "category": "Toys",
+        "vlm_version": "gpt-5",
+        "material_group": "plastic",
+        "categories_gso": "Toys"
+    },
+    "Lovable_Huggable_Cuddly_Boutique_Teddy_Bear_Beige": {
+        "object_name": "Plush stuffed animal (teddy-bear-like toy)",
+        "thinking": "The images show a soft, floppy plush stuffed animal with shaggy pile fabric and no signs of rigid structure. Such toys are typically polyester plush fabric over loosely packed polyester fiberfill, making the whole-object very low density and extremely compliant. Bulk properties reflect the porous, air-filled fiber network and fabric shell rather than solid polymer values.",
+        "assumptions": "Approx. 20\u201340 cm long plush toy; filled mainly with polyester fiberfill (no internal frame, pellets, or electronics); outer shell is synthetic plush (polyester). Packing is loose to medium, leading to very low effective density and kPa-range stiffness.",
+        "material": {
+            "name": "Whole-object: polyester plush shell with polyester fiberfill (bulk effective properties)",
+            "density_kg_per_m3": {
+                "min": 25.0,
+                "max": 80.0
+            },
+            "youngs_modulus_pa": {
+                "min": 2000.0,
+                "max": 80000.0
+            },
+            "poisson_ratio": {
+                "min": 0.1,
+                "max": 0.4
+            }
+        },
+        "object_name_short": "plush toy",
+        "visible_material_name": "shaggy polyester plush fabric with polyester fiberfill",
+        "version": "materials_v2.0",
+        "vlm_category": "Textile/Stuffed toy",
+        "category": "Stuffed Toys",
+        "vlm_version": "gpt-5",
+        "material_group": "plush/fiberfill",
+        "categories_gso": "Stuffed Toys"
+    },
+    "Womens_Bluefish_2Eye_Boat_Shoe_in_White_Tumbled_YG44xIePRHw": {
+        "object_name": "White leather boat shoe with rubber sole",
+        "thinking": "The object is a white boat shoe with leather upper, rubber outsole, textile/foam lining and insole, laces and metal eyelets; interior is mostly hollow (air). Effective bulk properties should reflect this multi-layer composite and significant internal void volume.",
+        "assumptions": "Adult-sized single shoe ~0.27\u20130.30 m long; mass ~0.28\u20130.38 kg; external volume envelope ~1.4\u20132.4e-3 m^3; composition fractions approx: rubber outsole 30\u201340%, leather/synthetic upper 25\u201335%, foam/textile insole/lining 10\u201320%, laces/eyelets <5%, remaining volume air. Loads considered quasi-static compression/bending of the whole shoe.",
+        "material": {
+            "name": "composite shoe (leather upper, rubber outsole, foam/textile lining and insole; hollow interior)",
+            "density_kg_per_m3": {
+                "min": 100.0,
+                "max": 250.0
+            },
+            "youngs_modulus_pa": {
+                "min": 500000.0,
+                "max": 10000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.3,
+                "max": 0.49
+            }
+        },
+        "object_name_short": "boat shoe",
+        "visible_material_name": "leather upper with rubber sole and textile/foam lining",
+        "version": "materials_v2.0",
+        "vlm_category": "footwear",
+        "category": "Bottles and Cans and Cups",
+        "vlm_version": "gpt-5",
+        "material_group": "leather",
+        "categories_gso": "Bottles and Cans and Cups"
+    },
+    "Clue_Board_Game_Classic_Edition": {
+        "object_name": "Clue board game box with contents (packaged set)",
+        "thinking": "The object is a retail board game box (Clue) with a printed paperboard outer box and mixed contents (folded chipboard game board, paper cards/rules, small plastic/metal tokens, dice). The bulk/effective properties should include the large internal air volume and loose packing. Typical box size ~40 x 27 x 5 cm (~0.0054 m^3). Such games usually weigh ~0.8\u20131.4 kg, giving an effective density ~150\u2013260 kg/m^3. The effective (through-thickness/compressive) stiffness of the whole boxed set is far below solid paperboard or chipboard due to voids and discrete items; a reasonable isotropic-equivalent range is tens to a few hundred MPa. Poisson\u2019s ratio similar to cellular/paperboard assemblies.",
+        "assumptions": "- Standard classic board-game packaging with paperboard lid/base, folded chipboard board, paper cards, plastic/metal tokens, and some air gaps.\n- No shrink-wrap considered; moisture content normal indoor.\n- Properties represent the entire boxed object under small-strain compression/elastic response.",
+        "material": {
+            "name": "Filled board game package (cardboard + paper + plastic pieces, with air voids)",
+            "density_kg_per_m3": {
+                "min": 120.0,
+                "max": 300.0
+            },
+            "youngs_modulus_pa": {
+                "min": 30000000.0,
+                "max": 250000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.15,
+                "max": 0.35
+            }
+        },
+        "object_name_short": "board game box",
+        "visible_material_name": "printed paperboard/cardboard outer box",
+        "version": "materials_v2.0",
+        "vlm_category": "board_game_box_cardboard_filled",
+        "category": "Board Games",
+        "vlm_version": "gpt-5",
+        "material_group": "paper/cardboard",
+        "categories_gso": "Board Games"
+    },
+    "2_of_Jenga_Classic_Game": {
+        "object_name": "Stacked Jenga tower of wooden blocks (partially hollow due to removed pieces)",
+        "thinking": "The object is a Jenga tower made from small finished wooden blocks. The stack shows multiple removed blocks, so the bulk properties should reflect a partially hollow, dry-contact assembly. A perfect 18-layer tower\u2019s bounding volume equals the total block volume; with several blocks missing, the solid fraction is roughly 0.8\u20130.9. Using typical hardwood densities (\u2248550\u2013750 kg/m^3) and reducing for the solid fraction yields an effective bulk density around 400\u2013680 kg/m^3. Contact gaps and intermittent load paths lower the effective stiffness well below clear-wood values (~9\u201313 GPa), so I estimate an effective Young\u2019s modulus of about 1\u20136 GPa. Poisson\u2019s ratio remains uncertain but likely lower-to-moderate due to slip at interfaces.",
+        "assumptions": "Blocks are standard Jenga size; wood is typical light-to-medium hardwood (rubberwood/beech); approximately 15\u201325% of blocks are missing or offset introducing voids/gaps; room temperature and humidity; no hidden weights or adhesives; properties reported are whole-object, homogenized averages along the tower axis under small compression.",
+        "material": {
+            "name": "stacked wooden blocks assembly (Jenga tower, with voids and dry contacts)",
+            "density_kg_per_m3": {
+                "min": 400.0,
+                "max": 680.0
+            },
+            "youngs_modulus_pa": {
+                "min": 1000000000.0,
+                "max": 6000000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.1,
+                "max": 0.35
+            }
+        },
+        "object_name_short": "Jenga tower",
+        "visible_material_name": "finished wood (hardwood)",
+        "version": "materials_v2.0",
+        "vlm_category": "wood",
+        "category": "Consumer Goods",
+        "vlm_version": "gpt-5",
+        "material_group": "wood",
+        "categories_gso": "Consumer Goods"
+    },
+    "Reebok_DMX_MAX_MANIA_WD_D": {
+        "object_name": "White athletic sneaker (composite, cushioned running/training shoe)",
+        "thinking": "The object is a white athletic sneaker. For whole-object properties, consider its hollow interior, foam midsole, rubber outsole, synthetic leather/textile upper, and padding. Estimate bulk density from typical shoe mass (0.25\u20130.40 kg) over approximate external volume (~1.3\u20131.8e-3 m^3), yielding ~140\u2013300 kg/m^3. Effective stiffness dominated by EVA foam and rubber layers, so modulus in the several MPa to ~0.1 GPa range; Poisson ratio close to soft polymers/foams.",
+        "assumptions": "Adult-size running/training sneaker; composite construction: synthetic leather/textile upper, EVA foam midsole, rubber outsole, fabric/foam lining; interior cavity for foot; no metal shank; typical cushioning; dry condition; not tightly compacted or waterlogged.",
+        "material": {
+            "name": "Composite sneaker (EVA foam + rubber + synthetic leather + textile)",
+            "density_kg_per_m3": {
+                "min": 140.0,
+                "max": 300.0
+            },
+            "youngs_modulus_pa": {
+                "min": 5000000.0,
+                "max": 100000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.25,
+                "max": 0.49
+            }
+        },
+        "object_name_short": "sneaker",
+        "visible_material_name": "synthetic leather upper with textile/foam lining, EVA foam midsole, rubber outsole, polymer laces",
+        "version": "materials_v2.0",
+        "vlm_category": "apparel_footwear",
+        "category": "Shoe",
+        "vlm_version": "gpt-5",
+        "material_group": "leather",
+        "categories_gso": "Shoe"
+    },
+    "UGG_Jena_Womens_Java_7": {
+        "object_name": "Mid-calf lace-up leather boot with rubber sole and buckle",
+        "thinking": "The object is a mid-calf lace-up leather boot with a rubber sole, textile/foam lining, laces, and small metal hardware. The boot is largely hollow (space for the foot and shaft). Effective bulk properties should reflect this composite, hollow, layered construction rather than pure leather or rubber.",
+        "assumptions": "Adult-size single boot, unfilled (no foot), typical mass 0.6\u20131.0 kg; external dimensions roughly 0.28 m long, 0.10 m wide, 0.26 m high with a shape factor ~0.4\u20130.5, giving an external volume ~0.003\u20130.0045 m^3. Materials: leather upper, rubber outsole, foam/textile lining, synthetic insole, small brass/steel eyelets/buckle. Dominant visible material is leather; stiffness influenced by rubber sole and leather; void volume lowers effective density.",
+        "material": {
+            "name": "composite boot (leather + rubber + textile/foam lining + minor metal hardware, hollow interior)",
+            "density_kg_per_m3": {
+                "min": 100.0,
+                "max": 300.0
+            },
+            "youngs_modulus_pa": {
+                "min": 5000000.0,
+                "max": 60000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.35,
+                "max": 0.49
+            }
+        },
+        "object_name_short": "leather boot",
+        "visible_material_name": "leather upper with rubber sole and textile lining",
+        "version": "materials_v2.0",
+        "vlm_category": "footwear",
+        "category": "Shoe",
+        "vlm_version": "gpt-5",
+        "material_group": "leather",
+        "categories_gso": "Shoe"
+    },
+    "UGG_Classic_Tall_Womens_Boots_Chestnut_7": {
+        "object_name": "Shearling-lined suede winter boot with EVA/rubber sole (hollow composite)",
+        "thinking": "The item is a tall suede/shearling winter boot with an EVA/rubber sole. As a whole object it is mostly hollow (leg and foot cavities) with soft, porous liner and a compliant foam/rubber sole. Averaging across the outer volume, the bulk density is far below solid leather or rubber and stiffness is governed by the soft upper and foam sole rather than base materials.",
+        "assumptions": "Adult size boot (~30\u201335 cm tall). Outer is suede leather; interior is shearling/fleece (~5\u201315 mm); outsole is EVA foam with rubber tread. No water inside; empty boot. Whole-object properties treat the boot as a homogenized, hollow composite over its external volume.",
+        "material": {
+            "name": "Hollow composite (suede upper + shearling lining + EVA/rubber sole)",
+            "density_kg_per_m3": {
+                "min": 120.0,
+                "max": 300.0
+            },
+            "youngs_modulus_pa": {
+                "min": 1000000.0,
+                "max": 30000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.25,
+                "max": 0.45
+            }
+        },
+        "object_name_short": "suede winter boot",
+        "visible_material_name": "suede leather outer, shearling/fleece lining, EVA/rubber sole",
+        "version": "materials_v2.0",
+        "vlm_category": "footwear",
+        "category": "Shoe",
+        "vlm_version": "gpt-5",
+        "material_group": "leather",
+        "categories_gso": "Shoe"
+    },
+    "Firefly_Clue_Board_Game": {
+        "object_name": "Clue board game retail box (filled, sealed)",
+        "thinking": "The object is a retail board game box made of printed paperboard/chipboard with a glossy laminate, containing mostly paper/cardboard components (board, cards, rules) and a few small plastic pieces/dice. The overall volume is similar to a standard board-game box (~0.40\u00d70.27\u00d70.05 m \u2248 5\u20136 L). Filled mass typically ~0.8\u20131.2 kg, so bulk density is far below solid paperboard due to air gaps and loose packing. The whole-object stiffness under compression is governed by the thin paperboard shell plus stacked paper/cardboard inserts, not solid board; thus an effective modulus in the tens to low hundreds of MPa is reasonable. Poisson\u2019s ratio similar to paperboard/packed paper goods.",
+        "assumptions": "Box dimensions \u2248 40\u00d727\u00d75 cm; contents are mostly paper/cardboard with minor plastic; loosely packed with internal voids; object considered as a homogeneous bulk package under small compressive strain.",
+        "material": {
+            "name": "Filled paperboard box with mixed paper/plastic contents",
+            "density_kg_per_m3": {
+                "min": 120.0,
+                "max": 260.0
+            },
+            "youngs_modulus_pa": {
+                "min": 30000000.0,
+                "max": 300000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.2,
+                "max": 0.35
+            }
+        },
+        "object_name_short": "board game box",
+        "visible_material_name": "glossy printed paperboard (chipboard/card stock) box",
+        "version": "materials_v2.0",
+        "vlm_category": "packaged consumer good (board game)",
+        "category": "Consumer Goods",
+        "vlm_version": "gpt-5",
+        "material_group": "paper/cardboard",
+        "categories_gso": "Consumer Goods"
+    },
+    "Olive_Kids_Game_On_Pack_n_Snack": {
+        "object_name": "Children\u2019s printed backpack (empty, textile shell with light foam)",
+        "thinking": "The object is a small children\u2019s backpack that appears empty. Its structure is mostly hollow air volume with a thin textile shell (likely polyester/nylon) plus light foam/padding, zippers, and webbing straps. Whole\u2011object properties should therefore be dominated by the large internal void and compliant shell, giving very low bulk density and a soft, easily compressible effective stiffness.",
+        "assumptions": "Backpack is empty; size roughly 8\u201312 L internal volume; mass about 0.25\u20130.5 kg typical for kids\u2019 packs; shell is woven polyester/nylon with thin foam backing and lining; negligible rigid frame; measurements represent bulk/effective behavior of the entire hollow object, not the base polymer.",
+        "material": {
+            "name": "backpack assembly (fabric + foam + air voids) \u2014 whole-object effective",
+            "density_kg_per_m3": {
+                "min": 20.0,
+                "max": 70.0
+            },
+            "youngs_modulus_pa": {
+                "min": 50000.0,
+                "max": 2000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.15,
+                "max": 0.45
+            }
+        },
+        "object_name_short": "child backpack",
+        "visible_material_name": "printed polyester/nylon fabric with thin foam backing and zippers",
+        "version": "materials_v2.0",
+        "vlm_category": "textile/fabric",
+        "category": "Bag",
+        "vlm_version": "gpt-5",
+        "material_group": "fabric/textile",
+        "categories_gso": "Bag"
+    },
+    "Animal_Planet_Foam_2Headed_Dragon": {
+        "object_name": "Two-headed blue dragon toy figurine (painted plastic)",
+        "thinking": "The object appears to be a small hand-sized fantasy creature toy (two-headed blue dragon) with painted details. Such figurines are commonly made from flexible/soft PVC (vinyl) or similar TPE-like plastics. The body likely has variable wall thickness: thicker torso and legs, thinner wings, with possible partial hollowness/air pockets from rotocasting or blow molding. Hence the whole-object (effective) density will be lower than solid PVC. Effective stiffness will align with flexible PVC toys, not rigid PVC.",
+        "assumptions": "Scale ~10\u201320 cm long; manufactured via rotocast/blow-mold or injection with some hollow regions; no internal metal weights; paint layer thin and negligible mass; void fraction roughly 0\u201335% depending on sections (wings more hollow). Estimates are for the whole object as-held.",
+        "material": {
+            "name": "Flexible PVC (vinyl), mostly solid with some hollow/thin-walled sections",
+            "density_kg_per_m3": {
+                "min": 800.0,
+                "max": 1200.0
+            },
+            "youngs_modulus_pa": {
+                "min": 30000000.0,
+                "max": 300000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.42,
+                "max": 0.49
+            }
+        },
+        "object_name_short": "toy dragon figurine",
+        "visible_material_name": "painted flexible PVC (vinyl) toy plastic",
+        "version": "materials_v2.0",
+        "vlm_category": "toy_figurine",
+        "category": "Toys",
+        "vlm_version": "gpt-5",
+        "material_group": "plastic",
+        "categories_gso": "Toys"
+    },
+    "Simon_Swipe_Game": {
+        "object_name": "Round electronic memory game (Simon-style) with colored light pads",
+        "thinking": "The object is a round, electronic memory game (Simon-style): a hollow plastic shell with translucent colored segments and internal electronics/battery. Estimate whole-object (air-filled) properties: very low effective density compared to solid plastic and a much lower effective stiffness than bulk ABS due to thin-walled shell, ribs, and cavities.",
+        "assumptions": "Diameter ~27\u201330 cm; average thickness ~3\u20134 cm; mass ~0.25\u20130.5 kg; mostly air inside with thin ABS/PC shell, ribs, small PCB, speaker, LEDs, and batteries; colored lenses are translucent PC/PMMA; object behaves like a thin-walled plastic shell under bulk loading.",
+        "material": {
+            "name": "Hollow ABS/PC plastic electronic toy (air-filled, with electronics)",
+            "density_kg_per_m3": {
+                "min": 100.0,
+                "max": 300.0
+            },
+            "youngs_modulus_pa": {
+                "min": 50000000.0,
+                "max": 500000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.2,
+                "max": 0.35
+            }
+        },
+        "object_name_short": "Simon-style memory game",
+        "visible_material_name": "ABS/PC plastic body with translucent colored lenses",
+        "version": "materials_v2.0",
+        "vlm_category": "plastic",
+        "category": "Media Cases",
+        "vlm_version": "gpt-5",
+        "material_group": "plastic",
+        "categories_gso": "Media Cases"
+    },
+    "Twinlab_100_Whey_Protein_Fuel_Vanilla": {
+        "object_name": "Plastic jar of whey protein powder (powder-filled container)",
+        "thinking": "The object is a plastic protein powder jar that appears mostly filled with fine whey powder with a small headspace and a thin plastic wall and cap. The bulk behavior is dominated by the loosely packed granular powder; the plastic shell adds little to mass and only modest stiffness under global compression. I model the whole object as a homogenized, powder-filled container.",
+        "assumptions": "Jar material PET/HDPE with thin walls; capacity about 2\u20133 L; fill fraction ~80\u201395%; whey protein powder bulk density roughly 0.35\u20130.6 g/cm\u00b3; jar mass comparatively small (~5\u201310% of total). Effective modulus reflects granular packing plus flexible shell under small strain.",
+        "material": {
+            "name": "Powder-filled plastic jar (whey protein in PET/HDPE container)",
+            "density_kg_per_m3": {
+                "min": 300.0,
+                "max": 700.0
+            },
+            "youngs_modulus_pa": {
+                "min": 20000000.0,
+                "max": 300000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.2,
+                "max": 0.4
+            }
+        },
+        "object_name_short": "Protein powder jar",
+        "visible_material_name": "Clear plastic jar with plastic cap and shrink label, filled with whey protein powder",
+        "version": "materials_v2.0",
+        "vlm_category": "consumer_packaging_plastic_jar",
+        "category": "Bottles and Cans and Cups",
+        "vlm_version": "gpt-5",
+        "material_group": "plastic",
+        "categories_gso": "Bottles and Cans and Cups"
+    },
+    "Sootheze_Toasty_Orca": {
+        "object_name": "Plush stuffed orca toy (polyester plush shell with polyester fiberfill)",
+        "thinking": "The object appears to be a soft stuffed animal (orca/whale) made with a plush polyester fabric shell and filled with polyester fiberfill. Whole-object behavior is governed by the low-density, highly compressible stuffing with minor contribution from the thin fabric shell and small plastic eyes. Bulk properties reflect a highly porous, air-filled body that deforms easily under small loads.",
+        "assumptions": "Typical consumer plush toy size (~20\u201350 cm long), polyester plush fabric shell, polyester fiberfill stuffing with high porosity, loosely to moderately filled, negligible mass contribution from plastic eyes and thread; no internal rigid frame.",
+        "material": {
+            "name": "Stuffed plush toy (polyester plush shell + polyester fiberfill), bulk effective properties",
+            "density_kg_per_m3": {
+                "min": 25.0,
+                "max": 120.0
+            },
+            "youngs_modulus_pa": {
+                "min": 2000.0,
+                "max": 60000.0
+            },
+            "poisson_ratio": {
+                "min": 0.05,
+                "max": 0.3
+            }
+        },
+        "object_name_short": "plush orca",
+        "visible_material_name": "soft polyester plush fabric with fiberfill stuffing",
+        "version": "materials_v2.0",
+        "vlm_category": "textiles/soft toy",
+        "category": "Stuffed Toys",
+        "vlm_version": "gpt-5",
+        "material_group": "plush/fiberfill",
+        "categories_gso": "Stuffed Toys"
+    },
+    "Threshold_Porcelain_Spoon_Rest_White": {
+        "object_name": "Glazed ceramic spoon rest with arched handle",
+        "thinking": "The object looks like a small countertop spoon rest or tasting spoon made from glossy white glazed ceramic. It is a hollow, thin-walled shell with a bowl-shaped cavity and an arched handle. For whole-object (bulk/effective) properties, the interior air volume reduces effective density and stiffness versus solid ceramic. I estimate wall thickness around 3\u20136 mm, with 60\u201380% of the external volume being void. A thin vitreous glaze adds negligible mass but slightly increases surface hardness; base ceramic is likely porcelain/stoneware. No contents are present.",
+        "assumptions": "Approx dimensions: length 12\u201318 cm, width 6\u20139 cm, height 4\u20136 cm; wall thickness 3\u20136 mm; void fraction 60\u201380% of outer volume; ceramic porosity low (\u22481\u20135%); thin glaze layer \u22480.1\u20130.5 mm; room temperature, dry; measured properties are whole-object effective values (shell with internal air), not intrinsic solid-ceramic values.",
+        "material": {
+            "name": "effective hollow glazed ceramic shell (whole-object)",
+            "density_kg_per_m3": {
+                "min": 400.0,
+                "max": 900.0
+            },
+            "youngs_modulus_pa": {
+                "min": 3000000000.0,
+                "max": 12000000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.12,
+                "max": 0.24
+            }
+        },
+        "object_name_short": "ceramic spoon rest",
+        "visible_material_name": "white glazed ceramic (porcelain/stoneware)",
+        "version": "materials_v2.0",
+        "vlm_category": "ceramic",
+        "category": "Bottles and Cans and Cups",
+        "vlm_version": "gpt-5",
+        "material_group": "ceramic",
+        "categories_gso": "Bottles and Cans and Cups"
+    },
+    "Avengers_Gamma_Green_Smash_Fists": {
+        "object_name": "Oversized green foam fist toy (hollow, soft)",
+        "thinking": "The images show oversized green fist toys with sculpted details and a matte, slightly textured surface typical of molded flexible foam. These toys are usually soft, compressible, and have a hollow cavity where the user inserts a hand, lowering the whole-object effective density and stiffness compared with solid foam. Not inflatable or rigid plastic based on surface finish and lack of seam lines.",
+        "assumptions": "Assume each fist is a toy-sized, molded flexible polyurethane foam shell with a hollow interior hand cavity and thin painted skin; no rigid frame or electronics. Values represent whole-object bulk properties for a single fist (pair assumed identical).",
+        "material": {
+            "name": "Flexible polyurethane foam (hollow toy shell)",
+            "density_kg_per_m3": {
+                "min": 10.0,
+                "max": 60.0
+            },
+            "youngs_modulus_pa": {
+                "min": 30000.0,
+                "max": 300000.0
+            },
+            "poisson_ratio": {
+                "min": 0.15,
+                "max": 0.35
+            }
+        },
+        "object_name_short": "foam fist toy",
+        "visible_material_name": "green painted flexible polyurethane foam",
+        "version": "materials_v2.0",
+        "vlm_category": "polymer foam",
+        "category": "Consumer Goods",
+        "vlm_version": "gpt-5",
+        "material_group": "foam",
+        "categories_gso": "Consumer Goods"
+    },
+    "Vans_Cereal_Honey_Nut_Crunch_11_oz_box": {
+        "object_name": "Box of breakfast cereal with plastic liner (Van's Honey Crunch)",
+        "thinking": "Object is a retail breakfast-cereal carton with printed paperboard outer box and a thin plastic liner bag containing puffed/crispy cereal. The whole-object properties should reflect mostly air-filled cereal, headspace, plastic liner, and thin paperboard walls. Typical family-size cereal boxes are about 28 x 20 x 5 cm (~2.8 L). Net food mass ~0.28\u20130.36 kg; with packaging ~0.30\u20130.38 kg. Bulk density therefore ~0.30\u20130.38 kg / 0.0025\u20130.0030 m^3 \u2248 100\u2013150 kg/m^3; allow margin for different cereals/fill levels.",
+        "assumptions": "\u2022 Dimensions ~28\u00d720\u00d75 cm; volume 2.5\u20133.0 L. \u2022 Net cereal mass 0.28\u20130.36 kg; packaging 10\u201330 g. \u2022 ~5\u201315% headspace. \u2022 Cereal pieces are porous and loosely packed; liner is thin LDPE; box is coated paperboard ~0.4\u20130.6 mm. \u2022 Effective stiffness dominated by paperboard panels and loosely packed granular contents; overall behaves like a thin carton with compressible fill.",
+        "material": {
+            "name": "bulk composite: loose cereal + air headspace + thin LDPE liner + paperboard carton",
+            "density_kg_per_m3": {
+                "min": 80.0,
+                "max": 180.0
+            },
+            "youngs_modulus_pa": {
+                "min": 1000000.0,
+                "max": 200000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.2,
+                "max": 0.35
+            }
+        },
+        "object_name_short": "cereal box",
+        "visible_material_name": "printed coated paperboard carton",
+        "version": "materials_v2.0",
+        "vlm_category": "packaged_food_box",
+        "category": "Consumer Goods",
+        "vlm_version": "gpt-5",
+        "material_group": "paper/cardboard",
+        "categories_gso": "Consumer Goods"
+    },
+    "BALANCING_CACTUS": {
+        "object_name": "Painted wooden cactus balancing toy",
+        "thinking": "The object appears to be a small balancing cactus toy made of multiple painted wooden pegs inserted into a wooden base. The pieces look solid (not hollow) and uniformly painted; any internal voids are minimal (small drilled sockets and peg holes). Paint layers contribute negligible mass and stiffness. Therefore, the whole-object (bulk) properties should closely track those of solid painted hardwood used in toys (often rubberwood).",
+        "assumptions": "Overall size ~15\u201320 cm tall; solid wood components with small drilled cavities; moisture content typical of finished toys (~8\u201312%); water-based paint/varnish thin; no metal weights inside.",
+        "material": {
+            "name": "painted hardwood (rubberwood-like)",
+            "density_kg_per_m3": {
+                "min": 450.0,
+                "max": 750.0
+            },
+            "youngs_modulus_pa": {
+                "min": 5000000000.0,
+                "max": 13000000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.25,
+                "max": 0.4
+            }
+        },
+        "object_name_short": "wooden cactus toy",
+        "visible_material_name": "painted wood (likely rubberwood)",
+        "version": "materials_v2.0",
+        "vlm_category": "wood",
+        "category": "Toys",
+        "vlm_version": "gpt-5",
+        "material_group": "wood",
+        "categories_gso": "Toys"
+    },
+    "Olive_Kids_Dinosaur_Land_Sidekick_Backpack": {
+        "object_name": "Children\u2019s backpack (empty) with dinosaur print",
+        "thinking": "The item is a soft children\u2019s backpack made of thin printed fabric with foam padding, zippers, and largely hollow interior. Assuming it\u2019s empty: typical size ~0.35\u20130.42 m tall, 0.26\u20130.30 m wide, 0.12\u20130.16 m deep \u2192 external volume \u2248 0.012\u20130.020 m\u00b3. Typical empty mass \u2248 0.3\u20130.8 kg. Effective bulk density = mass/outer volume \u2248 15\u201360 kg/m\u00b3. As a whole object it\u2019s compliant and collapsible; global compression stiffness is governed by fabric membranes, light foam panels, and air voids, giving an effective Young\u2019s modulus on the order of kilopascals to low hundreds of kilopascals. Effective Poisson\u2019s ratio is taken as that of a soft, porous composite (not incompressible).",
+        "assumptions": "Backpack is empty; no rigid frame. Outer shell is polyester/nylon fabric with light foam padding; base may be slightly stiffer but thin. Dimensions and mass estimated from typical children\u2019s backpacks.",
+        "material": {
+            "name": "effective composite of fabric + foam + air (empty backpack)",
+            "density_kg_per_m3": {
+                "min": 15.0,
+                "max": 60.0
+            },
+            "youngs_modulus_pa": {
+                "min": 5000.0,
+                "max": 200000.0
+            },
+            "poisson_ratio": {
+                "min": 0.2,
+                "max": 0.45
+            }
+        },
+        "object_name_short": "backpack",
+        "visible_material_name": "printed polyester/nylon fabric with light foam padding and zippers",
+        "version": "materials_v2.0",
+        "vlm_category": "textile/composite (soft good)",
+        "category": "Bag",
+        "vlm_version": "gpt-5",
+        "material_group": "fabric/textile",
+        "categories_gso": "Bag"
+    },
+    "Dino_3": {
+        "object_name": "Painted Tyrannosaurus rex toy figurine (small scale)",
+        "thinking": "The object looks like a small, detailed T. rex toy figurine. Such figures are typically molded from soft/plasticized PVC and then painted. Many high-detail figures are solid or near-solid PVC (sometimes with minor porosity/fillers); some cheaper toys are thin-walled and partially hollow. Whole-object properties therefore lie between solid soft-PVC and a slightly hollow casting. I estimate effective density near soft PVC if solid, trending lower if partially hollow; stiffness well below rigid PVC, consistent with plasticized PVC.",
+        "assumptions": "Scale is small (\u224815\u201330 cm long). Body is mostly soft/plasticized PVC with surface paint. Casting likely solid or mostly solid, though small internal voids are possible; no metal frame. No liquids or batteries inside.",
+        "material": {
+            "name": "soft PVC (toy figurine), painted",
+            "density_kg_per_m3": {
+                "min": 900.0,
+                "max": 1400.0
+            },
+            "youngs_modulus_pa": {
+                "min": 5000000.0,
+                "max": 100000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.4,
+                "max": 0.49
+            }
+        },
+        "object_name_short": "toy dinosaur figurine",
+        "visible_material_name": "painted soft PVC plastic",
+        "version": "materials_v2.0",
+        "vlm_category": "polymer/plastic (soft PVC toy)",
+        "category": "Action Figures",
+        "vlm_version": "gpt-5",
+        "material_group": "plastic",
+        "categories_gso": "Action Figures"
+    },
+    "Sootheze_Cold_Therapy_Elephant": {
+        "object_name": "Stuffed elephant plush toy",
+        "thinking": "The object is a small stuffed elephant toy with a soft plush textile exterior and likely polyester fiberfill stuffing. Whole-object properties should reflect the very low-density, highly compressible, air-filled structure rather than solid polymer properties.",
+        "assumptions": "Assume common construction: polyester plush fabric skin with polyester fiberfill, loosely packed; minimal internal pellets or rigid parts; size ~20\u201330 cm tall. Bulk properties dominated by fiberfill density and skin tension.",
+        "material": {
+            "name": "stuffed plush toy (polyester fabric + polyester fiberfill)",
+            "density_kg_per_m3": {
+                "min": 15.0,
+                "max": 120.0
+            },
+            "youngs_modulus_pa": {
+                "min": 2000.0,
+                "max": 80000.0
+            },
+            "poisson_ratio": {
+                "min": 0.05,
+                "max": 0.3
+            }
+        },
+        "object_name_short": "plush elephant",
+        "visible_material_name": "plush fabric (polyester) with fiberfill stuffing",
+        "version": "materials_v2.0",
+        "vlm_category": "textile/soft good (stuffed toy)",
+        "category": "Stuffed Toys",
+        "vlm_version": "gpt-5",
+        "material_group": "plush/fiberfill",
+        "categories_gso": "Stuffed Toys"
+    },
+    "Philips_60ct_Warm_White_LED_Smooth_Mini_String_Lights": {
+        "object_name": "Philips 60-count warm white LED mini lights retail box (with contents)",
+        "thinking": "The object is a retail folding-carton box that contains a coiled string of 60 LED mini lights. The effective (bulk) properties should reflect the cardboard shell plus loosely packed plastic wiring, bulbs, and internal voids. The mass-to-volume ratio will be low because of air gaps and lightweight components; stiffness is dominated by the thin paperboard/corrugated shell, with contents contributing little to structural rigidity.",
+        "assumptions": "Box is typical small retail carton (~23 x 14 x 8 cm) with printed paperboard or light corrugated; contains one set of 60 LED mini lights (PVC insulated wire, small plastic lenses, minimal accessories). Contents are loosely packed with some empty space; no dense manuals or power bricks. Total mass roughly 0.2\u20130.5 kg.",
+        "material": {
+            "name": "Cardboard retail box with lightweight string lights (bulk effective)",
+            "density_kg_per_m3": {
+                "min": 70.0,
+                "max": 250.0
+            },
+            "youngs_modulus_pa": {
+                "min": 100000000.0,
+                "max": 1500000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.2,
+                "max": 0.35
+            }
+        },
+        "object_name_short": "LED string lights box",
+        "visible_material_name": "Printed paperboard/corrugated cardboard",
+        "version": "materials_v2.0",
+        "vlm_category": "packaging_box",
+        "category": "Consumer Goods",
+        "vlm_version": "gpt-5",
+        "material_group": "paper/cardboard",
+        "categories_gso": "Consumer Goods"
+    },
+    "LEGO_Creationary_Game_ZJa163wlWp2": {
+        "object_name": "LEGO Creationary board game boxed set (sealed retail package)",
+        "thinking": "The object appears to be a sealed LEGO Creationary board-game retail box. As a whole object it is a thin paperboard/cardboard box containing mostly air plus mixed components (ABS bricks, plastic die, cards, booklet). Effective bulk properties should reflect the hollow volume and loose packing, not the solid materials\u2019 intrinsic values. A typical medium LEGO game box is roughly 0.37\u00d70.26\u00d70.06 m (~5.8 L). Likely mass ~0.8\u20131.5 kg, giving a low effective density. The effective stiffness of the whole filled box is foam-like: dominated by corrugated paperboard panels and the low packing fraction of contents; using cellular-solid scaling (relative density ~0.2\u20130.4 vs paperboard/ABS solids) suggests an effective Young\u2019s modulus on the order of 1e7\u20131e8 Pa. Poisson\u2019s ratio for such porous, crushable packings is typically below dense solids, around 0.2\u20130.35.",
+        "assumptions": "Box is unopened and about medium size (approx 37\u00d726\u00d76 cm). Contents include ABS parts, a plastic die, paper cards/instructions; packing fraction ~15\u201335%. Cardboard is standard printed paperboard (non-corrugated or light corrugation). No extra shrink wrap or dense inserts. Estimations are for the whole boxed product treated as a homogeneous block under small-strain compression.",
+        "material": {
+            "name": "filled cardboard game box with mixed plastic (ABS) bricks and paper components",
+            "density_kg_per_m3": {
+                "min": 100.0,
+                "max": 300.0
+            },
+            "youngs_modulus_pa": {
+                "min": 10000000.0,
+                "max": 150000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.2,
+                "max": 0.35
+            }
+        },
+        "object_name_short": "board game box",
+        "visible_material_name": "printed paperboard/cardboard exterior",
+        "version": "materials_v2.0",
+        "vlm_category": "consumer_packaged_goods/cardboard_box_filled",
+        "category": "Consumer Goods",
+        "vlm_version": "gpt-5",
+        "material_group": "paper/cardboard",
+        "categories_gso": "Consumer Goods"
+    },
+    "LEGO_Fusion_Set_Town_Master": {
+        "object_name": "LEGO Fusion Town Master boxed set (sealed retail package)",
+        "thinking": "The images show a sealed retail LEGO set box. The visible object is a printed corrugated cardboard box that contains loose ABS plastic bricks in bags plus paper inserts, with significant internal air volume. Whole-object estimates should therefore reflect a mostly hollow corrugated box with mixed contents, not solid ABS or solid paperboard.",
+        "assumptions": "Typical medium LEGO set box volume ~2\u20133 liters and mass ~0.35\u20130.6 kg (box + bags + 200\u2013300 small ABS parts + booklet). Effective stiffness governed by corrugated cardboard shell and loosely packed contents; large internal voids reduce bulk density and modulus. Loads considered are small-strain compressive/bending of the boxed article at room conditions.",
+        "material": {
+            "name": "Filled corrugated cardboard retail box (with loose ABS toy bricks and paper inserts)",
+            "density_kg_per_m3": {
+                "min": 120.0,
+                "max": 280.0
+            },
+            "youngs_modulus_pa": {
+                "min": 50000000.0,
+                "max": 600000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.18,
+                "max": 0.35
+            }
+        },
+        "object_name_short": "LEGO boxed set",
+        "visible_material_name": "Printed corrugated cardboard box with plastic contents",
+        "version": "materials_v2.0",
+        "vlm_category": "packaging_box_cardboard",
+        "category": "Board Games",
+        "vlm_version": "gpt-5",
+        "material_group": "paper/cardboard",
+        "categories_gso": "Board Games"
+    },
+    "Transformers_Age_of_Extinction_Mega_1Step_Bumblebee_Figure": {
+        "object_name": "Hollow transforming robot toy figure (yellow/black plastic, Bumblebee-like)",
+        "thinking": "The object is a hollow, transforming robot toy figure made of glossy, painted plastic parts with thin walls, internal ribs, and numerous air cavities. Such toys are typically injection-molded ABS (with some POM for joints and a little TPE for softer details). Whole-object (bulk) properties are much lower than solid ABS due to high void fraction and articulated construction.",
+        "assumptions": "Approximate size ~20\u201330 cm tall with thin-wall shells (~1.5\u20132.5 mm) and mostly hollow interior; small metal fasteners are negligible for bulk properties; effective density computed over the overall bounding volume; stiffness dominated by shell bending and joints rather than solid plastic.",
+        "material": {
+            "name": "Hollow ABS-based toy (bulk/effective properties)",
+            "density_kg_per_m3": {
+                "min": 180.0,
+                "max": 480.0
+            },
+            "youngs_modulus_pa": {
+                "min": 60000000.0,
+                "max": 300000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.2,
+                "max": 0.33
+            }
+        },
+        "object_name_short": "plastic transformer toy",
+        "visible_material_name": "painted ABS plastic with some TPE and POM components",
+        "version": "materials_v2.0",
+        "vlm_category": "toy_figurine_plastic",
+        "category": "Toys",
+        "vlm_version": "gpt-5",
+        "material_group": "plastic",
+        "categories_gso": "Toys"
+    },
+    "SpiderMan_Titan_Hero_12Inch_Action_Figure_5Hnn4mtkFsP": {
+        "object_name": "Spider-Man action figure toy (hollow plastic)",
+        "thinking": "Looks like a large hollow plastic action figure of a fictional superhero. The glossy surface and typical manufacturing suggest blow-molded or rotomolded hollow body with thin walls (~1\u20133 mm), possibly with a few thicker joints. Most of the interior is air, so the bulk (whole-object) density is far below the base polymer density. Stiffness of the whole object is dominated by the thin shell and geometry, giving an effective Young\u2019s modulus much lower than solid plastic.",
+        "assumptions": "- Size roughly 25\u201335 cm tall; thin-walled shell construction with 85\u201395% internal void.\n- Rigid glossy body/limbs from PVC/PP/HDPE-like plastic; painted surface; no metal weights inside.\n- Minor local thickening at joints but overall hollow; no foam fill.\n- Estimations target effective bulk properties of the toy as a whole, not base resin values.",
+        "material": {
+            "name": "Hollow blow-molded plastic toy (PVC/PP/HDPE blend, painted)",
+            "density_kg_per_m3": {
+                "min": 80.0,
+                "max": 300.0
+            },
+            "youngs_modulus_pa": {
+                "min": 20000000.0,
+                "max": 300000000.0
+            },
+            "poisson_ratio": {
+                "min": 0.15,
+                "max": 0.35
+            }
+        },
+        "object_name_short": "Spider-Man toy",
+        "visible_material_name": "painted glossy hollow plastic (PVC/PP/HDPE-like)",
+        "version": "materials_v2.0",
+        "vlm_category": "toy_figurine_hollow_plastic",
+        "category": "Action Figures",
+        "vlm_version": "gpt-5",
+        "material_group": "plastic",
+        "categories_gso": "Action Figures"
+    }
+}

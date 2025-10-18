@@ -12,16 +12,18 @@
 #   • Use the entity tree to hide/show velocity arrows or trails.
 #
 # Notes:
-#   - Expects per-step transforms in either [x,y,z, rx,ry,rz] (radians, XYZ order)
-#     or a dict {"p":[...], "q":[...]} where q is a quaternion [x,y,z,w].
-#   - If 'kinematics' exists (from the augmenter), it will visualize velocity arrows.
-#   - Cylinder is drawn using Cylinders3D (axis/length), sphere via Ellipsoids3D, cube via Boxes3D.
+#   - Supports two per-step formats:
+#       • Rigid transform: [x,y,z, rx,ry,rz] or {"p":[...], "q":[x,y,z,w]}
+#       • Oriented bounding box (OBB): {"obb": {"R": 3x3, "center": [3], "extents": [3]}}
+#   - If 'kinematics' exists, it draws velocity arrows (else estimates from positions).
+#   - Geometry: sphere via Ellipsoids3D, box via Boxes3D, cylinder via Cylinders3D; OBB uses Boxes3D with half_sizes=extents.
 #   - World coordinates assumed right-handed with +Y up, +Z forward.
 #
 import argparse
 import json
 import numpy as np
 import rerun as rr
+from collections import deque
 
 
 # ---------------------------- Math helpers ----------------------------
@@ -52,6 +54,45 @@ def euler_to_quat_xyz(rx, ry, rz):
     # normalize
     n = np.linalg.norm(q)
     return (q / n) if n > 0 else np.array([0, 0, 0, 1])
+
+
+def rotmat_to_quat(R):
+    """Convert a 3x3 rotation matrix to quaternion [x,y,z,w]."""
+    R = np.asarray(R, dtype=float)
+    if R.shape != (3, 3):
+        raise ValueError("R must be 3x3 rotation matrix")
+    m00, m01, m02 = R[0, 0], R[0, 1], R[0, 2]
+    m10, m11, m12 = R[1, 0], R[1, 1], R[1, 2]
+    m20, m21, m22 = R[2, 0], R[2, 1], R[2, 2]
+    trace = m00 + m11 + m22
+    if trace > 0.0:
+        S = np.sqrt(trace + 1.0) * 2.0
+        qw = 0.25 * S
+        qx = (m21 - m12) / S
+        qy = (m02 - m20) / S
+        qz = (m10 - m01) / S
+    elif (m00 > m11) and (m00 > m22):
+        S = np.sqrt(1.0 + m00 - m11 - m22) * 2.0
+        qw = (m21 - m12) / S
+        qx = 0.25 * S
+        qy = (m01 + m10) / S
+        qz = (m02 + m20) / S
+    elif m11 > m22:
+        S = np.sqrt(1.0 + m11 - m00 - m22) * 2.0
+        qw = (m02 - m20) / S
+        qx = (m01 + m10) / S
+        qy = 0.25 * S
+        qz = (m12 + m21) / S
+    else:
+        S = np.sqrt(1.0 + m22 - m00 - m11) * 2.0
+        qw = (m10 - m01) / S
+        qx = (m02 + m20) / S
+        qy = (m12 + m21) / S
+        qz = 0.25 * S
+    q = np.array([qx, qy, qz, qw], dtype=float)
+    # normalize
+    n = np.linalg.norm(q)
+    return (q / n) if n > 0 else np.array([0, 0, 0, 1], dtype=float)
 
 
 def stress_color(stress):
@@ -105,6 +146,24 @@ def get_pose(obj):
     )
 
 
+def get_obb_pose_and_dims(ent):
+    """If entity has an OBB, return (p[3], q[4], half_sizes[3]); else None.
+
+    - OBB dict has keys: R (3x3 rotation), center (3), extents (3).
+    - We treat extents as half-sizes for rr.Boxes3D.
+    """
+    obb = ent.get("obb")
+    if not isinstance(obb, dict):
+        return None
+    R = np.asarray(obb.get("R"), dtype=float)
+    center = np.asarray(obb.get("center"), dtype=float)
+    extents = np.asarray(obb.get("extents"), dtype=float)
+    if R.shape != (3, 3) or center.shape != (3,) or extents.shape != (3,):
+        return None
+    q = rotmat_to_quat(R)
+    return center, q, extents
+
+
 def get_velocity(obj, prev_p, dt):
     """Return velocity vector if available; else finite-difference from prev_p."""
     kin = obj.get("kinematics")
@@ -118,27 +177,68 @@ def get_velocity(obj, prev_p, dt):
 
 
 # ---------------------------- Visualization ----------------------------
+def quat_from_two_vectors(a, b):
+    """Quaternion [x,y,z,w] that rotates vector a to vector b.
+
+    If a or b is near-zero, returns identity. Handles opposite vectors.
+    """
+    a = np.asarray(a, dtype=float)
+    b = np.asarray(b, dtype=float)
+    na = np.linalg.norm(a)
+    nb = np.linalg.norm(b)
+    if na < 1e-8 or nb < 1e-8:
+        return np.array([0.0, 0.0, 0.0, 1.0], dtype=float)
+    a = a / na
+    b = b / nb
+    v = np.cross(a, b)
+    c = float(np.dot(a, b))
+    if c < -0.999999:
+        # 180-degree rotation: find orthogonal axis
+        axis = np.array([1.0, 0.0, 0.0])
+        if abs(a[0]) > 0.9:
+            axis = np.array([0.0, 1.0, 0.0])
+        axis = axis - a * np.dot(a, axis)
+        axis /= np.linalg.norm(axis)
+        return np.array([axis[0], axis[1], axis[2], 0.0], dtype=float)
+    s = np.sqrt((1.0 + c) * 2.0)
+    invs = 1.0 / s
+    qx, qy, qz = v * invs
+    qw = 0.5 * s
+    q = np.array([qx, qy, qz, qw], dtype=float)
+    # normalize
+    return q / np.linalg.norm(q)
+
+
 def log_static_scene(sim):
-    # Coordinate system: right-handed, +Y up
+    # Coordinate system: right-handed, +Y up (viewer convention)
     rr.log("world", rr.ViewCoordinates.RIGHT_HAND_Y_UP, static=True)
 
-    # Draw a ground plane (thin box) and a table slab for context
-    table_h = 0.76  # default if not provided elsewhere
+    # Derive ground orientation from gravity
+    gravity = np.array(
+        sim.get("config", {}).get("scene", {}).get("gravity", [0.0, -9.81, 0.0]),
+        dtype=float,
+    )
+    # Ground normal points opposite gravity ("up")
+    if np.linalg.norm(gravity) > 1e-8:
+        ground_normal = -gravity / np.linalg.norm(gravity)
+    else:
+        ground_normal = np.array([0.0, 1.0, 0.0], dtype=float)  # default Y-up
+
+    # Default box's local +Y is its normal; rotate +Y to ground_normal
+    q_ground = quat_from_two_vectors([0.0, 1.0, 0.0], ground_normal)
+
+    # Ground plane centered at origin, thin thickness along its normal
     rr.log(
         "world/ground",
-        rr.Boxes3D(
-            half_sizes=[[10.0, 0.01, 10.0]],
-            centers=[[0.0, -0.01, 0.0]],
-            colors=[MATERIAL_COLORS.get("concrete", [120, 120, 120])],
-        ),
+        rr.Transform3D(translation=[0.0, 0.0, 0.0], quaternion=q_ground.tolist()),
         static=True,
     )
     rr.log(
-        "world/pingpong_table",
+        "world/ground/geom",
         rr.Boxes3D(
-            half_sizes=[[2.0, 0.015, 1.2]],
-            centers=[[0.0, table_h - 0.015, 0.0]],
-            colors=[MATERIAL_COLORS.get("wood", [120, 90, 50])],
+            half_sizes=[[10.0, 0.01, 10.0]],
+            centers=[[0.0, 0.0, 0.0]],
+            colors=[MATERIAL_COLORS.get("concrete", [120, 120, 120])],
         ),
         static=True,
     )
@@ -221,33 +321,74 @@ def main():
 
     log_static_scene(sim)
 
-    obj_meta = sim.get("objects", {})
-    steps = sim.get("simulation_steps", {})
+    obj_meta = sim.get("objects", {})  # may be empty or missing shape info
+    steps = sim.get("simulation", {})
     time_keys = sorted(steps.keys(), key=lambda s: float(s))
 
-    # Precompute shape geometry per object
+    # Gravity vector for force visualization and ground alignment
+    gravity = np.array(
+        sim.get("config", {}).get("scene", {}).get("gravity", [0.0, -9.81, 0.0]),
+        dtype=float,
+    )
+
+    # Mass map per object id, default 1.0 if missing
+    mass_map = {}
+    for oid, meta in obj_meta.items():
+        m = meta.get("mass")
+        try:
+            mass_map[oid] = float(m) if m is not None else 1.0
+        except Exception:
+            mass_map[oid] = 1.0
+
+    # Determine per-object base color (fallback palette when no material)
+    palette = [
+        [230, 57, 70],  # red-ish
+        [29, 161, 242],  # blue
+        [87, 187, 138],  # green
+        [255, 196, 0],  # yellow
+        [149, 76, 233],  # purple
+        [255, 99, 72],  # orange
+        [16, 172, 132],  # teal
+        [72, 149, 239],  # light blue
+        [238, 82, 83],  # coral
+        [52, 172, 224],  # cyan
+    ]
+
+    def default_color_for_oid(oid: str):
+        try:
+            idx = int(oid) % len(palette)
+        except Exception:
+            idx = sum(ord(c) for c in oid) % len(palette)
+        return palette[idx]
+
+    # Precompute static shape info only if metadata contains shape/scale.
     shape_info = {}
     for oid, meta in obj_meta.items():
-        shape = meta.get("shape", "sphere").lower()
-        scale = meta.get("scale", [0.1, 0.1, 0.1])
-        color = MATERIAL_COLORS.get(meta.get("material", ""), [200, 200, 200])
-        if shape == "sphere":
+        color = MATERIAL_COLORS.get(
+            meta.get("material", ""), default_color_for_oid(oid)
+        )
+        shape = str(meta.get("shape", "")).lower()
+        scale = meta.get("scale")
+        if shape == "sphere" and scale is not None:
             r = float(scale[0])
             shape_info[oid] = ("sphere", [r, r, r], color)
-        elif shape == "cube":
+        elif shape == "cube" and scale is not None:
             half = [float(scale[0]) / 2.0, float(scale[1]) / 2.0, float(scale[2]) / 2.0]
             shape_info[oid] = ("box", half, color)
-        elif shape == "cylinder":
+        elif shape == "cylinder" and scale is not None:
             radius = float(scale[0])
             height = float(scale[2])
             shape_info[oid] = ("cylinder", [radius, height], color)
         else:
-            # default to box using the scale as half-sizes
-            half = [float(scale[0]) / 2.0, float(scale[1]) / 2.0, float(scale[2]) / 2.0]
-            shape_info[oid] = ("box", half, color)
+            # Unknown shape in metadata: defer to per-step info (e.g., OBB) or box fallback.
+            shape_info[oid] = ("unknown", None, color)
 
-    trails = {oid: [] for oid in obj_meta.keys()}
-    prev_positions = {oid: None for oid in obj_meta.keys()}
+    trails = {}
+    prev_positions = {}
+    prev_times = {}
+    prev_velocities = {}
+    pos_hist = {}  # oid -> deque of last 3 positions
+    time_hist = {}  # oid -> deque of last 3 times
 
     for i, tk in enumerate(time_keys):
         if (i % args.skip) != 0:
@@ -264,8 +405,6 @@ def main():
         # Collisions (draw a pulse point at each contact)
         for oid, ent in objects.items():
             for hit in ent.get("collide", []):
-                # hit is like {"object_ID_3": {"pos": [...]}} or {"pingpong_table": {"pos":[...]}}
-                # Extract the first (and only) value dict
                 if isinstance(hit, dict) and hit:
                     info = list(hit.values())[0]
                     pos = info.get("pos", None)
@@ -274,10 +413,44 @@ def main():
                             "world/collisions",
                             rr.Points3D([pos], radii=0.02, colors=[[255, 80, 80]]),
                         )
+        # Also support step-level collisions as list of positions if present
+        step_collisions = frame.get("collisions", [])
+        if isinstance(step_collisions, list):
+            for c in step_collisions:
+                if isinstance(c, dict):
+                    pos = c.get("pos") or c.get("position")
+                    if pos is not None:
+                        rr.log(
+                            "world/collisions",
+                            rr.Points3D([pos], radii=0.02, colors=[[255, 80, 80]]),
+                        )
 
         # Objects
         for oid, ent in objects.items():
-            p, q = get_pose(ent)
+            # Ensure dynamic containers exist
+            if oid not in trails:
+                trails[oid] = []
+            if oid not in prev_positions:
+                prev_positions[oid] = None
+            if oid not in prev_times:
+                prev_times[oid] = None
+            if oid not in prev_velocities:
+                prev_velocities[oid] = None
+            if oid not in pos_hist:
+                pos_hist[oid] = deque(maxlen=3)
+            if oid not in time_hist:
+                time_hist[oid] = deque(maxlen=3)
+
+            obb_info = get_obb_pose_and_dims(ent)
+            if obb_info is not None:
+                p, q, half_sizes = obb_info
+                kind = "box"
+                dims = half_sizes.tolist()
+            else:
+                p, q = get_pose(ent)
+                # Fallback dims from metadata or default small box
+                kind, dims, _ = shape_info.get(oid, ("box", [0.05, 0.05, 0.05], None))
+
             trails[oid].append(p.tolist())
 
             # Transform: attach geometry to object frame
@@ -287,7 +460,13 @@ def main():
             )
 
             # Color by material, modulated by stress if present
-            base_color = shape_info[oid][2]
+            base_color = shape_info.get(oid, (None, None, None))[2]
+            if base_color is None:
+                # Try metadata if exists; else default palette
+                meta = obj_meta.get(oid, {})
+                base_color = MATERIAL_COLORS.get(
+                    meta.get("material", ""), default_color_for_oid(oid)
+                )
             stress = ent.get("stress", None)
             if stress is not None:
                 # blend material color toward stress heat color
@@ -297,7 +476,6 @@ def main():
             else:
                 col = base_color
 
-            kind, dims, _ = shape_info[oid]
             if kind == "sphere":
                 # ellipsoid centered at local origin
                 rr.log(
@@ -335,29 +513,93 @@ def main():
             # Velocity arrows in world space
             if args.arrows:
                 kin = ent.get("kinematics", {})
+                # Velocity: prefer provided value; else finite difference using per-object prev time
                 if "linear_velocity_world" in kin:
                     v = np.array(kin["linear_velocity_world"], float)
                 else:
-                    # estimate from previous position
                     v = np.zeros(3, float)
-                    prev = prev_positions[oid]
-                    # Try to derive dt from neighbor keys if uniform; else 0
-                    if prev is not None:
-                        # compute dt from time keys (works even with --skip)
-                        prev_t = float(time_keys[max(0, i - args.skip)])
-                        dt = t - prev_t
+                    prev_p = prev_positions.get(oid)
+                    pt_prev = prev_times.get(oid)
+                    if prev_p is not None and pt_prev is not None:
+                        dt = t - pt_prev
                         if dt > 0:
-                            v = (p - prev) / dt
-                prev_positions[oid] = p.copy()
+                            v = (p - prev_p) / dt
 
-                # scale arrow length for readability
-                scale = 1.0
+                # Velocity arrow (reddish)
+                vel_scale = 1.0
                 rr.log(
-                    "world/velocity",
+                    f"world/velocity/{oid}",
                     rr.Arrows3D(
-                        vectors=[(v * scale).tolist()], origins=[p.tolist()], radii=0.01
+                        vectors=[(v * vel_scale).tolist()],
+                        origins=[p.tolist()],
+                        radii=0.01,
+                        colors=[[255, 120, 120]],
                     ),
                 )
+
+                # Acceleration: central difference with one-frame delay
+                # Maintain sliding window of last 3 samples
+                time_hist[oid].append(t)
+                pos_hist[oid].append(p.copy())
+                if len(time_hist[oid]) == 3:
+                    t0, t1, t2 = time_hist[oid][0], time_hist[oid][1], time_hist[oid][2]
+                    p0, p1, p2 = pos_hist[oid][0], pos_hist[oid][1], pos_hist[oid][2]
+                    dtb = t1 - t0
+                    dtf = t2 - t1
+                    a = np.zeros(3, float)
+                    if dtb > 0 and dtf > 0:
+                        v_b = (p1 - p0) / dtb
+                        v_f = (p2 - p1) / dtf
+                        denom = t2 - t0
+                        if denom > 0:
+                            a = 2.0 * (v_f - v_b) / denom
+                    # Log at the middle timestamp t1, with origin at p1
+                    # Temporarily switch timeline to t1 to avoid visual lag
+                    rr.set_time_seconds(args.timeline, float(t1))
+                    acc_scale = 0.1
+                    rr.log(
+                        f"world/acceleration/{oid}",
+                        rr.Arrows3D(
+                            vectors=[(a * acc_scale).tolist()],
+                            origins=[p1.tolist()],
+                            radii=0.01,
+                            colors=[[80, 220, 80]],
+                        ),
+                    )
+                    # Switch back to current time t
+                    rr.set_time_seconds(args.timeline, t)
+
+                # Update history for velocity backward-diff reference
+                prev_velocities[oid] = v.copy()
+                prev_positions[oid] = p.copy()
+                prev_times[oid] = t
+
+            # Force arrows (gravity by default; use provided force fields if present)
+            # Try common keys in case the JSON contains explicit forces
+            f_vec = None
+            for key in ("force_world", "force", "net_force_world", "net_force"):
+                if key in ent:
+                    try:
+                        f_vec = np.array(ent[key], dtype=float)
+                        break
+                    except Exception:
+                        pass
+            if f_vec is None:
+                # fallback to gravity force
+                mass = mass_map.get(oid, 1.0)
+                f_vec = mass * gravity
+
+            # Visual scale for readability (tune as needed)
+            force_scale = 0.05
+            rr.log(
+                f"world/forces/{oid}",
+                rr.Arrows3D(
+                    vectors=[(f_vec * force_scale).tolist()],
+                    origins=[p.tolist()],
+                    radii=0.012,
+                    colors=[[70, 120, 255]],
+                ),
+            )
 
         # Trails
         if args.trail:

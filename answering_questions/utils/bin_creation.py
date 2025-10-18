@@ -103,6 +103,7 @@ def create_mc_options_around_gt(
     num_answers: int = 4,
     *,
     seed: Optional[int] = None,
+    min_rel_gap: float = 0.05,
     sig_digits: int = 3,
     lo: Optional[float] = None,  # e.g., 0.0 for speed
     hi: Optional[float] = None,  # upper bound if needed
@@ -124,7 +125,6 @@ def create_mc_options_around_gt(
     rng = random.Random(seed)
 
     spread_rel = 0.25
-    min_rel_gap = 0.05
     attempts_limit = 6000
 
     rounded_gt = _round_sig(gt, sig_digits)

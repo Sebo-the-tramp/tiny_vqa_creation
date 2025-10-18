@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [        
         {
-            "name": "Python Debugger: Current File",
+            "name": "Main VQA answering",
             "type": "debugpy",
             "request": "launch",
             "program": "./main.py",
@@ -13,6 +13,19 @@
             "cwd": "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/answering_questions",
             "args": [
                 "--verbose"
+            ]
+        },
+        {
+            "name": "Merging materials",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "./enrich_simulation_materials.py",
+            "console": "integratedTerminal",
+            "cwd": "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/answering_questions",
+            "args": [
+                "--max-files", "10",
+                "--materials-root", "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/Physics-gso/",
+                "--simulation-root", "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/output/",
             ]
         }
     ]

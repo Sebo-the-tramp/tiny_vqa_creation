@@ -6,19 +6,26 @@ Second-pass augmentation for JSON simulations. Computes per-object kinematics
 derived scalars (speed, curvature, tangential/normal accel, momentum, KE).
 
 Works with these transform formats per object per step:
-1) List of 6: [x,y,z, rx,ry,rz] (Euler angles, radians; default order=XYZ)
-2) Dict {"p":[...], "q":[...]} or {"position":[...], "rotation_quat":[...]}
-3) Dict {"pose":{"p":[...], "q":[...]}}  or {"state":{"pose":{"p":...,"q":...}}}
+1) New format: `obb` with `center` (position) and `R` (3x3 rotation matrix)
+2) List of 6: [x,y,z, rx,ry,rz] (Euler angles, radians; default order=XYZ)
+3) Dict {"p":[...], "q":[...]} or {"position":[...], "rotation_quat":[...]}
+4) Dict {"pose":{"p":[...], "q":[...]}}  or {"state":{"pose":{"p":...,"q":...}}}
 
 Angular velocity is computed from quaternions if available (recommended).
 If only Euler is present, each axis is unwrapped and differentiated (approx).
 
 Usage:
-  python augment_kinematics.py input.json --out-json out.json --out-csv out.csv
+  python augment_kinematics.py simulation.json [--out-json out.json]
+  python augment_kinematics.py path/to/root_with_data --no-csv
+  python augment_kinematics.py --search-root data/run1 --search-root data/run2
   # optional flags:
   --euler-order XYZ|ZYX (default XYZ)
   --csv-float 6     (decimal places)
   --no-csv          (skip csv)
+
+When no explicit input or search roots are provided the script searches the
+current working directory for directories named 'data' that contain a
+simulation.json, augmenting each match in place.
 """
 
 import json
@@ -27,8 +34,31 @@ import argparse
 import sys
 import csv
 import os
-from typing import Dict, Any, Tuple
+from typing import Any, Dict, Iterable, List, Optional, Tuple
 import numpy as np
+
+
+def find_simulation_files(search_roots: Iterable[str]) -> List[str]:
+    """Find simulation.json files located under directories named 'data'."""
+    matches: List[str] = []
+    for root in search_roots:
+        if not root:
+            continue
+        abs_root = os.path.abspath(root)
+        if os.path.isfile(abs_root):
+            if os.path.basename(abs_root) == "simulation.json":
+                matches.append(abs_root)
+            continue
+        if not os.path.isdir(abs_root):
+            continue
+        for dirpath, dirnames, filenames in os.walk(abs_root):
+            dirnames.sort()
+            if "simulation.json" not in filenames:
+                continue
+            parts = os.path.normpath(dirpath).split(os.sep)
+            if "data" in parts:
+                matches.append(os.path.join(dirpath, "simulation.json"))
+    return matches
 
 
 def clamp(x, a, b):
@@ -159,6 +189,22 @@ def extract_pose_quat(
     obj_step: Dict[str, Any], euler_order="XYZ"
 ) -> Tuple[np.ndarray, np.ndarray]:
     # Returns (position[3], quaternion[4])
+    # New: OBB-based pose (preferred in new simulation format)
+    if "obb" in obj_step and isinstance(obj_step["obb"], dict):
+        obb = obj_step["obb"]
+        if "center" in obb and "R" in obb:
+            p = np.array(obb["center"], dtype=float)
+            R = np.array(obb["R"], dtype=float)
+            # Support both flat and nested 3x3 forms
+            R = R.reshape(3, 3)
+            q = mat3_to_quat(R)
+            return p, q
+        # If only center exists, still return it with identity rotation
+        if "center" in obb and "R" not in obb:
+            p = np.array(obb["center"], dtype=float)
+            q = np.array([0, 0, 0, 1], dtype=float)
+            return p, q
+
     # Try state->pose
     if "state" in obj_step and isinstance(obj_step["state"], dict):
         pose = obj_step["state"].get("pose", {})
@@ -207,7 +253,7 @@ def extract_pose_quat(
         return np.array(tr["position"], dtype=float), q
 
     raise ValueError(
-        "Could not parse pose/quaternion from object step; expected transform or state.pose."
+        "Could not parse pose/quaternion from object step; expected obb or transform or state.pose."
     )
 
 
@@ -301,67 +347,64 @@ def compute_kinematics(
     }
 
 
-def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument("input", help="Input simulation JSON")
-    ap.add_argument("--out-json", default=None, help="Path to write augmented JSON")
-    ap.add_argument("--out-csv", default=None, help="Path to write long-form CSV")
-    ap.add_argument("--euler-order", default="XYZ", choices=["XYZ", "ZYX"])
-    ap.add_argument("--csv-float", type=int, default=6)
-    ap.add_argument("--no-csv", action="store_true")
-    args = ap.parse_args()
-
-    with open(args.input, "r") as f:
+def augment_simulation_file(
+    input_path: str,
+    *,
+    euler_order: str,
+    csv_float: int,
+    write_csv: bool,
+    out_json_path: Optional[str] = None,
+    out_csv_path: Optional[str] = None,
+) -> None:
+    with open(input_path, "r") as f:
         sim = json.load(f)
 
-    steps = sim.get("simulation_steps", {})
+    steps = sim.get("simulation", {})
     if not steps:
-        print("No simulation_steps found.", file=sys.stderr)
-        sys.exit(2)
+        raise ValueError("No simulation_steps found.")
 
-    # Time vector
     time_keys = sorted(steps.keys(), key=lambda s: float(s))
     times = np.array([float(k) for k in time_keys], dtype=float)
 
     obj_ids = list(sim.get("objects", {}).keys())
     if not obj_ids:
-        # try to infer from first step
-        first_step = sim["simulation_steps"][time_keys[0]]
+        first_step = sim["simulation"][time_keys[0]]
         obj_ids = list(first_step.get("objects", {}).keys())
 
-    # Collect per-object arrays
     per_obj = {}
     for oid in obj_ids:
         P = []
         Q = []
         have_quat = True
         for tk in time_keys:
-            step = sim["simulation_steps"][tk]
+            step = sim["simulation"][tk]
             obj = step["objects"].get(oid, None)
             if obj is None:
                 raise ValueError(f"Missing object {oid} at time {tk}")
             try:
-                p, q = extract_pose_quat(obj, euler_order=args.euler_order)
+                p, q = extract_pose_quat(obj, euler_order=euler_order)
             except Exception:
-                # If completely missing orientation, assume identity quaternion
                 tr = obj.get("transform", None)
                 if isinstance(tr, list) and len(tr) >= 3:
                     p = np.array(tr[:3], dtype=float)
+                    q = np.array([0, 0, 0, 1], dtype=float)
+                    have_quat = False
+                elif isinstance(obj.get("obb"), dict) and "center" in obj["obb"]:
+                    p = np.array(obj["obb"]["center"], dtype=float)
                     q = np.array([0, 0, 0, 1], dtype=float)
                     have_quat = False
                 else:
                     raise
             P.append(p)
             Q.append(q)
-        P = np.vstack(P)  # (N,3)
-        Q = np.vstack(Q)  # (N,4)
+        P = np.vstack(P)
+        Q = np.vstack(Q)
         mass = float(sim["objects"].get(oid, {}).get("mass", 1.0))
         kin = compute_kinematics(times, P, Q, mass, have_quat=have_quat)
         per_obj[oid] = {"P": P, "Q": Q, "mass": mass, "kin": kin}
 
-    # Inject kinematics back into JSON
     for idx, tk in enumerate(time_keys):
-        st = sim["simulation_steps"][tk]
+        st = sim["simulation"][tk]
         for oid in obj_ids:
             kin = per_obj[oid]["kin"]
             v = kin["v"][idx]
@@ -370,26 +413,21 @@ def main():
             w = kin["w"][idx]
             alpha = kin["alpha"][idx]
             rec = {
-                "linear_velocity_world": np.round(v, args.csv_float).tolist(),
-                "linear_accel_world": np.round(a, args.csv_float).tolist(),
-                "linear_jerk_world": np.round(j, args.csv_float).tolist(),
-                "speed": round(float(kin["speed"][idx]), args.csv_float),
-                "tangential_accel": round(float(kin["a_t"][idx]), args.csv_float),
-                "normal_accel": round(float(kin["a_n"][idx]), args.csv_float),
-                "curvature": round(float(kin["curvature"][idx]), args.csv_float),
-                "momentum_world": np.round(
-                    kin["momentum"][idx], args.csv_float
-                ).tolist(),
-                "kinetic_energy_trans": round(
-                    float(kin["ke_trans"][idx]), args.csv_float
-                ),
-                "angular_velocity_world": np.round(w, args.csv_float).tolist(),
-                "angular_accel_world": np.round(alpha, args.csv_float).tolist(),
+                "linear_velocity_world": np.round(v, csv_float).tolist(),
+                "linear_accel_world": np.round(a, csv_float).tolist(),
+                "linear_jerk_world": np.round(j, csv_float).tolist(),
+                "speed": round(float(kin["speed"][idx]), csv_float),
+                "tangential_accel": round(float(kin["a_t"][idx]), csv_float),
+                "normal_accel": round(float(kin["a_n"][idx]), csv_float),
+                "curvature": round(float(kin["curvature"][idx]), csv_float),
+                "momentum_world": np.round(kin["momentum"][idx], csv_float).tolist(),
+                "kinetic_energy_trans": round(float(kin["ke_trans"][idx]), csv_float),
+                "angular_velocity_world": np.round(w, csv_float).tolist(),
+                "angular_accel_world": np.round(alpha, csv_float).tolist(),
                 "frame": "world",
             }
             st["objects"][oid]["kinematics"] = rec
 
-    # Add a tiny conventions block if missing
     sim.setdefault("conventions", {})
     sim["conventions"].setdefault("axes", "right-handed, +Y up, +Z forward")
     sim["conventions"].setdefault("transform_direction", "world_T_object")
@@ -397,17 +435,16 @@ def main():
     sim["conventions"]["augmentation"] = {
         "version": "kinematics-1.0",
         "method": "finite-difference (central), quaternion log for ω",
-        "euler_order_assumed": args.euler_order,
+        "euler_order_assumed": euler_order,
     }
 
-    # Write outputs
-    out_json = args.out_json or (os.path.splitext(args.input)[0] + "_kinematics.json")
+    out_json = out_json_path or (os.path.splitext(input_path)[0] + "_kinematics.json")
     with open(out_json, "w") as f:
         json.dump(sim, f, indent=2)
-    print("Wrote augmented JSON:", out_json)
+    print(f"[{input_path}] Wrote augmented JSON: {out_json}")
 
-    if not args.no_csv:
-        out_csv = args.out_csv or (os.path.splitext(args.input)[0] + "_kinematics.csv")
+    if write_csv:
+        out_csv = out_csv_path or (os.path.splitext(input_path)[0] + "_kinematics.csv")
         with open(out_csv, "w", newline="") as f:
             wcsv = csv.writer(f)
             header = [
@@ -488,7 +525,130 @@ def main():
                         alpha[2],
                     ]
                     wcsv.writerow(row)
-        print("Wrote CSV:", out_csv)
+        print(f"[{input_path}] Wrote CSV: {out_csv}")
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument(
+        "input",
+        nargs="?",
+        help="Input simulation JSON or directory to search for data simulations",
+    )
+    ap.add_argument(
+        "--search-root",
+        action="append",
+        default=[],
+        help="Additional base directory to search recursively for data simulations. "
+        "Can be supplied multiple times.",
+    )
+    ap.add_argument(
+        "--out-json",
+        default=None,
+        help="Path to write augmented JSON (only valid for a single input file).",
+    )
+    ap.add_argument(
+        "--out-csv",
+        default=None,
+        help="Path to write long-form CSV (only valid for a single input file).",
+    )
+    ap.add_argument("--euler-order", default="XYZ", choices=["XYZ", "ZYX"])
+    ap.add_argument("--csv-float", type=int, default=6)
+    ap.add_argument("--no-csv", action="store_true")
+    args = ap.parse_args()
+
+    targets: List[str] = []
+    seen = set()
+
+    def add_paths(paths: Iterable[str]) -> None:
+        for path in paths:
+            abs_path = os.path.abspath(path)
+            if abs_path not in seen:
+                seen.add(abs_path)
+                targets.append(abs_path)
+
+    if args.input:
+        input_candidate = os.path.abspath(args.input)
+        if os.path.isfile(input_candidate):
+            add_paths([input_candidate])
+        elif os.path.isdir(input_candidate):
+            matches = find_simulation_files([input_candidate])
+            if not matches:
+                print(
+                    f"No simulation.json files found in data directories under '{args.input}'.",
+                    file=sys.stderr,
+                )
+                sys.exit(1)
+            add_paths(sorted(matches))
+        else:
+            print(f"Input path '{args.input}' does not exist.", file=sys.stderr)
+            sys.exit(1)
+
+    if args.search_root:
+        normalized_roots: List[str] = []
+        for root in args.search_root:
+            abs_root = os.path.abspath(root)
+            if not os.path.exists(abs_root):
+                print(f"Search root '{root}' does not exist.", file=sys.stderr)
+                sys.exit(1)
+            normalized_roots.append(abs_root)
+        matches = find_simulation_files(normalized_roots)
+        if not matches:
+            print(
+                "No simulation.json files found in supplied search roots.",
+                file=sys.stderr,
+            )
+            sys.exit(1)
+        add_paths(sorted(matches))
+
+    if not targets:
+        matches = find_simulation_files([os.getcwd()])
+        if not matches:
+            print(
+                "No simulation.json files found in data directories under the current working directory.",
+                file=sys.stderr,
+            )
+            sys.exit(1)
+        add_paths(sorted(matches))
+
+    if args.no_csv and args.out_csv:
+        print("--out-csv cannot be combined with --no-csv.", file=sys.stderr)
+        sys.exit(2)
+
+    if len(targets) > 1:
+        if args.out_json:
+            print(
+                "--out-json can only be used when processing a single file.",
+                file=sys.stderr,
+            )
+            sys.exit(2)
+        if args.out_csv:
+            print(
+                "--out-csv can only be used when processing a single file.",
+                file=sys.stderr,
+            )
+            sys.exit(2)
+
+    single_target = len(targets) == 1
+    json_override = args.out_json if single_target else None
+    csv_override = args.out_csv if single_target else None
+
+    had_error = False
+    for input_path in targets:
+        try:
+            augment_simulation_file(
+                input_path,
+                euler_order=args.euler_order,
+                csv_float=args.csv_float,
+                write_csv=False,
+                out_json_path=json_override,
+                out_csv_path=csv_override,
+            )
+        except Exception as exc:
+            print(f"Error processing {input_path}: {exc}", file=sys.stderr)
+            had_error = True
+    if had_error:
+        sys.exit(1)
 
 
 if __name__ == "__main__":

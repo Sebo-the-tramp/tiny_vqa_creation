@@ -9,13 +9,8 @@ and fall back to sensible defaults when information is missing.
 from __future__ import annotations
 
 from utils.decorators import with_resolved_attributes
-from utils.bin_creation import (
-    create_mc_options_around_gt,
-    create_mc_object_names_from_dataset,
-    uniform_labels,
-)
-
 from utils.all_objects import get_all_objects_names
+from utils.frames_selection import uniformly_sample_frames, sample_frames_at_timesteps
 
 from typing import (
     Any,
@@ -29,12 +24,20 @@ from utils.helpers import (
     _distance_between,
     _iter_objects,
     _fill_template,
+    get_object_state_at_timestep,
 )
 
 from .spatial_helpers import (
     _get_position,
     point_to_plane_distance,
     _get_position_camera,
+    get_max_height_from_obb,
+)
+
+from utils.bin_creation import (
+    create_mc_options_around_gt,
+    create_mc_object_names_from_dataset,
+    uniform_labels,
 )
 
 Number = Union[int, float]
@@ -58,10 +61,8 @@ def F_SPATIAL_OBJECT_GROUND_DISTANCE(
 
     timestep = resolved_attributes["TIME"]["choice"]
     object = resolved_attributes["OBJECT"]["choice"]
-    ground_normal = world_state["segments"]["ground"].get(
-        "plane_normal", [0, 0, 1]
-    )  # TODO change the format eventually
-    ground_height = world_state["segments"]["ground"].get("ground_height", 0.0)
+    ground_normal = [0, 0, 1]  # TODO change the format eventually
+    ground_height = 0.0
 
     object_position_at_time = _get_position(world_state, object["id"], timestep)
 
@@ -69,14 +70,18 @@ def F_SPATIAL_OBJECT_GROUND_DISTANCE(
         object_position_at_time, ground_normal, ground_height
     )
 
-    _fill_template(question, resolved_attributes)
     options, correct_idx = create_mc_options_around_gt(
         distance, num_answers=4, display_decimals=1, lo=0.0
     )
     labels = uniform_labels(options, integer=False, decimals=1)
     labels = [str(label) + " meters" for label in labels]
 
-    return question, labels, correct_idx
+    return (
+        question,
+        labels,
+        correct_idx,
+        sample_frames_at_timesteps(world_state, [timestep]),
+    )
 
 
 @with_resolved_attributes
@@ -99,14 +104,18 @@ def F_SPATIAL_OBJECT_OBJECT_DISTANCE(
 
     distance = _distance_between(object_1_position_at_time, object_2_position_at_time)
 
-    _fill_template(question, resolved_attributes)
     options, correct_idx = create_mc_options_around_gt(
         distance, num_answers=4, display_decimals=1, lo=0.0
     )
     labels = uniform_labels(options, integer=False, decimals=1)
     labels = [str(label) + " meters" for label in labels]
 
-    return question, labels, correct_idx
+    return (
+        question,
+        labels,
+        correct_idx,
+        sample_frames_at_timesteps(world_state, [timestep]),
+    )
 
 
 @with_resolved_attributes
@@ -114,10 +123,9 @@ def F_SPATIAL_OBJECT_CAMERA_DISTANCE(
     world_state: WorldState, question: QuestionPayload, resolved_attributes, **kwargs
 ) -> int:
     assert (
-        len(resolved_attributes) == 3
+        len(resolved_attributes) == 2
         and "OBJECT" in resolved_attributes
         and "TIME" in resolved_attributes
-        and "CAMERA" in resolved_attributes
     )
 
     timestep = resolved_attributes["TIME"]["choice"]
@@ -128,14 +136,18 @@ def F_SPATIAL_OBJECT_CAMERA_DISTANCE(
 
     distance = _distance_between(object_position_at_time, camera_position_at_time)
 
-    _fill_template(question, resolved_attributes)
     options, correct_idx = create_mc_options_around_gt(
         distance, num_answers=4, display_decimals=1, lo=0.0
     )
     labels = uniform_labels(options, integer=False, decimals=1)
     labels = [str(label) + " meters" for label in labels]
 
-    return question, labels, correct_idx
+    return (
+        question,
+        labels,
+        correct_idx,
+        sample_frames_at_timesteps(world_state, [timestep]),
+    )
 
 
 @with_resolved_attributes
@@ -162,21 +174,13 @@ def F_SPATIAL_CLOSEST_OBJECT(
                 closest_distance = distance
                 closest_object = object_iter
 
-    print(
-        f"Closest object to {object['id']} at time {timestep} is {closest_object} at distance {closest_distance}"
-    )
-
-    _fill_template(question, resolved_attributes)
-    # here we need to have
-
-    DATASET = get_all_objects_names()
     present = [obj["name"] for obj in _iter_objects_list if obj["id"] != object["id"]]
 
     labels, idx = create_mc_object_names_from_dataset(
-        closest_object["name"], present, DATASET
+        closest_object["name"], present, get_all_objects_names()
     )
 
-    return question, labels, idx
+    return question, labels, idx, sample_frames_at_timesteps(world_state, [timestep])
 
 
 @with_resolved_attributes
@@ -203,11 +207,49 @@ def F_SPATIAL_COUNTING_OBJECTS_CLOSE(
         if distance <= distance_threshold:
             count += 1
 
-    _fill_template(question, resolved_attributes)
     options, correct_idx = create_mc_options_around_gt(
         count, num_answers=4, display_decimals=0, lo=0.0
     )
     labels = uniform_labels(options, integer=True, decimals=0)
     labels = [str(label) for label in labels]
 
-    return question, labels, correct_idx
+    return (
+        question,
+        labels,
+        correct_idx,
+        sample_frames_at_timesteps(world_state, [timestep]),
+    )
+
+
+@with_resolved_attributes
+def F_SPATIAL_HEIGHEST_ABOVE_GROUND(
+    world_state: WorldState, question: QuestionPayload, resolved_attributes, **kwargs
+) -> int:
+    assert len(resolved_attributes) == 1 and "TIME" in resolved_attributes
+
+    timestep = resolved_attributes["TIME"]["choice"]
+
+    highest = -1.0
+    highest_obj = None
+
+    # they could also have the same height - in that case we take the first one found
+    for obj in _iter_objects(world_state):
+        object_state = get_object_state_at_timestep(world_state, obj["id"], timestep)
+        obb = object_state["obb"]
+        # calculate the height from the obb
+        obj_height = get_max_height_from_obb(obb)
+        if obj_height > highest:
+            highest = obj_height
+            highest_obj = obj
+
+    present = [
+        obj["name"]
+        for obj in list(_iter_objects(world_state))
+        if obj["id"] != highest_obj["id"]
+    ]
+
+    labels, idx = create_mc_object_names_from_dataset(
+        highest_obj["name"], present, get_all_objects_names()
+    )
+
+    return question, labels, idx, sample_frames_at_timesteps(world_state, [timestep])

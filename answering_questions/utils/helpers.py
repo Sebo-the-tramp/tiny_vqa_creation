@@ -27,6 +27,8 @@ Answer = Union[int, float, str]
 
 MOVEMENT_TOLERANCE = 1e-3
 DEFAULT_DISPLACEMENT_THRESHOLD = 2.0
+FPS = 100.0  # frames per second
+DELTA_FRAMES = 0.01
 
 # ---------------------------------------------------------------------------
 # Helper utilities
@@ -85,7 +87,7 @@ def get_object_state_at_timestep(
     world_state: Mapping[str, Any], object_id: str, timestep: str
 ) -> Optional[Mapping[str, Any]]:
     """Retrieve the state of an object at a specific timestep."""
-    simulation_steps = world_state.get("simulation_steps", {})
+    simulation_steps = world_state.get("simulation", {})
     if not simulation_steps:
         return None
 
@@ -98,7 +100,7 @@ def get_all_objects_state_at_time(
     world_state: Mapping[str, Any], timestep: str
 ) -> Optional[Mapping[str, Any]]:
     """Retrieve the state of an object at a specific timestep."""
-    simulation_steps = world_state.get("simulation_steps", {})
+    simulation_steps = world_state.get("simulation", {})
     if not simulation_steps:
         return None
 
@@ -129,13 +131,15 @@ def _fill_template(
     question: Mapping[str, Any], resolved_attributes: Mapping[str, Any]
 ) -> None:
     for attribute in resolved_attributes:
-        if "OBJECT_CATEGORY" in attribute:
+        if "OBJECT-CATEGORY" in attribute:
             question["question"] = question["question"].replace(
-                f"<{attribute}>", resolved_attributes[attribute]["choice"]["category_GSO"]
+                f"<{attribute}>",
+                resolved_attributes[attribute]["choice"],
             )
         elif "OBJECT" in attribute:
             question["question"] = question["question"].replace(
-                f"<{attribute}>", resolved_attributes[attribute]["choice"]["name"]
+                f"<{attribute}>",
+                resolved_attributes[attribute]["choice"]["description"]["object_name"],
             )
         else:
             question["question"] = question["question"].replace(
@@ -144,7 +148,8 @@ def _fill_template(
 
 
 def get_camera(world_state: Mapping[str, Any]) -> Mapping[str, Any]:
-    camera = world_state.get("camera")
+    # taking the first camera
+    camera = world_state["simulation"]["0000.010"]["camera"]
     if not camera:
         raise ValueError("No camera found in the world state.")
     return camera
@@ -153,7 +158,7 @@ def get_camera(world_state: Mapping[str, Any]) -> Mapping[str, Any]:
 def get_random_material(world_state: Mapping[str, Any]) -> str:
     materials = set()
     for obj in _iter_objects(world_state):
-        material = _as_lower(obj.get("material"))
+        material = _as_lower(obj["description"]["material_group"])
         if material:
             materials.add(material)
     if not materials:
@@ -164,24 +169,39 @@ def get_random_material(world_state: Mapping[str, Any]) -> str:
 def get_random_object(
     world_state: Mapping[str, Any], OBJECT_CATEGORY: Optional[str] = None
 ) -> Mapping[str, Any]:
-    objects = list(_objects_of_type(world_state, OBJECT_CATEGORY))
-    if not objects:
-        raise ValueError(f"No objects found of type '{OBJECT_CATEGORY}'")
+    # objects = list(_objects_of_type(world_state, OBJECT_CATEGORY))
+    # if not objects:
+    #     raise ValueError(f"No objects found of type '{OBJECT_CATEGORY}'")
+
+    objects = world_state["objects"]
+
+    return rng.choice(list(objects.values()))
+
+
+def get_random_object_visible(
+    world_state: Mapping[str, Any], OBJECT_CATEGORY: Optional[str] = None
+) -> Mapping[str, Any]:
+    # objects = list(_objects_of_type(world_state, OBJECT_CATEGORY))
+    # if not objects:
+    #     raise ValueError(f"No objects found of type '{OBJECT_CATEGORY}'")
+
+    objects = world_state.get("objects", [])
 
     # TODO I think we should only resolve objects that are visible at least 50%
     # This can be improved and made a function of the time also
     visible_objects = []
-    for obj in objects:
+    for obj_id, object in objects.items():
         is_visible_everywhere = True
-        for timestep in world_state.get("simulation_steps", {}).keys():
-            obj_state = get_object_state_at_timestep(world_state, obj["id"], timestep)
+        for timestep in world_state.get("simulation", {}).keys():
+            obj_state = get_object_state_at_timestep(world_state, obj_id, timestep)
             if obj_state.get("is_visible_from_camera", False):
                 continue
             else:
                 is_visible_everywhere = False
                 break
         if is_visible_everywhere:
-            visible_objects.append(obj)
+            object["id"] = obj_id
+            visible_objects.append(object)
     if not visible_objects:
         raise ValueError(f"No visible objects found of type '{OBJECT_CATEGORY}'")
 
@@ -191,7 +211,7 @@ def get_random_object(
 def get_random_OBJECT_CATEGORY(world_state: Mapping[str, Any]) -> str:
     OBJECT_CATEGORYs = set()
     for obj in _iter_objects(world_state):
-        obj_type = _as_lower(obj.get("category_GSO"))
+        obj_type = _as_lower(obj["description"]["category_gso"])
         if obj_type:
             OBJECT_CATEGORYs.add(obj_type)
     if not OBJECT_CATEGORYs:
@@ -199,8 +219,8 @@ def get_random_OBJECT_CATEGORY(world_state: Mapping[str, Any]) -> str:
     return rng.choice(list(OBJECT_CATEGORYs))
 
 
-def get_random_time(world_state: Mapping[str, Any]) -> float:
-    timesteps = world_state.get("simulation_steps", [])
+def get_random_timestep(world_state: Mapping[str, Any]) -> float:
+    timesteps = world_state.get("simulation", [])
     if not timesteps:
         raise ValueError("No timesteps found in the world state")
     return rng.choice(list(timesteps.keys()))
@@ -211,8 +231,8 @@ resolver = {
     "CAMERA": get_camera,
     "CATEGORY": get_random_OBJECT_CATEGORY,
     "DENSITY": lambda ws: round(
-        rng.uniform(0.1, 3.0), 1
-    ),  # random density between 0.1 and 3 g/kg_per_m3
+        rng.uniform(10, 600), 1
+    ),  # random density between 10 and 600 kg/m3
     "DISTANCE": lambda ws: round(
         rng.uniform(1.0, 5.0), 1
     ),  # random distance between 1 and 5 meters, 1 decimal place
@@ -220,15 +240,15 @@ resolver = {
         rng.uniform(0.1, 3.0), 1
     ),  # random mass between 0.1 and 5 kg
     "MATERIAL": get_random_material,
-    "OBJECT_CATEGORY": get_random_OBJECT_CATEGORY,
+    "OBJECT-CATEGORY": get_random_OBJECT_CATEGORY,
     "OBJECT": get_random_object,
     "STRESS-THRESHOLD": lambda ws: round(
         rng.uniform(0.0, 10.0), 1
     ),  # random stress threshold between 10 and 100 MPa
-    "TIME": get_random_time,
+    "TIME": get_random_timestep,
     "VOLUME": lambda ws: round(
-        rng.uniform(0.1, 3.0), 1
-    ),  # random volume between 0.1 and 5 cubic meters
+        rng.uniform(0.001, 0.5), 1
+    ),  # random volume between 0.001 and .5 cubic meters
 }
 
 
@@ -262,10 +282,31 @@ def _iter_objects(world_state: Mapping[str, Any]) -> Iterator[Mapping[str, Any]]
             yield obj
 
 
+# TODO improve this and make it actually work
+def _iter_visible_objects(
+    world_state: Mapping[str, Any],
+) -> Iterator[Mapping[str, Any]]:
+    for obj in _iter_objects(world_state):
+        obj_id = obj.get("id")
+        if not obj_id:
+            continue
+
+        is_visible_everywhere = True
+        for timestep in world_state.get("simulation", {}).keys():
+            obj_state = get_object_state_at_timestep(world_state, obj_id, timestep)
+            if obj_state.get("is_visible_from_camera", True):
+                continue
+            else:
+                is_visible_everywhere = False
+                break
+        if is_visible_everywhere:
+            yield obj
+
+
 def iter_visible_objects_at_time(
     world_state: Mapping[str, Any], timestep: str
 ) -> Iterator[Mapping[str, Any]]:
-    step_data = world_state.get("simulation_steps", {}).get(str(timestep), {})
+    step_data = world_state.get("simulation", {}).get(str(timestep), {})
     objects_state = step_data.get("objects", {})
 
     for obj in _iter_objects(world_state):
@@ -274,7 +315,7 @@ def iter_visible_objects_at_time(
             continue
 
         obj_state = objects_state[obj_id]
-        if obj_state.get("is_visible_from_camera", False):
+        if obj_state.get("is_visible_from_camera", True):
             yield obj
 
 
@@ -287,7 +328,7 @@ def _objects_of_type(
 
     target = OBJECT_CATEGORY.casefold()
     for obj in _iter_objects(world_state):
-        obj_type = _as_lower(obj.get("type"))
+        obj_type = _as_lower(obj["description"]["category_gso"])
         if obj_type == target:
             yield obj
 
@@ -314,7 +355,7 @@ def _is_moving(object_id: str, timestep: str, world_state: Mapping[str, Any]) ->
 
 
 def _get_speed(object_id: str, timestep: str, world_state: Mapping[str, Any]) -> float:
-    timestep_world = world_state["simulation_steps"][timestep]
+    timestep_world = world_state["simulation"][timestep]
     current_timestep_involved_object = timestep_world["objects"][object_id][
         "kinematics"
     ]["speed"]
@@ -324,7 +365,7 @@ def _get_speed(object_id: str, timestep: str, world_state: Mapping[str, Any]) ->
 def _get_acceleration(
     object_id: str, timestep: str, world_state: Mapping[str, Any]
 ) -> float:
-    timestep_world = world_state["simulation_steps"][timestep]
+    timestep_world = world_state["simulation"][timestep]
     current_timestep_involved_object = timestep_world["objects"][object_id][
         "kinematics"
     ]["normal_accel"]
@@ -334,20 +375,20 @@ def _get_acceleration(
 def get_angular_velocity_vector(
     object_id: str, timestep: str, world_state: Mapping[str, Any]
 ) -> float:
-    timestep_world = world_state["simulation_steps"][timestep]
+    timestep_world = world_state["simulation"][timestep]
     current_timestep_involved_object = timestep_world["objects"][object_id][
         "kinematics"
     ]["angular_velocity_world"]
     return current_timestep_involved_object
 
 
-def _get_vertical_speed(obj: Mapping[str, Any]) -> float:
+def _get_vertical_velocity(obj: Mapping[str, Any]) -> float:
     motion = _get_motion(obj)
 
-    value = motion.get("vertical_speed") or motion.get("verticalSpeed")
-    vertical_speed = _coerce_to_float(value)
-    if vertical_speed is not None:
-        return vertical_speed
+    value = motion.get("vertical_velocity") or motion.get("verticalvelocity")
+    vertical_velocity = _coerce_to_float(value)
+    if vertical_velocity is not None:
+        return vertical_velocity
 
     velocity = motion.get("velocity")
     components = _as_vector(velocity)
@@ -367,12 +408,12 @@ def _get_vertical_speed(obj: Mapping[str, Any]) -> float:
 def _get_displacement(
     obj: str, timestep_start: str, timestep_end: str, world_state: Mapping[str, Any]
 ) -> float:
-    position_start = world_state["simulation_steps"][timestep_start]["objects"][obj][
+    position_start = world_state["simulation"][timestep_start]["objects"][obj][
         "transform"
     ][:3]
-    position_end = world_state["simulation_steps"][timestep_end]["objects"][obj][
-        "transform"
-    ][:3]
+    position_end = world_state["simulation"][timestep_end]["objects"][obj]["transform"][
+        :3
+    ]
     displacement = _distance_between(position_start, position_end)
 
     displacement = _coerce_to_float(displacement)
@@ -455,7 +496,7 @@ def _as_vector(value: Any) -> Optional[Tuple[Number, ...]]:
 
 
 def _extract_OBJECT_CATEGORY(question: Mapping[str, Any]) -> Optional[str]:
-    value = _extract_text(question, "OBJECT_CATEGORY", "objectType", "type")
+    value = _extract_text(question, "OBJECT-CATEGORY", "objectType", "type")
     if value:
         return _as_lower(value)
 
@@ -647,7 +688,7 @@ def _extract_motion_vector(
 
 def _extract_velocity_vector(obj: Mapping[str, Any]) -> Optional[Tuple[float, ...]]:
     vector = _extract_motion_vector(
-        obj, "velocity_vector", "velocity", "linear_velocity", "speed_vector"
+        obj, "velocity_vector", "velocity", "linear_velocity", "velocity_vector"
     )
     if vector:
         return vector

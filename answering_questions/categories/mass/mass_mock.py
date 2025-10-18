@@ -9,6 +9,8 @@ and fall back to sensible defaults when information is missing.
 from __future__ import annotations
 
 from utils.decorators import with_resolved_attributes
+from utils.frames_selection import uniformly_sample_frames
+
 from utils.bin_creation import (
     create_mc_object_names_from_dataset,
     create_mc_options_around_gt,
@@ -27,10 +29,9 @@ from typing import (
 
 from utils.helpers import (
     _iter_objects,
-    _fill_template,
-    get_object_state_at_timestep,
-    iter_visible_objects_at_time,
+    _iter_visible_objects,
 )
+
 
 # from .mass_helpers import (
 # )
@@ -58,16 +59,9 @@ def F_MASS_COUNTING(
     timestep = resolved_attributes["TIME"]["choice"]
 
     count = 0
-    for obj in _iter_objects(world_state):
+    for obj in _iter_visible_objects(world_state):
         if obj["mass"] >= mass_threshold:
-            obj_state = get_object_state_at_timestep(world_state, obj["id"], timestep)
-            # the mass doesn't change over time so
-            if (
-                obj_state["percentage_visible"] > 0.50
-            ):  # TODO check if this threshold is okay
-                count += 1
-
-    _fill_template(question, resolved_attributes)
+            count += 1
 
     options, correct_idx = create_mc_options_around_gt(
         count, num_answers=4, display_decimals=0, lo=0.0
@@ -75,7 +69,7 @@ def F_MASS_COUNTING(
     labels = uniform_labels(options, integer=True, decimals=0)
     labels = [str(label) for label in labels]
 
-    return question, labels, correct_idx
+    return question, labels, correct_idx, uniformly_sample_frames(world_state)
 
 
 @with_resolved_attributes
@@ -87,15 +81,13 @@ def F_MASS_ATTRIBUTE(
     object = resolved_attributes["OBJECT"]["choice"]
     mass = object["mass"]
 
-    _fill_template(question, resolved_attributes)
-
     options, correct_idx = create_mc_options_around_gt(
-        mass, num_answers=4, display_decimals=1, lo=0.1
+        mass, num_answers=4, display_decimals=1, lo=0.1, min_rel_gap=0.4
     )
     labels = uniform_labels(options, integer=False, decimals=1)
     labels = [str(label) for label in labels]
 
-    return question, labels, correct_idx
+    return question, labels, correct_idx, uniformly_sample_frames(world_state)
 
 
 @with_resolved_attributes
@@ -125,7 +117,7 @@ def F_MASS_ATTRIBUTE_HEAVIEST(
         object["name"], present, DATASET
     )
 
-    return question, options, correct_idx
+    return question, options, correct_idx, uniformly_sample_frames(world_state)
 
 
 @with_resolved_attributes
@@ -155,155 +147,51 @@ def F_MASS_ATTRIBUTE_LIGHTEST(
         object["name"], present, DATASET
     )
 
-    return question, options, correct_idx
-
-
-@with_resolved_attributes
-def F_VOLUME_COUNTING(
-    world_state: WorldState, question: QuestionPayload, resolved_attributes, **kwargs
-) -> str:
-    assert (
-        len(resolved_attributes) == 2
-        and "VOLUME" in resolved_attributes
-        and "TIME" in resolved_attributes
-    )
-
-    volume_threshold = resolved_attributes["VOLUME"]["choice"]
-    timestep = resolved_attributes["TIME"]["choice"]
-
-    count = 0
-
-    objects = _iter_objects(world_state)
-
-    for object in objects:
-        obj_state = get_object_state_at_timestep(world_state, object["id"], timestep)
-        if obj_state["is_visible_from_camera"]:
-            if object["volume_m3"] >= volume_threshold:
-                count += 1
-
-    _fill_template(question, resolved_attributes)
-
-    options, correct_idx = create_mc_options_around_gt(
-        count, num_answers=4, display_decimals=0, lo=0.0
-    )
-    labels = uniform_labels(options, integer=True, decimals=0)
-    labels = [str(label) for label in labels]
-
-    return question, labels, correct_idx
-
-
-@with_resolved_attributes
-def F_VOLUME_ATTRIBUTE(
-    world_state: WorldState, question: QuestionPayload, resolved_attributes, **kwargs
-) -> str:
-    assert (
-        len(resolved_attributes) == 2
-        and "OBJECT" in resolved_attributes
-        and "TIME" in resolved_attributes
-    )
-
-    # TODO make sure that objects is visible at time T, before getting the choice§
-    object = resolved_attributes["OBJECT"]["choice"]
-
-    timestep = resolved_attributes["TIME"]["choice"]
-    volume = object["volume_m3"]
-
-    _fill_template(question, resolved_attributes)
-
-    options, correct_idx = create_mc_options_around_gt(
-        volume, num_answers=4, display_decimals=1, lo=0.1
-    )
-    labels = uniform_labels(options, integer=False, decimals=1)
-    labels = [str(label) for label in labels]
-
-    return question, labels, correct_idx
-
-
-@with_resolved_attributes
-def F_VOLUME_ATTRIBUTE_MOST_VOLUME(
-    world_state: WorldState, question: QuestionPayload, resolved_attributes, **kwargs
-) -> str:
-    assert len(resolved_attributes) == 1 and "TIME" in resolved_attributes
-
-    timestep = resolved_attributes["TIME"]["choice"]
-
-    largest_volume = -1.0
-    object = None
-    for obj in iter_visible_objects_at_time(world_state, timestep):
-        if "volume_m3" not in obj:
-            raise ValueError(f"Object {obj['id']} is missing 'volume_m3' attribute.")
-        if obj["volume_m3"] > largest_volume:
-            largest_volume = obj["volume_m3"]
-            object = obj
-
-    if object is None:
-        raise ValueError("No objects found in the world state.")
-
-    _fill_template(question, resolved_attributes)
-
-    DATASET = get_all_objects_names()
-    present = [
-        obj["name"] for obj in _iter_objects(world_state) if obj["id"] != object["id"]
-    ]
-
-    options, correct_idx = create_mc_object_names_from_dataset(
-        object["name"], present, DATASET
-    )
-
-    return question, options, correct_idx
+    return question, options, correct_idx, uniformly_sample_frames(world_state)
 
 
 @with_resolved_attributes
 def F_DENSITY_COUNTING(
     world_state: WorldState, question: QuestionPayload, resolved_attributes, **kwargs
 ) -> str:
-    assert (
-        len(resolved_attributes) == 2
-        and "DENSITY" in resolved_attributes
-        and "TIME" in resolved_attributes
-    )
+    assert len(resolved_attributes) == 1 and "DENSITY" in resolved_attributes
 
     density_threshold = resolved_attributes["DENSITY"]["choice"]
-    timestep = resolved_attributes["TIME"]["choice"]
 
     count = 0
 
-    for obj in iter_visible_objects_at_time(world_state, timestep):
-        if "density_kg_per_m3" not in obj:
-            raise ValueError(f"Object {obj['id']} is missing 'volume_m3' attribute.")
-        if obj["density_kg_per_m3"] > density_threshold:
+    for obj in _iter_objects(world_state):
+        min_object_density = obj["description"]["material"]["density_kg_per_m3"]["min"]
+        max_object_density = obj["description"]["material"]["density_kg_per_m3"]["max"]
+        mean_object_density = (min_object_density + max_object_density) / 2.0
+        if mean_object_density > density_threshold:
             count += 1
 
-    _fill_template(question, resolved_attributes)
-
     options, correct_idx = create_mc_options_around_gt(
-        count, num_answers=4, display_decimals=1, lo=0.1
+        count, num_answers=4, display_decimals=0, lo=0.1
     )
-    labels = uniform_labels(options, integer=False, decimals=1)
+    labels = uniform_labels(options, integer=True, decimals=0)
     labels = [str(label) for label in labels]
 
-    return question, labels, correct_idx
+    return question, labels, correct_idx, uniformly_sample_frames(world_state)
 
 
 @with_resolved_attributes
 def F_DENSITY_ATTRIBUTE(
     world_state: WorldState, question: QuestionPayload, resolved_attributes, **kwargs
 ) -> str:
-    assert (
-        len(resolved_attributes) == 2
-        and "OBJECT" in resolved_attributes
-        and "TIME" in resolved_attributes
-    )
+    assert len(resolved_attributes) == 1 and "OBJECT" in resolved_attributes
 
     # TODO check here as well about visibility at time T before getting the choice
     object = resolved_attributes["OBJECT"]["choice"]
 
-    density_object = object["density_kg_per_m3"]
+    min_object_density = object["description"]["material"]["density_kg_per_m3"]["min"]
+    max_object_density = object["description"]["material"]["density_kg_per_m3"]["max"]
+    mean_object_density = (min_object_density + max_object_density) / 2.0
 
-    _fill_template(question, resolved_attributes)
     options, correct_idx = create_mc_options_around_gt(
-        density_object, num_answers=4, display_decimals=1, lo=0.1
+        mean_object_density, num_answers=4, display_decimals=1, lo=0.1
     )
     labels = uniform_labels(options, integer=False, decimals=1)
 
-    return question, labels, correct_idx
+    return question, labels, correct_idx, uniformly_sample_frames(world_state)

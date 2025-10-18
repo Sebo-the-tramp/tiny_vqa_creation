@@ -43,28 +43,32 @@ def point_to_plane_distance(point, normal, d):
 def _get_position(
     world_state: Mapping[str, Any], object_id: str, timestep: str
 ) -> Optional[Tuple[float, ...]]:
-    timestep_world = world_state["simulation_steps"][timestep]
-    current_timestep_involved_object = [0, 0, 0]
-    current_timestep_involved_object[0] = timestep_world["objects"][object_id][
-        "transform"
-    ][0]
-    current_timestep_involved_object[1] = timestep_world["objects"][object_id][
-        "transform"
-    ][2]
-    current_timestep_involved_object[2] = timestep_world["objects"][object_id][
-        "transform"
-    ][1]
-    # TODO change back to correct vecottr format now -> XZY, should be XYZ
+    timestep_world = world_state["simulation"][timestep]
+    current_timestep_involved_object = timestep_world["objects"][object_id]["obb"][
+        "center"
+    ]
     return _as_vector(current_timestep_involved_object)
 
 
 def _get_position_camera(
     world_state: Mapping[str, Any], timestep: str
 ) -> Optional[Tuple[float, ...]]:
-    timestep_world = world_state["simulation_steps"][timestep]
-    current_timestep_involved_object = [0, 0, 0]
-    current_timestep_involved_object[0] = timestep_world["camera"]["transform"][0]
-    current_timestep_involved_object[1] = timestep_world["camera"]["transform"][2]
-    current_timestep_involved_object[2] = timestep_world["camera"]["transform"][1]
-    # TODO change back to correct vecottr format now -> XZY, should be XYZ
+    timestep_world = world_state["simulation"][timestep]
+    current_timestep_involved_object = timestep_world["camera"]["eye"]
     return _as_vector(current_timestep_involved_object)
+
+
+def get_max_height_from_obb(obb: Mapping[str, Any]) -> float:
+    """
+    Given an oriented bounding box (obb), return the maximum height (y coordinate) of the object.
+    """
+    center = np.array(obb["center"])
+    extents = np.array(obb["extents"])
+    axes = np.array(obb["R"])  # 3x3 rotation matrix
+    up = np.array([0.0, 0.0, 1.0])
+
+    # Fast path: choose the sign of each extent by the up-dot for each axis
+    signs = np.sign(axes.T @ up)  # shape (3,)
+    p_high = center + axes @ (signs * extents)
+
+    return p_high[2]  # return the z coordinate since z is up

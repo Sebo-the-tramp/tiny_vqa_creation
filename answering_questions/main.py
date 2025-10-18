@@ -594,7 +594,7 @@ def main(args):
             export_format=args.export_format,
             image_output=args.image_output,
             number_of_images_max=args.number_of_images_max,
-            root_image_path=args.simulation_path,
+            root_image_path=args.simulation_path + simulation_folder,
         )
         print(f"Saved questions and answers to {args.output_path} ({args.export_format})")
 
@@ -606,7 +606,7 @@ def main(args):
             export_format=args.export_format,
             image_output=args.image_output,
             number_of_images_max=args.number_of_images_max,
-            root_image_path=args.simulation_path,
+            root_image_path=args.simulation_path + simulation_folder,
         )
         print(f"Saved questions and answers to {args.output_path} ({args.export_format})")
 

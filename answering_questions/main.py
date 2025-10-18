@@ -446,6 +446,7 @@ def normalize_question_tsv(
         "B": labels[1] if len(labels) > 1 else "",
         "C": labels[2] if len(labels) > 2 else "",
         "D": labels[3] if len(labels) > 3 else "",
+        "question": question_text,
         "answer": ["A", "B", "C", "D"][answer_index] if answer_index is not None and 0 <= answer_index < 4 else "",
         "category": question_payload.get("category"),
         "source": "simulation",

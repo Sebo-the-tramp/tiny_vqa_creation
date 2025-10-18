@@ -223,8 +223,8 @@ def save_questions_answers(
         answers.append(answer_record)
 
     if "json" in export_targets:
-        questions_path = os.path.join(output_path, "questions.json")
-        answers_path = os.path.join(output_path, "answers.json")
+        questions_path = os.path.join(output_path, "test.json")
+        answers_path = os.path.join(output_path, "val_answer.json")
 
         with open(questions_path, "w") as f:
             json.dump(normalized_questions, f, indent=4)
@@ -267,6 +267,9 @@ def normalize_question(
     formatted_question = question_text
     if option_lines:
         formatted_question = f"{formatted_question}\n" + "\n".join(option_lines)
+
+    # add <image> tags in place of images
+    formatted_question = "".join(["<image>" for _ in image_indexes]) + formatted_question
 
     scene_info = simulation_steps.get("scene", {}) if simulation_steps else {}
     scene_name = scene_info.get("scene") or scene_info.get("name") or "simulation_scene"

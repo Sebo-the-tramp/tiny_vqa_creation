@@ -1,7 +1,7 @@
 [
     {
         "idx": 0,
-        "answer": "D",
+        "answer": "B",
         "task_type": "factual",
         "sub_type": "collision",
         "ability_type": "counting",
@@ -9,7 +9,7 @@
     },
     {
         "idx": 1,
-        "answer": "C",
+        "answer": "D",
         "task_type": "factual",
         "sub_type": "collision",
         "ability_type": "counting",
@@ -17,7 +17,7 @@
     },
     {
         "idx": 2,
-        "answer": "D",
+        "answer": "C",
         "task_type": "factual",
         "sub_type": "collision",
         "ability_type": "counting",
@@ -25,7 +25,7 @@
     },
     {
         "idx": 3,
-        "answer": "D",
+        "answer": "A",
         "task_type": "factual",
         "sub_type": "collision",
         "ability_type": "estimation",
@@ -33,7 +33,7 @@
     },
     {
         "idx": 4,
-        "answer": "A",
+        "answer": "D",
         "task_type": "factual",
         "sub_type": "collision",
         "ability_type": "estimation",
@@ -41,7 +41,7 @@
     },
     {
         "idx": 5,
-        "answer": "C",
+        "answer": "A",
         "task_type": "factual",
         "sub_type": "collision",
         "ability_type": "estimation",
@@ -49,7 +49,7 @@
     },
     {
         "idx": 6,
-        "answer": "C",
+        "answer": "A",
         "task_type": "factual",
         "sub_type": "kinematics",
         "ability_type": "estimation",
@@ -57,7 +57,7 @@
     },
     {
         "idx": 7,
-        "answer": "D",
+        "answer": "A",
         "task_type": "factual",
         "sub_type": "kinematics",
         "ability_type": "attribute",
@@ -65,30 +65,6 @@
     },
     {
         "idx": 8,
-        "answer": "C",
-        "task_type": "factual",
-        "sub_type": "kinematics",
-        "ability_type": "estimation",
-        "mode": "general"
-    },
-    {
-        "idx": 9,
-        "answer": "B",
-        "task_type": "factual",
-        "sub_type": "kinematics",
-        "ability_type": "estimation",
-        "mode": "general"
-    },
-    {
-        "idx": 10,
-        "answer": "A",
-        "task_type": "factual",
-        "sub_type": "kinematics",
-        "ability_type": "estimation",
-        "mode": "general"
-    },
-    {
-        "idx": 11,
         "answer": "D",
         "task_type": "factual",
         "sub_type": "kinematics",
@@ -96,7 +72,7 @@
         "mode": "general"
     },
     {
-        "idx": 12,
+        "idx": 9,
         "answer": "C",
         "task_type": "factual",
         "sub_type": "kinematics",
@@ -104,8 +80,32 @@
         "mode": "general"
     },
     {
-        "idx": 13,
+        "idx": 10,
+        "answer": "D",
+        "task_type": "factual",
+        "sub_type": "kinematics",
+        "ability_type": "estimation",
+        "mode": "general"
+    },
+    {
+        "idx": 11,
+        "answer": "A",
+        "task_type": "factual",
+        "sub_type": "kinematics",
+        "ability_type": "estimation",
+        "mode": "general"
+    },
+    {
+        "idx": 12,
         "answer": "B",
+        "task_type": "factual",
+        "sub_type": "kinematics",
+        "ability_type": "estimation",
+        "mode": "general"
+    },
+    {
+        "idx": 13,
+        "answer": "D",
         "task_type": "factual",
         "sub_type": "kinematic",
         "ability_type": "estimation",
@@ -113,14 +113,6 @@
     },
     {
         "idx": 14,
-        "answer": "B",
-        "task_type": "factual",
-        "sub_type": "kinematic",
-        "ability_type": "counting",
-        "mode": "general"
-    },
-    {
-        "idx": 15,
         "answer": "A",
         "task_type": "factual",
         "sub_type": "kinematic",
@@ -128,8 +120,16 @@
         "mode": "general"
     },
     {
+        "idx": 15,
+        "answer": "C",
+        "task_type": "factual",
+        "sub_type": "kinematic",
+        "ability_type": "counting",
+        "mode": "general"
+    },
+    {
         "idx": 16,
-        "answer": "B",
+        "answer": "C",
         "task_type": "factual",
         "sub_type": "masses",
         "ability_type": "counting",
@@ -153,7 +153,7 @@
     },
     {
         "idx": 19,
-        "answer": "B",
+        "answer": "A",
         "task_type": "factual",
         "sub_type": "masses",
         "ability_type": "attribute",
@@ -161,7 +161,7 @@
     },
     {
         "idx": 20,
-        "answer": "A",
+        "answer": "D",
         "task_type": "factual",
         "sub_type": "density",
         "ability_type": "counting",
@@ -185,7 +185,7 @@
     },
     {
         "idx": 23,
-        "answer": "B",
+        "answer": "C",
         "task_type": "factual",
         "sub_type": "masses",
         "ability_type": "attribute",
@@ -201,7 +201,7 @@
     },
     {
         "idx": 25,
-        "answer": "B",
+        "answer": "A",
         "task_type": "factual",
         "sub_type": "materials",
         "ability_type": "counting",
@@ -209,7 +209,7 @@
     },
     {
         "idx": 26,
-        "answer": "D",
+        "answer": "B",
         "task_type": "factual",
         "sub_type": "materials",
         "ability_type": "attribute",
@@ -217,7 +217,7 @@
     },
     {
         "idx": 27,
-        "answer": "D",
+        "answer": "A",
         "task_type": "factual",
         "sub_type": "materials",
         "ability_type": "general",
@@ -225,7 +225,7 @@
     },
     {
         "idx": 28,
-        "answer": "C",
+        "answer": "A",
         "task_type": "factual",
         "sub_type": "materials",
         "ability_type": "general",
@@ -241,7 +241,7 @@
     },
     {
         "idx": 30,
-        "answer": "C",
+        "answer": "B",
         "task_type": "factual",
         "sub_type": "spatial",
         "ability_type": "estimation",
@@ -257,7 +257,7 @@
     },
     {
         "idx": 32,
-        "answer": "C",
+        "answer": "D",
         "task_type": "factual",
         "sub_type": "spatial",
         "ability_type": "estimation",
@@ -273,7 +273,7 @@
     },
     {
         "idx": 34,
-        "answer": "D",
+        "answer": "B",
         "task_type": "factual",
         "sub_type": "spatial",
         "ability_type": "estimation",
@@ -281,7 +281,7 @@
     },
     {
         "idx": 35,
-        "answer": "B",
+        "answer": "A",
         "task_type": "factual",
         "sub_type": "spatial",
         "ability_type": "attribute",

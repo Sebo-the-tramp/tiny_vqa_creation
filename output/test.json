@@ -13,7 +13,7 @@
             "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/output/sims/dl3dv-hf-gso2/3-cg/c-0_no-3_d-3_s-dl3dv-1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_dbgsub-1_20251016_013244/render/000294.png"
         ],
         "description": null,
-        "question": "With what object is the Hollow Spider-Man action figure (approx. 25\u201332 cm tall) colliding first?\nA. Olive_kids_dinosaur_land_sidekick_backpack\nB. Sorry_sliders_board_game\nC. Connect_4_launcher\nD. No Object",
+        "question": "<image><image><image><image><image><image><image><image>With what object is the Hollow Spider-Man action figure (approx. 25\u201332 cm tall) colliding first?\nA. Sorry_sliders_board_game\nB. No Object\nC. Connect_4_launcher\nD. Olive_kids_dinosaur_land_sidekick_backpack",
         "mode": "general",
         "idx": 0,
         "split": "val"
@@ -32,7 +32,7 @@
             "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/output/sims/dl3dv-hf-gso2/3-cg/c-0_no-3_d-3_s-dl3dv-1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_dbgsub-1_20251016_013244/render/000294.png"
         ],
         "description": null,
-        "question": "How many times is Packaged board game box (Sorry! Sliders) colliding with other objects?\nA. 1\nB. 2\nC. 0\nD. 3",
+        "question": "<image><image><image><image><image><image><image><image>How many times is Packaged board game box (Sorry! Sliders) colliding with other objects?\nA. 1\nB. 3\nC. 2\nD. 0",
         "mode": "general",
         "idx": 1,
         "split": "val"
@@ -51,7 +51,7 @@
             "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/output/sims/dl3dv-hf-gso2/3-cg/c-0_no-3_d-3_s-dl3dv-1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_dbgsub-1_20251016_013244/render/000294.png"
         ],
         "description": null,
-        "question": "How many times is Packaged board game box (Sorry! Sliders) colliding with Hollow Spider-Man action figure (approx. 25\u201332 cm tall)?\nA. 2\nB. 1\nC. 3\nD. 0",
+        "question": "<image><image><image><image><image><image><image><image>How many times is Packaged board game box (Sorry! Sliders) colliding with Hollow Spider-Man action figure (approx. 25\u201332 cm tall)?\nA. 2\nB. 3\nC. 0\nD. 1",
         "mode": "general",
         "idx": 2,
         "split": "val"
@@ -70,7 +70,7 @@
             "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/output/sims/dl3dv-hf-gso2/3-cg/c-0_no-3_d-3_s-dl3dv-1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_dbgsub-1_20251016_013244/render/000294.png"
         ],
         "description": null,
-        "question": "At what time does children\u2019s soft backpack collides with anything first?\nA. 0.10 seconds\nB. 0.14 seconds\nC. 0.24 seconds\nD. 0.48 seconds",
+        "question": "<image><image><image><image><image><image><image><image>At what time does children\u2019s soft backpack collides with anything first?\nA. 0.48 seconds\nB. 0.10 seconds\nC. 0.24 seconds\nD. 0.14 seconds",
         "mode": "general",
         "idx": 3,
         "split": "val"
@@ -89,7 +89,7 @@
             "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/output/sims/dl3dv-hf-gso2/3-cg/c-0_no-3_d-3_s-dl3dv-1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_dbgsub-1_20251016_013244/render/000294.png"
         ],
         "description": null,
-        "question": "At what time does Packaged board game box (Sorry! Sliders) collides with anything last?\nA. 3.00 seconds\nB. 2.72 seconds\nC. 2.46 seconds\nD. 2.64 seconds",
+        "question": "<image><image><image><image><image><image><image><image>At what time does Packaged board game box (Sorry! Sliders) collides with anything last?\nA. 2.81 seconds\nB. 2.46 seconds\nC. 2.39 seconds\nD. 3.00 seconds",
         "mode": "general",
         "idx": 4,
         "split": "val"
@@ -108,7 +108,7 @@
             "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/output/sims/dl3dv-hf-gso2/3-cg/c-0_no-3_d-3_s-dl3dv-1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_dbgsub-1_20251016_013244/render/000294.png"
         ],
         "description": null,
-        "question": "With what force does Packaged board game box (Sorry! Sliders) collides with Packaged board game box (Sorry! Sliders) the first time?\nA. 4.0 Newtons\nB. 5.7 Newtons\nC. No Collision\nD. 3.9 Newtons",
+        "question": "<image><image><image><image><image><image><image><image>With what force does Packaged board game box (Sorry! Sliders) collides with Packaged board game box (Sorry! Sliders) the first time?\nA. No Collision\nB. 4.2 Newtons\nC. 5.7 Newtons\nD. 4.0 Newtons",
         "mode": "general",
         "idx": 5,
         "split": "val"
@@ -127,7 +127,7 @@
             "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/output/sims/dl3dv-hf-gso2/3-cg/c-0_no-3_d-3_s-dl3dv-1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_dbgsub-1_20251016_013244/render/000294.png"
         ],
         "description": null,
-        "question": "What is the approximate velocity of the Hollow Spider-Man action figure (approx. 25\u201332 cm tall) at time 0000.530 in meters/second?\nA. 1.67 m/s\nB. 4.17 m/s\nC. 2.78 m/s\nD. 1.39 m/s",
+        "question": "<image><image><image><image><image><image><image><image>What is the approximate velocity of the Hollow Spider-Man action figure (approx. 25\u201332 cm tall) at time 0000.530 in meters/second?\nA. 2.78 m/s\nB. 4.17 m/s\nC. 1.39 m/s\nD. 1.67 m/s",
         "mode": "general",
         "idx": 6,
         "split": "val"
@@ -146,7 +146,7 @@
             "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/output/sims/dl3dv-hf-gso2/3-cg/c-0_no-3_d-3_s-dl3dv-1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_dbgsub-1_20251016_013244/render/000294.png"
         ],
         "description": null,
-        "question": "which object is moving fastes at time 0002.800?\nA. Spiderman_titan_hero_12inch_action_figure_5hnn4mtkfsp\nB. Olive_kids_dinosaur_land_sidekick_backpack\nC. Sorry_sliders_board_game\nD. They All Have The Same Speed",
+        "question": "<image><image><image><image><image><image><image><image>which object is moving fastes at time 0002.800?\nA. They All Have The Same Speed\nB. Olive_kids_dinosaur_land_sidekick_backpack\nC. Sorry_sliders_board_game\nD. Spiderman_titan_hero_12inch_action_figure_5hnn4mtkfsp",
         "mode": "general",
         "idx": 7,
         "split": "val"
@@ -165,7 +165,7 @@
             "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/output/sims/dl3dv-hf-gso2/3-cg/c-0_no-3_d-3_s-dl3dv-1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_dbgsub-1_20251016_013244/render/000294.png"
         ],
         "description": null,
-        "question": "What is the velocity of the fastest object?\nA. 6.41 m/s\nB. 5.48 m/s\nC. 5.17 m/s\nD. 5.72 m/s",
+        "question": "<image><image><image><image><image><image><image><image>What is the velocity of the fastest object?\nA. 5.74 m/s\nB. 4.81 m/s\nC. 4.25 m/s\nD. 5.17 m/s",
         "mode": "general",
         "idx": 8,
         "split": "val"
@@ -184,7 +184,7 @@
             "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/output/sims/dl3dv-hf-gso2/3-cg/c-0_no-3_d-3_s-dl3dv-1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_dbgsub-1_20251016_013244/render/000294.png"
         ],
         "description": null,
-        "question": "What is the approximate acceleration of the Packaged board game box (Sorry! Sliders) in meters/second^2 at time 0002.170?\nA. 0.03 m/s^2\nB. 0.01 m/s^2\nC. 0.04 m/s^2\nD. 0.02 m/s^2",
+        "question": "<image><image><image><image><image><image><image><image>What is the approximate acceleration of the Packaged board game box (Sorry! Sliders) in meters/second^2 at time 0002.170?\nA. 0.03 m/s^2\nB. 0.04 m/s^2\nC. 0.01 m/s^2\nD. 0.02 m/s^2",
         "mode": "general",
         "idx": 9,
         "split": "val"
@@ -203,7 +203,7 @@
             "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/output/sims/dl3dv-hf-gso2/3-cg/c-0_no-3_d-3_s-dl3dv-1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_dbgsub-1_20251016_013244/render/000294.png"
         ],
         "description": null,
-        "question": "What is the approximate angular velocity of the Packaged board game box (Sorry! Sliders) in rad/s at time 0000.160?\nA. 0.00319 deg/s\nB. 0.00479 deg/s\nC. 0.00159 deg/s\nD. 0.00223 deg/s",
+        "question": "<image><image><image><image><image><image><image><image>What is the approximate angular velocity of the Packaged board game box (Sorry! Sliders) in rad/s at time 0000.160?\nA. 0.00223 deg/s\nB. 0.00479 deg/s\nC. 0.00159 deg/s\nD. 0.00319 deg/s",
         "mode": "general",
         "idx": 10,
         "split": "val"
@@ -222,7 +222,7 @@
             "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/output/sims/dl3dv-hf-gso2/3-cg/c-0_no-3_d-3_s-dl3dv-1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_dbgsub-1_20251016_013244/render/000294.png"
         ],
         "description": null,
-        "question": "At what time does Packaged board game box (Sorry! Sliders) object reach its peak velocity?\nA. 3.1 m/s^2\nB. 7.8 m/s^2\nC. 2.6 m/s^2\nD. 5.2 m/s^2",
+        "question": "<image><image><image><image><image><image><image><image>At what time does Packaged board game box (Sorry! Sliders) object reach its peak velocity?\nA. 5.2 m/s^2\nB. 3.1 m/s^2\nC. 2.6 m/s^2\nD. 7.8 m/s^2",
         "mode": "general",
         "idx": 11,
         "split": "val"
@@ -241,7 +241,7 @@
             "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/output/sims/dl3dv-hf-gso2/3-cg/c-0_no-3_d-3_s-dl3dv-1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_dbgsub-1_20251016_013244/render/000294.png"
         ],
         "description": null,
-        "question": "How far does Packaged board game box (Sorry! Sliders) travel between 0001.200 and 0002.590\nA. 0.1 meters\nB. 0.3 meters\nC. 0.0 meters\nD. 0.2 meters",
+        "question": "<image><image><image><image><image><image><image><image>How far does Packaged board game box (Sorry! Sliders) travel between 0001.200 and 0002.590\nA. 0.3 meters\nB. 0.0 meters\nC. 0.2 meters\nD. 0.1 meters",
         "mode": "general",
         "idx": 12,
         "split": "val"
@@ -260,7 +260,7 @@
             "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/output/sims/dl3dv-hf-gso2/3-cg/c-0_no-3_d-3_s-dl3dv-1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_dbgsub-1_20251016_013244/render/000294.png"
         ],
         "description": null,
-        "question": "How many times does Hollow Spider-Man action figure (approx. 25\u201332 cm tall) reverse its direction?\nA. 12\nB. 16\nC. 18\nD. 14",
+        "question": "<image><image><image><image><image><image><image><image>How many times does Hollow Spider-Man action figure (approx. 25\u201332 cm tall) reverse its direction?\nA. 18\nB. 13\nC. 13\nD. 16",
         "mode": "general",
         "idx": 13,
         "split": "val"
@@ -279,7 +279,7 @@
             "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/output/sims/dl3dv-hf-gso2/3-cg/c-0_no-3_d-3_s-dl3dv-1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_dbgsub-1_20251016_013244/render/000294.png"
         ],
         "description": null,
-        "question": "How many objects of type action figures have moved?\nA. 0\nB. 1\nC. 2\nD. 3",
+        "question": "<image><image><image><image><image><image><image><image>How many objects of type bag have moved?\nA. 1\nB. 0\nC. 3\nD. 2",
         "mode": "general",
         "idx": 14,
         "split": "val"
@@ -298,7 +298,7 @@
             "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/output/sims/dl3dv-hf-gso2/3-cg/c-0_no-3_d-3_s-dl3dv-1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_dbgsub-1_20251016_013244/render/000294.png"
         ],
         "description": null,
-        "question": "How many objects of type bag are moving at time 0001.020?\nA. 1\nB. 2\nC. 0\nD. 3",
+        "question": "<image><image><image><image><image><image><image><image>How many objects of type board games are moving at time 0001.020?\nA. 3\nB. 0\nC. 1\nD. 2",
         "mode": "general",
         "idx": 15,
         "split": "val"
@@ -317,7 +317,7 @@
             "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/output/sims/dl3dv-hf-gso2/3-cg/c-0_no-3_d-3_s-dl3dv-1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_dbgsub-1_20251016_013244/render/000294.png"
         ],
         "description": null,
-        "question": "How many objects have mass more than the 2.2 at time 0002.800?\nA. 0\nB. 1\nC. 3\nD. 2",
+        "question": "<image><image><image><image><image><image><image><image>How many objects have mass more than the 2.2 at time 0002.800?\nA. 2\nB. 3\nC. 1\nD. 0",
         "mode": "general",
         "idx": 16,
         "split": "val"
@@ -336,7 +336,7 @@
             "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/output/sims/dl3dv-hf-gso2/3-cg/c-0_no-3_d-3_s-dl3dv-1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_dbgsub-1_20251016_013244/render/000294.png"
         ],
         "description": null,
-        "question": "What is the mass of the children\u2019s soft backpack?\nA. 1.0\nB. 0.6\nC. 0.3\nD. 0.4",
+        "question": "<image><image><image><image><image><image><image><image>What is the mass of the children\u2019s soft backpack?\nA. 1.0\nB. 0.6\nC. 0.4\nD. 0.3",
         "mode": "general",
         "idx": 17,
         "split": "val"
@@ -355,7 +355,7 @@
             "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/output/sims/dl3dv-hf-gso2/3-cg/c-0_no-3_d-3_s-dl3dv-1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_dbgsub-1_20251016_013244/render/000294.png"
         ],
         "description": null,
-        "question": "Which object appears to have the greatest mass?\nA. Olive_kids_dinosaur_land_sidekick_backpack\nB. Sorry_sliders_board_game\nC. Spiderman_titan_hero_12inch_action_figure_5hnn4mtkfsp\nD. My_monopoly_board_game",
+        "question": "<image><image><image><image><image><image><image><image>Which object appears to have the greatest mass?\nA. Olive_kids_dinosaur_land_sidekick_backpack\nB. Sorry_sliders_board_game\nC. My_monopoly_board_game\nD. Spiderman_titan_hero_12inch_action_figure_5hnn4mtkfsp",
         "mode": "general",
         "idx": 18,
         "split": "val"
@@ -374,7 +374,7 @@
             "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/output/sims/dl3dv-hf-gso2/3-cg/c-0_no-3_d-3_s-dl3dv-1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_dbgsub-1_20251016_013244/render/000294.png"
         ],
         "description": null,
-        "question": "Which object appears to have the smallest mass?\nA. Spiderman_titan_hero_12inch_action_figure_oo1qph4wwiw\nB. Spiderman_titan_hero_12inch_action_figure_5hnn4mtkfsp\nC. Sorry_sliders_board_game\nD. Olive_kids_dinosaur_land_sidekick_backpack",
+        "question": "<image><image><image><image><image><image><image><image>Which object appears to have the smallest mass?\nA. Spiderman_titan_hero_12inch_action_figure_5hnn4mtkfsp\nB. Olive_kids_dinosaur_land_sidekick_backpack\nC. Sorry_sliders_board_game\nD. Spiderman_titan_hero_12inch_action_figure_oo1qph4wwiw",
         "mode": "general",
         "idx": 19,
         "split": "val"
@@ -393,7 +393,7 @@
             "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/output/sims/dl3dv-hf-gso2/3-cg/c-0_no-3_d-3_s-dl3dv-1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_dbgsub-1_20251016_013244/render/000294.png"
         ],
         "description": null,
-        "question": "How many objects have average/overall density more than 140.1 kg_per_m3?\nA. 2\nB. 4\nC. 3\nD. 1",
+        "question": "<image><image><image><image><image><image><image><image>How many objects have average/overall density more than 140.1 kg_per_m3?\nA. 1\nB. 3\nC. 4\nD. 2",
         "mode": "general",
         "idx": 20,
         "split": "val"
@@ -412,7 +412,7 @@
             "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/output/sims/dl3dv-hf-gso2/3-cg/c-0_no-3_d-3_s-dl3dv-1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_dbgsub-1_20251016_013244/render/000294.png"
         ],
         "description": null,
-        "question": "What is the average/overall density of the Hollow Spider-Man action figure (approx. 25\u201332 cm tall) in kg_per_m3?\nA. 515.0\nB. 495.0\nC. 425.0\nD. 390.0",
+        "question": "<image><image><image><image><image><image><image><image>What is the average/overall density of the Hollow Spider-Man action figure (approx. 25\u201332 cm tall) in kg_per_m3?\nA. 384.0\nB. 499.0\nC. 425.0\nD. 531.0",
         "mode": "general",
         "idx": 21,
         "split": "val"
@@ -431,7 +431,7 @@
             "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/output/sims/dl3dv-hf-gso2/3-cg/c-0_no-3_d-3_s-dl3dv-1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_dbgsub-1_20251016_013244/render/000294.png"
         ],
         "description": null,
-        "question": "How many visible objects have volume more than 0.1 cm^3?\nA. 3\nB. 1\nC. 2\nD. 0",
+        "question": "<image><image><image><image><image><image><image><image>How many visible objects have volume more than 0.1 cm^3?\nA. 2\nB. 3\nC. 1\nD. 0",
         "mode": "general",
         "idx": 22,
         "split": "val"
@@ -450,7 +450,7 @@
             "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/output/sims/dl3dv-hf-gso2/3-cg/c-0_no-3_d-3_s-dl3dv-1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_dbgsub-1_20251016_013244/render/000294.png"
         ],
         "description": null,
-        "question": "What is the volume of the Packaged board game box (Sorry! Sliders) in cm^3?\nA. 27900.0 cm^3\nB. 16400.0 cm^3\nC. 8200.0 cm^3\nD. 4920.0 cm^3",
+        "question": "<image><image><image><image><image><image><image><image>What is the volume of the Packaged board game box (Sorry! Sliders) in cm^3?\nA. 8200.0 cm^3\nB. 27900.0 cm^3\nC. 16400.0 cm^3\nD. 4920.0 cm^3",
         "mode": "general",
         "idx": 23,
         "split": "val"
@@ -469,7 +469,7 @@
             "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/output/sims/dl3dv-hf-gso2/3-cg/c-0_no-3_d-3_s-dl3dv-1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_dbgsub-1_20251016_013244/render/000294.png"
         ],
         "description": null,
-        "question": "Which object occupies the greatest volume?\nA. Sorry_sliders_board_game\nB. Olive_kids_dinosaur_land_sidekick_backpack\nC. Spiderman_titan_hero_12inch_action_figure_5hnn4mtkfsp\nD. Olive_kids_dinosaur_land_pack_n_snack",
+        "question": "<image><image><image><image><image><image><image><image>Which object occupies the greatest volume?\nA. Sorry_sliders_board_game\nB. Olive_kids_dinosaur_land_sidekick_backpack\nC. Olive_kids_dinosaur_land_pack_n_snack\nD. Spiderman_titan_hero_12inch_action_figure_5hnn4mtkfsp",
         "mode": "general",
         "idx": 24,
         "split": "val"
@@ -481,7 +481,7 @@
             "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/output/sims/dl3dv-hf-gso2/3-cg/c-0_no-3_d-3_s-dl3dv-1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_dbgsub-1_20251016_013244/render/000217.png"
         ],
         "description": null,
-        "question": "How many objects are made of plastic?\nA. 0\nB. 1\nC. 2\nD. 3",
+        "question": "<image>How many objects are made of fabric/textile?\nA. 1\nB. 3\nC. 0\nD. 2",
         "mode": "general",
         "idx": 25,
         "split": "val"
@@ -493,7 +493,7 @@
             "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/output/sims/dl3dv-hf-gso2/3-cg/c-0_no-3_d-3_s-dl3dv-1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_dbgsub-1_20251016_013244/render/000143.png"
         ],
         "description": null,
-        "question": "What is the material of the children\u2019s soft backpack?\nA. Mixed (paper + Plastic)\nB. Plastic\nC. Paper/cardboard\nD. Fabric/textile",
+        "question": "<image>What is the material of the children\u2019s soft backpack?\nA. Mixed (paper + Plastic)\nB. Fabric/textile\nC. Plastic\nD. Paper/cardboard",
         "mode": "general",
         "idx": 26,
         "split": "val"
@@ -505,7 +505,7 @@
             "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/output/sims/dl3dv-hf-gso2/3-cg/c-0_no-3_d-3_s-dl3dv-1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_dbgsub-1_20251016_013244/render/000080.png"
         ],
         "description": null,
-        "question": "Which object is made of a harder material?\nA. Olive_kids_dinosaur_land_sidekick_backpack\nB. Spiderman_titan_hero_12inch_action_figure_oo1qph4wwiw\nC. Sorry_sliders_board_game\nD. Spiderman_titan_hero_12inch_action_figure_5hnn4mtkfsp",
+        "question": "<image>Which object is made of a harder material?\nA. Spiderman_titan_hero_12inch_action_figure_5hnn4mtkfsp\nB. Spiderman_titan_hero_12inch_action_figure_oo1qph4wwiw\nC. Sorry_sliders_board_game\nD. Olive_kids_dinosaur_land_sidekick_backpack",
         "mode": "general",
         "idx": 27,
         "split": "val"
@@ -517,7 +517,7 @@
             "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/output/sims/dl3dv-hf-gso2/3-cg/c-0_no-3_d-3_s-dl3dv-1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_dbgsub-1_20251016_013244/render/000111.png"
         ],
         "description": null,
-        "question": "Which object is made of a softer material?\nA. Spiderman_titan_hero_12inch_action_figure_5hnn4mtkfsp\nB. Olive_kids_dinosaur_land_pack_n_snack\nC. Olive_kids_dinosaur_land_sidekick_backpack\nD. Sorry_sliders_board_game",
+        "question": "<image>Which object is made of a softer material?\nA. Olive_kids_dinosaur_land_sidekick_backpack\nB. Olive_kids_dinosaur_land_pack_n_snack\nC. Spiderman_titan_hero_12inch_action_figure_5hnn4mtkfsp\nD. Sorry_sliders_board_game",
         "mode": "general",
         "idx": 28,
         "split": "val"
@@ -536,7 +536,7 @@
             "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/output/sims/dl3dv-hf-gso2/3-cg/c-0_no-3_d-3_s-dl3dv-1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_dbgsub-1_20251016_013244/render/000294.png"
         ],
         "description": null,
-        "question": "What physical constraint is violated in the scene?\nA. Collision\nB. Mass\nC. Restitution\nD. Gravity",
+        "question": "<image><image><image><image><image><image><image><image>What physical constraint is violated in the scene?\nA. Restitution\nB. Mass\nC. Collision\nD. Gravity",
         "mode": "general",
         "idx": 29,
         "split": "val"
@@ -548,7 +548,7 @@
             "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/output/sims/dl3dv-hf-gso2/3-cg/c-0_no-3_d-3_s-dl3dv-1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_dbgsub-1_20251016_013244/render/000053.png"
         ],
         "description": null,
-        "question": "What is the distance between the center of mass of the children\u2019s soft backpack and the ground plane at time 0000.530?\nA. 0.8 meters\nB. 0.9 meters\nC. 1.0 meters\nD. 1.3 meters",
+        "question": "<image>What is the distance between the center of mass of the children\u2019s soft backpack and the ground plane at time 0000.530?\nA. 0.9 meters\nB. 1.0 meters\nC. 1.1 meters\nD. 1.2 meters",
         "mode": "general",
         "idx": 30,
         "split": "val"
@@ -560,7 +560,7 @@
             "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/output/sims/dl3dv-hf-gso2/3-cg/c-0_no-3_d-3_s-dl3dv-1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_dbgsub-1_20251016_013244/render/000050.png"
         ],
         "description": null,
-        "question": "What is the distance between the center of mass of the Packaged board game box (Sorry! Sliders) and the center of mass of the children\u2019s soft backpack at time 0000.500?\nA. 1.9 meters\nB. 1.6 meters\nC. 1.8 meters\nD. 2.0 meters",
+        "question": "<image>What is the distance between the center of mass of the Packaged board game box (Sorry! Sliders) and the center of mass of the children\u2019s soft backpack at time 0000.500?\nA. 1.9 meters\nB. 1.6 meters\nC. 1.5 meters\nD. 1.2 meters",
         "mode": "general",
         "idx": 31,
         "split": "val"
@@ -572,7 +572,7 @@
             "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/output/sims/dl3dv-hf-gso2/3-cg/c-0_no-3_d-3_s-dl3dv-1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_dbgsub-1_20251016_013244/render/000177.png"
         ],
         "description": null,
-        "question": "What is the distance between the center of mass of the children\u2019s soft backpack and the camera at time 0001.770?\nA. 8.6 meters\nB. 8.2 meters\nC. 7.7 meters\nD. 6.8 meters",
+        "question": "<image>What is the distance between the center of mass of the children\u2019s soft backpack and the camera at time 0001.770?\nA. 9.4 meters\nB. 6.9 meters\nC. 6.1 meters\nD. 7.7 meters",
         "mode": "general",
         "idx": 32,
         "split": "val"
@@ -584,7 +584,7 @@
             "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/output/sims/dl3dv-hf-gso2/3-cg/c-0_no-3_d-3_s-dl3dv-1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_dbgsub-1_20251016_013244/render/000136.png"
         ],
         "description": null,
-        "question": "What is the closest object to Hollow Spider-Man action figure (approx. 25\u201332 cm tall) at time 0001.360?\nA. Olive_kids_dinosaur_land_sidekick_backpack\nB. My_monopoly_board_game\nC. Sorry_sliders_board_game\nD. Hasbro_life_board_game",
+        "question": "<image>What is the closest object to Hollow Spider-Man action figure (approx. 25\u201332 cm tall) at time 0001.360?\nA. My_monopoly_board_game\nB. Olive_kids_dinosaur_land_sidekick_backpack\nC. Sorry_sliders_board_game\nD. Hasbro_life_board_game",
         "mode": "general",
         "idx": 33,
         "split": "val"
@@ -596,7 +596,7 @@
             "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/output/sims/dl3dv-hf-gso2/3-cg/c-0_no-3_d-3_s-dl3dv-1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_dbgsub-1_20251016_013244/render/000236.png"
         ],
         "description": null,
-        "question": "How many objects are closer than 4.2 meters to the camera at time 0002.360?\nA. 1\nB. 2\nC. 3\nD. 0",
+        "question": "<image>How many objects are closer than 4.2 meters to the camera at time 0002.360?\nA. 1\nB. 0\nC. 3\nD. 2",
         "mode": "general",
         "idx": 34,
         "split": "val"
@@ -608,7 +608,7 @@
             "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/output/sims/dl3dv-hf-gso2/3-cg/c-0_no-3_d-3_s-dl3dv-1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_dbgsub-1_20251016_013244/render/000275.png"
         ],
         "description": null,
-        "question": "Which object is the highest above the ground at 0002.750?\nA. Spiderman_titan_hero_12inch_action_figure_5hnn4mtkfsp\nB. Olive_kids_dinosaur_land_sidekick_backpack\nC. Olive_kids_dinosaur_land_pack_n_snack\nD. Sorry_sliders_board_game",
+        "question": "<image>Which object is the highest above the ground at 0002.750?\nA. Olive_kids_dinosaur_land_sidekick_backpack\nB. Sorry_sliders_board_game\nC. Olive_kids_dinosaur_land_pack_n_snack\nD. Spiderman_titan_hero_12inch_action_figure_5hnn4mtkfsp",
         "mode": "general",
         "idx": 35,
         "split": "val"
@@ -623,7 +623,7 @@
             "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/output/sims/dl3dv-hf-gso2/3-cg/c-0_no-3_d-3_s-dl3dv-1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_dbgsub-1_20251016_013244/render/000081.png"
         ],
         "description": null,
-        "question": "What is the correct sequence of images showing the events in the scene?\nA. D.C.B.A.\nB. D.C.A.B.\nC. A.B.D.C.\nD. D.B.A.C.",
+        "question": "<image><image><image><image>What is the correct sequence of images showing the events in the scene?\nA. D.C.B.A.\nB. D.C.A.B.\nC. A.B.D.C.\nD. D.B.A.C.",
         "mode": "general",
         "idx": 36,
         "split": "val"
@@ -638,7 +638,7 @@
             "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/output/sims/dl3dv-hf-gso2/3-cg/c-0_no-3_d-3_s-dl3dv-1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_dbgsub-1_20251016_013244/render/000100.png"
         ],
         "description": null,
-        "question": "What event is most likely to happen next in the scene?\nA. 000225\nB. 000000\nC. 000125\nD. 000200",
+        "question": "<image><image><image><image>What event is most likely to happen next in the scene?\nA. 000225\nB. 000000\nC. 000125\nD. 000200",
         "mode": "general",
         "idx": 37,
         "split": "val"
@@ -653,7 +653,7 @@
             "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/output/sims/dl3dv-hf-gso2/3-cg/c-0_no-3_d-3_s-dl3dv-1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_dbgsub-1_20251016_013244/render/000225.png"
         ],
         "description": null,
-        "question": "What event is most likely to happen next in the scene?\nA. 000050\nB. 000125\nC. 000250\nD. 000025",
+        "question": "<image><image><image><image>What event is most likely to happen next in the scene?\nA. 000050\nB. 000125\nC. 000250\nD. 000025",
         "mode": "general",
         "idx": 38,
         "split": "val"
@@ -668,7 +668,7 @@
             "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/output/sims/dl3dv-hf-gso2/3-cg/c-0_no-3_d-3_s-dl3dv-1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_dbgsub-1_20251016_013244/render/000150.png"
         ],
         "description": null,
-        "question": "What image has been removed from the scene?\nA. 000275\nB. 000100\nC. 000200\nD. 000250",
+        "question": "<image><image><image><image>What image has been removed from the scene?\nA. 000275\nB. 000100\nC. 000200\nD. 000250",
         "mode": "general",
         "idx": 39,
         "split": "val"

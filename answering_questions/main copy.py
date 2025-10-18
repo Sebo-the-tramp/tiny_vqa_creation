@@ -246,7 +246,6 @@ def normalize_question_json(
     # add <image> tags in place of images
     # locking in question images before adding other images in the question
     # slop code, but guess I need to speed up
-    formatted_question = question_text
     formatted_question = "".join(["<image>" for _ in image_indexes]) + "\n" + formatted_question
 
     #regex to check if in the label we have an image
@@ -263,6 +262,7 @@ def normalize_question_json(
     for letter, label in zip(option_letters, labels):
         option_lines.append(f"{letter}. {label}")
 
+    formatted_question = question_text
     if option_lines:
         formatted_question = f"{formatted_question}\n" + "\n".join(option_lines)
 

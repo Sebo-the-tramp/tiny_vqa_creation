@@ -1,4 +1,5 @@
 import os
+import re
 import json
 import csv
 import argparse
@@ -241,6 +242,15 @@ def normalize_question_json(
     answer_index = vqa_entry.get("answer_index")
     image_indexes = vqa_entry.get("image_indexes", []) or []
     letters = list(string.ascii_uppercase)
+    
+    #regex to check if in the label we have an image
+    pattern = re.compile(r'^\d{6}$')
+
+    for idx, label in enumerate(labels):
+        print("label", label)
+        if pattern.match(label):
+            image_indexes.append(str(label))
+            labels[idx] = f"<image>"
 
     option_letters = [letters[i] for i in range(min(len(labels), len(letters)))]
     option_lines = []
@@ -252,39 +262,11 @@ def normalize_question_json(
         formatted_question = f"{formatted_question}\n" + "\n".join(option_lines)
 
     # add <image> tags in place of images
-    formatted_question = "".join(["<image>" for _ in image_indexes]) + formatted_question
+    formatted_question = "".join(["<image>" for _ in image_indexes]) + "\n" + formatted_question
 
     scene_info = simulation_steps.get("scene", {}) if simulation_steps else {}
     scene_name = scene_info.get("scene") or scene_info.get("name") or "simulation_scene"
 
-    objects_metadata = simulation_steps.get("objects", {}) if simulation_steps else {}
-    detected_objects = set()
-    lowered_question = formatted_question.lower()
-    for obj in objects_metadata.values():
-        description = obj.get("description", {}) or {}
-        object_name = description.get("object_name") or obj.get("model") or obj.get(
-            "name"
-        )
-        if not object_name:
-            continue
-        if object_name.lower() in lowered_question:
-            detected_objects.add(object_name)
-
-    label_lookup = {
-        obj.get("model", "").lower(): obj
-        for obj in objects_metadata.values()
-        if obj.get("model")
-    }
-    for label in labels:
-        label_key = label.replace(" ", "_").lower()
-        if label_key in label_lookup:
-            obj = label_lookup[label_key]
-            description = obj.get("description", {}) or {}
-            object_name = (
-                description.get("object_name") or obj.get("model") or obj.get("name")
-            )
-            if object_name:
-                detected_objects.add(object_name)
 
     file_names = [root_image_path + f"/render/{int(frame_idx):06d}.png" for frame_idx in image_indexes]
 
@@ -639,7 +621,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--export_format",
         choices=["json", "tsv", "both"],
-        default="tsv",
+        default="json",
         help="Output format for generated questions and answers.",
     )
     parser.add_argument(

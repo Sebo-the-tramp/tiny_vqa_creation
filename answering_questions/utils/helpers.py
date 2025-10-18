@@ -139,7 +139,7 @@ def _fill_template(
         elif "OBJECT" in attribute:
             question["question"] = question["question"].replace(
                 f"<{attribute}>",
-                resolved_attributes[attribute]["choice"]["description"]["object_name"],
+                resolved_attributes[attribute]["choice"]["model"],
             )
         else:
             question["question"] = question["question"].replace(

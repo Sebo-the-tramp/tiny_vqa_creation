@@ -469,7 +469,7 @@ def get_gt(question_key, question_category, mock=False):
 
 
 # ----- MAIN VQA CREATION LOGIC
-def create_vqa(questions, simulation_steps, simulation_folder_path, arg_mock, verbose=False):
+def create_vqa(questions, simulation_steps, destination_simulation_folder_path, arg_mock, verbose=False):
     total_correct_per_category = {}
 
     print("Starting VQA creation...")
@@ -499,7 +499,7 @@ def create_vqa(questions, simulation_steps, simulation_folder_path, arg_mock, ve
             )
             
             # changing from image_paths to image_paths
-            file_names = [simulation_folder_path + f"/render/{int(frame_idx):06d}.png" for frame_idx in imgs_idx]
+            file_names = [destination_simulation_folder_path + f"/render/{int(frame_idx):06d}.png" for frame_idx in imgs_idx]
             
             all_vqa.append(
                 {
@@ -571,13 +571,14 @@ def main(args):
             questions = read_questions(args.vqa_path)
 
             simulation_folder_path = os.path.join(args.simulation_path, simulation_folder)
+            destination_simulation_folder_path = os.path.join(args.destination_simulation_path, simulation_folder)
 
             simulation_steps = read_simulation(
                 os.path.join(simulation_folder_path, "simulation_kinematics.json")                
             )
 
             simulation_vqa = create_vqa(
-                questions, simulation_steps, simulation_folder_path, args.mock, verbose=args.verbose
+                questions, simulation_steps, destination_simulation_folder_path, args.mock, verbose=args.verbose
             )
             all_vqa.extend(simulation_vqa)
     
@@ -623,6 +624,13 @@ if __name__ == "__main__":
         default="/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/output/sims/dl3dv-hf-gso2/3-cg/",
         # default="/Users/sebastiancavada/Desktop/tmp_Paris/vqa/answering_questions/",
         help="Path to the simulation file containing the scenes.",
+    )
+    parser.add_argument(
+        "--destination_simulation_path",
+        type=str,        
+        default="/data0/sebastian.cavada/datasets/simulations/output/sims/dl3dv-hf-gso2/3-cg/",
+        # default="/Users/sebastiancavada/Desktop/tmp_Paris/vqa/answering_questions/",
+        help="Path where the simulation files are stored (on same or different computer).",
     )
     parser.add_argument(
         "--output_path",

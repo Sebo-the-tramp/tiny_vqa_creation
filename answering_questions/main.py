@@ -181,13 +181,11 @@ def _build_tsv_row(record, answer, fieldnames):
 
 
 def save_questions_answers_json(
-    all_vqa,
-    simulation_steps,
+    all_vqa,    
     output_path,
     export_format="json",
     image_output="base64",
-    number_of_images_max=8,
-    root_image_path="",
+    number_of_images_max=8,    
 ):
     os.makedirs(output_path, exist_ok=True)
     export_targets = {"json", "tsv"} if export_format == "both" else {export_format}
@@ -197,11 +195,9 @@ def save_questions_answers_json(
     for idx, entry in enumerate(all_vqa):
         question_record, answer_record = normalize_question_json(
             entry,
-            idx=idx,
-            simulation_steps=simulation_steps,
+            idx=idx,            
             image_output=image_output,
-            number_of_images_max=number_of_images_max,
-            root_image_path=root_image_path,
+            number_of_images_max=number_of_images_max,            
         )
 
         normalized_questions.append(question_record) 
@@ -230,33 +226,33 @@ def save_questions_answers_json(
 
 def normalize_question_json(
     vqa_entry,
-    idx,
-    simulation_steps,
+    idx,    
     image_output="base64",
-    number_of_images_max=8,
-    root_image_path="",
+    number_of_images_max=8,    
 ):
     question_payload = vqa_entry.get("question", {})
     question_text = question_payload.get("question", "").strip()
     labels = vqa_entry.get("labels", [])
     answer_index = vqa_entry.get("answer_index")
-    image_indexes = vqa_entry.get("image_indexes", []) or []
+    image_paths = vqa_entry.get("image_paths", []) or []
     letters = list(string.ascii_uppercase)
     
     # add <image> tags in place of images
     # locking in question images before adding other images in the question
     # slop code, but guess I need to speed up
     formatted_question = question_text
-    formatted_question = "".join(["<image>" for _ in image_indexes]) + "\n" + formatted_question
+    formatted_question = "".join(["<image>" for _ in image_paths]) + "\n" + formatted_question
 
     #regex to check if in the label we have an image
     pattern = re.compile(r'^\d{6}$')
 
-    for idx, label in enumerate(labels):
-        print("label", label)
+    for idx_img, label in enumerate(labels):
+        # print("label", label)
         if pattern.match(label):
-            image_indexes.append(str(label))
-            labels[idx] = f"<image>"
+            # do a smart replacement
+            new_image_path = image_paths[0].rsplit('/', 1)[0] + f'/{label}.png'
+            image_paths.append(new_image_path)
+            labels[idx_img] = f"<image>"
 
     option_letters = [letters[i] for i in range(min(len(labels), len(letters)))]
     option_lines = []
@@ -264,12 +260,9 @@ def normalize_question_json(
         option_lines.append(f"{letter}. {label}")
 
     if option_lines:
-        formatted_question = f"{formatted_question}\n" + "\n".join(option_lines)
+        formatted_question = f"{formatted_question}\n" + "\n".join(option_lines)    
 
-    scene_info = simulation_steps.get("scene", {}) if simulation_steps else {}
-    scene_name = scene_info.get("scene") or scene_info.get("name") or "simulation_scene"
-
-    file_names = [root_image_path + f"/render/{int(frame_idx):06d}.png" for frame_idx in image_indexes]
+    # file_names = [root_image_path + f"/render/{int(frame_idx):06d}.png" for frame_idx in image_paths]
 
     ability_map = {
         "prediction": "prediction",
@@ -288,9 +281,9 @@ def normalize_question_json(
         answer_letter = option_letters[answer_index]
 
     question_record = {
-        "scene": scene_name,
+        "scene": vqa_entry["scene"],
         "source": "simulation",
-        "file_name": file_names,
+        "file_name": image_paths,
         "description": question_payload.get("description"),
         "question": formatted_question,
         "mode": "image-only",
@@ -358,7 +351,7 @@ def normalize_question_tsv(
     question_text = question_payload.get("question", "").strip()
     labels = vqa_entry.get("labels", [])
     answer_index = vqa_entry.get("answer_index")
-    image_indexes = vqa_entry.get("image_indexes", []) or []
+    image_paths = vqa_entry.get("image_paths", []) or []
 
     scene_info = simulation_steps.get("scene", {}) if simulation_steps else {}
     scene_name = scene_info.get("scene") or scene_info.get("name") or "simulation_scene"
@@ -392,7 +385,7 @@ def normalize_question_tsv(
             if object_name:
                 detected_objects.add(object_name)
 
-    file_names = [root_image_path + f"/render/{int(frame_idx):06d}.png" for frame_idx in image_indexes]
+    file_names = [root_image_path + f"/render/{int(frame_idx):06d}.png" for frame_idx in image_paths]
     images_base64 = [encode_image_file_to_base64(image_path) for image_path in file_names]
 
     ability_map = {
@@ -476,7 +469,7 @@ def get_gt(question_key, question_category, mock=False):
 
 
 # ----- MAIN VQA CREATION LOGIC
-def create_vqa(questions, simulation_steps, arg_mock, verbose=False):
+def create_vqa(questions, simulation_steps, simulation_folder_path, arg_mock, verbose=False):
     total_correct_per_category = {}
 
     print("Starting VQA creation...")
@@ -504,12 +497,17 @@ def create_vqa(questions, simulation_steps, arg_mock, verbose=False):
             question, labels, correct_idx, imgs_idx = fn_to_answer_question(
                 simulation_steps, question_data
             )
+            
+            # changing from image_paths to image_paths
+            file_names = [simulation_folder_path + f"/render/{int(frame_idx):06d}.png" for frame_idx in imgs_idx]
+            
             all_vqa.append(
                 {
+                    "scene": simulation_steps.get("scene", {}).get("scene", "unknown_scene"),
                     "question": question,
                     "category": category_key,
                     "question_key": question_key,
-                    "image_indexes": imgs_idx,
+                    "image_paths": file_names,
                     "labels": labels,
                     "answer_index": correct_idx,
                 })
@@ -571,12 +569,15 @@ def main(args):
             print("Found simulation folder:", simulation_folder)
 
             questions = read_questions(args.vqa_path)
+
+            simulation_folder_path = os.path.join(args.simulation_path, simulation_folder)
+
             simulation_steps = read_simulation(
-                args.simulation_path + simulation_folder + "/simulation_kinematics.json"
+                os.path.join(simulation_folder_path, "simulation_kinematics.json")                
             )
 
             simulation_vqa = create_vqa(
-                questions, simulation_steps, args.mock, verbose=args.verbose
+                questions, simulation_steps, simulation_folder_path, args.mock, verbose=args.verbose
             )
             all_vqa.extend(simulation_vqa)
     
@@ -588,25 +589,21 @@ def main(args):
 
     if args.export_format in ["json", "both"]:
         save_questions_answers_json(
-            all_vqa,
-            simulation_steps,
+            all_vqa,            
             args.output_path,
             export_format=args.export_format,
             image_output=args.image_output,
-            number_of_images_max=args.number_of_images_max,
-            root_image_path=args.simulation_path + simulation_folder,
+            number_of_images_max=args.number_of_images_max,            
         )
         print(f"Saved questions and answers to {args.output_path} ({args.export_format})")
 
     if args.export_format in ["tsv", "both"]:
         save_questions_answers_tsv(
-            all_vqa,
-            simulation_steps,
+            all_vqa,            
             args.output_path,
             export_format=args.export_format,
             image_output=args.image_output,
-            number_of_images_max=args.number_of_images_max,
-            root_image_path=args.simulation_path + simulation_folder,
+            number_of_images_max=args.number_of_images_max,            
         )
         print(f"Saved questions and answers to {args.output_path} ({args.export_format})")
 

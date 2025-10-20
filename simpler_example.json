@@ -346,7 +346,7 @@
             "category": "temporal",
             "choice": "mcq",
             "measurement": "prediction",
-            "question": "What is the correct sequence of images showing the events in the scene?"
+            "question": "Given the sequence of images A. - B. - C. - D. What is the correct rearrangement of images showing the events in the scene?"
         },
         "F_TEMPORAL_PREDICTION_NEXT_IMAGE": {
             "question_type": "factual",

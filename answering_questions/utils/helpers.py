@@ -48,6 +48,20 @@ DELTA_FRAMES = 0.01
 
 # ----- General helpers -----
 
+units = {
+    "DISTANCE": "meters",
+    "MASS": "kilograms",
+    "VOLUME": "cubic centimeters",
+    "DENSITY": "kg/m3",
+    "TIME": "seconds",
+    "SPEED": "meters/second",
+    "ACCELERATION": "meters/second^2",
+}
+
+
+def resolve_units(measurement: str) -> str:
+    return units.get(measurement, "")
+
 
 def _get_random_integer(min_value: int, max_value: int) -> int:
     return rng.randint(min_value, max_value)
@@ -143,7 +157,9 @@ def _fill_template(
             )
         else:
             question["question"] = question["question"].replace(
-                f"<{attribute}>", str(resolved_attributes[attribute]["choice"])
+                f"<{attribute}>",
+                str(resolved_attributes[attribute]["choice"])
+                + resolve_units(attribute),
             )
 
 

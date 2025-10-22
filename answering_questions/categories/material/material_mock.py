@@ -29,7 +29,6 @@ from typing import (
 from utils.helpers import (
     _iter_objects,
     iter_visible_objects_at_time,
-    _fill_template,
     get_object_state_at_timestep,
     get_all_objects_state_at_time,
     _shuffle_array,
@@ -136,7 +135,7 @@ def F_MATERIALS_COMPARISON_HARD(
     correct_answer = harder_object["model"]
 
     present = [
-         obj["model"]
+        obj["model"]
         for obj in list(_iter_objects(world_state))
         if obj["model"] != correct_answer
     ]

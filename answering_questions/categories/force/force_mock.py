@@ -12,7 +12,7 @@ import math
 from typing import Any, Mapping, Union
 
 from utils.decorators import with_resolved_attributes
-from utils.helpers import _fill_template, get_object_state_at_timestep, _iter_objects
+from utils.helpers import get_object_state_at_timestep, _iter_objects
 from utils.all_objects import get_all_objects_names
 from utils.frames_selection import uniformly_sample_frames
 
@@ -48,8 +48,6 @@ def F_FORCE_OF_GRAVITY_OBJECT_TIME(
     gravity_vector = world_state["config"]["scene"]["gravity"]
 
     force_of_gravity = -gravity_vector[2] * object["mass"]
-
-    _fill_template(question, resolved_attributes)
     options, correct_idx = create_mc_options_around_gt(
         force_of_gravity, num_answers=4, display_decimals=1, lo=0.0, min_rel_gap=0.2
     )
@@ -75,8 +73,6 @@ def F_FORCES_NET_FORCE_OBJECT_TIME(
     # TODO check about the availability of this variable
     net_force = object_state["net_force"]
     net_force_magnitude = math.sqrt(sum(f**2 for f in net_force))
-
-    _fill_template(question, resolved_attributes)
     options, correct_idx = create_mc_options_around_gt(
         net_force_magnitude, num_answers=4, display_decimals=1, lo=0.0
     )
@@ -99,8 +95,6 @@ def F_FORCES_TORQUE_OBJECT_TIME(
     # TODO check about the availability of this variable
     torque = object_state["torque"]
     torque_magnitude = math.sqrt(sum(t**2 for t in torque))
-
-    _fill_template(question, resolved_attributes)
     options, correct_idx = create_mc_options_around_gt(
         torque_magnitude, num_answers=4, display_decimals=1, lo=0.0
     )
@@ -123,8 +117,6 @@ def F_FORCES_NORMAL_FORCE_OBJECT_TIME(
     # TODO check about the availability of this variable
     normal_force = object_state["normal_force"]
     normal_force_magnitude = math.sqrt(sum(nf**2 for nf in normal_force))
-
-    _fill_template(question, resolved_attributes)
     options, correct_idx = create_mc_options_around_gt(
         normal_force_magnitude, num_answers=4, display_decimals=1, lo=0.0
     )

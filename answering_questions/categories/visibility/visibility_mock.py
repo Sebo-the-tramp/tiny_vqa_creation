@@ -31,7 +31,7 @@ from utils.bin_creation import (
     uniform_labels,
 )
 
-from utils.helpers import _iter_objects, _fill_template, get_object_state_at_timestep
+from utils.helpers import _iter_objects, get_object_state_at_timestep
 
 ## --- Resolver functions -- ##
 
@@ -49,8 +49,6 @@ def F_VISIBILITY_COUNTING(
         obj_state = get_object_state_at_timestep(world_state, obj["id"], timestep)
         if obj_state is not None and obj_state.get("is_visible_from_camera", False):
             visible_count += 1
-
-    _fill_template(question, resolved_attributes)
 
     options, correct_idx = create_mc_options_around_gt(
         visible_count, num_answers=4, display_decimals=0, lo=0.0
@@ -81,8 +79,6 @@ def F_VISIBILITY_COUNTING_CATEGORY(
         obj_state = get_object_state_at_timestep(world_state, obj["id"], timestep)
         if obj_state is not None and obj_state.get("is_visible_from_camera", False):
             visible_count += 1
-
-    _fill_template(question, resolved_attributes)
 
     options, correct_idx = create_mc_options_around_gt(
         visible_count, num_answers=4, display_decimals=0, lo=0.0
@@ -117,8 +113,6 @@ def F_VISIBILITY_COUNTING_OBJECTS_ALWAYS_VISIBEL(
                 count_object_visible.remove(obj)
                 if count_object_visible == []:
                     break
-
-    _fill_template(question, resolved_attributes)
 
     options, correct_idx = create_mc_options_around_gt(
         len(count_object_visible), num_answers=4, display_decimals=0, lo=0.0

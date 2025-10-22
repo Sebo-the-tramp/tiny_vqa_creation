@@ -1,10 +1,10 @@
-
 MAX_FRAMES = 8
+
 
 def uniformly_sample_frames(world_state):
     total_steps = len(world_state["simulation"])
-    delta_fram_img = total_steps // (MAX_FRAMES-1) # max are 8 images
-    imgs_idx = [x for x in range(0, total_steps-1, delta_fram_img)]
+    delta_fram_img = total_steps // (MAX_FRAMES - 1)  # max are 8 images
+    imgs_idx = [x for x in range(0, total_steps - 1, delta_fram_img)]
     return imgs_idx
 
 

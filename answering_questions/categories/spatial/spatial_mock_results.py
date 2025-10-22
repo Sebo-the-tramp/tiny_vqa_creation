@@ -18,5 +18,5 @@ def F_SPATIAL_COUNTING_OBJECTS_CLOSE() -> str:
     return "0"
 
 
-def F_SPATIAL_HEIGHEST_ABOVE_GROUND() -> str:
+def F_SPATIAL_HIGHEST_ABOVE_GROUND() -> str:
     return "Olive_kids_dinosaur_land_sidekick_backpack"

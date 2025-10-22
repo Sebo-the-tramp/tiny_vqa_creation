@@ -20,3 +20,7 @@ def F_COLLISIONS_OBJ_OBJ_TIME_LAST() -> str:
 
 def F_COLLISIONS_OBJ_OBJ_FORCE() -> str:
     return "MISSING THE DATA"
+
+
+def F_COLLISIONS_OBJ_SCENE() -> str:
+    return "0"

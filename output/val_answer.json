@@ -1,27 +1,27 @@
 [
     {
         "idx": 0,
-        "answer": "B",
+        "answer": "D",
         "task_type": "factual",
         "sub_type": "collision",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 1,
-        "answer": "B",
+        "answer": "D",
         "task_type": "factual",
         "sub_type": "collision",
         "ability_type": "counting",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 2,
-        "answer": "B",
+        "answer": "D",
         "task_type": "factual",
         "sub_type": "collision",
         "ability_type": "counting",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 3,
@@ -29,7 +29,7 @@
         "task_type": "factual",
         "sub_type": "collision",
         "ability_type": "estimation",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 4,
@@ -37,231 +37,231 @@
         "task_type": "factual",
         "sub_type": "collision",
         "ability_type": "estimation",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 5,
-        "answer": "B",
+        "answer": "C",
         "task_type": "factual",
         "sub_type": "collision",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "ability_type": "counting",
+        "mode": "general"
     },
     {
         "idx": 6,
-        "answer": "D",
+        "answer": "B",
         "task_type": "factual",
         "sub_type": "kinematics",
         "ability_type": "estimation",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 7,
         "answer": "C",
         "task_type": "factual",
         "sub_type": "kinematics",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 8,
-        "answer": "C",
+        "answer": "D",
         "task_type": "factual",
         "sub_type": "kinematics",
         "ability_type": "estimation",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 9,
-        "answer": "A",
+        "answer": "C",
         "task_type": "factual",
         "sub_type": "kinematics",
         "ability_type": "estimation",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 10,
-        "answer": "B",
+        "answer": "C",
         "task_type": "factual",
         "sub_type": "kinematics",
         "ability_type": "estimation",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 11,
-        "answer": "C",
+        "answer": "D",
         "task_type": "factual",
         "sub_type": "kinematics",
         "ability_type": "estimation",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 12,
-        "answer": "A",
+        "answer": "D",
         "task_type": "factual",
         "sub_type": "kinematics",
         "ability_type": "estimation",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 13,
-        "answer": "B",
+        "answer": "A",
         "task_type": "factual",
-        "sub_type": "kinematic",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "kinematics",
+        "ability_type": "counting",
+        "mode": "general"
     },
     {
         "idx": 14,
-        "answer": "B",
+        "answer": "C",
         "task_type": "factual",
-        "sub_type": "kinematic",
+        "sub_type": "kinematics",
         "ability_type": "counting",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 15,
-        "answer": "B",
+        "answer": "A",
         "task_type": "factual",
-        "sub_type": "kinematic",
+        "sub_type": "mass",
         "ability_type": "counting",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 16,
-        "answer": "C",
+        "answer": "B",
         "task_type": "factual",
-        "sub_type": "masses",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "sub_type": "mass",
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 17,
-        "answer": "D",
+        "answer": "B",
         "task_type": "factual",
-        "sub_type": "masses",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "mass",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 18,
         "answer": "C",
         "task_type": "factual",
-        "sub_type": "masses",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "sub_type": "mass",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 19,
-        "answer": "C",
-        "task_type": "factual",
-        "sub_type": "masses",
-        "ability_type": "attribute",
-        "mode": "image-only"
-    },
-    {
-        "idx": 20,
         "answer": "B",
         "task_type": "factual",
         "sub_type": "density",
         "ability_type": "counting",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
-        "idx": 21,
+        "idx": 20,
         "answer": "C",
         "task_type": "factual",
         "sub_type": "density",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "ability_type": "estimation",
+        "mode": "general"
+    },
+    {
+        "idx": 21,
+        "answer": "D",
+        "task_type": "factual",
+        "sub_type": "volume",
+        "ability_type": "counting",
+        "mode": "general"
     },
     {
         "idx": 22,
-        "answer": "A",
+        "answer": "B",
         "task_type": "factual",
-        "sub_type": "masses",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "sub_type": "volume",
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 23,
         "answer": "C",
         "task_type": "factual",
-        "sub_type": "masses",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "sub_type": "volume",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 24,
-        "answer": "A",
+        "answer": "C",
         "task_type": "factual",
-        "sub_type": "masses",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "sub_type": "material",
+        "ability_type": "counting",
+        "mode": "general"
     },
     {
         "idx": 25,
-        "answer": "D",
+        "answer": "C",
         "task_type": "factual",
-        "sub_type": "materials",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "sub_type": "material",
+        "ability_type": "attribute",
+        "mode": "general"
     },
     {
         "idx": 26,
-        "answer": "B",
+        "answer": "C",
         "task_type": "factual",
-        "sub_type": "materials",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "sub_type": "material",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 27,
         "answer": "B",
         "task_type": "factual",
-        "sub_type": "materials",
+        "sub_type": "material",
         "ability_type": "general",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 28,
-        "answer": "D",
-        "task_type": "factual",
-        "sub_type": "materials",
-        "ability_type": "general",
-        "mode": "image-only"
-    },
-    {
-        "idx": 29,
-        "answer": "B",
+        "answer": "A",
         "task_type": "factual",
         "sub_type": "global_plausibility",
         "ability_type": "attribute",
-        "mode": "image-only"
+        "mode": "general"
+    },
+    {
+        "idx": 29,
+        "answer": "D",
+        "task_type": "factual",
+        "sub_type": "spatial",
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 30,
-        "answer": "B",
+        "answer": "D",
         "task_type": "factual",
         "sub_type": "spatial",
         "ability_type": "estimation",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 31,
-        "answer": "B",
+        "answer": "C",
         "task_type": "factual",
         "sub_type": "spatial",
         "ability_type": "estimation",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 32,
         "answer": "C",
         "task_type": "factual",
         "sub_type": "spatial",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 33,
@@ -269,31 +269,31 @@
         "task_type": "factual",
         "sub_type": "spatial",
         "ability_type": "estimation",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 34,
-        "answer": "A",
-        "task_type": "factual",
-        "sub_type": "spatial",
-        "ability_type": "estimation",
-        "mode": "image-only"
-    },
-    {
-        "idx": 35,
         "answer": "B",
         "task_type": "factual",
         "sub_type": "spatial",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "ability_type": "general",
+        "mode": "general"
     },
     {
-        "idx": 36,
-        "answer": "D",
+        "idx": 35,
+        "answer": "A",
         "task_type": "factual",
         "sub_type": "temporal",
         "ability_type": "prediction",
-        "mode": "image-only"
+        "mode": "general"
+    },
+    {
+        "idx": 36,
+        "answer": "A",
+        "task_type": "factual",
+        "sub_type": "temporal",
+        "ability_type": "prediction",
+        "mode": "general"
     },
     {
         "idx": 37,
@@ -301,7 +301,7 @@
         "task_type": "factual",
         "sub_type": "temporal",
         "ability_type": "prediction",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 38,
@@ -309,103 +309,103 @@
         "task_type": "factual",
         "sub_type": "temporal",
         "ability_type": "prediction",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 39,
-        "answer": "B",
+        "answer": "C",
         "task_type": "factual",
-        "sub_type": "temporal",
-        "ability_type": "prediction",
-        "mode": "image-only"
+        "sub_type": "collision",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 40,
-        "answer": "A",
+        "answer": "D",
         "task_type": "factual",
         "sub_type": "collision",
         "ability_type": "counting",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 41,
-        "answer": "A",
+        "answer": "D",
         "task_type": "factual",
         "sub_type": "collision",
         "ability_type": "counting",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 42,
         "answer": "D",
         "task_type": "factual",
         "sub_type": "collision",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 43,
-        "answer": "B",
+        "answer": "A",
         "task_type": "factual",
         "sub_type": "collision",
         "ability_type": "estimation",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 44,
         "answer": "B",
         "task_type": "factual",
         "sub_type": "collision",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "ability_type": "counting",
+        "mode": "general"
     },
     {
         "idx": 45,
         "answer": "C",
         "task_type": "factual",
-        "sub_type": "collision",
+        "sub_type": "kinematics",
         "ability_type": "estimation",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 46,
-        "answer": "B",
+        "answer": "A",
         "task_type": "factual",
         "sub_type": "kinematics",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 47,
         "answer": "D",
         "task_type": "factual",
         "sub_type": "kinematics",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 48,
-        "answer": "A",
+        "answer": "C",
         "task_type": "factual",
         "sub_type": "kinematics",
         "ability_type": "estimation",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 49,
-        "answer": "B",
+        "answer": "C",
         "task_type": "factual",
         "sub_type": "kinematics",
         "ability_type": "estimation",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 50,
-        "answer": "A",
+        "answer": "C",
         "task_type": "factual",
         "sub_type": "kinematics",
         "ability_type": "estimation",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 51,
@@ -413,199 +413,199 @@
         "task_type": "factual",
         "sub_type": "kinematics",
         "ability_type": "estimation",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 52,
         "answer": "C",
         "task_type": "factual",
         "sub_type": "kinematics",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "ability_type": "counting",
+        "mode": "general"
     },
     {
         "idx": 53,
-        "answer": "C",
+        "answer": "A",
         "task_type": "factual",
-        "sub_type": "kinematic",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "kinematics",
+        "ability_type": "counting",
+        "mode": "general"
     },
     {
         "idx": 54,
         "answer": "D",
         "task_type": "factual",
-        "sub_type": "kinematic",
+        "sub_type": "mass",
         "ability_type": "counting",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 55,
         "answer": "D",
         "task_type": "factual",
-        "sub_type": "kinematic",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "sub_type": "mass",
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 56,
-        "answer": "C",
+        "answer": "D",
         "task_type": "factual",
-        "sub_type": "masses",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "sub_type": "mass",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 57,
-        "answer": "B",
+        "answer": "D",
         "task_type": "factual",
-        "sub_type": "masses",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "mass",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 58,
-        "answer": "A",
+        "answer": "C",
         "task_type": "factual",
-        "sub_type": "masses",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "sub_type": "density",
+        "ability_type": "counting",
+        "mode": "general"
     },
     {
         "idx": 59,
-        "answer": "A",
-        "task_type": "factual",
-        "sub_type": "masses",
-        "ability_type": "attribute",
-        "mode": "image-only"
-    },
-    {
-        "idx": 60,
         "answer": "B",
         "task_type": "factual",
         "sub_type": "density",
+        "ability_type": "estimation",
+        "mode": "general"
+    },
+    {
+        "idx": 60,
+        "answer": "A",
+        "task_type": "factual",
+        "sub_type": "volume",
         "ability_type": "counting",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 61,
-        "answer": "A",
+        "answer": "D",
         "task_type": "factual",
-        "sub_type": "density",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "sub_type": "volume",
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 62,
-        "answer": "C",
+        "answer": "A",
         "task_type": "factual",
-        "sub_type": "masses",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "sub_type": "volume",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 63,
-        "answer": "D",
+        "answer": "C",
         "task_type": "factual",
-        "sub_type": "masses",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "sub_type": "material",
+        "ability_type": "counting",
+        "mode": "general"
     },
     {
         "idx": 64,
-        "answer": "C",
+        "answer": "A",
         "task_type": "factual",
-        "sub_type": "masses",
+        "sub_type": "material",
         "ability_type": "attribute",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 65,
         "answer": "A",
         "task_type": "factual",
-        "sub_type": "materials",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "sub_type": "material",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 66,
-        "answer": "C",
+        "answer": "A",
         "task_type": "factual",
-        "sub_type": "materials",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "sub_type": "material",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 67,
-        "answer": "B",
-        "task_type": "factual",
-        "sub_type": "materials",
-        "ability_type": "general",
-        "mode": "image-only"
-    },
-    {
-        "idx": 68,
-        "answer": "B",
-        "task_type": "factual",
-        "sub_type": "materials",
-        "ability_type": "general",
-        "mode": "image-only"
-    },
-    {
-        "idx": 69,
         "answer": "D",
         "task_type": "factual",
         "sub_type": "global_plausibility",
         "ability_type": "attribute",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
-        "idx": 70,
-        "answer": "B",
-        "task_type": "factual",
-        "sub_type": "spatial",
-        "ability_type": "estimation",
-        "mode": "image-only"
-    },
-    {
-        "idx": 71,
-        "answer": "A",
-        "task_type": "factual",
-        "sub_type": "spatial",
-        "ability_type": "estimation",
-        "mode": "image-only"
-    },
-    {
-        "idx": 72,
+        "idx": 68,
         "answer": "D",
         "task_type": "factual",
         "sub_type": "spatial",
         "ability_type": "estimation",
-        "mode": "image-only"
+        "mode": "general"
+    },
+    {
+        "idx": 69,
+        "answer": "C",
+        "task_type": "factual",
+        "sub_type": "spatial",
+        "ability_type": "estimation",
+        "mode": "general"
+    },
+    {
+        "idx": 70,
+        "answer": "D",
+        "task_type": "factual",
+        "sub_type": "spatial",
+        "ability_type": "estimation",
+        "mode": "general"
+    },
+    {
+        "idx": 71,
+        "answer": "B",
+        "task_type": "factual",
+        "sub_type": "spatial",
+        "ability_type": "general",
+        "mode": "general"
+    },
+    {
+        "idx": 72,
+        "answer": "B",
+        "task_type": "factual",
+        "sub_type": "spatial",
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 73,
-        "answer": "A",
+        "answer": "D",
         "task_type": "factual",
         "sub_type": "spatial",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 74,
-        "answer": "A",
+        "answer": "B",
         "task_type": "factual",
-        "sub_type": "spatial",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "temporal",
+        "ability_type": "prediction",
+        "mode": "general"
     },
     {
         "idx": 75,
-        "answer": "A",
+        "answer": "B",
         "task_type": "factual",
-        "sub_type": "spatial",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "sub_type": "temporal",
+        "ability_type": "prediction",
+        "mode": "general"
     },
     {
         "idx": 76,
@@ -613,7 +613,7 @@
         "task_type": "factual",
         "sub_type": "temporal",
         "ability_type": "prediction",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 77,
@@ -621,71 +621,71 @@
         "task_type": "factual",
         "sub_type": "temporal",
         "ability_type": "prediction",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 78,
-        "answer": "B",
-        "task_type": "factual",
-        "sub_type": "temporal",
-        "ability_type": "prediction",
-        "mode": "image-only"
-    },
-    {
-        "idx": 79,
-        "answer": "D",
-        "task_type": "factual",
-        "sub_type": "temporal",
-        "ability_type": "prediction",
-        "mode": "image-only"
-    },
-    {
-        "idx": 80,
         "answer": "D",
         "task_type": "factual",
         "sub_type": "collision",
+        "ability_type": "general",
+        "mode": "general"
+    },
+    {
+        "idx": 79,
+        "answer": "A",
+        "task_type": "factual",
+        "sub_type": "collision",
         "ability_type": "counting",
-        "mode": "image-only"
+        "mode": "general"
+    },
+    {
+        "idx": 80,
+        "answer": "A",
+        "task_type": "factual",
+        "sub_type": "collision",
+        "ability_type": "counting",
+        "mode": "general"
     },
     {
         "idx": 81,
         "answer": "C",
         "task_type": "factual",
         "sub_type": "collision",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 82,
-        "answer": "C",
+        "answer": "D",
         "task_type": "factual",
         "sub_type": "collision",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 83,
-        "answer": "B",
+        "answer": "A",
         "task_type": "factual",
         "sub_type": "collision",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "ability_type": "counting",
+        "mode": "general"
     },
     {
         "idx": 84,
-        "answer": "C",
+        "answer": "B",
         "task_type": "factual",
-        "sub_type": "collision",
+        "sub_type": "kinematics",
         "ability_type": "estimation",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 85,
         "answer": "B",
         "task_type": "factual",
-        "sub_type": "collision",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "kinematics",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 86,
@@ -693,199 +693,199 @@
         "task_type": "factual",
         "sub_type": "kinematics",
         "ability_type": "estimation",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 87,
-        "answer": "D",
+        "answer": "A",
         "task_type": "factual",
         "sub_type": "kinematics",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 88,
+        "answer": "A",
+        "task_type": "factual",
+        "sub_type": "kinematics",
+        "ability_type": "estimation",
+        "mode": "general"
+    },
+    {
+        "idx": 89,
         "answer": "C",
         "task_type": "factual",
         "sub_type": "kinematics",
         "ability_type": "estimation",
-        "mode": "image-only"
-    },
-    {
-        "idx": 89,
-        "answer": "A",
-        "task_type": "factual",
-        "sub_type": "kinematics",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 90,
-        "answer": "A",
-        "task_type": "factual",
-        "sub_type": "kinematics",
-        "ability_type": "estimation",
-        "mode": "image-only"
-    },
-    {
-        "idx": 91,
-        "answer": "A",
-        "task_type": "factual",
-        "sub_type": "kinematics",
-        "ability_type": "estimation",
-        "mode": "image-only"
-    },
-    {
-        "idx": 92,
         "answer": "D",
         "task_type": "factual",
         "sub_type": "kinematics",
         "ability_type": "estimation",
-        "mode": "image-only"
+        "mode": "general"
+    },
+    {
+        "idx": 91,
+        "answer": "C",
+        "task_type": "factual",
+        "sub_type": "kinematics",
+        "ability_type": "counting",
+        "mode": "general"
+    },
+    {
+        "idx": 92,
+        "answer": "C",
+        "task_type": "factual",
+        "sub_type": "kinematics",
+        "ability_type": "counting",
+        "mode": "general"
     },
     {
         "idx": 93,
-        "answer": "A",
+        "answer": "D",
         "task_type": "factual",
-        "sub_type": "kinematic",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "mass",
+        "ability_type": "counting",
+        "mode": "general"
     },
     {
         "idx": 94,
-        "answer": "B",
+        "answer": "A",
         "task_type": "factual",
-        "sub_type": "kinematic",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "sub_type": "mass",
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 95,
-        "answer": "B",
+        "answer": "C",
         "task_type": "factual",
-        "sub_type": "kinematic",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "sub_type": "mass",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 96,
         "answer": "C",
         "task_type": "factual",
-        "sub_type": "masses",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "sub_type": "mass",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 97,
-        "answer": "B",
-        "task_type": "factual",
-        "sub_type": "masses",
-        "ability_type": "estimation",
-        "mode": "image-only"
-    },
-    {
-        "idx": 98,
-        "answer": "B",
-        "task_type": "factual",
-        "sub_type": "masses",
-        "ability_type": "attribute",
-        "mode": "image-only"
-    },
-    {
-        "idx": 99,
-        "answer": "A",
-        "task_type": "factual",
-        "sub_type": "masses",
-        "ability_type": "attribute",
-        "mode": "image-only"
-    },
-    {
-        "idx": 100,
         "answer": "C",
         "task_type": "factual",
         "sub_type": "density",
         "ability_type": "counting",
-        "mode": "image-only"
+        "mode": "general"
+    },
+    {
+        "idx": 98,
+        "answer": "C",
+        "task_type": "factual",
+        "sub_type": "density",
+        "ability_type": "estimation",
+        "mode": "general"
+    },
+    {
+        "idx": 99,
+        "answer": "C",
+        "task_type": "factual",
+        "sub_type": "volume",
+        "ability_type": "counting",
+        "mode": "general"
+    },
+    {
+        "idx": 100,
+        "answer": "D",
+        "task_type": "factual",
+        "sub_type": "volume",
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 101,
-        "answer": "D",
+        "answer": "A",
         "task_type": "factual",
-        "sub_type": "density",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "sub_type": "volume",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 102,
         "answer": "D",
         "task_type": "factual",
-        "sub_type": "masses",
+        "sub_type": "material",
         "ability_type": "counting",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 103,
-        "answer": "A",
+        "answer": "C",
         "task_type": "factual",
-        "sub_type": "masses",
+        "sub_type": "material",
         "ability_type": "attribute",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 104,
         "answer": "D",
         "task_type": "factual",
-        "sub_type": "masses",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "sub_type": "material",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 105,
-        "answer": "D",
+        "answer": "C",
         "task_type": "factual",
-        "sub_type": "materials",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "sub_type": "material",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 106,
         "answer": "A",
         "task_type": "factual",
-        "sub_type": "materials",
+        "sub_type": "global_plausibility",
         "ability_type": "attribute",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 107,
-        "answer": "B",
+        "answer": "A",
         "task_type": "factual",
-        "sub_type": "materials",
-        "ability_type": "general",
-        "mode": "image-only"
+        "sub_type": "spatial",
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 108,
         "answer": "A",
         "task_type": "factual",
-        "sub_type": "materials",
-        "ability_type": "general",
-        "mode": "image-only"
+        "sub_type": "spatial",
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 109,
         "answer": "C",
         "task_type": "factual",
-        "sub_type": "global_plausibility",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "sub_type": "spatial",
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 110,
-        "answer": "C",
+        "answer": "A",
         "task_type": "factual",
         "sub_type": "spatial",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 111,
@@ -893,39 +893,39 @@
         "task_type": "factual",
         "sub_type": "spatial",
         "ability_type": "estimation",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 112,
-        "answer": "A",
-        "task_type": "factual",
-        "sub_type": "spatial",
-        "ability_type": "estimation",
-        "mode": "image-only"
-    },
-    {
-        "idx": 113,
-        "answer": "B",
-        "task_type": "factual",
-        "sub_type": "spatial",
-        "ability_type": "estimation",
-        "mode": "image-only"
-    },
-    {
-        "idx": 114,
-        "answer": "A",
-        "task_type": "factual",
-        "sub_type": "spatial",
-        "ability_type": "estimation",
-        "mode": "image-only"
-    },
-    {
-        "idx": 115,
         "answer": "D",
         "task_type": "factual",
         "sub_type": "spatial",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "ability_type": "general",
+        "mode": "general"
+    },
+    {
+        "idx": 113,
+        "answer": "A",
+        "task_type": "factual",
+        "sub_type": "temporal",
+        "ability_type": "prediction",
+        "mode": "general"
+    },
+    {
+        "idx": 114,
+        "answer": "D",
+        "task_type": "factual",
+        "sub_type": "temporal",
+        "ability_type": "prediction",
+        "mode": "general"
+    },
+    {
+        "idx": 115,
+        "answer": "A",
+        "task_type": "factual",
+        "sub_type": "temporal",
+        "ability_type": "prediction",
+        "mode": "general"
     },
     {
         "idx": 116,
@@ -933,2270 +933,2190 @@
         "task_type": "factual",
         "sub_type": "temporal",
         "ability_type": "prediction",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 117,
-        "answer": "B",
+        "answer": "A",
         "task_type": "factual",
-        "sub_type": "temporal",
-        "ability_type": "prediction",
-        "mode": "image-only"
+        "sub_type": "collision",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 118,
-        "answer": "A",
+        "answer": "C",
         "task_type": "factual",
-        "sub_type": "temporal",
-        "ability_type": "prediction",
-        "mode": "image-only"
+        "sub_type": "collision",
+        "ability_type": "counting",
+        "mode": "general"
     },
     {
         "idx": 119,
-        "answer": "B",
+        "answer": "C",
         "task_type": "factual",
-        "sub_type": "temporal",
-        "ability_type": "prediction",
-        "mode": "image-only"
+        "sub_type": "collision",
+        "ability_type": "counting",
+        "mode": "general"
     },
     {
         "idx": 120,
-        "answer": "C",
+        "answer": "D",
         "task_type": "factual",
         "sub_type": "collision",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 121,
-        "answer": "A",
+        "answer": "D",
         "task_type": "factual",
         "sub_type": "collision",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 122,
-        "answer": "D",
+        "answer": "A",
         "task_type": "factual",
         "sub_type": "collision",
         "ability_type": "counting",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 123,
-        "answer": "D",
+        "answer": "B",
         "task_type": "factual",
-        "sub_type": "collision",
+        "sub_type": "kinematics",
         "ability_type": "estimation",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 124,
-        "answer": "D",
+        "answer": "B",
         "task_type": "factual",
-        "sub_type": "collision",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "kinematics",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 125,
-        "answer": "C",
+        "answer": "B",
         "task_type": "factual",
-        "sub_type": "collision",
+        "sub_type": "kinematics",
         "ability_type": "estimation",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 126,
-        "answer": "B",
+        "answer": "C",
         "task_type": "factual",
         "sub_type": "kinematics",
         "ability_type": "estimation",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 127,
-        "answer": "A",
-        "task_type": "factual",
-        "sub_type": "kinematics",
-        "ability_type": "attribute",
-        "mode": "image-only"
-    },
-    {
-        "idx": 128,
-        "answer": "B",
-        "task_type": "factual",
-        "sub_type": "kinematics",
-        "ability_type": "estimation",
-        "mode": "image-only"
-    },
-    {
-        "idx": 129,
         "answer": "D",
         "task_type": "factual",
         "sub_type": "kinematics",
         "ability_type": "estimation",
-        "mode": "image-only"
+        "mode": "general"
+    },
+    {
+        "idx": 128,
+        "answer": "D",
+        "task_type": "factual",
+        "sub_type": "kinematics",
+        "ability_type": "estimation",
+        "mode": "general"
+    },
+    {
+        "idx": 129,
+        "answer": "A",
+        "task_type": "factual",
+        "sub_type": "kinematics",
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 130,
         "answer": "A",
         "task_type": "factual",
         "sub_type": "kinematics",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "ability_type": "counting",
+        "mode": "general"
     },
     {
         "idx": 131,
-        "answer": "C",
+        "answer": "B",
         "task_type": "factual",
         "sub_type": "kinematics",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "ability_type": "counting",
+        "mode": "general"
     },
     {
         "idx": 132,
-        "answer": "A",
+        "answer": "D",
         "task_type": "factual",
-        "sub_type": "kinematics",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "mass",
+        "ability_type": "counting",
+        "mode": "general"
     },
     {
         "idx": 133,
-        "answer": "D",
+        "answer": "B",
         "task_type": "factual",
-        "sub_type": "kinematic",
+        "sub_type": "mass",
         "ability_type": "estimation",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 134,
-        "answer": "D",
+        "answer": "B",
         "task_type": "factual",
-        "sub_type": "kinematic",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "sub_type": "mass",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 135,
-        "answer": "A",
+        "answer": "B",
         "task_type": "factual",
-        "sub_type": "kinematic",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "sub_type": "mass",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 136,
-        "answer": "B",
+        "answer": "D",
         "task_type": "factual",
-        "sub_type": "masses",
+        "sub_type": "density",
         "ability_type": "counting",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 137,
         "answer": "C",
         "task_type": "factual",
-        "sub_type": "masses",
+        "sub_type": "density",
         "ability_type": "estimation",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 138,
-        "answer": "B",
+        "answer": "C",
         "task_type": "factual",
-        "sub_type": "masses",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "sub_type": "volume",
+        "ability_type": "counting",
+        "mode": "general"
     },
     {
         "idx": 139,
-        "answer": "D",
+        "answer": "A",
         "task_type": "factual",
-        "sub_type": "masses",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "sub_type": "volume",
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 140,
-        "answer": "C",
+        "answer": "A",
         "task_type": "factual",
-        "sub_type": "density",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "sub_type": "volume",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 141,
-        "answer": "A",
+        "answer": "B",
         "task_type": "factual",
-        "sub_type": "density",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "sub_type": "material",
+        "ability_type": "counting",
+        "mode": "general"
     },
     {
         "idx": 142,
-        "answer": "B",
+        "answer": "D",
         "task_type": "factual",
-        "sub_type": "masses",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "sub_type": "material",
+        "ability_type": "attribute",
+        "mode": "general"
     },
     {
         "idx": 143,
-        "answer": "B",
+        "answer": "D",
         "task_type": "factual",
-        "sub_type": "masses",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "sub_type": "material",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 144,
-        "answer": "D",
+        "answer": "C",
         "task_type": "factual",
-        "sub_type": "masses",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "sub_type": "material",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 145,
         "answer": "C",
         "task_type": "factual",
-        "sub_type": "materials",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "sub_type": "global_plausibility",
+        "ability_type": "attribute",
+        "mode": "general"
     },
     {
         "idx": 146,
-        "answer": "D",
-        "task_type": "factual",
-        "sub_type": "materials",
-        "ability_type": "attribute",
-        "mode": "image-only"
-    },
-    {
-        "idx": 147,
-        "answer": "D",
-        "task_type": "factual",
-        "sub_type": "materials",
-        "ability_type": "general",
-        "mode": "image-only"
-    },
-    {
-        "idx": 148,
-        "answer": "D",
-        "task_type": "factual",
-        "sub_type": "materials",
-        "ability_type": "general",
-        "mode": "image-only"
-    },
-    {
-        "idx": 149,
-        "answer": "A",
-        "task_type": "factual",
-        "sub_type": "global_plausibility",
-        "ability_type": "attribute",
-        "mode": "image-only"
-    },
-    {
-        "idx": 150,
-        "answer": "A",
-        "task_type": "factual",
-        "sub_type": "spatial",
-        "ability_type": "estimation",
-        "mode": "image-only"
-    },
-    {
-        "idx": 151,
         "answer": "B",
         "task_type": "factual",
         "sub_type": "spatial",
         "ability_type": "estimation",
-        "mode": "image-only"
+        "mode": "general"
+    },
+    {
+        "idx": 147,
+        "answer": "A",
+        "task_type": "factual",
+        "sub_type": "spatial",
+        "ability_type": "estimation",
+        "mode": "general"
+    },
+    {
+        "idx": 148,
+        "answer": "B",
+        "task_type": "factual",
+        "sub_type": "spatial",
+        "ability_type": "estimation",
+        "mode": "general"
+    },
+    {
+        "idx": 149,
+        "answer": "C",
+        "task_type": "factual",
+        "sub_type": "spatial",
+        "ability_type": "general",
+        "mode": "general"
+    },
+    {
+        "idx": 150,
+        "answer": "B",
+        "task_type": "factual",
+        "sub_type": "spatial",
+        "ability_type": "estimation",
+        "mode": "general"
+    },
+    {
+        "idx": 151,
+        "answer": "C",
+        "task_type": "factual",
+        "sub_type": "spatial",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 152,
-        "answer": "C",
+        "answer": "B",
         "task_type": "factual",
-        "sub_type": "spatial",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "temporal",
+        "ability_type": "prediction",
+        "mode": "general"
     },
     {
         "idx": 153,
-        "answer": "C",
+        "answer": "D",
         "task_type": "factual",
-        "sub_type": "spatial",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "temporal",
+        "ability_type": "prediction",
+        "mode": "general"
     },
     {
         "idx": 154,
         "answer": "B",
         "task_type": "factual",
-        "sub_type": "spatial",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "temporal",
+        "ability_type": "prediction",
+        "mode": "general"
     },
     {
         "idx": 155,
-        "answer": "C",
+        "answer": "D",
         "task_type": "factual",
-        "sub_type": "spatial",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "sub_type": "temporal",
+        "ability_type": "prediction",
+        "mode": "general"
     },
     {
         "idx": 156,
-        "answer": "B",
+        "answer": "A",
         "task_type": "factual",
-        "sub_type": "temporal",
-        "ability_type": "prediction",
-        "mode": "image-only"
+        "sub_type": "collision",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 157,
-        "answer": "A",
+        "answer": "C",
         "task_type": "factual",
-        "sub_type": "temporal",
-        "ability_type": "prediction",
-        "mode": "image-only"
+        "sub_type": "collision",
+        "ability_type": "counting",
+        "mode": "general"
     },
     {
         "idx": 158,
-        "answer": "C",
+        "answer": "A",
         "task_type": "factual",
-        "sub_type": "temporal",
-        "ability_type": "prediction",
-        "mode": "image-only"
+        "sub_type": "collision",
+        "ability_type": "counting",
+        "mode": "general"
     },
     {
         "idx": 159,
         "answer": "D",
         "task_type": "factual",
-        "sub_type": "temporal",
-        "ability_type": "prediction",
-        "mode": "image-only"
+        "sub_type": "collision",
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 160,
         "answer": "A",
         "task_type": "factual",
         "sub_type": "collision",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 161,
-        "answer": "C",
+        "answer": "A",
         "task_type": "factual",
         "sub_type": "collision",
         "ability_type": "counting",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 162,
-        "answer": "A",
-        "task_type": "factual",
-        "sub_type": "collision",
-        "ability_type": "counting",
-        "mode": "image-only"
-    },
-    {
-        "idx": 163,
-        "answer": "A",
-        "task_type": "factual",
-        "sub_type": "collision",
-        "ability_type": "estimation",
-        "mode": "image-only"
-    },
-    {
-        "idx": 164,
-        "answer": "D",
-        "task_type": "factual",
-        "sub_type": "collision",
-        "ability_type": "estimation",
-        "mode": "image-only"
-    },
-    {
-        "idx": 165,
-        "answer": "A",
-        "task_type": "factual",
-        "sub_type": "collision",
-        "ability_type": "estimation",
-        "mode": "image-only"
-    },
-    {
-        "idx": 166,
-        "answer": "A",
-        "task_type": "factual",
-        "sub_type": "kinematics",
-        "ability_type": "estimation",
-        "mode": "image-only"
-    },
-    {
-        "idx": 167,
-        "answer": "D",
-        "task_type": "factual",
-        "sub_type": "kinematics",
-        "ability_type": "attribute",
-        "mode": "image-only"
-    },
-    {
-        "idx": 168,
         "answer": "B",
         "task_type": "factual",
         "sub_type": "kinematics",
         "ability_type": "estimation",
-        "mode": "image-only"
+        "mode": "general"
+    },
+    {
+        "idx": 163,
+        "answer": "D",
+        "task_type": "factual",
+        "sub_type": "kinematics",
+        "ability_type": "general",
+        "mode": "general"
+    },
+    {
+        "idx": 164,
+        "answer": "A",
+        "task_type": "factual",
+        "sub_type": "kinematics",
+        "ability_type": "estimation",
+        "mode": "general"
+    },
+    {
+        "idx": 165,
+        "answer": "B",
+        "task_type": "factual",
+        "sub_type": "kinematics",
+        "ability_type": "estimation",
+        "mode": "general"
+    },
+    {
+        "idx": 166,
+        "answer": "B",
+        "task_type": "factual",
+        "sub_type": "kinematics",
+        "ability_type": "estimation",
+        "mode": "general"
+    },
+    {
+        "idx": 167,
+        "answer": "A",
+        "task_type": "factual",
+        "sub_type": "kinematics",
+        "ability_type": "estimation",
+        "mode": "general"
+    },
+    {
+        "idx": 168,
+        "answer": "C",
+        "task_type": "factual",
+        "sub_type": "kinematics",
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 169,
         "answer": "B",
         "task_type": "factual",
         "sub_type": "kinematics",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "ability_type": "counting",
+        "mode": "general"
     },
     {
         "idx": 170,
-        "answer": "D",
+        "answer": "C",
         "task_type": "factual",
         "sub_type": "kinematics",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "ability_type": "counting",
+        "mode": "general"
     },
     {
         "idx": 171,
-        "answer": "D",
+        "answer": "C",
         "task_type": "factual",
-        "sub_type": "kinematics",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "mass",
+        "ability_type": "counting",
+        "mode": "general"
     },
     {
         "idx": 172,
-        "answer": "D",
+        "answer": "C",
         "task_type": "factual",
-        "sub_type": "kinematics",
+        "sub_type": "mass",
         "ability_type": "estimation",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 173,
-        "answer": "A",
+        "answer": "B",
         "task_type": "factual",
-        "sub_type": "kinematic",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "mass",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 174,
         "answer": "D",
         "task_type": "factual",
-        "sub_type": "kinematic",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "sub_type": "mass",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 175,
-        "answer": "A",
+        "answer": "C",
         "task_type": "factual",
-        "sub_type": "kinematic",
+        "sub_type": "density",
         "ability_type": "counting",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 176,
-        "answer": "D",
-        "task_type": "factual",
-        "sub_type": "masses",
-        "ability_type": "counting",
-        "mode": "image-only"
-    },
-    {
-        "idx": 177,
-        "answer": "D",
-        "task_type": "factual",
-        "sub_type": "masses",
-        "ability_type": "estimation",
-        "mode": "image-only"
-    },
-    {
-        "idx": 178,
-        "answer": "B",
-        "task_type": "factual",
-        "sub_type": "masses",
-        "ability_type": "attribute",
-        "mode": "image-only"
-    },
-    {
-        "idx": 179,
-        "answer": "D",
-        "task_type": "factual",
-        "sub_type": "masses",
-        "ability_type": "attribute",
-        "mode": "image-only"
-    },
-    {
-        "idx": 180,
-        "answer": "C",
-        "task_type": "factual",
-        "sub_type": "density",
-        "ability_type": "counting",
-        "mode": "image-only"
-    },
-    {
-        "idx": 181,
         "answer": "A",
         "task_type": "factual",
         "sub_type": "density",
+        "ability_type": "estimation",
+        "mode": "general"
+    },
+    {
+        "idx": 177,
+        "answer": "C",
+        "task_type": "factual",
+        "sub_type": "volume",
+        "ability_type": "counting",
+        "mode": "general"
+    },
+    {
+        "idx": 178,
+        "answer": "A",
+        "task_type": "factual",
+        "sub_type": "volume",
+        "ability_type": "estimation",
+        "mode": "general"
+    },
+    {
+        "idx": 179,
+        "answer": "B",
+        "task_type": "factual",
+        "sub_type": "volume",
+        "ability_type": "general",
+        "mode": "general"
+    },
+    {
+        "idx": 180,
+        "answer": "A",
+        "task_type": "factual",
+        "sub_type": "material",
+        "ability_type": "counting",
+        "mode": "general"
+    },
+    {
+        "idx": 181,
+        "answer": "D",
+        "task_type": "factual",
+        "sub_type": "material",
         "ability_type": "attribute",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 182,
-        "answer": "D",
+        "answer": "C",
         "task_type": "factual",
-        "sub_type": "masses",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "sub_type": "material",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 183,
-        "answer": "C",
+        "answer": "B",
         "task_type": "factual",
-        "sub_type": "masses",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "sub_type": "material",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 184,
-        "answer": "D",
+        "answer": "A",
         "task_type": "factual",
-        "sub_type": "masses",
+        "sub_type": "global_plausibility",
         "ability_type": "attribute",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 185,
         "answer": "C",
         "task_type": "factual",
-        "sub_type": "materials",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "sub_type": "spatial",
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 186,
-        "answer": "B",
-        "task_type": "factual",
-        "sub_type": "materials",
-        "ability_type": "attribute",
-        "mode": "image-only"
-    },
-    {
-        "idx": 187,
-        "answer": "D",
-        "task_type": "factual",
-        "sub_type": "materials",
-        "ability_type": "general",
-        "mode": "image-only"
-    },
-    {
-        "idx": 188,
-        "answer": "C",
-        "task_type": "factual",
-        "sub_type": "materials",
-        "ability_type": "general",
-        "mode": "image-only"
-    },
-    {
-        "idx": 189,
-        "answer": "D",
-        "task_type": "factual",
-        "sub_type": "global_plausibility",
-        "ability_type": "attribute",
-        "mode": "image-only"
-    },
-    {
-        "idx": 190,
-        "answer": "C",
+        "answer": "A",
         "task_type": "factual",
         "sub_type": "spatial",
         "ability_type": "estimation",
-        "mode": "image-only"
+        "mode": "general"
+    },
+    {
+        "idx": 187,
+        "answer": "A",
+        "task_type": "factual",
+        "sub_type": "spatial",
+        "ability_type": "estimation",
+        "mode": "general"
+    },
+    {
+        "idx": 188,
+        "answer": "B",
+        "task_type": "factual",
+        "sub_type": "spatial",
+        "ability_type": "general",
+        "mode": "general"
+    },
+    {
+        "idx": 189,
+        "answer": "B",
+        "task_type": "factual",
+        "sub_type": "spatial",
+        "ability_type": "estimation",
+        "mode": "general"
+    },
+    {
+        "idx": 190,
+        "answer": "B",
+        "task_type": "factual",
+        "sub_type": "spatial",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 191,
         "answer": "D",
         "task_type": "factual",
-        "sub_type": "spatial",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "temporal",
+        "ability_type": "prediction",
+        "mode": "general"
     },
     {
         "idx": 192,
-        "answer": "B",
+        "answer": "D",
         "task_type": "factual",
-        "sub_type": "spatial",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "temporal",
+        "ability_type": "prediction",
+        "mode": "general"
     },
     {
         "idx": 193,
-        "answer": "B",
+        "answer": "D",
         "task_type": "factual",
-        "sub_type": "spatial",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "temporal",
+        "ability_type": "prediction",
+        "mode": "general"
     },
     {
         "idx": 194,
-        "answer": "A",
+        "answer": "D",
         "task_type": "factual",
-        "sub_type": "spatial",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "temporal",
+        "ability_type": "prediction",
+        "mode": "general"
     },
     {
         "idx": 195,
-        "answer": "C",
+        "answer": "D",
         "task_type": "factual",
-        "sub_type": "spatial",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "sub_type": "collision",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 196,
-        "answer": "B",
-        "task_type": "factual",
-        "sub_type": "temporal",
-        "ability_type": "prediction",
-        "mode": "image-only"
-    },
-    {
-        "idx": 197,
-        "answer": "B",
-        "task_type": "factual",
-        "sub_type": "temporal",
-        "ability_type": "prediction",
-        "mode": "image-only"
-    },
-    {
-        "idx": 198,
         "answer": "A",
-        "task_type": "factual",
-        "sub_type": "temporal",
-        "ability_type": "prediction",
-        "mode": "image-only"
-    },
-    {
-        "idx": 199,
-        "answer": "A",
-        "task_type": "factual",
-        "sub_type": "temporal",
-        "ability_type": "prediction",
-        "mode": "image-only"
-    },
-    {
-        "idx": 200,
-        "answer": "B",
         "task_type": "factual",
         "sub_type": "collision",
         "ability_type": "counting",
-        "mode": "image-only"
+        "mode": "general"
+    },
+    {
+        "idx": 197,
+        "answer": "A",
+        "task_type": "factual",
+        "sub_type": "collision",
+        "ability_type": "counting",
+        "mode": "general"
+    },
+    {
+        "idx": 198,
+        "answer": "B",
+        "task_type": "factual",
+        "sub_type": "collision",
+        "ability_type": "estimation",
+        "mode": "general"
+    },
+    {
+        "idx": 199,
+        "answer": "D",
+        "task_type": "factual",
+        "sub_type": "collision",
+        "ability_type": "estimation",
+        "mode": "general"
+    },
+    {
+        "idx": 200,
+        "answer": "A",
+        "task_type": "factual",
+        "sub_type": "collision",
+        "ability_type": "counting",
+        "mode": "general"
     },
     {
         "idx": 201,
         "answer": "A",
         "task_type": "factual",
-        "sub_type": "collision",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "sub_type": "kinematics",
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 202,
-        "answer": "C",
+        "answer": "B",
         "task_type": "factual",
-        "sub_type": "collision",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "sub_type": "kinematics",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 203,
-        "answer": "C",
+        "answer": "A",
         "task_type": "factual",
-        "sub_type": "collision",
+        "sub_type": "kinematics",
         "ability_type": "estimation",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 204,
-        "answer": "D",
+        "answer": "C",
         "task_type": "factual",
-        "sub_type": "collision",
+        "sub_type": "kinematics",
         "ability_type": "estimation",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 205,
-        "answer": "D",
+        "answer": "B",
         "task_type": "factual",
-        "sub_type": "collision",
+        "sub_type": "kinematics",
         "ability_type": "estimation",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 206,
-        "answer": "A",
+        "answer": "B",
         "task_type": "factual",
         "sub_type": "kinematics",
         "ability_type": "estimation",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 207,
-        "answer": "C",
+        "answer": "A",
         "task_type": "factual",
         "sub_type": "kinematics",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 208,
-        "answer": "B",
+        "answer": "A",
         "task_type": "factual",
         "sub_type": "kinematics",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "ability_type": "counting",
+        "mode": "general"
     },
     {
         "idx": 209,
-        "answer": "D",
+        "answer": "B",
         "task_type": "factual",
         "sub_type": "kinematics",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "ability_type": "counting",
+        "mode": "general"
     },
     {
         "idx": 210,
-        "answer": "D",
+        "answer": "A",
         "task_type": "factual",
-        "sub_type": "kinematics",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "mass",
+        "ability_type": "counting",
+        "mode": "general"
     },
     {
         "idx": 211,
-        "answer": "C",
+        "answer": "A",
         "task_type": "factual",
-        "sub_type": "kinematics",
+        "sub_type": "mass",
         "ability_type": "estimation",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 212,
-        "answer": "B",
+        "answer": "D",
         "task_type": "factual",
-        "sub_type": "kinematics",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "mass",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 213,
-        "answer": "B",
+        "answer": "C",
         "task_type": "factual",
-        "sub_type": "kinematic",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "mass",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 214,
-        "answer": "C",
+        "answer": "D",
         "task_type": "factual",
-        "sub_type": "kinematic",
+        "sub_type": "density",
         "ability_type": "counting",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 215,
-        "answer": "A",
+        "answer": "B",
         "task_type": "factual",
-        "sub_type": "kinematic",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "sub_type": "density",
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 216,
-        "answer": "C",
+        "answer": "A",
         "task_type": "factual",
-        "sub_type": "masses",
+        "sub_type": "volume",
         "ability_type": "counting",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 217,
         "answer": "C",
         "task_type": "factual",
-        "sub_type": "masses",
+        "sub_type": "volume",
         "ability_type": "estimation",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 218,
-        "answer": "C",
+        "answer": "D",
         "task_type": "factual",
-        "sub_type": "masses",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "sub_type": "volume",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 219,
-        "answer": "D",
+        "answer": "B",
         "task_type": "factual",
-        "sub_type": "masses",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "sub_type": "material",
+        "ability_type": "counting",
+        "mode": "general"
     },
     {
         "idx": 220,
-        "answer": "B",
+        "answer": "A",
         "task_type": "factual",
-        "sub_type": "density",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "sub_type": "material",
+        "ability_type": "attribute",
+        "mode": "general"
     },
     {
         "idx": 221,
-        "answer": "C",
+        "answer": "D",
         "task_type": "factual",
-        "sub_type": "density",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "sub_type": "material",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 222,
         "answer": "D",
         "task_type": "factual",
-        "sub_type": "masses",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "sub_type": "material",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 223,
-        "answer": "B",
-        "task_type": "factual",
-        "sub_type": "masses",
-        "ability_type": "attribute",
-        "mode": "image-only"
-    },
-    {
-        "idx": 224,
-        "answer": "C",
-        "task_type": "factual",
-        "sub_type": "masses",
-        "ability_type": "attribute",
-        "mode": "image-only"
-    },
-    {
-        "idx": 225,
         "answer": "D",
-        "task_type": "factual",
-        "sub_type": "materials",
-        "ability_type": "counting",
-        "mode": "image-only"
-    },
-    {
-        "idx": 226,
-        "answer": "A",
-        "task_type": "factual",
-        "sub_type": "materials",
-        "ability_type": "attribute",
-        "mode": "image-only"
-    },
-    {
-        "idx": 227,
-        "answer": "D",
-        "task_type": "factual",
-        "sub_type": "materials",
-        "ability_type": "general",
-        "mode": "image-only"
-    },
-    {
-        "idx": 228,
-        "answer": "A",
-        "task_type": "factual",
-        "sub_type": "materials",
-        "ability_type": "general",
-        "mode": "image-only"
-    },
-    {
-        "idx": 229,
-        "answer": "B",
         "task_type": "factual",
         "sub_type": "global_plausibility",
         "ability_type": "attribute",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
-        "idx": 230,
-        "answer": "A",
+        "idx": 224,
+        "answer": "B",
         "task_type": "factual",
         "sub_type": "spatial",
         "ability_type": "estimation",
-        "mode": "image-only"
+        "mode": "general"
+    },
+    {
+        "idx": 225,
+        "answer": "C",
+        "task_type": "factual",
+        "sub_type": "spatial",
+        "ability_type": "estimation",
+        "mode": "general"
+    },
+    {
+        "idx": 226,
+        "answer": "B",
+        "task_type": "factual",
+        "sub_type": "spatial",
+        "ability_type": "estimation",
+        "mode": "general"
+    },
+    {
+        "idx": 227,
+        "answer": "B",
+        "task_type": "factual",
+        "sub_type": "spatial",
+        "ability_type": "general",
+        "mode": "general"
+    },
+    {
+        "idx": 228,
+        "answer": "D",
+        "task_type": "factual",
+        "sub_type": "spatial",
+        "ability_type": "estimation",
+        "mode": "general"
+    },
+    {
+        "idx": 229,
+        "answer": "D",
+        "task_type": "factual",
+        "sub_type": "spatial",
+        "ability_type": "general",
+        "mode": "general"
+    },
+    {
+        "idx": 230,
+        "answer": "D",
+        "task_type": "factual",
+        "sub_type": "temporal",
+        "ability_type": "prediction",
+        "mode": "general"
     },
     {
         "idx": 231,
         "answer": "A",
         "task_type": "factual",
-        "sub_type": "spatial",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "temporal",
+        "ability_type": "prediction",
+        "mode": "general"
     },
     {
         "idx": 232,
-        "answer": "A",
+        "answer": "D",
         "task_type": "factual",
-        "sub_type": "spatial",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "temporal",
+        "ability_type": "prediction",
+        "mode": "general"
     },
     {
         "idx": 233,
-        "answer": "D",
+        "answer": "A",
         "task_type": "factual",
-        "sub_type": "spatial",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "temporal",
+        "ability_type": "prediction",
+        "mode": "general"
     },
     {
         "idx": 234,
-        "answer": "A",
+        "answer": "D",
         "task_type": "factual",
-        "sub_type": "spatial",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "collision",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 235,
         "answer": "C",
         "task_type": "factual",
-        "sub_type": "spatial",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "sub_type": "collision",
+        "ability_type": "counting",
+        "mode": "general"
     },
     {
         "idx": 236,
-        "answer": "B",
+        "answer": "C",
         "task_type": "factual",
-        "sub_type": "temporal",
-        "ability_type": "prediction",
-        "mode": "image-only"
+        "sub_type": "collision",
+        "ability_type": "counting",
+        "mode": "general"
     },
     {
         "idx": 237,
-        "answer": "C",
+        "answer": "D",
         "task_type": "factual",
-        "sub_type": "temporal",
-        "ability_type": "prediction",
-        "mode": "image-only"
+        "sub_type": "collision",
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 238,
         "answer": "D",
         "task_type": "factual",
-        "sub_type": "temporal",
-        "ability_type": "prediction",
-        "mode": "image-only"
+        "sub_type": "collision",
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 239,
-        "answer": "A",
+        "answer": "B",
         "task_type": "factual",
-        "sub_type": "temporal",
-        "ability_type": "prediction",
-        "mode": "image-only"
+        "sub_type": "collision",
+        "ability_type": "counting",
+        "mode": "general"
     },
     {
         "idx": 240,
-        "answer": "D",
+        "answer": "C",
         "task_type": "factual",
-        "sub_type": "collision",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "sub_type": "kinematics",
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 241,
-        "answer": "A",
+        "answer": "D",
         "task_type": "factual",
-        "sub_type": "collision",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "sub_type": "kinematics",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 242,
         "answer": "A",
         "task_type": "factual",
-        "sub_type": "collision",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "sub_type": "kinematics",
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 243,
-        "answer": "D",
-        "task_type": "factual",
-        "sub_type": "collision",
-        "ability_type": "estimation",
-        "mode": "image-only"
-    },
-    {
-        "idx": 244,
-        "answer": "D",
-        "task_type": "factual",
-        "sub_type": "collision",
-        "ability_type": "estimation",
-        "mode": "image-only"
-    },
-    {
-        "idx": 245,
-        "answer": "B",
-        "task_type": "factual",
-        "sub_type": "collision",
-        "ability_type": "estimation",
-        "mode": "image-only"
-    },
-    {
-        "idx": 246,
-        "answer": "C",
+        "answer": "A",
         "task_type": "factual",
         "sub_type": "kinematics",
         "ability_type": "estimation",
-        "mode": "image-only"
+        "mode": "general"
+    },
+    {
+        "idx": 244,
+        "answer": "B",
+        "task_type": "factual",
+        "sub_type": "kinematics",
+        "ability_type": "estimation",
+        "mode": "general"
+    },
+    {
+        "idx": 245,
+        "answer": "D",
+        "task_type": "factual",
+        "sub_type": "kinematics",
+        "ability_type": "estimation",
+        "mode": "general"
+    },
+    {
+        "idx": 246,
+        "answer": "A",
+        "task_type": "factual",
+        "sub_type": "kinematics",
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 247,
         "answer": "B",
         "task_type": "factual",
         "sub_type": "kinematics",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "ability_type": "counting",
+        "mode": "general"
     },
     {
         "idx": 248,
         "answer": "B",
         "task_type": "factual",
         "sub_type": "kinematics",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "ability_type": "counting",
+        "mode": "general"
     },
     {
         "idx": 249,
-        "answer": "C",
+        "answer": "D",
         "task_type": "factual",
-        "sub_type": "kinematics",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "mass",
+        "ability_type": "counting",
+        "mode": "general"
     },
     {
         "idx": 250,
-        "answer": "C",
+        "answer": "D",
         "task_type": "factual",
-        "sub_type": "kinematics",
+        "sub_type": "mass",
         "ability_type": "estimation",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 251,
-        "answer": "B",
+        "answer": "A",
         "task_type": "factual",
-        "sub_type": "kinematics",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "mass",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 252,
-        "answer": "C",
+        "answer": "A",
         "task_type": "factual",
-        "sub_type": "kinematics",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "mass",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 253,
-        "answer": "A",
+        "answer": "B",
         "task_type": "factual",
-        "sub_type": "kinematic",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "density",
+        "ability_type": "counting",
+        "mode": "general"
     },
     {
         "idx": 254,
-        "answer": "A",
+        "answer": "B",
         "task_type": "factual",
-        "sub_type": "kinematic",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "sub_type": "density",
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 255,
-        "answer": "B",
+        "answer": "C",
         "task_type": "factual",
-        "sub_type": "kinematic",
+        "sub_type": "volume",
         "ability_type": "counting",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 256,
-        "answer": "A",
+        "answer": "C",
         "task_type": "factual",
-        "sub_type": "masses",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "sub_type": "volume",
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 257,
-        "answer": "B",
+        "answer": "D",
         "task_type": "factual",
-        "sub_type": "masses",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "volume",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 258,
-        "answer": "A",
+        "answer": "D",
         "task_type": "factual",
-        "sub_type": "masses",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "sub_type": "material",
+        "ability_type": "counting",
+        "mode": "general"
     },
     {
         "idx": 259,
-        "answer": "A",
+        "answer": "C",
         "task_type": "factual",
-        "sub_type": "masses",
+        "sub_type": "material",
         "ability_type": "attribute",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 260,
-        "answer": "C",
+        "answer": "D",
         "task_type": "factual",
-        "sub_type": "density",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "sub_type": "material",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 261,
-        "answer": "A",
+        "answer": "C",
         "task_type": "factual",
-        "sub_type": "density",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "sub_type": "material",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 262,
         "answer": "B",
         "task_type": "factual",
-        "sub_type": "masses",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "sub_type": "global_plausibility",
+        "ability_type": "attribute",
+        "mode": "general"
     },
     {
         "idx": 263,
-        "answer": "C",
+        "answer": "B",
         "task_type": "factual",
-        "sub_type": "masses",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "sub_type": "spatial",
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 264,
-        "answer": "B",
+        "answer": "C",
         "task_type": "factual",
-        "sub_type": "masses",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "sub_type": "spatial",
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 265,
         "answer": "D",
         "task_type": "factual",
-        "sub_type": "materials",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "sub_type": "spatial",
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 266,
-        "answer": "B",
+        "answer": "C",
         "task_type": "factual",
-        "sub_type": "materials",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "sub_type": "spatial",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 267,
-        "answer": "C",
+        "answer": "A",
         "task_type": "factual",
-        "sub_type": "materials",
-        "ability_type": "general",
-        "mode": "image-only"
+        "sub_type": "spatial",
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 268,
-        "answer": "C",
+        "answer": "A",
         "task_type": "factual",
-        "sub_type": "materials",
+        "sub_type": "spatial",
         "ability_type": "general",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 269,
-        "answer": "C",
+        "answer": "D",
         "task_type": "factual",
-        "sub_type": "global_plausibility",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "sub_type": "temporal",
+        "ability_type": "prediction",
+        "mode": "general"
     },
     {
         "idx": 270,
-        "answer": "D",
+        "answer": "A",
         "task_type": "factual",
-        "sub_type": "spatial",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "temporal",
+        "ability_type": "prediction",
+        "mode": "general"
     },
     {
         "idx": 271,
-        "answer": "B",
+        "answer": "A",
         "task_type": "factual",
-        "sub_type": "spatial",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "temporal",
+        "ability_type": "prediction",
+        "mode": "general"
     },
     {
         "idx": 272,
-        "answer": "C",
+        "answer": "A",
         "task_type": "factual",
-        "sub_type": "spatial",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "temporal",
+        "ability_type": "prediction",
+        "mode": "general"
     },
     {
         "idx": 273,
         "answer": "B",
         "task_type": "factual",
-        "sub_type": "spatial",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "collision",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 274,
-        "answer": "C",
+        "answer": "A",
         "task_type": "factual",
-        "sub_type": "spatial",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "collision",
+        "ability_type": "counting",
+        "mode": "general"
     },
     {
         "idx": 275,
-        "answer": "A",
+        "answer": "B",
         "task_type": "factual",
-        "sub_type": "spatial",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "sub_type": "collision",
+        "ability_type": "counting",
+        "mode": "general"
     },
     {
         "idx": 276,
-        "answer": "C",
+        "answer": "D",
         "task_type": "factual",
-        "sub_type": "temporal",
-        "ability_type": "prediction",
-        "mode": "image-only"
+        "sub_type": "collision",
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 277,
         "answer": "A",
         "task_type": "factual",
-        "sub_type": "temporal",
-        "ability_type": "prediction",
-        "mode": "image-only"
+        "sub_type": "collision",
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 278,
         "answer": "B",
         "task_type": "factual",
-        "sub_type": "temporal",
-        "ability_type": "prediction",
-        "mode": "image-only"
+        "sub_type": "collision",
+        "ability_type": "counting",
+        "mode": "general"
     },
     {
         "idx": 279,
         "answer": "C",
         "task_type": "factual",
-        "sub_type": "temporal",
-        "ability_type": "prediction",
-        "mode": "image-only"
+        "sub_type": "kinematics",
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 280,
         "answer": "C",
         "task_type": "factual",
-        "sub_type": "collision",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "sub_type": "kinematics",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 281,
-        "answer": "A",
+        "answer": "B",
         "task_type": "factual",
-        "sub_type": "collision",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "sub_type": "kinematics",
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 282,
         "answer": "B",
         "task_type": "factual",
-        "sub_type": "collision",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "sub_type": "kinematics",
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 283,
-        "answer": "B",
+        "answer": "A",
         "task_type": "factual",
-        "sub_type": "collision",
+        "sub_type": "kinematics",
         "ability_type": "estimation",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 284,
-        "answer": "D",
+        "answer": "A",
         "task_type": "factual",
-        "sub_type": "collision",
+        "sub_type": "kinematics",
         "ability_type": "estimation",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 285,
-        "answer": "B",
-        "task_type": "factual",
-        "sub_type": "collision",
-        "ability_type": "estimation",
-        "mode": "image-only"
-    },
-    {
-        "idx": 286,
-        "answer": "B",
-        "task_type": "factual",
-        "sub_type": "kinematics",
-        "ability_type": "estimation",
-        "mode": "image-only"
-    },
-    {
-        "idx": 287,
         "answer": "C",
         "task_type": "factual",
         "sub_type": "kinematics",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "ability_type": "estimation",
+        "mode": "general"
+    },
+    {
+        "idx": 286,
+        "answer": "A",
+        "task_type": "factual",
+        "sub_type": "kinematics",
+        "ability_type": "counting",
+        "mode": "general"
+    },
+    {
+        "idx": 287,
+        "answer": "A",
+        "task_type": "factual",
+        "sub_type": "kinematics",
+        "ability_type": "counting",
+        "mode": "general"
     },
     {
         "idx": 288,
-        "answer": "D",
+        "answer": "B",
         "task_type": "factual",
-        "sub_type": "kinematics",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "mass",
+        "ability_type": "counting",
+        "mode": "general"
     },
     {
         "idx": 289,
-        "answer": "A",
+        "answer": "D",
         "task_type": "factual",
-        "sub_type": "kinematics",
+        "sub_type": "mass",
         "ability_type": "estimation",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 290,
-        "answer": "D",
+        "answer": "A",
         "task_type": "factual",
-        "sub_type": "kinematics",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "mass",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 291,
-        "answer": "D",
+        "answer": "C",
         "task_type": "factual",
-        "sub_type": "kinematics",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "mass",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 292,
-        "answer": "D",
+        "answer": "C",
         "task_type": "factual",
-        "sub_type": "kinematics",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "density",
+        "ability_type": "counting",
+        "mode": "general"
     },
     {
         "idx": 293,
-        "answer": "D",
+        "answer": "B",
         "task_type": "factual",
-        "sub_type": "kinematic",
+        "sub_type": "density",
         "ability_type": "estimation",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 294,
-        "answer": "A",
+        "answer": "C",
         "task_type": "factual",
-        "sub_type": "kinematic",
+        "sub_type": "volume",
         "ability_type": "counting",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 295,
         "answer": "C",
         "task_type": "factual",
-        "sub_type": "kinematic",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "sub_type": "volume",
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 296,
-        "answer": "A",
+        "answer": "D",
         "task_type": "factual",
-        "sub_type": "masses",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "sub_type": "volume",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 297,
-        "answer": "C",
+        "answer": "D",
         "task_type": "factual",
-        "sub_type": "masses",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "material",
+        "ability_type": "counting",
+        "mode": "general"
     },
     {
         "idx": 298,
         "answer": "A",
         "task_type": "factual",
-        "sub_type": "masses",
+        "sub_type": "material",
         "ability_type": "attribute",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 299,
-        "answer": "A",
+        "answer": "B",
         "task_type": "factual",
-        "sub_type": "masses",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "sub_type": "material",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 300,
-        "answer": "D",
+        "answer": "A",
         "task_type": "factual",
-        "sub_type": "density",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "sub_type": "material",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 301,
         "answer": "D",
         "task_type": "factual",
-        "sub_type": "density",
+        "sub_type": "global_plausibility",
         "ability_type": "attribute",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 302,
-        "answer": "B",
+        "answer": "C",
         "task_type": "factual",
-        "sub_type": "masses",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "sub_type": "spatial",
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 303,
         "answer": "C",
         "task_type": "factual",
-        "sub_type": "masses",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "sub_type": "spatial",
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 304,
-        "answer": "B",
+        "answer": "D",
         "task_type": "factual",
-        "sub_type": "masses",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "sub_type": "spatial",
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 305,
-        "answer": "B",
+        "answer": "A",
         "task_type": "factual",
-        "sub_type": "materials",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "sub_type": "spatial",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 306,
-        "answer": "D",
+        "answer": "C",
         "task_type": "factual",
-        "sub_type": "materials",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "sub_type": "spatial",
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 307,
         "answer": "D",
         "task_type": "factual",
-        "sub_type": "materials",
+        "sub_type": "spatial",
         "ability_type": "general",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 308,
-        "answer": "D",
+        "answer": "B",
         "task_type": "factual",
-        "sub_type": "materials",
-        "ability_type": "general",
-        "mode": "image-only"
+        "sub_type": "temporal",
+        "ability_type": "prediction",
+        "mode": "general"
     },
     {
         "idx": 309,
-        "answer": "D",
+        "answer": "C",
         "task_type": "factual",
-        "sub_type": "global_plausibility",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "sub_type": "temporal",
+        "ability_type": "prediction",
+        "mode": "general"
     },
     {
         "idx": 310,
-        "answer": "D",
+        "answer": "A",
         "task_type": "factual",
-        "sub_type": "spatial",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "temporal",
+        "ability_type": "prediction",
+        "mode": "general"
     },
     {
         "idx": 311,
         "answer": "D",
         "task_type": "factual",
-        "sub_type": "spatial",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "temporal",
+        "ability_type": "prediction",
+        "mode": "general"
     },
     {
         "idx": 312,
-        "answer": "B",
+        "answer": "C",
         "task_type": "factual",
-        "sub_type": "spatial",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "collision",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 313,
-        "answer": "C",
+        "answer": "B",
         "task_type": "factual",
-        "sub_type": "spatial",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "collision",
+        "ability_type": "counting",
+        "mode": "general"
     },
     {
         "idx": 314,
         "answer": "A",
         "task_type": "factual",
-        "sub_type": "spatial",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "collision",
+        "ability_type": "counting",
+        "mode": "general"
     },
     {
         "idx": 315,
-        "answer": "A",
+        "answer": "D",
         "task_type": "factual",
-        "sub_type": "spatial",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "sub_type": "collision",
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 316,
-        "answer": "D",
+        "answer": "C",
         "task_type": "factual",
-        "sub_type": "temporal",
-        "ability_type": "prediction",
-        "mode": "image-only"
+        "sub_type": "collision",
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 317,
-        "answer": "C",
+        "answer": "D",
         "task_type": "factual",
-        "sub_type": "temporal",
-        "ability_type": "prediction",
-        "mode": "image-only"
+        "sub_type": "collision",
+        "ability_type": "counting",
+        "mode": "general"
     },
     {
         "idx": 318,
-        "answer": "A",
+        "answer": "D",
         "task_type": "factual",
-        "sub_type": "temporal",
-        "ability_type": "prediction",
-        "mode": "image-only"
+        "sub_type": "kinematics",
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 319,
-        "answer": "B",
+        "answer": "D",
         "task_type": "factual",
-        "sub_type": "temporal",
-        "ability_type": "prediction",
-        "mode": "image-only"
+        "sub_type": "kinematics",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 320,
-        "answer": "B",
+        "answer": "A",
         "task_type": "factual",
-        "sub_type": "collision",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "sub_type": "kinematics",
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 321,
-        "answer": "A",
+        "answer": "B",
         "task_type": "factual",
-        "sub_type": "collision",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "sub_type": "kinematics",
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 322,
-        "answer": "A",
+        "answer": "D",
         "task_type": "factual",
-        "sub_type": "collision",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "sub_type": "kinematics",
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 323,
         "answer": "B",
         "task_type": "factual",
-        "sub_type": "collision",
+        "sub_type": "kinematics",
         "ability_type": "estimation",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 324,
         "answer": "A",
         "task_type": "factual",
-        "sub_type": "collision",
+        "sub_type": "kinematics",
         "ability_type": "estimation",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 325,
         "answer": "C",
         "task_type": "factual",
-        "sub_type": "collision",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "kinematics",
+        "ability_type": "counting",
+        "mode": "general"
     },
     {
         "idx": 326,
         "answer": "A",
         "task_type": "factual",
         "sub_type": "kinematics",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "ability_type": "counting",
+        "mode": "general"
     },
     {
         "idx": 327,
-        "answer": "C",
+        "answer": "A",
         "task_type": "factual",
-        "sub_type": "kinematics",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "sub_type": "mass",
+        "ability_type": "counting",
+        "mode": "general"
     },
     {
         "idx": 328,
-        "answer": "C",
+        "answer": "D",
         "task_type": "factual",
-        "sub_type": "kinematics",
+        "sub_type": "mass",
         "ability_type": "estimation",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 329,
-        "answer": "D",
+        "answer": "C",
         "task_type": "factual",
-        "sub_type": "kinematics",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "mass",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 330,
-        "answer": "D",
+        "answer": "C",
         "task_type": "factual",
-        "sub_type": "kinematics",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "mass",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 331,
-        "answer": "D",
+        "answer": "C",
         "task_type": "factual",
-        "sub_type": "kinematics",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "density",
+        "ability_type": "counting",
+        "mode": "general"
     },
     {
         "idx": 332,
         "answer": "B",
         "task_type": "factual",
-        "sub_type": "kinematics",
+        "sub_type": "density",
         "ability_type": "estimation",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 333,
         "answer": "A",
         "task_type": "factual",
-        "sub_type": "kinematic",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "volume",
+        "ability_type": "counting",
+        "mode": "general"
     },
     {
         "idx": 334,
         "answer": "D",
         "task_type": "factual",
-        "sub_type": "kinematic",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "sub_type": "volume",
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 335,
         "answer": "A",
         "task_type": "factual",
-        "sub_type": "kinematic",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "sub_type": "volume",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 336,
-        "answer": "C",
+        "answer": "A",
         "task_type": "factual",
-        "sub_type": "masses",
+        "sub_type": "material",
         "ability_type": "counting",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 337,
-        "answer": "D",
+        "answer": "C",
         "task_type": "factual",
-        "sub_type": "masses",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "material",
+        "ability_type": "attribute",
+        "mode": "general"
     },
     {
         "idx": 338,
         "answer": "A",
         "task_type": "factual",
-        "sub_type": "masses",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "sub_type": "material",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 339,
-        "answer": "A",
+        "answer": "C",
         "task_type": "factual",
-        "sub_type": "masses",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "sub_type": "material",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 340,
-        "answer": "A",
+        "answer": "B",
         "task_type": "factual",
-        "sub_type": "density",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "sub_type": "global_plausibility",
+        "ability_type": "attribute",
+        "mode": "general"
     },
     {
         "idx": 341,
-        "answer": "A",
+        "answer": "C",
         "task_type": "factual",
-        "sub_type": "density",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "sub_type": "spatial",
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 342,
         "answer": "A",
         "task_type": "factual",
-        "sub_type": "masses",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "sub_type": "spatial",
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 343,
-        "answer": "C",
+        "answer": "B",
         "task_type": "factual",
-        "sub_type": "masses",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "sub_type": "spatial",
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 344,
-        "answer": "B",
+        "answer": "D",
         "task_type": "factual",
-        "sub_type": "masses",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "sub_type": "spatial",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 345,
-        "answer": "C",
+        "answer": "A",
         "task_type": "factual",
-        "sub_type": "materials",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "sub_type": "spatial",
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 346,
         "answer": "D",
         "task_type": "factual",
-        "sub_type": "materials",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "sub_type": "spatial",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 347,
-        "answer": "D",
+        "answer": "B",
         "task_type": "factual",
-        "sub_type": "materials",
-        "ability_type": "general",
-        "mode": "image-only"
+        "sub_type": "temporal",
+        "ability_type": "prediction",
+        "mode": "general"
     },
     {
         "idx": 348,
-        "answer": "C",
+        "answer": "D",
         "task_type": "factual",
-        "sub_type": "materials",
-        "ability_type": "general",
-        "mode": "image-only"
+        "sub_type": "temporal",
+        "ability_type": "prediction",
+        "mode": "general"
     },
     {
         "idx": 349,
-        "answer": "B",
+        "answer": "C",
         "task_type": "factual",
-        "sub_type": "global_plausibility",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "sub_type": "temporal",
+        "ability_type": "prediction",
+        "mode": "general"
     },
     {
         "idx": 350,
-        "answer": "C",
+        "answer": "A",
         "task_type": "factual",
-        "sub_type": "spatial",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "temporal",
+        "ability_type": "prediction",
+        "mode": "general"
     },
     {
         "idx": 351,
-        "answer": "C",
+        "answer": "B",
         "task_type": "factual",
-        "sub_type": "spatial",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "collision",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 352,
-        "answer": "B",
+        "answer": "D",
         "task_type": "factual",
-        "sub_type": "spatial",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "collision",
+        "ability_type": "counting",
+        "mode": "general"
     },
     {
         "idx": 353,
-        "answer": "B",
+        "answer": "C",
         "task_type": "factual",
-        "sub_type": "spatial",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "collision",
+        "ability_type": "counting",
+        "mode": "general"
     },
     {
         "idx": 354,
-        "answer": "C",
+        "answer": "D",
         "task_type": "factual",
-        "sub_type": "spatial",
+        "sub_type": "collision",
         "ability_type": "estimation",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 355,
         "answer": "A",
         "task_type": "factual",
-        "sub_type": "spatial",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "sub_type": "collision",
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 356,
-        "answer": "D",
-        "task_type": "factual",
-        "sub_type": "temporal",
-        "ability_type": "prediction",
-        "mode": "image-only"
-    },
-    {
-        "idx": 357,
-        "answer": "A",
-        "task_type": "factual",
-        "sub_type": "temporal",
-        "ability_type": "prediction",
-        "mode": "image-only"
-    },
-    {
-        "idx": 358,
-        "answer": "C",
-        "task_type": "factual",
-        "sub_type": "temporal",
-        "ability_type": "prediction",
-        "mode": "image-only"
-    },
-    {
-        "idx": 359,
-        "answer": "C",
-        "task_type": "factual",
-        "sub_type": "temporal",
-        "ability_type": "prediction",
-        "mode": "image-only"
-    },
-    {
-        "idx": 360,
         "answer": "B",
         "task_type": "factual",
         "sub_type": "collision",
         "ability_type": "counting",
-        "mode": "image-only"
+        "mode": "general"
+    },
+    {
+        "idx": 357,
+        "answer": "C",
+        "task_type": "factual",
+        "sub_type": "kinematics",
+        "ability_type": "estimation",
+        "mode": "general"
+    },
+    {
+        "idx": 358,
+        "answer": "D",
+        "task_type": "factual",
+        "sub_type": "kinematics",
+        "ability_type": "general",
+        "mode": "general"
+    },
+    {
+        "idx": 359,
+        "answer": "B",
+        "task_type": "factual",
+        "sub_type": "kinematics",
+        "ability_type": "estimation",
+        "mode": "general"
+    },
+    {
+        "idx": 360,
+        "answer": "A",
+        "task_type": "factual",
+        "sub_type": "kinematics",
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 361,
-        "answer": "D",
+        "answer": "C",
         "task_type": "factual",
-        "sub_type": "collision",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "sub_type": "kinematics",
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 362,
-        "answer": "D",
+        "answer": "C",
         "task_type": "factual",
-        "sub_type": "collision",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "sub_type": "kinematics",
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 363,
-        "answer": "C",
+        "answer": "B",
         "task_type": "factual",
-        "sub_type": "collision",
+        "sub_type": "kinematics",
         "ability_type": "estimation",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 364,
-        "answer": "D",
+        "answer": "B",
         "task_type": "factual",
-        "sub_type": "collision",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "kinematics",
+        "ability_type": "counting",
+        "mode": "general"
     },
     {
         "idx": 365,
-        "answer": "A",
+        "answer": "B",
         "task_type": "factual",
-        "sub_type": "collision",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "kinematics",
+        "ability_type": "counting",
+        "mode": "general"
     },
     {
         "idx": 366,
-        "answer": "A",
+        "answer": "B",
         "task_type": "factual",
-        "sub_type": "kinematics",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "mass",
+        "ability_type": "counting",
+        "mode": "general"
     },
     {
         "idx": 367,
-        "answer": "C",
+        "answer": "A",
         "task_type": "factual",
-        "sub_type": "kinematics",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "sub_type": "mass",
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 368,
-        "answer": "D",
+        "answer": "A",
         "task_type": "factual",
-        "sub_type": "kinematics",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "mass",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 369,
-        "answer": "D",
+        "answer": "A",
         "task_type": "factual",
-        "sub_type": "kinematics",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "mass",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 370,
-        "answer": "A",
+        "answer": "B",
         "task_type": "factual",
-        "sub_type": "kinematics",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "density",
+        "ability_type": "counting",
+        "mode": "general"
     },
     {
         "idx": 371,
         "answer": "D",
         "task_type": "factual",
-        "sub_type": "kinematics",
+        "sub_type": "density",
         "ability_type": "estimation",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 372,
-        "answer": "C",
+        "answer": "D",
         "task_type": "factual",
-        "sub_type": "kinematics",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "volume",
+        "ability_type": "counting",
+        "mode": "general"
     },
     {
         "idx": 373,
-        "answer": "B",
+        "answer": "D",
         "task_type": "factual",
-        "sub_type": "kinematic",
+        "sub_type": "volume",
         "ability_type": "estimation",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 374,
-        "answer": "C",
+        "answer": "B",
         "task_type": "factual",
-        "sub_type": "kinematic",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "sub_type": "volume",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 375,
-        "answer": "D",
+        "answer": "C",
         "task_type": "factual",
-        "sub_type": "kinematic",
+        "sub_type": "material",
         "ability_type": "counting",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 376,
-        "answer": "A",
+        "answer": "B",
         "task_type": "factual",
-        "sub_type": "masses",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "sub_type": "material",
+        "ability_type": "attribute",
+        "mode": "general"
     },
     {
         "idx": 377,
-        "answer": "A",
+        "answer": "D",
         "task_type": "factual",
-        "sub_type": "masses",
-        "ability_type": "estimation",
-        "mode": "image-only"
+        "sub_type": "material",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 378,
-        "answer": "D",
+        "answer": "A",
         "task_type": "factual",
-        "sub_type": "masses",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "sub_type": "material",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 379,
-        "answer": "B",
+        "answer": "A",
         "task_type": "factual",
-        "sub_type": "masses",
+        "sub_type": "global_plausibility",
         "ability_type": "attribute",
-        "mode": "image-only"
+        "mode": "general"
     },
     {
         "idx": 380,
-        "answer": "D",
+        "answer": "C",
         "task_type": "factual",
-        "sub_type": "density",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "sub_type": "spatial",
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 381,
         "answer": "D",
         "task_type": "factual",
-        "sub_type": "density",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "sub_type": "spatial",
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 382,
-        "answer": "C",
+        "answer": "A",
         "task_type": "factual",
-        "sub_type": "masses",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "sub_type": "spatial",
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 383,
         "answer": "D",
         "task_type": "factual",
-        "sub_type": "masses",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "sub_type": "spatial",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 384,
-        "answer": "D",
+        "answer": "C",
         "task_type": "factual",
-        "sub_type": "masses",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "sub_type": "spatial",
+        "ability_type": "estimation",
+        "mode": "general"
     },
     {
         "idx": 385,
-        "answer": "A",
+        "answer": "B",
         "task_type": "factual",
-        "sub_type": "materials",
-        "ability_type": "counting",
-        "mode": "image-only"
+        "sub_type": "spatial",
+        "ability_type": "general",
+        "mode": "general"
     },
     {
         "idx": 386,
-        "answer": "A",
+        "answer": "B",
         "task_type": "factual",
-        "sub_type": "materials",
-        "ability_type": "attribute",
-        "mode": "image-only"
+        "sub_type": "temporal",
+        "ability_type": "prediction",
+        "mode": "general"
     },
     {
         "idx": 387,
         "answer": "D",
         "task_type": "factual",
-        "sub_type": "materials",
-        "ability_type": "general",
-        "mode": "image-only"
+        "sub_type": "temporal",
+        "ability_type": "prediction",
+        "mode": "general"
     },
     {
         "idx": 388,
-        "answer": "D",
+        "answer": "B",
         "task_type": "factual",
-        "sub_type": "materials",
-        "ability_type": "general",
-        "mode": "image-only"
+        "sub_type": "temporal",
+        "ability_type": "prediction",
+        "mode": "general"
     },
     {
         "idx": 389,
-        "answer": "D",
-        "task_type": "factual",
-        "sub_type": "global_plausibility",
-        "ability_type": "attribute",
-        "mode": "image-only"
-    },
-    {
-        "idx": 390,
-        "answer": "B",
-        "task_type": "factual",
-        "sub_type": "spatial",
-        "ability_type": "estimation",
-        "mode": "image-only"
-    },
-    {
-        "idx": 391,
-        "answer": "A",
-        "task_type": "factual",
-        "sub_type": "spatial",
-        "ability_type": "estimation",
-        "mode": "image-only"
-    },
-    {
-        "idx": 392,
-        "answer": "C",
-        "task_type": "factual",
-        "sub_type": "spatial",
-        "ability_type": "estimation",
-        "mode": "image-only"
-    },
-    {
-        "idx": 393,
-        "answer": "C",
-        "task_type": "factual",
-        "sub_type": "spatial",
-        "ability_type": "estimation",
-        "mode": "image-only"
-    },
-    {
-        "idx": 394,
-        "answer": "A",
-        "task_type": "factual",
-        "sub_type": "spatial",
-        "ability_type": "estimation",
-        "mode": "image-only"
-    },
-    {
-        "idx": 395,
-        "answer": "D",
-        "task_type": "factual",
-        "sub_type": "spatial",
-        "ability_type": "attribute",
-        "mode": "image-only"
-    },
-    {
-        "idx": 396,
-        "answer": "C",
-        "task_type": "factual",
-        "sub_type": "temporal",
-        "ability_type": "prediction",
-        "mode": "image-only"
-    },
-    {
-        "idx": 397,
-        "answer": "C",
-        "task_type": "factual",
-        "sub_type": "temporal",
-        "ability_type": "prediction",
-        "mode": "image-only"
-    },
-    {
-        "idx": 398,
         "answer": "B",
         "task_type": "factual",
         "sub_type": "temporal",
         "ability_type": "prediction",
-        "mode": "image-only"
-    },
-    {
-        "idx": 399,
-        "answer": "A",
-        "task_type": "factual",
-        "sub_type": "temporal",
-        "ability_type": "prediction",
-        "mode": "image-only"
+        "mode": "general"
     }
 ]

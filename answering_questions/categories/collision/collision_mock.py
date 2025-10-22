@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from typing import Any, Mapping
 
-from utils.all_objects import get_all_objects_names
+from utils.all_objects import get_all_objects_names, get_all_scenes_segments
 from utils.decorators import with_resolved_attributes
 
 from utils.frames_selection import uniformly_sample_frames
@@ -18,7 +18,6 @@ from utils.frames_selection import uniformly_sample_frames
 from utils.helpers import (
     _coerce_to_float,
     _iter_objects,
-    _fill_template,
 )
 
 from utils.bin_creation import (
@@ -29,6 +28,13 @@ from utils.bin_creation import (
 
 WorldState = Mapping[str, Any]
 QuestionPayload = Mapping[str, Any]
+
+from utils.config import get_config
+
+SAMPLING_RATE = get_config()["sampling_rate"]
+DELTA_TIME_BETWEEN_STEPS = 1.0 / SAMPLING_RATE
+COLLISION_BUFFER_TIME = 0.1  # seconds
+COLLISION_BUFFER_STEPS = -int(-COLLISION_BUFFER_TIME // DELTA_TIME_BETWEEN_STEPS)
 
 
 @with_resolved_attributes
@@ -42,8 +48,8 @@ def F_COLLISIONS_OBJ_OBJ_FIRST(
     first_collided_object = None
 
     for _, value in world_state["simulation"].items():
-        collisions_at_ts = value["collisions"]
-        for collision in collisions_at_ts:
+        collisions_at_sim_step = value["collisions"]
+        for collision in collisions_at_sim_step:
             obj_a = collision[0]
             obj_b = collision[1]
             if obj_a == 0 or obj_b == 0:
@@ -54,8 +60,6 @@ def F_COLLISIONS_OBJ_OBJ_FIRST(
                 else:
                     first_collided_object = world_state[["objects"]][str(obj_b)]
                 break
-
-    _fill_template(question, resolved_attributes)
 
     DATASET = get_all_objects_names()
     _iter_objects_list = list(_iter_objects(world_state))
@@ -68,10 +72,7 @@ def F_COLLISIONS_OBJ_OBJ_FIRST(
     else:
         labels, idx = create_mc_object_names_from_dataset("No Object", present, DATASET)
 
-    # choosing frames to show collision
-    imgs_idx = uniformly_sample_frames(world_state)
-
-    return question, labels, idx, imgs_idx
+    return question, labels, idx, uniformly_sample_frames(world_state)
 
 
 @with_resolved_attributes
@@ -83,37 +84,41 @@ def F_COLLISIONS_OBJ_OBJ_COUNT_GENERAL(
     object = resolved_attributes["OBJECT"]["choice"]
 
     count = 0
-    has_collided_in_previous_10_steps = False  # 0.1 second at 0.01 per step
-
-    for ts, value in world_state["simulation"].items():
-        collisions_at_ts = value["collisions"]
-        for collision in collisions_at_ts:
+    is_colliding = False  # 0.1 second at 0.01 per step
+    last_collision_sim_step = -1
+    for value in world_state["simulation"].values():
+        sim_step = value["simstep"]
+        collisions_at_sim_step = value["collisions"]
+        for collision in collisions_at_sim_step:
             obj_a = str(collision[0])
             obj_b = str(collision[1])
             if (
-                not has_collided_in_previous_10_steps
-                and obj_a != "0"
+                not is_colliding
+                and obj_a != 0
                 and obj_b != 0
                 and (obj_a == object["id"] or obj_b == object["id"])
             ):
+                last_collision_sim_step = sim_step
+                is_colliding = True
                 count += 1
-                has_collided_in_previous_10_steps = True
-        # reset the flag after 10 steps
-        if has_collided_in_previous_10_steps:
-            step_float = float(ts)
-            if step_float % 0.1 < 0.01:
-                has_collided_in_previous_10_steps = False
 
-    _fill_template(question, resolved_attributes)
+            # if object is not in the collision, reset the flag
+            if (
+                obj_a != object["id"]
+                and obj_b != object["id"]
+                and (
+                    sim_step - last_collision_sim_step
+                    >= COLLISION_BUFFER_STEPS  # since now steps are not necessarily 0.01s
+                )
+            ):
+                is_colliding = False
+
     options, correct_idx = create_mc_options_around_gt(
         count, num_answers=4, display_decimals=0, lo=0.0
     )
     labels = uniform_labels(options, integer=True, decimals=0)
 
-    # choosing frames to show collision
-    imgs_idx = uniformly_sample_frames(world_state)
-
-    return question, labels, correct_idx, imgs_idx
+    return question, labels, correct_idx, uniformly_sample_frames(world_state)
 
 
 @with_resolved_attributes
@@ -130,34 +135,42 @@ def F_COLLISIONS_OBJ_OBJ_COUNT_TYPE(
     object_2 = resolved_attributes["OBJECT_2"]["choice"]
 
     count = 0
-    has_collided_in_previous_10_steps = False  # 0.1 second at 0.01 per step
-    for ts, value in world_state["simulation"].items():
-        collisions_at_ts = value["collisions"]
-        for collision in collisions_at_ts:
+    is_colliding = False
+    last_collision_sim_step = -1
+    for value in world_state["simulation"].values():
+        sim_step = value["simstep"]
+        collisions_at_sim_step = value["collisions"]
+        for collision in collisions_at_sim_step:
             obj_a = str(collision[0])
             obj_b = str(collision[1])
-            if not has_collided_in_previous_10_steps and (
+            if not is_colliding and (
                 (obj_a == object_1["id"] and obj_b == object_2["id"])
                 or (obj_a == object_2["id"] and obj_b == object_1["id"])
             ):
+                last_collision_sim_step = sim_step
+                is_colliding = True
                 count += 1
-                has_collided_in_previous_10_steps = True
-        # reset the flag after 10 steps
-        if has_collided_in_previous_10_steps:
-            step_float = float(ts)
-            if step_float % 0.1 < 0.01:
-                has_collided_in_previous_10_steps = False
 
-    _fill_template(question, resolved_attributes)
+            # if object is not in the collision, reset the flag
+            if (
+                is_colliding
+                and not (
+                    (obj_a == object_1["id"] and obj_b == object_2["id"])
+                    or (obj_a == object_2["id"] and obj_b == object_1["id"])
+                )
+                and (
+                    sim_step - last_collision_sim_step
+                    >= COLLISION_BUFFER_STEPS  # since now steps are not necessarily 0.01s
+                )
+            ):
+                is_colliding = False
+
     options, correct_idx = create_mc_options_around_gt(
         count, num_answers=4, display_decimals=0, lo=0.0
     )
     labels = uniform_labels(options, integer=True, decimals=0)
 
-    # choosing frames to show collision
-    imgs_idx = uniformly_sample_frames(world_state)
-
-    return question, labels, correct_idx, imgs_idx
+    return question, labels, correct_idx, uniformly_sample_frames(world_state)
 
 
 @with_resolved_attributes
@@ -173,24 +186,20 @@ def F_COLLISIONS_OBJ_OBJ_TIME_FIRST(
     # supposing 8 frames we give to the LLM to answer the question
     # I mean we can't expect perfect time, but it should interpolate anyway, knowing the number of frames
     # and the FPS of the simulation
-    for ts, value in world_state["simulation"].items():
-        collisions_at_ts = value["collisions"]
-        for collision in collisions_at_ts:
+    for value in world_state["simulation"].values():
+        sim_step = value["simstep"]
+        collisions_at_sim_step = value["collisions"]
+        for collision in collisions_at_sim_step:
             obj_a = str(collision[0])
             obj_b = str(collision[1])
             if obj_a == object["id"] or obj_b == object["id"]:
-                first_collision_time = ts
+                first_collision_time = sim_step * DELTA_TIME_BETWEEN_STEPS
                 break
         if first_collision_time is not None:
             break
 
-    _fill_template(question, resolved_attributes)
-
-    # choosing frames to show collision
-    imgs_idx = uniformly_sample_frames(world_state)
-
     # create a random option between 0 and max time (wanted do do something)
-    # cleverer but lets's see what chatgpt comes up with
+    # cleverer but lesim_step's see what chatgpt comes up with
     if first_collision_time is None:
         max_time = 0.01 * len(world_state["simulation"]) - 0.01
         options, correct_idx = create_mc_options_around_gt(
@@ -204,7 +213,7 @@ def F_COLLISIONS_OBJ_OBJ_TIME_FIRST(
         labels = [str(label) + " seconds" for label in labels]
 
         labels[correct_idx] = "No Collision"
-        return question, labels, correct_idx
+        return question, labels, correct_idx, uniformly_sample_frames(world_state)
 
     else:
         first_collision_time = float(first_collision_time)
@@ -219,7 +228,7 @@ def F_COLLISIONS_OBJ_OBJ_TIME_FIRST(
         labels = uniform_labels(options, integer=False, decimals=2)
         labels = [str(label) + " seconds" for label in labels]
 
-        return question, labels, correct_idx, imgs_idx
+        return question, labels, correct_idx, uniformly_sample_frames(world_state)
 
 
 @with_resolved_attributes
@@ -232,24 +241,19 @@ def F_COLLISIONS_OBJ_OBJ_TIME_LAST(
 
     first_collision_time = None
     # first collision in a reversed list is last :)
-    for ts, value in dict(reversed(world_state["simulation"].items())).items():
-        collisions_at_ts = value["collisions"]
-        for collision in collisions_at_ts:
+    for sim_step, value in dict(reversed(world_state["simulation"].items())).items():
+        collisions_at_sim_step = value["collisions"]
+        for collision in collisions_at_sim_step:
             obj_a = str(collision[0])
             obj_b = str(collision[1])
             if obj_a == object["id"] or obj_b == object["id"]:
-                first_collision_time = ts
+                first_collision_time = sim_step
                 break
         if first_collision_time is not None:
             break
 
-    _fill_template(question, resolved_attributes)
-
-    # choosing frames to show collision
-    imgs_idx = uniformly_sample_frames(world_state)
-
     # create a random option between 0 and max time (wanted do do something)
-    # cleverer but lets's see what chatgpt comes up with
+    # cleverer but lesim_step's see what chatgpt comes up with
     if first_collision_time is None:
         max_time = 0.01 * len(world_state["simulation"]) - 0.01
         options, correct_idx = create_mc_options_around_gt(
@@ -263,7 +267,7 @@ def F_COLLISIONS_OBJ_OBJ_TIME_LAST(
         labels = [str(label) + " seconds" for label in labels]
 
         labels[correct_idx] = "No Collision"
-        return question, labels, correct_idx, imgs_idx
+        return question, labels, correct_idx, uniformly_sample_frames(world_state)
 
     else:
         first_collision_time = float(first_collision_time)
@@ -277,7 +281,7 @@ def F_COLLISIONS_OBJ_OBJ_TIME_LAST(
         labels = uniform_labels(options, integer=False, decimals=2)
         labels = [str(label) + " seconds" for label in labels]
 
-        return question, labels, correct_idx, imgs_idx
+        return question, labels, correct_idx, uniformly_sample_frames(world_state)
 
 
 @with_resolved_attributes
@@ -294,22 +298,21 @@ def F_COLLISIONS_OBJ_OBJ_FORCE(
     object_2 = resolved_attributes["OBJECT_2"]["choice"]
 
     first_collision_force = None
-    for ts, value in world_state["simulation"].items():
-        for object_id_in_ts in value["objects"]:
-            if object_id_in_ts != object_1["id"]:
-                collisions = value["objects"][object_id_in_ts].get("collide", [])
+    for sim_step, value in world_state["simulation"].items():
+        for object_id_in_sim_step in value["objects"]:
+            if object_id_in_sim_step != object_1["id"]:
+                collisions = value["objects"][object_id_in_sim_step].get("collide", [])
                 if collisions != []:
                     for collision in collisions:
-                        if object_1["id"] in list(collision.keys()):
+                        obj_a = str(collision[0])
+                        obj_b = str(collision[1])
+                        if (obj_a == object_1["id"] and obj_b == object_2["id"]) or (
+                            obj_a == object_2["id"] and obj_b == object_1["id"]
+                        ):
                             first_collision_force = collision[object_1["id"]].get(
                                 "force", None
                             )
                             break
-
-    _fill_template(question, resolved_attributes)
-
-    # choosing frames to show collision
-    imgs_idx = uniformly_sample_frames(world_state)
 
     # create a random option between 0 and max force (wanted do do something)
     # cleverer but lets's see what chatgpt comes up with
@@ -322,7 +325,7 @@ def F_COLLISIONS_OBJ_OBJ_FORCE(
         labels = [str(label) + " Newtons" for label in labels]
 
         labels[correct_idx] = "No Collision"
-        return question, labels, correct_idx, imgs_idx
+        return question, labels, correct_idx, uniformly_sample_frames(world_state)
 
     else:
         first_collision_force = _coerce_to_float(first_collision_force)
@@ -332,4 +335,73 @@ def F_COLLISIONS_OBJ_OBJ_FORCE(
         labels = uniform_labels(options, integer=False, decimals=1)
         labels = [str(label) + " Newtons" for label in labels]
 
-        return question, labels, correct_idx, imgs_idx
+        return question, labels, correct_idx, uniformly_sample_frames(world_state)
+
+
+@with_resolved_attributes
+def F_COLLISIONS_OBJ_SCENE(
+    world_state: WorldState, question: QuestionPayload, resolved_attributes, **kwargs
+) -> int:
+    object = resolved_attributes["OBJECT"]["choice"]
+
+    count = 0
+    is_colliding = False  # 0.1 second at 0.01 per step
+    last_collision_sim_step = -1
+    for value in world_state["simulation"].values():
+        sim_step = value["simstep"]
+        collisions_at_sim_step = value["collisions"]
+        for collision in collisions_at_sim_step:
+            obj_a = str(collision[0])
+            obj_b = str(collision[1])
+            if (
+                not is_colliding
+                and (obj_a == 0 or obj_b == 0)
+                and (obj_a == object["id"] or obj_b == object["id"])
+            ):
+                last_collision_sim_step = sim_step
+                is_colliding = True
+                count += 1
+
+            # if object is not in the collision, reset the flag
+            if (obj_a != 0 and obj_b != 0) and (
+                sim_step - last_collision_sim_step >= COLLISION_BUFFER_STEPS
+            ):
+                is_colliding = False
+
+    options, correct_idx = create_mc_options_around_gt(
+        count, num_answers=4, display_decimals=0, lo=0.0
+    )
+    labels = uniform_labels(options, integer=True, decimals=0)
+
+    return question, labels, correct_idx, uniformly_sample_frames(world_state)
+
+
+# TODO this needs to be done
+@with_resolved_attributes
+def F_COLLISIONS_OBJ_SCENE_SEGMENT(
+    world_state: WorldState, question: QuestionPayload, resolved_attributes, **kwargs
+) -> int:
+    object = resolved_attributes["OBJECT"]["choice"]
+
+    segment_name = ""
+    for sim_step, value in world_state["simulation"].items():
+        collisions_at_sim_step = value["collisions"]
+        for collision in collisions_at_sim_step:
+            obj_a = str(collision[0])
+            obj_b = str(collision[1])
+            if (obj_a == 0 or obj_b == 0) and (
+                obj_a == object["id"] or obj_b == object["id"]
+            ):
+                # check which part of the scene it is colliding with
+                # TODO
+
+                segment_name = "Tree"  # dummy
+                break
+
+    correct_answer = segment_name if segment_name != "" else "No Collision"
+
+    labels, correct_idx = create_mc_object_names_from_dataset(
+        correct_answer, present, get_all_scenes_segments()
+    )
+
+    return question, labels, correct_idx, uniformly_sample_frames(world_state)

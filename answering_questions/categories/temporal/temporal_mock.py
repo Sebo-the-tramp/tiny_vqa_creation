@@ -34,12 +34,19 @@ QuestionPayload = Mapping[str, Any]
 Answer = Union[str, float, Vector, Mapping[str, Any], Sequence[str]]
 
 ## --- Resolver functions -- ##
-FPS = 100
-DELTA_STEP = 0.01
-VIDEO_DURATION_IN_SECONDS = 5
-N_FRAMES = 4
-DELTA_TIMESTEP = 25  # quarter of a second
 
+from utils.config import get_config
+
+SAMPLING_RATE = get_config()["sampling_rate"]
+RENDER_STEP = 1.0 / SAMPLING_RATE
+
+# I want to sample every quarter of a second
+FRAME_STRIDE = int(
+    -(-0.25 // SAVE_INTERVAL)
+)  # same as math.ceil(0.25 / SAVE_INTERVAL) but better quarter of a second
+
+
+# OKAY NO THIS IS ALL TO DO AGAIN USING THE CORRECT SAMPLING AND STUFF
 
 @with_resolved_attributes
 def F_TEMPORAL_SEQUENCE_IMAGES(
@@ -48,14 +55,16 @@ def F_TEMPORAL_SEQUENCE_IMAGES(
     """here we select a sequence of uniformly sampled images and return the next with random
     position in the simulations steps"""
     assert len(resolved_attributes) == 0
+    n_frames = 4
 
-    total_steps = len(world_state["simulation"])
+    total_frames = len(world_state["simulation"])
     min = 0
-    max = total_steps - (N_FRAMES * DELTA_TIMESTEP) - 1
-    start_timestep = _get_random_integer(min, max)
+    max = total_frames - (n_frames * FRAME_STRIDE) - 1
+    start_frame = _get_random_integer(min, max)
+    end_frame = start_frame + (n_frames * FRAME_STRIDE) - 1
 
     imgs_idx = uniformly_sample_frames_start_end_delta(
-        start_timestep, start_timestep + N_FRAMES * DELTA_TIMESTEP, DELTA_TIMESTEP
+        start_frame, end_frame, FRAME_STRIDE
     )
 
     choices = ["A.", "B.", "C.", "D."]
@@ -85,10 +94,11 @@ def F_TEMPORAL_PREDICTION_NEXT_IMAGE(
     """here we select a sequence of uniformly sampled images and return the next with random
     position in the simulations steps"""
     assert len(resolved_attributes) == 0
+    n_frames = 5
 
     min = 0
     total_steps = len(world_state["simulation"])
-    max = (total_steps // DELTA_TIMESTEP) - (N_FRAMES + 1)
+    max = total_steps - (n_frames * FRAME_STRIDE) - 1
 
     sequence = [
         f"{(i * DELTA_TIMESTEP)}".zfill(6) for i in range(total_steps // DELTA_TIMESTEP)
@@ -166,7 +176,7 @@ def F_TEMPORAL_PREDICTION_MISSING_IMAGE(
 
     total_steps = len(world_state["simulation"])
     min = 1
-    max = (total_steps // DELTA_TIMESTEP) - (N_FRAMES)
+    max = (total_steps // DELTA_TIMESTEP) - (N_FRAMES + 1)
 
     sequence = [
         f"{(i * DELTA_TIMESTEP)}".zfill(6) for i in range(total_steps // DELTA_TIMESTEP)
@@ -174,7 +184,7 @@ def F_TEMPORAL_PREDICTION_MISSING_IMAGE(
 
     start_timestep = _get_random_integer(min, max)
 
-    given_sequence = sequence[start_timestep : start_timestep + 5]
+    given_sequence_initial = sequence[start_timestep : start_timestep + 5]
 
     # assumption
     # we do this to ensure that the in the confounding images, we do not have by chance
@@ -186,13 +196,14 @@ def F_TEMPORAL_PREDICTION_MISSING_IMAGE(
     confounding_images = confounding_images[:3]
 
     index_of_image_to_remove = _get_random_integer(0, 4)
+    given_sequence = given_sequence_initial.copy()
     given_sequence.pop(index_of_image_to_remove)
 
     correct_index = _get_random_integer(0, 3)
 
     labels = (
         confounding_images[:correct_index]
-        + [given_sequence[correct_index]]
+        + [given_sequence_initial[index_of_image_to_remove]]
         + confounding_images[correct_index:]
     )
 

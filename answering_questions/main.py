@@ -1,13 +1,12 @@
 import os
-import re
 import json
-import csv
 import argparse
-import string
 
-from PIL import Image
-
-from utils.encoding_vlm import encode_image_file_to_base64
+from utils.saving_utils import (
+    save_questions_answers_json,
+    save_questions_answers_tsv,
+)
+from utils.my_exception import ImpossibleToAnswer
 
 # Import categories - alphabetically
 
@@ -74,362 +73,6 @@ def read_simulation(simulation_path):
         simulation_steps = json.load(f)
     return simulation_steps
 
-""" QUESTION JSON
-    {
-        "scene": "black background",
-        "object": [
-            "glass",
-            "rubber bullet"
-        ],
-        "source": "web",
-        "file_name": [
-            "iNINChj51Aqn.mp4",
-            "iNINChj51Aqj.png",
-            "iNINChj51Aqk.png",
-            "iNINChj51Aql.png",
-            "iNINChj51Aqm.png"
-        ],
-        "description": null,
-        "question": "Following the content of the <video>, which option's corresponding picture will happen first?\nA. <image>\nB. <image>\nC. <image>\nD. <image>\n",
-        "mode": "general",
-        "idx": 0,
-        "split": "val"
-    },
-"""
-
-""" ANSWER JSON
-{
-        "idx": 0,
-        "answer": "A",
-        "task_type": "dynamics",
-        "sub_type": "collision",
-        "ability_type": "prediction",
-        "mode": "general"
-},
-"""
-
-
-def _determine_tsv_fieldnames(question_records, answer_records):
-    preferred_order = [
-        "index",
-        "image",
-        "image_path",
-        "question",
-        "hint",
-        "multi-choice options",
-        "options",
-        "answer",
-        "category",
-        "l2-category",
-        "split",
-    ]
-
-    question_keys = set()
-    for record in question_records:
-        question_keys.update(record.keys())
-
-    answer_keys = set()
-    for answer in answer_records:
-        if isinstance(answer, dict):
-            answer_keys.update(answer.keys())
-        elif answer is not None:
-            answer_keys.add("answer")
-
-    question_keys.discard("index")
-    answer_keys.discard("index")
-
-    ordered = []
-    for field in preferred_order:
-        if field == "index" or field in question_keys or field in answer_keys:
-            if field != "index":
-                question_keys.discard(field)
-                answer_keys.discard(field)
-            ordered.append(field)
-
-    remaining = sorted(question_keys.union(answer_keys))
-    for field in remaining:
-        if field not in ordered:
-            ordered.append(field)
-
-    return ordered
-
-
-def _stringify_tsv_value(value):
-    if value is None:
-        return ""
-    if isinstance(value, (list, dict)):
-        return json.dumps(value, ensure_ascii=False)
-    return str(value)
-
-
-def _build_tsv_row(record, answer, fieldnames):
-    row = {field: "" for field in fieldnames}
-    for key, value in record.items():
-        if key in row:
-            row[key] = _stringify_tsv_value(value)
-    if answer is not None:
-        if isinstance(answer, dict):
-            for key, value in answer.items():
-                if key in row:
-                    row[key] = _stringify_tsv_value(value)
-        else:
-            if "answer" in row:
-                row["answer"] = _stringify_tsv_value(answer)
-    if "index" in row and "index" in record:
-        row["index"] = _stringify_tsv_value(record["index"])
-    return row
-
-
-def save_questions_answers_json(
-    all_vqa,    
-    output_path,
-    export_format="json",
-    image_output="base64",
-    number_of_images_max=8,    
-):
-    os.makedirs(output_path, exist_ok=True)
-    export_targets = {"json", "tsv"} if export_format == "both" else {export_format}
-    normalized_questions = []
-    answers = []
-
-    for idx, entry in enumerate(all_vqa):
-        question_record, answer_record = normalize_question_json(
-            entry,
-            idx=idx,            
-            image_output=image_output,
-            number_of_images_max=number_of_images_max,            
-        )
-
-        normalized_questions.append(question_record) 
-        answers.append(answer_record)
-
-    
-    questions_path = os.path.join(output_path, "test.json")
-    answers_path = os.path.join(output_path, "val_answer.json")
-
-    with open(questions_path, "w") as f:
-        json.dump(normalized_questions, f, indent=4)
-
-    with open(answers_path, "w") as f:
-        json.dump(answers, f, indent=4)
-
-    if "tsv" in export_targets:
-        fieldnames = _determine_tsv_fieldnames(normalized_questions, answers)
-        tsv_path = os.path.join(output_path, "questions.tsv")
-        with open(tsv_path, "w", newline="") as f:
-            writer = csv.DictWriter(f, fieldnames=fieldnames, delimiter="\t")
-            writer.writeheader()
-            for idx, record in enumerate(normalized_questions):
-                answer = answers[idx] if idx < len(answers) else None
-                row = _build_tsv_row(record, answer, fieldnames)
-                writer.writerow(row)
-
-def normalize_question_json(
-    vqa_entry,
-    idx,    
-    image_output="base64",
-    number_of_images_max=8,    
-):
-    question_payload = vqa_entry.get("question", {})
-    question_text = question_payload.get("question", "").strip()
-    labels = vqa_entry.get("labels", [])
-    answer_index = vqa_entry.get("answer_index")
-    image_paths = vqa_entry.get("image_paths", []) or []
-    letters = list(string.ascii_uppercase)
-    
-    # add <image> tags in place of images
-    # locking in question images before adding other images in the question
-    # slop code, but guess I need to speed up
-    formatted_question = question_text
-    formatted_question = "".join(["<image>" for _ in image_paths]) + "\n" + formatted_question
-
-    #regex to check if in the label we have an image
-    pattern = re.compile(r'^\d{6}$')
-
-    for idx_img, label in enumerate(labels):
-        # print("label", label)
-        if pattern.match(label):
-            # do a smart replacement
-            new_image_path = image_paths[0].rsplit('/', 1)[0] + f'/{label}.png'
-            image_paths.append(new_image_path)
-            labels[idx_img] = f"<image>"
-
-    option_letters = [letters[i] for i in range(min(len(labels), len(letters)))]
-    option_lines = []
-    for letter, label in zip(option_letters, labels):
-        option_lines.append(f"{letter}. {label}")
-
-    if option_lines:
-        formatted_question = f"{formatted_question}\n" + "\n".join(option_lines)    
-
-    # file_names = [root_image_path + f"/render/{int(frame_idx):06d}.png" for frame_idx in image_paths]
-
-    ability_map = {
-        "prediction": "prediction",
-        "counting": "counting",
-        "estimation": "estimation",
-        "attribute": "attribute",
-    }
-    measurement = question_payload.get("measurement")
-    ability_type = ability_map.get(measurement, "general")
-
-    answer_letter = None
-    if (
-        answer_index is not None
-        and 0 <= answer_index < len(option_letters)
-    ):
-        answer_letter = option_letters[answer_index]
-
-    question_record = {
-        "scene": vqa_entry["scene"],
-        "source": "simulation",
-        "file_name": image_paths,
-        "description": question_payload.get("description"),
-        "question": formatted_question,
-        "mode": "image-only",
-        "idx": idx,
-        "split": question_payload.get("split", "val"),
-    }
-
-    answer_record = {
-        "idx": idx,
-        "answer": answer_letter,
-        "task_type": "factual",
-        "sub_type": question_payload.get("category"),
-        "ability_type": question_payload.get("ability_type", ability_type),
-        "mode": question_record["mode"],
-    }
-
-    return question_record, answer_record
-
-def save_questions_answers_tsv(
-    all_vqa,
-    simulation_steps,
-    output_path,
-    export_format="json",
-    image_output="base64",
-    number_of_images_max=8,
-    root_image_path="",
-):
-    os.makedirs(output_path, exist_ok=True)
-    export_targets = {"json", "tsv"} if export_format == "both" else {export_format}
-    normalized_questions = []
-    answers = []
-
-    for idx, entry in enumerate(all_vqa):
-        question_record = normalize_question_tsv(
-            entry,
-            idx=idx,
-            simulation_steps=simulation_steps,
-            image_output=image_output,
-            number_of_images_max=number_of_images_max,
-            root_image_path=root_image_path,
-        )
-
-        normalized_questions.append(question_record) 
-    
-    fieldnames = _determine_tsv_fieldnames(normalized_questions, answers)
-    tsv_path = os.path.join(output_path, "questions.tsv")
-    with open(tsv_path, "w", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=fieldnames, delimiter="\t")
-        writer.writeheader()
-        for idx, record in enumerate(normalized_questions):
-            answer = answers[idx] if idx < len(answers) else None
-            row = _build_tsv_row(record, answer, fieldnames)
-            writer.writerow(row)
-
-
-def normalize_question_tsv(
-    vqa_entry,
-    idx,
-    simulation_steps,
-    image_output="base64",
-    number_of_images_max=8,
-    root_image_path="",
-):
-    question_payload = vqa_entry.get("question", {})
-    question_text = question_payload.get("question", "").strip()
-    labels = vqa_entry.get("labels", [])
-    answer_index = vqa_entry.get("answer_index")
-    image_paths = vqa_entry.get("image_paths", []) or []
-
-    scene_info = simulation_steps.get("scene", {}) if simulation_steps else {}
-    scene_name = scene_info.get("scene") or scene_info.get("name") or "simulation_scene"
-
-    objects_metadata = simulation_steps.get("objects", {}) if simulation_steps else {}
-    detected_objects = set()
-    lowered_question = question_text.lower()
-    for obj in objects_metadata.values():
-        description = obj.get("description", {}) or {}
-        object_name = description.get("object_name") or obj.get("model") or obj.get(
-            "name"
-        )
-        if not object_name:
-            continue
-        if object_name.lower() in lowered_question:
-            detected_objects.add(object_name)
-
-    label_lookup = {
-        obj.get("model", "").lower(): obj
-        for obj in objects_metadata.values()
-        if obj.get("model")
-    }
-    for label in labels:
-        label_key = label.replace(" ", "_").lower()
-        if label_key in label_lookup:
-            obj = label_lookup[label_key]
-            description = obj.get("description", {}) or {}
-            object_name = (
-                description.get("object_name") or obj.get("model") or obj.get("name")
-            )
-            if object_name:
-                detected_objects.add(object_name)
-
-    file_names = [root_image_path + f"/render/{int(frame_idx):06d}.png" for frame_idx in image_paths]
-    images_base64 = [encode_image_file_to_base64(image_path) for image_path in file_names]
-
-    ability_map = {
-        "prediction": "prediction",
-        "counting": "counting",
-        "estimation": "estimation",
-        "attribute": "attribute",
-    }
-    measurement = question_payload.get("measurement")
-    ability_type = ability_map.get(measurement, "general")
-
-    """
-    Full row (raw values):
-    index: '1000205'
-    question: 'Based on the description, how are the people in the image engaging with the game?'
-    hint: ''
-    A: 'The group of people is engaging with the game by playing a board game.'
-    B: 'The group of people is physically engaging with the game by using Nintendo Wii controllers.'
-    C: 'The group of people is physically engaging with the game by using traditional gaming controllers.'
-    D: 'The group of people is engaging with the game by watching a screen passively.'
-    answer: 'B'
-    category: 'function_reasoning'
-    image: <base64 image omitted>
-    source: 'reasoning'
-    l2-category: 'attribute_reasoning'
-    comment: ''
-    split: 'dev'
-    """
-
-    question_record = {
-        "index": idx,
-        "images": images_base64,
-        "A": labels[0] if len(labels) > 0 else "",
-        "B": labels[1] if len(labels) > 1 else "",
-        "C": labels[2] if len(labels) > 2 else "",
-        "D": labels[3] if len(labels) > 3 else "",
-        "question": question_text,
-        "answer": ["A", "B", "C", "D"][answer_index] if answer_index is not None and 0 <= answer_index < 4 else "",
-        "category": question_payload.get("category"),
-        "source": "simulation",
-        "l2-category": question_payload.get("ability_type", ability_type),
-    }
-
-    return question_record
 
 # ----- FUNCTION TO GET ANSWER FROM SIMULTAION
 
@@ -469,7 +112,14 @@ def get_gt(question_key, question_category, mock=False):
 
 
 # ----- MAIN VQA CREATION LOGIC
-def create_vqa(questions, simulation_steps, destination_simulation_folder_path, arg_mock, verbose=False):
+def create_vqa(
+    questions,
+    simulation_steps,
+    simulation_id,
+    destination_simulation_id_path,
+    arg_mock,
+    verbose=False,
+):
     total_correct_per_category = {}
 
     print("Starting VQA creation...")
@@ -478,7 +128,11 @@ def create_vqa(questions, simulation_steps, destination_simulation_folder_path, 
 
     for category_key, category in questions.items():
         # current category dev
-        if category_key == "force" or category_key == "deformation" or category_key == "visibility":
+        if (
+            category_key == "force"
+            or category_key == "deformation"
+            or category_key == "visibility"
+        ):
             continue
 
         if verbose:
@@ -494,24 +148,40 @@ def create_vqa(questions, simulation_steps, destination_simulation_folder_path, 
             fn_to_answer_question = get_answer(
                 question_key, category_key, mock=arg_mock
             )
-            question, labels, correct_idx, imgs_idx = fn_to_answer_question(
-                simulation_steps, question_data
-            )
-            
+
+            try:
+                question, labels, correct_idx, imgs_idx = fn_to_answer_question(
+                    simulation_steps, question_data
+                )
+            except ImpossibleToAnswer as e:
+                if verbose:
+                    print(
+                        f"  Question: {question_key} is impossible to answer. Skipping."
+                    )
+                not_implemented += 1
+                continue
+
             # changing from image_paths to image_paths
-            file_names = [destination_simulation_folder_path + f"/render/{int(frame_idx):06d}.png" for frame_idx in imgs_idx]
-            
+            file_names = [
+                destination_simulation_id_path + f"/render/{int(frame_idx):06d}.png"
+                for frame_idx in imgs_idx
+            ]
+
             all_vqa.append(
                 {
-                    "scene": simulation_steps.get("scene", {}).get("scene", "unknown_scene"),
+                    "scene": simulation_steps.get("scene", {}).get(
+                        "scene", "unknown_scene"
+                    ),
+                    "simulation_id": simulation_id,
                     "question": question,
                     "category": category_key,
                     "question_key": question_key,
                     "image_paths": file_names,
                     "labels": labels,
                     "answer_index": correct_idx,
-                })
-            
+                }
+            )
+
             if verbose:
                 print(f"  Question: {question}")
                 print(f"  Labels: {labels}")
@@ -558,62 +228,74 @@ def create_vqa(questions, simulation_steps, destination_simulation_folder_path, 
 
     return all_vqa
 
-def main(args):
 
+def main(args):
     all_vqa = []
 
-    for simulation_folder in os.listdir(args.simulation_path):
-        if not os.path.isdir(os.path.join(args.simulation_path, simulation_folder)):
+    for simulation_id in os.listdir(args.simulation_path):
+        if not os.path.isdir(os.path.join(args.simulation_path, simulation_id)):
             continue
         else:
-            print("Found simulation folder:", simulation_folder)
+            print("Found simulation folder:", simulation_id)
 
-            questions = read_questions(args.vqa_path)
+            questions_raw = read_questions(args.vqa_pat + "simple_vqa.json")
 
-            simulation_folder_path = os.path.join(args.simulation_path, simulation_folder)
-            destination_simulation_folder_path = os.path.join(args.destination_simulation_path, simulation_folder)
+            # here now we should duplicate if a question have different task splits
+
+
+            simulation_id_path = os.path.join(args.simulation_path, simulation_id)
+            destination_simulation_id_path = os.path.join(
+                args.destination_simulation_path, simulation_id
+            )
 
             simulation_steps = read_simulation(
-                os.path.join(simulation_folder_path, "simulation_kinematics.json")                
+                os.path.join(simulation_id_path, "simulation_kinematics.json")
             )
 
             simulation_vqa = create_vqa(
-                questions, simulation_steps, destination_simulation_folder_path, args.mock, verbose=args.verbose
+                questions,
+                simulation_steps,
+                simulation_id,
+                destination_simulation_id_path,
+                args.mock,
+                verbose=args.verbose,
             )
             all_vqa.extend(simulation_vqa)
-    
 
     # Finally save the questions and answers
-    print(
-        f"Saved {len(all_vqa)} questions and answers."
-    )
+    print(f"Saved {len(all_vqa)} questions and answers.")
 
     if args.export_format in ["json", "both"]:
         save_questions_answers_json(
-            all_vqa,            
+            all_vqa,
             args.output_path,
             export_format=args.export_format,
             image_output=args.image_output,
-            number_of_images_max=args.number_of_images_max,            
+            number_of_images_max=args.number_of_images_max,
         )
-        print(f"Saved questions and answers to {args.output_path} ({args.export_format})")
+        print(
+            f"Saved questions and answers to {args.output_path} ({args.export_format})"
+        )
 
     if args.export_format in ["tsv", "both"]:
         save_questions_answers_tsv(
-            all_vqa,            
+            all_vqa,
             args.output_path,
             export_format=args.export_format,
             image_output=args.image_output,
-            number_of_images_max=args.number_of_images_max,            
+            number_of_images_max=args.number_of_images_max,
         )
-        print(f"Saved questions and answers to {args.output_path} ({args.export_format})")
+        print(
+            f"Saved questions and answers to {args.output_path} ({args.export_format})"
+        )
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--vqa_path",
         type=str,
-        default="../simpler_example.json",
+        default="../",
         help="Path to simpler.json file or similar that contain all the vqa templates.",
     )
     parser.add_argument(
@@ -627,7 +309,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--destination_simulation_path",
-        type=str,        
+        type=str,
         default="/data0/sebastian.cavada/datasets/simulations/output/sims/dl3dv-hf-gso2/3-cg/",
         # default="/Users/sebastiancavada/Desktop/tmp_Paris/vqa/answering_questions/",
         help="Path where the simulation files are stored (on same or different computer).",

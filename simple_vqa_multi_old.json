@@ -1,6 +1,7 @@
 {   
     "collision":{
         "F_COLLISIONS_OBJ_OBJ_FIRST": {
+            "task_split": "multi",
             "question_type": "factual",
             "category": "collision",
             "choice": "mcq",
@@ -8,6 +9,7 @@
             "question": "What is the first object the <OBJECT> collides with?"
         },
         "F_COLLISIONS_OBJ_OBJ_COUNT_GENERAL": {
+            "task_split": "multi",
             "question_type": "factual",
             "category": "collision",
             "choice": "mcq",
@@ -15,6 +17,7 @@
             "question": "How many times does <OBJECT> collide with any other objects?"
         },
         "F_COLLISIONS_OBJ_OBJ_COUNT_TYPE": {
+            "task_split": "multi",
             "question_type": "factual",
             "category": "collision",
             "choice": "mcq",
@@ -22,6 +25,7 @@
             "question": "How many times does <OBJECT_1> collide with <OBJECT_2>?"
         },
         "F_COLLISIONS_OBJ_OBJ_TIME_FIRST": {
+            "task_split": "multi",
             "question_type": "factual",
             "category": "collision",
             "choice": "mcq",
@@ -29,6 +33,7 @@
             "question": "At what time does <OBJECT> collide with anything first?"
         },
         "F_COLLISIONS_OBJ_OBJ_TIME_LAST": {
+            "task_split": "multi",
             "question_type": "factual",
             "category": "collision",
             "choice": "mcq",
@@ -36,6 +41,7 @@
             "question": "At what time does <OBJECT> collide with anything last?"
         },
         "F_COLLISIONS_OBJ_SCENE": {
+            "task_split": "multi",
             "question_type": "factual",
             "category": "collision",
             "choice": "mcq",
@@ -43,8 +49,10 @@
             "question": "How many times does <OBJECT> collide with the scene?"
         }
     },
-    "force": {  
+    "force": {
+            "task_split": "multi",  
         "F_FORCE_OF_GRAVITY_OBJECT_TIME": {
+            "task_split": "multi",
             "question_type": "factual",
             "category": "force",
             "choice": "mcq",
@@ -52,6 +60,7 @@
             "question": "What is the force of gravity acting on <OBJECT> at <TIME> in newtowns?"
         },      
         "F_FORCES_NET_FORCE_OBJECT_TIME": {
+            "task_split": "multi",
             "question_type": "factual",
             "category": "force",
             "choice": "mcq",
@@ -59,6 +68,7 @@
             "question": "What is the net force magnitude on <OBJECT> at <TIME> in newtowns?"
         },
         "F_FORCES_TORQUE_OBJECT_TIME": {
+            "task_split": "multi",
             "question_type": "factual",
             "category": "force",
             "choice": "mcq",
@@ -82,6 +92,7 @@
     },
     "kinematics":{
         "F_KINEMATICS_VELOCITY_OBJECT_AT_TIMESTEP": {
+            "task_split": "multi",
             "question_type": "factual",
             "category": "kinematics",
             "choice": "mcq",
@@ -103,6 +114,7 @@
             "question": "What is the speed of the fastest object in meters/second?"
         },
         "F_KINEMATICS_ACCEL_OBJECT_TIMESTEP": {
+            "task_split": "multi",
             "question_type": "factual",
             "category": "kinematics",
             "choice": "mcq",
@@ -110,6 +122,7 @@
             "question": "What is the approximate acceleration of the <OBJECT> in meters/second^2 at time <TIME>?"
         },
          "F_KINEMATICS_ANGULAR_VELOCITY_OBJECT_TIMESTEP": {
+            "task_split": "multi",
             "question_type": "factual",
             "category": "kinematics",
             "choice": "mcq",
@@ -117,6 +130,7 @@
             "question": "What is the approximate angular speed of the <OBJECT> in rad/s at time <TIME>?"
         },
         "F_KINEMATICS_PEAK_VELOCITY_TIMESTEP": {
+            "task_split": "multi",
             "question_type": "factual",
             "category": "kinematics",
             "choice": "mcq",
@@ -131,6 +145,7 @@
             "question": "How far does <OBJECT> travel between <TIME_1> and <TIME_2>"
         },       
         "F_KINEMATICS_COUNTING_MOVEMENT_OBJECT_CATEGORY": {
+            "task_split": "multi",
             "question_type": "factual",
             "category": "kinematics",
             "choice": "mcq",
@@ -138,6 +153,7 @@
             "question": "How many objects of type <OBJECT-CATEGORY> have moved?"
         },
         "F_KINEMATICS_COUNTING_MOVEMENT_OBJECT_CATEGORY_TIME": {
+            "task_split": "multi",
             "question_type": "factual",
             "category": "kinematics",
             "choice": "mcq",
@@ -147,6 +163,7 @@
     },
     "mass":{
          "F_MASS_COUNTING": {
+            "task_split": "multi",
             "question_type": "factual",
             "category": "mass",
             "choice": "mcq",
@@ -154,6 +171,7 @@
             "question": "How many objects have a mass greater than <MASS>?"
         },
         "F_MASS_ATTRIBUTE": {
+            "task_split": "multi",
             "question_type": "factual",
             "category": "mass",
             "choice": "mcq",
@@ -161,6 +179,7 @@
             "question": "What is the mass of the <OBJECT>?"
         },
         "F_MASS_ATTRIBUTE_HEAVIEST": {
+            "task_split": "multi",
             "question_type": "factual",
             "category": "mass",
             "choice": "mcq",
@@ -168,13 +187,16 @@
             "question": "Which object appears to have the greatest mass?"
         },        
         "F_MASS_ATTRIBUTE_LIGHTEST": {
+            "task_split": "multi",
             "question_type": "factual",
             "category": "mass",
             "choice": "mcq",
             "measurement": "object",
             "question": "Which object appears to have the smallest mass?"
         },
+        
         "F_DENSITY_COUNTING": {
+            "task_split": "multi",
             "question_type": "factual",
             "category": "density",
             "choice": "mcq",
@@ -182,6 +204,7 @@
             "question": "How many objects have average density more than <DENSITY> kg_per_m3?"
         },
         "F_DENSITY_ATTRIBUTE": {
+            "task_split": "multi",
             "question_type": "factual",
             "category": "density",
             "choice": "mcq",
@@ -191,6 +214,7 @@
     },
     "volume":{
         "F_VOLUME_COUNTING": {
+            "task_split": "multi",
             "question_type": "factual",
             "category": "volume",
             "choice": "mcq",
@@ -198,6 +222,7 @@
             "question": "How many visible objects have volume more than <VOLUME> cm^3?"
         },
         "F_VOLUME_ATTRIBUTE": {
+            "task_split": "multi",
             "question_type": "factual",
             "category": "volume",
             "choice": "mcq",
@@ -205,6 +230,7 @@
             "question": "What is the volume of the <OBJECT> in cm^3?"
         },
         "F_VOLUME_ATTRIBUTE_MOST_VOLUME": {
+            "task_split": "multi",
             "question_type": "factual",
             "category": "volume",
             "choice": "mcq",
@@ -214,6 +240,7 @@
     },
     "material":{
         "F_MATERIALS_COUNTING": {
+            "task_split": "multi",
             "question_type": "factual",
             "category": "material",
             "choice": "mcq",
@@ -221,6 +248,7 @@
             "question": "How many objects are made of <MATERIAL>?"
         },
         "F_MATERIALS_ATTRIBUTE": {
+            "task_split": "multi",
             "question_type": "factual",
             "category": "material",
             "choice": "mcq",
@@ -228,6 +256,7 @@
             "question": "What material is <OBJECT> made of?"
         },
         "F_MATERIALS_COMPARISON_HARD": {
+            "task_split": "multi",
             "question_type": "factual",
             "category": "material",
             "choice": "mcq",
@@ -235,6 +264,7 @@
             "question": "Which object is made of the hardest material?"
         },
         "F_MATERIALS_COMPARISON_SOFT": {
+            "task_split": "multi",
             "question_type": "factual",
             "category": "material",
             "choice": "mcq",
@@ -244,6 +274,7 @@
     },
     "deformation":{ 
         "F_DEFORMATION_ATTRIBUTE": {
+            "task_split": "multi",
             "question_type": "factual",
             "category": "deformation",
             "choice": "mcq",
@@ -251,6 +282,7 @@
             "question": "What is the deformation stress of the <OBJECT> at time <TIME>?"
         },
         "F_DEFORMATION_COUNTING": {
+            "task_split": "multi",
             "question_type": "factual",
             "category": "deformation",
             "choice": "mcq",
@@ -258,6 +290,7 @@
             "question": "How many objects are deformed at time <TIME>?"
         },
          "F_DEFORMATION_COUNTING_THRESHOLD": {
+            "task_split": "multi",
             "question_type": "factual",
             "category": "deformation",
             "choice": "mcq",
@@ -265,6 +298,7 @@
             "question": "How many objects are deformed more than <STRESS-THRESHOLD> at time <TIME>?"
         },
         "F_DEFORMATION_OBJECT_IMAGE_MOST": {
+            "task_split": "multi",
             "question_type": "factual",
             "category": "deformation",
             "choice": "mcq",
@@ -272,6 +306,7 @@
             "question": "What of the images depicts the most deformed state of <OBJECT>?"
         },
         "F_DEFORMATION_ANY_OBJECT_IMAGE_MOST": {
+            "task_split": "multi",
             "question_type": "factual",
             "category": "deformation",
             "choice": "mcq",
@@ -290,6 +325,7 @@
     },
      "spatial":{
         "F_SPATIAL_OBJECT_GROUND_DISTANCE": {
+            "task_split": "multi",
             "question_type": "factual",
             "category": "spatial",
             "choice": "numeric",
@@ -297,6 +333,7 @@
             "question": "What is the distance between the center of mass of the <OBJECT> and the ground plane at time <TIME>?"
         },
         "F_SPATIAL_OBJECT_OBJECT_DISTANCE": {
+            "task_split": "multi",
             "question_type": "factual",
             "category": "spatial",
             "choice": "numeric",
@@ -304,6 +341,7 @@
             "question": "What is the distance between the center of mass of the <OBJECT_1> and the center of mass of the <OBJECT_2> at time <TIME>?"
         },
         "F_SPATIAL_OBJECT_CAMERA_DISTANCE": {
+            "task_split": "multi",
             "question_type": "factual",
             "category": "spatial",
             "choice": "numeric",
@@ -311,6 +349,7 @@
             "question": "What is the distance between the center of mass of the <OBJECT> and the camera at time <TIME>?"
         },
         "F_SPATIAL_CLOSEST_OBJECT": {
+            "task_split": "multi",
             "question_type": "factual",
             "category": "spatial",
             "choice": "numeric",
@@ -318,6 +357,7 @@
             "question": "What is the closest object to <OBJECT> at time <TIME>?"
         },
         "F_SPATIAL_COUNTING_OBJECTS_CLOSE": {
+            "task_split": "multi",
             "question_type": "factual",
             "category": "spatial",
             "choice": "numeric",
@@ -325,6 +365,7 @@
             "question": "How many objects are closer than <DISTANCE> meters to the camera at time <TIME>?"
         },
         "F_SPATIAL_HIGHEST_ABOVE_GROUND": {
+            "task_split": "multi",
             "question_type": "factual",
             "category": "spatial",
             "choice": "numeric",
@@ -334,6 +375,7 @@
     },
     "temporal":{
         "F_TEMPORAL_SEQUENCE_IMAGES": {
+            "task_split": "multi",
             "question_type": "factual",
             "category": "temporal",
             "choice": "mcq",
@@ -341,6 +383,7 @@
             "question": "Given the sequence of images A. - B. - C. - D. What is the correct rearrangement of images showing the events in the scene?"
         },
         "F_TEMPORAL_PREDICTION_NEXT_IMAGE": {
+            "task_split": "multi",
             "question_type": "factual",
             "category": "temporal",
             "choice": "mcq",
@@ -348,6 +391,7 @@
             "question": "What event is most likely to happen next in the scene?"
         },
         "F_TEMPORAL_PREDICTION_PREVIOUS_IMAGE": {
+            "task_split": "multi",
             "question_type": "factual",
             "category": "temporal",
             "choice": "mcq",
@@ -355,6 +399,7 @@
             "question": "What event is most likely to happen next in the scene?"
         },
         "F_TEMPORAL_PREDICTION_MISSING_IMAGE": {
+            "task_split": "multi",
             "question_type": "factual",
             "category": "temporal",
             "choice": "mcq",
@@ -364,6 +409,7 @@
     },
     "visibility":{
          "F_VISIBILITY_COUNTING": {
+            "task_split": "multi",
             "question_type": "factual",
             "category": "visibility",
             "choice": "mcq",
@@ -371,6 +417,7 @@
             "question": "How many visible objects are there at time <TIME>?"
         },
         "F_VISIBILITY_COUNTING_CATEGORY": {
+            "task_split": "multi",
             "question_type": "factual",
             "category": "visibility",
             "choice": "mcq",
@@ -378,6 +425,7 @@
             "question": "How many visible objects of <OBJECT-CATEGORY> are there at time <TIME>?"
         },
         "F_VISIBILITY_COUNTING_OBJECTS_HIDDEN_SCENE": {
+            "task_split": "multi",
             "question_type": "factual",
             "category": "visibility",
             "choice": "mcq",
@@ -385,6 +433,7 @@
             "question": "How many objects are hidden by the scene at time <TIME>?"
         },
         "F_VISIBILITY_COUNTING_OBJECTS_ALWAYS_VISIBEL": {
+            "task_split": "multi",
             "question_type": "factual",
             "category": "visibility",
             "choice": "mcq",

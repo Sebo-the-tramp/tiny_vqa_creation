@@ -23,7 +23,6 @@ from typing import (
 from utils.helpers import (
     _distance_between,
     _iter_objects,
-    _fill_template,
     get_object_state_at_timestep,
 )
 
@@ -222,7 +221,7 @@ def F_SPATIAL_COUNTING_OBJECTS_CLOSE(
 
 
 @with_resolved_attributes
-def F_SPATIAL_HEIGHEST_ABOVE_GROUND(
+def F_SPATIAL_HIGHEST_ABOVE_GROUND(
     world_state: WorldState, question: QuestionPayload, resolved_attributes, **kwargs
 ) -> int:
     assert len(resolved_attributes) == 1 and "TIME" in resolved_attributes

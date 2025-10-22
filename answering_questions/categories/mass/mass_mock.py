@@ -49,14 +49,9 @@ Answer = Union[str, float, Vector, Mapping[str, Any], Sequence[str]]
 def F_MASS_COUNTING(
     world_state: WorldState, question: QuestionPayload, resolved_attributes, **kwargs
 ) -> int:
-    assert (
-        len(resolved_attributes) == 2
-        and "MASS" in resolved_attributes
-        and "TIME" in resolved_attributes
-    )
+    assert len(resolved_attributes) == 1 and "MASS" in resolved_attributes
 
     mass_threshold = resolved_attributes["MASS"]["choice"]
-    timestep = resolved_attributes["TIME"]["choice"]
 
     count = 0
     for obj in _iter_visible_objects(world_state):

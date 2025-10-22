@@ -1,10 +1,29 @@
 import json
 
-with open("./utils/all_objects_data.json", "r") as f:
+with open("./utils/json/all_objects_data.json", "r") as f:
     all_objects = json.load(f)
 
 all_materials = set()
 all_objects_names = set()
+
+
+def get_all_scenes_segments():
+    # TODO dummy for now
+    scenes_segments = [
+        "Staue",
+        "Wood Bench",
+        "Marble Bench",
+        "Fountain",
+        "Tree",
+        "Lamp Post",
+        "Trash Can",
+        "Bushes",
+        "Flower Bed",
+        "Clock Tower",
+        "Bridge",
+    ]
+
+    return list(scenes_segments)
 
 
 def get_all_objects_names():

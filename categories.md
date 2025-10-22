@@ -5,7 +5,10 @@ https://chatgpt.com/c/68f09dab-d678-8330-9a61-f95f3e94192c -> here there are som
 
 ## in short
 
-Spatial reasoning, Kinematics, Forces, Contact, Material, Mass, Visibility, Event ordering, Global.
+# categories
+
+## sub-category
+Spatial reasoning, Kinematics, Forces, Collision, Material, Mass, Visibility, Event ordering, Globa, temporal
 
 ## core categories
 
@@ -70,3 +73,14 @@ So far we have the following attributes:
 - <MASS> -> the mass of the object.
 - <VOLUME> -> volume of the obejct
 - <SCENE> -> could be the scene itself or any segmented part of the scene
+
+
+## Version2
+
+question type -> **factual / counterfactual / hypothetical**
+answer_semantics -> **counting, estimation, selection, temporal**
+answer_type -> mcq
+
+
+new_categories:
+

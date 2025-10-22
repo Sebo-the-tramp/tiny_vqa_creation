@@ -29,7 +29,6 @@ from typing import (
 from utils.helpers import (
     _iter_objects,
     iter_visible_objects_at_time,
-    _fill_template,
     get_object_state_at_timestep,
     get_all_objects_state_at_time,
     _shuffle_array,
@@ -66,8 +65,6 @@ def F_DEFORMATION_ATTRIBUTE(
     objsect_state = get_object_state_at_timestep(world_state, object["id"], time)
     stress = objsect_state["stress"]
 
-    _fill_template(question, resolved_attributes)
-
     options, correct_idx = create_mc_options_around_gt(
         stress, num_answers=4, display_decimals=1, lo=0.0
     )
@@ -91,8 +88,6 @@ def F_DEFORMATION_COUNTING(
     for obj_state in objects_states:
         if "stress" in obj_state and obj_state["stress"] > 0.0:
             count += 1
-
-    _fill_template(question, resolved_attributes)
 
     options, correct_idx = create_mc_options_around_gt(
         count, num_answers=4, display_decimals=0, lo=0.0
@@ -125,8 +120,6 @@ def F_DEFORMATION_COUNTING_THRESHOLD(
         )
         if max_stress > threshold:
             count += 1
-
-    _fill_template(question, resolved_attributes)
 
     options, correct_idx = create_mc_options_around_gt(
         count, num_answers=4, display_decimals=0, lo=0.0
@@ -173,7 +166,6 @@ def F_DEFORMATION_OBJECT_IMAGE_MOST(
         )
 
     assert correct_idx != -1
-    _fill_template(question, resolved_attributes)
     options = [f"Image {i}" for i in range(len(iterate_timesteps))]
 
     # TODO Note here there could be ties, we should handle that better
@@ -216,7 +208,6 @@ def F_DEFORMATION_ANY_OBJECT_IMAGE_MOST(
         )
 
     assert correct_idx != -1
-    _fill_template(question, resolved_attributes)
     options = [f"Image {i}" for i in range(len(iterate_timesteps))]
 
     # TODO Note here there could be ties, we should handle that better

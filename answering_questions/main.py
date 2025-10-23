@@ -20,6 +20,11 @@ from categories.mechanics.mechanics import (
     get_result_by_name_mechanics,
 )
 
+from categories.material_understanding.material_understanding import (
+    get_function_by_name_material_understanding,
+    get_result_by_name_material_understanding,
+)
+
 
 # ----- UTILS FUNCTIONS
 def read_questions(vqa_path):
@@ -39,11 +44,13 @@ def read_simulation(simulation_path):
 resolver_gt = {
     "spatial_reasoning": get_result_by_name_spatial_reasoning,
     "mechanics": get_result_by_name_mechanics,
+    "material_understanding": get_result_by_name_material_understanding,
 }
 
 resolver = {
     "spatial_reasoning": get_function_by_name_spatial_reasoning,
     "mechanics": get_function_by_name_mechanics,
+    "material_understanding": get_function_by_name_material_understanding,
 }
 
 
@@ -145,7 +152,7 @@ def create_vqa(
                 # Just for development, the rng function given more or less functions will break the integration test
                 if str(labels[correct_idx]) != str(gt):
                     print(
-                        "\033[91m  WARNING: Answer does not match Ground Truth!\033[0m"
+                        "\033[93m  WARNING: Answer does not match Ground Truth!\033[0m"
                     )
                     # exit(1)
                 else:

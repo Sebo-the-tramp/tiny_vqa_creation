@@ -25,7 +25,6 @@ import numpy as np
 import rerun as rr
 from collections import deque
 
-
 # ---------------------------- Math helpers ----------------------------
 def euler_to_quat_xyz(rx, ry, rz):
     """Return quaternion [x,y,z,w] from intrinsic XYZ Euler angles (radians)."""
@@ -209,7 +208,49 @@ def quat_from_two_vectors(a, b):
     return q / np.linalg.norm(q)
 
 
-def log_static_scene(sim):
+def camera_quat_from_lookat(eye, target, up):
+    """Quaternion aligning camera RUB axes so that -Z looks at target."""
+    eye = np.asarray(eye, dtype=float)
+    target = np.asarray(target, dtype=float)
+    up = np.asarray(up, dtype=float)
+
+    forward = target - eye
+    f_norm = np.linalg.norm(forward)
+    if f_norm < 1e-8:
+        return np.array([0.0, 0.0, 0.0, 1.0], dtype=float)
+    forward = forward / f_norm
+
+    up_norm = np.linalg.norm(up)
+    if up_norm < 1e-8:
+        up = np.array([0.0, 1.0, 0.0], dtype=float)
+    else:
+        up = up / up_norm
+
+    right = np.cross(forward, up)
+    r_norm = np.linalg.norm(right)
+    if r_norm < 1e-6:
+        # Fall back to an arbitrary orthogonal up vector.
+        alt_up = np.array([1.0, 0.0, 0.0], dtype=float)
+        if abs(forward[0]) > 0.9:
+            alt_up = np.array([0.0, 0.0, 1.0], dtype=float)
+        right = np.cross(forward, alt_up)
+        r_norm = np.linalg.norm(right)
+        if r_norm < 1e-6:
+            return np.array([0.0, 0.0, 0.0, 1.0], dtype=float)
+    right = right / r_norm
+
+    true_up = np.cross(right, forward)
+    u_norm = np.linalg.norm(true_up)
+    if u_norm < 1e-6:
+        return np.array([0.0, 0.0, 0.0, 1.0], dtype=float)
+    true_up = true_up / u_norm
+
+    back = -forward
+    R = np.column_stack((right, true_up, back))
+    return rotmat_to_quat(R)
+
+
+def log_static_scene(sim, has_step_camera=False):
     # Coordinate system: right-handed, +Y up (viewer convention)
     rr.log("world", rr.ViewCoordinates.RIGHT_HAND_Y_UP, static=True)
 
@@ -245,39 +286,49 @@ def log_static_scene(sim):
 
     # Camera, if provided
     cam = sim.get("camera", {})
-    tr = cam.get("initial_transform", [])
-    if isinstance(tr, (list, tuple)) and len(tr) >= 6:
-        tx, ty, tz, rx, ry, rz = tr[:6]
-        q = euler_to_quat_xyz(rx, ry, rz)
-        rr.log(
-            "world/camera",
-            rr.Transform3D(translation=[tx, ty, tz], quaternion=q),
-            static=True,
-        )
-
-    intr = cam.get("intrinsics", {})
-    width, height = intr.get("width"), intr.get("height")
-    fx = intr.get("fx", None)
-    if width and height:
-        # Pinhole draws a camera frustum; focal_length is enough for a visual.
-        # If fx is present we use it; else fall back to a rough fov.
-        if fx is not None:
+    if not has_step_camera and isinstance(cam, dict):
+        tr = cam.get("initial_transform", [])
+        if isinstance(tr, (list, tuple)) and len(tr) >= 6:
+            tx, ty, tz, rx, ry, rz = tr[:6]
+            q = euler_to_quat_xyz(rx, ry, rz)
             rr.log(
-                "world/camera/frustum",
-                rr.Pinhole(
-                    width=int(width),
-                    height=int(height),
-                    focal_length=float(fx),
-                    camera_xyz=rr.ViewCoordinates.RUB,
-                ),
+                "world/camera",
+                rr.Transform3D(translation=[tx, ty, tz], quaternion=q),
                 static=True,
             )
-        else:
+
+        intr = cam.get("intrinsics", {})
+        width, height = intr.get("width"), intr.get("height")
+        fx = intr.get("fx", None)
+        if width and height:
+            # Pinhole draws a camera frustum; focal_length is enough for a visual.
+            # If fx is present we use it; else fall back to a rough fov.
+            if fx is not None:
+                rr.log(
+                    "world/camera/frustum",
+                    rr.Pinhole(
+                        width=int(width),
+                        height=int(height),
+                        focal_length=float(fx),
+                        camera_xyz=rr.ViewCoordinates.RUB,
+                    ),
+                    static=True,
+                )
+            else:
+                rr.log(
+                    "world/camera/frustum",
+                    rr.Pinhole(
+                        fov_y=0.8,
+                        aspect_ratio=width / height,
+                        camera_xyz=rr.ViewCoordinates.RUB,
+                    ),
+                    static=True,
+                )
+        elif fx is not None:
             rr.log(
                 "world/camera/frustum",
                 rr.Pinhole(
-                    fov_y=0.8,
-                    aspect_ratio=width / height,
+                    focal_length=float(fx),
                     camera_xyz=rr.ViewCoordinates.RUB,
                 ),
                 static=True,
@@ -319,10 +370,14 @@ def main():
     with open(args.input, "r") as f:
         sim = json.load(f)
 
-    log_static_scene(sim)
+    steps = sim.get("simulation", {})
+    has_step_camera = any(
+        isinstance(frame, dict) and "camera" in frame for frame in steps.values()
+    )
+
+    log_static_scene(sim, has_step_camera=has_step_camera)
 
     obj_meta = sim.get("objects", {})  # may be empty or missing shape info
-    steps = sim.get("simulation", {})
     time_keys = sorted(steps.keys(), key=lambda s: float(s))
 
     # Gravity vector for force visualization and ground alignment
@@ -401,6 +456,57 @@ def main():
 
         frame = steps[tk]
         objects = frame.get("objects", {})
+
+        if has_step_camera:
+            cam = frame.get("camera", {})
+            eye = cam.get("eye")
+            at = cam.get("at")
+            up = cam.get("up", [0.0, 1.0, 0.0])
+            if (
+                isinstance(cam, dict)
+                and isinstance(eye, (list, tuple))
+                and isinstance(at, (list, tuple))
+                and isinstance(up, (list, tuple))
+                and len(eye) == 3
+                and len(at) == 3
+                and len(up) == 3
+            ):
+                eye_arr = np.asarray(eye, dtype=float)
+                at_arr = np.asarray(at, dtype=float)
+                up_arr = np.asarray(up, dtype=float)
+                q_cam = camera_quat_from_lookat(eye_arr, at_arr, up_arr).tolist()
+                rr.log(
+                    "world/camera",
+                    rr.Transform3D(
+                        translation=eye_arr.tolist(),
+                        quaternion=q_cam,
+                    ),
+                )
+
+                pinhole_kwargs = {"camera_xyz": rr.ViewCoordinates.RUB}
+                width = cam.get("width")
+                height = cam.get("height")
+                if width is not None and height is not None:
+                    try:
+                        w = int(width)
+                        h = int(height)
+                        if w > 0 and h > 0:
+                            pinhole_kwargs["width"] = w
+                            pinhole_kwargs["height"] = h
+                            pinhole_kwargs["aspect_ratio"] = float(w) / float(h)
+                    except Exception:
+                        pass
+                fov = cam.get("fov")
+                if fov is not None:
+                    try:
+                        pinhole_kwargs["fov_y"] = float(fov)
+                    except Exception:
+                        pass
+                if len(pinhole_kwargs) > 1:
+                    rr.log(
+                        "world/camera/frustum",
+                        rr.Pinhole(**pinhole_kwargs),
+                    )
 
         # Collisions (draw a pulse point at each contact)
         for oid, ent in objects.items():

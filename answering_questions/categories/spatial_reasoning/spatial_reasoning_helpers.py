@@ -8,6 +8,8 @@ from typing import Any, Mapping, Optional, Tuple, Union, List
 
 from utils.helpers import as_vector
 
+from scipy.spatial.transform import Rotation as R
+
 # set random seed for reproducibility
 rng = random.Random(42)
 
@@ -22,6 +24,13 @@ from utils.frames_selection import (
     sample_frames_at_timesteps,
     sample_frames_before_timestep,
 )
+
+from utils.config import get_config
+
+
+AXIS_TO_NUM = {"X": 0, "Y": 1, "Z": 2}
+WORLD_UP_AXIS = get_config()["world_up_axis"]  # 0=X, 1=Y, 2=Z for World Up
+WORLD_UP_AXIS_NUM = AXIS_TO_NUM[WORLD_UP_AXIS]
 
 ## --- Helper functions --- ##
 
@@ -149,3 +158,68 @@ def get_closest_object(
             closest_object = obj_data
 
     return closest_object
+
+
+def get_spatial_relationship_camera_view(obj_1_state, obj_2_state, camera):
+    """
+    Calculates the positional relationship of O1 relative to O2 from the camera's view.
+    
+    Uses a hybrid system:
+    - Vertical (Above/Below) is relative to the World Up Axis (Z_world).
+    - Horizontal (Left/Right) is relative to the Camera's X_cam axis.
+    - Depth (Closer/Further) is relative to the Camera's Z_cam axis.
+    """
+
+    rx, ry, rz = camera["at"]
+    q = R.from_euler('xyz', [rx, ry, rz], degrees=True)
+    R_world_to_cam = q.as_matrix().T  # Transpose to invert rotation
+    
+    np_pos1_world = np.array(obj_1_state["obb"]["center"])
+    np_pos2_world = np.array(obj_2_state["obb"]["center"])
+
+    # 1. Calculate the Vector from O2 to O1 in WORLD Coordinates
+    V_rel_world = np_pos1_world - np_pos2_world
+    
+    # 2. World-Relative Vertical (Above/Below)
+    # Uses the designated WORLD_UP_AXIS_NUM (e.g., V_rel_world[2] for Z-Up)
+    world_vertical_component = V_rel_world[WORLD_UP_AXIS_NUM]
+    vertical_adj = []
+    if world_vertical_component > obj_1_state["obb"]["extents"][WORLD_UP_AXIS_NUM] * 2:
+        vertical_adj.append("Above")
+    elif world_vertical_component < -obj_1_state["obb"]["extents"][WORLD_UP_AXIS_NUM] * 2:
+        vertical_adj.append("Below")
+    else:
+        vertical_adj.append("Vertically Aligned")
+        
+    # 3. Transform V_rel from World to Camera Coordinates
+    V_rel_cam = R_world_to_cam @ V_rel_world
+    
+    # 4. Camera-Relative Horizontal (Left/Right) and Depth (Closer/Further)
+    
+    # Horizontal (Camera X, V_rel_cam[0])
+    horizontal_adj = []
+    if V_rel_cam[0] > 0.05:
+        horizontal_adj.append("to the Right")
+    elif V_rel_cam[0] < -0.05:
+        horizontal_adj.append("to the Left")
+    else:
+        horizontal_adj.append("Horizontally Aligned")
+        
+    # Depth (Camera Z, V_rel_cam[2])
+    # Z-axis in camera space is the distance from the camera.
+    if V_rel_cam[2] > 0.05:
+        depth_adj = ["behind"]
+    elif V_rel_cam[2] < -0.05:
+        depth_adj = ["In front"]
+    else:
+        depth_adj = ["Equidistant"]
+
+    return horizontal_adj[0].lower(), vertical_adj[0].lower(), depth_adj[0].lower() 
+
+
+def get_all_relational_positional_adjectives():
+    horizontals = ["to the Left", "to the Right", "Horizontally Aligned"]
+    verticals = ["above", "below", "vertically aligned"]
+    depths = ["in front", "behind", "equidistant"]
+    total = horizontals + verticals + depths
+    return [adj.lower() for adj in total]

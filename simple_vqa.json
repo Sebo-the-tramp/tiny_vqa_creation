@@ -41,7 +41,14 @@
             "sub_category": "size",
             "choice": "mcq",
             "question": "Which single object has the smallest volume?"
-        }        
+        }, 
+        "F_LAYOUT_POSITION_OBJECT_OBJECT":{
+            "task_splits": "single+multi",
+            "sub_category": "layout",
+            "choice": "mcq",
+            "question": "What is the positional relationship between the <OBJECT_1> and the <OBJECT_2> from the camera's point of view?"
+        }
+
     },
     "mechanics": {
         "F_KINEMATICS_SPEED_OBJECT": {
@@ -72,40 +79,16 @@
             "task_splits": "multi",
             "sub_category": "kinematics",
             "choice": "true_false",
-            "question": "Is the <OBJECT> moving?"
+            "question": "Is the <OBJECT> moving throughout all frames?"
         },
         "F_KINEMATICS_STILL_OBJECT": {
             "task_splits": "multi",
             "sub_category": "kinematics",
             "choice": "true_false",
-            "question": "Is the <OBJECT> still?"
+            "question": "Is the <OBJECT> motionless throughout all frames?"
         }                
     },
-    "material_undertanding": {
-        "F_MASS_OBJECT": {
-            "task_splits": "single+multi",
-            "sub_category": "mass",
-            "choice": "mcq",
-            "question": "What is the mass of the <OBJECT>?"
-        },        
-        "F_MASS_HEAVIEST_OBJECT": {
-            "task_splits": "single+multi",
-            "sub_category": "mass",
-            "choice": "mcq",
-            "question": "Which single object has the greatest mass?"
-        },
-        "F_MASS_LIGHTEST_OBJECT": {
-            "task_splits": "single+multi",
-            "sub_category": "mass",
-            "choice": "mcq",
-            "question": "Which single object has the least mass?"
-        },
-        "F_MASS_COMPARE_OBJECTS": {
-            "task_splits": "single+multi",
-            "sub_category": "mass",
-            "choice": "true_false",
-            "question": "Is the mass of the <OBJECT_1> greater than the mass of the <OBJECT_2>?"
-        }
+    "material_understanding": {
     },
     "view_point": {        
     },

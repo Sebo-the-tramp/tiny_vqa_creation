@@ -31,6 +31,7 @@ QuestionPayload = Mapping[str, Any]
 Answer = Union[int, float, str]
 
 SAMPLING_RATE = get_config()["sampling_rate"]
+VISIBILITY_THRESHOLD = get_config()["visibility_threshold"]
 
 
 # ---------------------------------------------------------------------------
@@ -148,7 +149,7 @@ def get_visible_timesteps_for_attributes_min_objects(
 
                     if (
                         obj_state
-                        and obj_state["fov_visibility"] > 0.25
+                        and obj_state["fov_visibility"] > VISIBILITY_THRESHOLD
                         and obj_state["infov"]
                     ):  # at least 25% visible for now cause of a bug
                         visible_objects_id.append(obj_id)

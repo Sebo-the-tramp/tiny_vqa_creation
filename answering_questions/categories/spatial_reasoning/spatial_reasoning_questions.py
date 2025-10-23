@@ -40,6 +40,8 @@ from .spatial_reasoning_helpers import (
     fill_questions,
     get_closest_object,
     get_min_height_from_obb,
+    get_spatial_relationship_camera_view,
+    get_all_relational_positional_adjectives
 )
 
 from utils.bin_creation import (
@@ -54,6 +56,10 @@ WorldState = Mapping[str, Any]
 QuestionPayload = Mapping[str, Any]
 Answer = Union[str, float, Vector, Mapping[str, Any], Sequence[str]]
 
+
+from utils.config import get_config
+
+VISIBILITY_THRESHOLD = get_config()["visibility_threshold"]
 
 ## --- Resolver functions -- ##
 
@@ -307,7 +313,7 @@ def F_SIZE_OBJECT_BIGGER(
             and world_state["simulation"][timestep]["objects"][obj["id"]][
                 "fov_visibility"
             ]
-            > 0.25
+            > VISIBILITY_THRESHOLD
         )
         if volume > biggest_volume and visible_at_timestep:
             biggest_volume = volume
@@ -357,7 +363,7 @@ def F_SIZE_OBJECT_SMALLER(
             and world_state["simulation"][timestep]["objects"][obj["id"]][
                 "fov_visibility"
             ]
-            > 0.25
+            > VISIBILITY_THRESHOLD
         )
         if volume < smallest_volume and visible_at_timestep:
             smallest_volume = volume
@@ -372,3 +378,54 @@ def F_SIZE_OBJECT_SMALLER(
     return fill_questions(
         question, labels, correct_idx, world_state, timestep, resolved_attributes
     )
+
+
+@with_resolved_attributes
+def F_LAYOUT_POSITION_OBJECT_OBJECT(
+    world_state: WorldState, question: QuestionPayload, attributes, **kwargs
+) -> str:
+    assert (len(attributes) == 2 and "OBJECT_1" in attributes and "OBJECT_2" in attributes)
+
+    # First we find the pairs of objects visible
+    visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
+        attributes, world_state, min_objects=2
+    )
+    # if we are in a multi-image setting, we need to ensure there are enough frames
+    if len(visible_timesteps) == 0:
+        raise ImpossibleToAnswer("No timestep with visible objects.")
+
+    if "multi" in question.get("task_splits", ""):
+        timestep = random.choice(visible_timesteps[7:])
+    else:
+        timestep = random.choice(visible_timesteps)
+
+    resolved_attributes = resolve_attributes_visible_at_timestep(
+        attributes, world_state, timestep
+    )
+
+    object_1 = resolved_attributes["OBJECT_1"]["choice"]
+    object_2 = resolved_attributes["OBJECT_2"]["choice"]
+
+    horizontal, vertical, depth = get_spatial_relationship_camera_view(
+        world_state["simulation"][timestep]["objects"][object_1["id"]],
+        world_state["simulation"][timestep]["objects"][object_2["id"]],
+        world_state["simulation"][timestep]["camera"],
+    )
+
+    DATASET_RELATIONAL_ADJECTIVES = get_all_relational_positional_adjectives()
+    #remove correct answers
+    DATASET_RELATIONAL_ADJECTIVES.remove(horizontal)
+    DATASET_RELATIONAL_ADJECTIVES.remove(vertical)
+    DATASET_RELATIONAL_ADJECTIVES.remove(depth)
+    
+    # confounding options
+    random.shuffle(DATASET_RELATIONAL_ADJECTIVES)
+    confounding_options = DATASET_RELATIONAL_ADJECTIVES[:3]
+
+    correct_idx = random.randint(0, 3)
+    labels = confounding_options[:correct_idx] + [horizontal] + confounding_options[correct_idx:]
+
+    return fill_questions(
+        question, labels, correct_idx, world_state, timestep, resolved_attributes
+    )
+    

@@ -24,3 +24,6 @@ def F_SIZE_OBJECT_BIGGER() -> str:
 
 def F_SIZE_OBJECT_SMALLER() -> str:
     return "Size of object question result"
+
+def F_LAYOUT_POSITION_OBJECT_OBJECT() -> str:
+    return "Layout position between two objects question result"

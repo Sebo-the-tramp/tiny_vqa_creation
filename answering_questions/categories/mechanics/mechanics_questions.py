@@ -179,6 +179,8 @@ def F_KINEMATICS_DISTANCE_TRAVELED_INTERVAL(
         visible_timesteps, min_length=CLIP_LENGTH
     )
 
+    print("continuous_subsequences:", continuous_subsequences)
+
     visible_timesteps = random.choice(continuous_subsequences)
 
     # if we are in a multi-image setting, we need to ensure there are enough frames

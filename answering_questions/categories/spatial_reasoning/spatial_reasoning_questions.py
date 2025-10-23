@@ -10,7 +10,11 @@ from __future__ import annotations
 
 from utils.decorators import with_resolved_attributes
 from utils.all_objects import get_all_objects_names
-from utils.frames_selection import uniformly_sample_frames, sample_frames_at_timesteps, sample_frames_before_timestep
+from utils.frames_selection import (
+    uniformly_sample_frames,
+    sample_frames_at_timesteps,
+    sample_frames_before_timestep,
+)
 
 from typing import (
     Any,
@@ -21,6 +25,7 @@ from typing import (
 )
 
 import random
+
 random.seed(42)
 
 from utils.my_exception import ImpossibleToAnswer
@@ -58,41 +63,35 @@ Answer = Union[str, float, Vector, Mapping[str, Any], Sequence[str]]
 
 ## --- Resolver functions -- ##
 
+
 @with_resolved_attributes
 def F_DISTANCE_OBJECT_OBJECT(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
     assert (
-        len(attributes) == 2
-        and "OBJECT_1" in attributes
-        and "OBJECT_2" in attributes        
+        len(attributes) == 2 and "OBJECT_1" in attributes and "OBJECT_2" in attributes
     )
 
     # First we find the pairs of objects visible
-
     visible_timesteps = _get_visible_timesteps_for_attributes_min_objects(
         attributes, world_state, min_objects=2
     )
     # if we are in a multi-image setting, we need to ensure there are enough frames
     if len(visible_timesteps) == 0:
-        raise ImpossibleToAnswer("No timestep with both objects visible.")
-    if(question["task_splits"] == "multi"):
-        visible_timesteps = visible_timesteps[7:]  # need at least 8 frames before
-    
-    timestep = random.choice(visible_timesteps)
+        raise ImpossibleToAnswer("No timestep with both objects visible.")    
+
+    timestep = random.choice(visible_timesteps[7:])
 
     resolved_attributes = _resolve_attributes_visible_at_timestep(
         attributes, world_state, timestep
     )
-    obj1_id = resolved_attributes["OBJECT_1"]["choice"]['id']
-    obj2_id = resolved_attributes["OBJECT_2"]["choice"]['id']
+    _fill_template(question, resolved_attributes)
 
-    obj1_pos = _get_position(
-        world_state, obj1_id, timestep      
-    )
-    obj2_pos = _get_position(
-        world_state, obj2_id, timestep
-    )
+    obj1_id = resolved_attributes["OBJECT_1"]["choice"]["id"]
+    obj2_id = resolved_attributes["OBJECT_2"]["choice"]["id"]
+
+    obj1_pos = _get_position(world_state, obj1_id, timestep)
+    obj2_pos = _get_position(world_state, obj2_id, timestep)
 
     distance = _distance_between(obj1_pos, obj2_pos)
 
@@ -100,24 +99,34 @@ def F_DISTANCE_OBJECT_OBJECT(
         distance, num_answers=4, display_decimals=1, lo=0.0
     )
     labels = uniform_labels(options, integer=False, decimals=1)
-    labels = [str(label) + " meters" for label in labels]
-
-    _fill_template(question, resolved_attributes)
+    labels = [str(label) + " meters" for label in labels]    
 
     questions = []
-    if("single" in question["task_splits"]):
+    if "single" in question["task_splits"]:
+        question_copy = question.copy()
+        question_copy['task_splits'] = 'single'  # ensure the question knows it's        
         questions.append(
-            question,
-            labels,
-            correct_idx,
-            sample_frames_before_timestep(world_state, timestep, num_frames=8, frame_interleave=1),
+            [
+                question_copy,
+                labels,
+                correct_idx,
+                sample_frames_at_timesteps(world_state, [timestep]),
+            ]
         )
-    if("multi" in question["task_splits"]):
+    if "multi" in question["task_splits"]:
+        question_copy = question.copy()
+        question_copy['task_splits'] = 'multi'  # ensure the question knows it's        
         questions.append(
-            question,
-            labels,
-            correct_idx,
-            sample_frames_before_timestep(world_state, timestep, num_frames=8, frame_interleave=1),
+            [
+                question_copy,
+                labels,
+                correct_idx,
+                sample_frames_before_timestep(
+                    world_state, timestep, num_frames=8, frame_interleave=1
+                ),
+            ]
         )
 
     return questions
+
+

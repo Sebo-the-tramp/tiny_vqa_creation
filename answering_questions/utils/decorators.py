@@ -35,12 +35,13 @@ from utils.helpers import _extract_attributes, _resolve_attributes, _fill_templa
 
 #     return wrapper
 
+
 def with_resolved_attributes(func):
     def wrapper(world_state, question, *args, **kwargs):
-        attributes = _extract_attributes(question)      
+        attributes = _extract_attributes(question)
 
         # Useful attributes without need of recomputation every time in each function
-        list_timesteps = list(world_state['simulation'].keys())
+        list_timesteps = list(world_state["simulation"].keys())
         timestep_start = list_timesteps[0]
         timestep_end = list_timesteps[-1]
 
@@ -55,9 +56,9 @@ def with_resolved_attributes(func):
         for obj_id, object in world_state["objects"].items():
             object["id"] = obj_id
             object["name"] = object["model"]
-            # object.pop('model', None)        
+            # object.pop('model', None)
 
         # Pass them along so the wrapped function can use them
-        return func(world_state, question, attributes['attributes'], *args, **kwargs)
+        return func(world_state, question, attributes["attributes"], *args, **kwargs)
 
     return wrapper

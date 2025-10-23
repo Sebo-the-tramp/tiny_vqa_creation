@@ -15,6 +15,7 @@ from categories.spatial_reasoning.spatial_reasoning import (
     get_result_by_name_spatial_reasoning,
 )
 
+
 # ----- UTILS FUNCTIONS
 def read_questions(vqa_path):
     with open(vqa_path, "r") as f:
@@ -79,18 +80,15 @@ def create_vqa(
         total_correct_answers = 0
         not_implemented = 0
         for question_key, question_data in category.items():
-            # note that now question_key can have the task split appended
-            question_key_base = "_".join(question_key.split("_")[:-1])
             if verbose:
                 print(f"  Question Key: {question_key}")
             fn_to_answer_question = get_answer(
-                question_key_base, category_key, mock=arg_mock
+                question_key, category_key, mock=arg_mock
             )
 
             try:
-                question, labels, correct_idx, imgs_idx = fn_to_answer_question(
-                    simulation_steps, question_data
-                )
+                # answer_list = question, labels, correct_idx, imgs_idx
+                answer_list = fn_to_answer_question(simulation_steps, question_data)
             except ImpossibleToAnswer as e:
                 if verbose:
                     print(
@@ -99,50 +97,55 @@ def create_vqa(
                 not_implemented += 1
                 continue
 
-            # changing from image_paths to image_paths
-            file_names = [
-                destination_simulation_id_path + f"/render/{int(frame_idx):06d}.png"
-                for frame_idx in imgs_idx
-            ]
+            for question, labels, correct_idx, imgs_idx in answer_list:
+                # changing from image_paths to image_paths
+                file_names = [
+                    destination_simulation_id_path + f"/render/{int(frame_idx):06d}.png"
+                    for frame_idx in imgs_idx
+                ]
 
-            all_vqa.append(
-                {
-                    "scene": simulation_steps.get("scene", {}).get(
-                        "scene", "unknown_scene"
-                    ),
-                    "simulation_id": simulation_id,
-                    "question": question,
-                    "category": category_key,
-                    "question_key": question_key,
-                    "image_paths": file_names,
-                    "labels": labels,
-                    "answer_index": correct_idx,
-                }
-            )
-
-            if verbose:
-                print(f"  Question: {question}")
-                print(f"  Labels: {labels}")
-                print(f"  Correct Index: {correct_idx}")
-                print(f"  Images Indexes: {imgs_idx}")
-
-            gt = get_gt(question_key_base, category_key, mock=arg_mock)
-            if verbose:
-                print(
-                    f"  Answer from function: {labels[correct_idx]}\n  Should match GT: {gt}"
+                all_vqa.append(
+                    {
+                        "scene": simulation_steps.get("scene", {}).get(
+                            "scene", "unknown_scene"
+                        ),
+                        "simulation_id": simulation_id,
+                        "question": question,
+                        "category": category_key,
+                        "question_key": question_key,
+                        "image_paths": file_names,
+                        "labels": labels,
+                        "answer_index": correct_idx,
+                        "mode": "image-only"
+                        if (question["task_splits"] == "multi")
+                        else "general",
+                    }
                 )
 
-            # Just for development, the rng function given more or less functions will break the integration test
-            if str(labels[correct_idx]) != str(gt):
-                print("\033[91m  WARNING: Answer does not match Ground Truth!\033[0m")
-                # exit(1)
-            else:
-                if str(labels[correct_idx]) == "not_implemented":
-                    not_implemented += 1
+                if verbose:
+                    print(f"  Question: {question}")
+                    print(f"  Labels: {labels}")
+                    print(f"  Correct Index: {correct_idx}")
+                    print(f"  Images Indexes: {imgs_idx}")
+
+                gt = get_gt(question_key, category_key, mock=arg_mock)
+                if verbose:
+                    print(
+                        f"  Answer from function: {labels[correct_idx]}\n  Should match GT: {gt}"
+                    )
+
+                # Just for development, the rng function given more or less functions will break the integration test
+                if str(labels[correct_idx]) != str(gt):
+                    print("\033[91m  WARNING: Answer does not match Ground Truth!\033[0m")
+                    # exit(1)
                 else:
-                    total_correct_answers += 1
-            if verbose:
-                print("===" * 20)
+                    if str(labels[correct_idx]) == "not_implemented":
+                        not_implemented += 1
+                    else:
+                        total_correct_answers += 1
+                if verbose:
+                    print("===" * 20)
+
         total_correct_per_category[category_key] = (
             total_correct_answers,
             not_implemented,
@@ -166,22 +169,6 @@ def create_vqa(
 
     return all_vqa
 
-def split_questions_by_task_splits(questions):
-    # here now we should duplicate if a question have different task splits
-    splitted_questions = {}
-
-    for category_key, category in questions.items():
-        splitted_questions[category_key] = {}
-        for question_key, question_data in category.items():
-            task_splits = question_data.get("task_splits", ["default"])
-            for task_split in task_splits.split("+"):
-                new_question_key = f"{question_key}_{task_split.upper()}"
-                new_question_data = question_data.copy()
-                new_question_data["task_splits"] = task_split
-                splitted_questions[category_key][new_question_key] = new_question_data
-
-    return splitted_questions
-
 def main(args):
     all_vqa = []
 
@@ -193,7 +180,8 @@ def main(args):
 
             questions_raw = read_questions(args.vqa_path + "simple_vqa.json")
 
-            questions = split_questions_by_task_splits(questions_raw)
+            # questions = split_questions_by_task_splits(questions_raw)
+            questions = questions_raw
 
             simulation_id_path = os.path.join(args.simulation_path, simulation_id)
             destination_simulation_id_path = os.path.join(

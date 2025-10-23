@@ -48,6 +48,7 @@ FRAME_STRIDE = int(
 
 # OKAY NO THIS IS ALL TO DO AGAIN USING THE CORRECT SAMPLING AND STUFF
 
+
 @with_resolved_attributes
 def F_TEMPORAL_SEQUENCE_IMAGES(
     world_state: WorldState, question: QuestionPayload, resolved_attributes, **kwargs

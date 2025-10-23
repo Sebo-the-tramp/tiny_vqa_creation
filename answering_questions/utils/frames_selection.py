@@ -3,20 +3,24 @@ from utils.my_exception import ImpossibleToAnswer
 
 MAX_FRAMES = 8
 
-def sample_frames_before_timestep(world_state, timestep, num_frames=8, frame_interleave=1):
+
+def sample_frames_before_timestep(
+    world_state, timestep, num_frames=8, frame_interleave=1
+):
     list_timesteps = list(world_state["simulation"].keys())
     last_frame_idx = list_timesteps.index(timestep)
 
     # if there are not enough frames before -> raise exception
     if last_frame_idx - (frame_interleave * (num_frames - 1)) < 0:
         raise ImpossibleToAnswer("Not enough frames before the timestep to sample.")
-    
+
     imgs_idx = []
     for i in range(num_frames):
-        idx = last_frame_idx - (frame_interleave * (num_frames - 1 - i))        
+        idx = last_frame_idx - (frame_interleave * (num_frames - 1 - i))
         simstep = list_timesteps[idx]
         imgs_idx.append(str(world_state["simulation"][simstep]["frame_idx"]).zfill(6))
     return imgs_idx
+
 
 def uniformly_sample_frames(world_state):
     total_steps = len(world_state["simulation"])
@@ -29,7 +33,7 @@ def sample_frames_at_timesteps(world_state, timesteps):
     total_steps = len(world_state["simulation"])
     imgs_idx = []
     for t in timesteps:
-        idx = str(world_state["simulation"][t]["simstep"]).zfill(6)
+        idx = str(world_state["simulation"][t]["frame_idx"]).zfill(6)
         imgs_idx.append(idx)
     return imgs_idx
 

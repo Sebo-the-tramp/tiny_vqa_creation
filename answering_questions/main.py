@@ -261,14 +261,14 @@ if __name__ == "__main__":
         type=str,
         # default="./sample_simulation_1000_steps_v2_kinematics.json
         # default="/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/output/sims/dl3dv-hf-gso2/3-cg/c-0_no-3_d-3_s-dl3dv-1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_dbgsub-1_20251016_013244",
-        default="/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations",
+        default="/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv",
         # default="/Users/sebastiancavada/Desktop/tmp_Paris/vqa/answering_questions/",
         help="Path to the simulation file containing the scenes.",
     )
     parser.add_argument(
         "--destination_simulation_path",
         type=str,
-        default="/data0/sebastian.cavada/datasets/simulations/output/sims/dl3dv-hf-gso2/3-cg/",
+        default="/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv",
         # default="/Users/sebastiancavada/Desktop/tmp_Paris/vqa/answering_questions/",
         help="Path where the simulation files are stored (on same or different computer).",
     )

@@ -188,6 +188,10 @@ def F_KINEMATICS_DISTANCE_TRAVELED_INTERVAL(
     timestep_end = random.choice(visible_timesteps[(CLIP_LENGTH - 1):])
     timestep_start = visible_timesteps[visible_timesteps.index(timestep_end) - (CLIP_LENGTH - 1)]
 
+    print( visible_timesteps)
+    print( visible_timesteps.index(timestep_end))
+    print( visible_timesteps[visible_timesteps.index(timestep_end) - (CLIP_LENGTH - 1)])
+
     print(f"Timestep start: {timestep_start}, Timestep end: {timestep_end}")
 
     resolved_attributes = resolve_attributes_visible_at_timestep(

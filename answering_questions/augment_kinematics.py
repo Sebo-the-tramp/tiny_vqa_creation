@@ -34,32 +34,36 @@ import argparse
 import sys
 import csv
 import os
+import glob
 from typing import Any, Dict, Iterable, List, Optional, Tuple
 import numpy as np
 
 
-def find_simulation_files(search_roots: Iterable[str]) -> List[str]:
-    """Find simulation.json files located under directories named 'data'."""
-    matches: List[str] = []
-    for root in search_roots:
-        if not root:
-            continue
-        abs_root = os.path.abspath(root)
-        if os.path.isfile(abs_root):
-            if os.path.basename(abs_root) == "simulation.json":
-                matches.append(abs_root)
-            continue
-        if not os.path.isdir(abs_root):
-            continue
-        for dirpath, dirnames, filenames in os.walk(abs_root):
-            dirnames.sort()
-            if "simulation.json" not in filenames:
-                continue
-            parts = os.path.normpath(dirpath).split(os.sep)
-            if "data" in parts:
-                matches.append(os.path.join(dirpath, "simulation.json"))
-    return matches
+# def find_simulation_files(search_roots: Iterable[str]) -> List[str]:
+#     """Find simulation.json files located under directories named 'data'."""
+#     matches: List[str] = []
+#     for root in search_roots:
+#         if not root:
+#             continue
+#         abs_root = os.path.abspath(root)
+#         if os.path.isfile(abs_root):
+#             if os.path.basename(abs_root) == "simulation.json":
+#                 matches.append(abs_root)
+#             continue
+#         if not os.path.isdir(abs_root):
+#             continue
+#         for dirpath, dirnames, filenames in os.walk(abs_root):
+#             dirnames.sort()
+#             if "simulation.json" not in filenames:
+#                 continue
+#             parts = os.path.normpath(dirpath).split(os.sep)
+#             if "data" in parts:
+#                 matches.append(os.path.join(dirpath, "simulation.json"))
+#     return matches
 
+def find_simulation_files(base_dir: str) -> list[str]:
+    pattern = os.path.join(base_dir[0], "*", "*", "*", "simulation.json")
+    return glob.glob(pattern)
 
 def clamp(x, a, b):
     return a if x < a else (b if x > b else x)

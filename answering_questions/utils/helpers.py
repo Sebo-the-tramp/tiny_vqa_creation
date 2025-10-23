@@ -110,7 +110,7 @@ def get_object_state_at_timestep(
         return None
 
     step_data = simulation_steps.get(str(timestep), {})
-    print(step_data['objects'][object_id])
+    # print(step_data['objects'][object_id])
     objects = step_data['objects']
     return objects[object_id]
 

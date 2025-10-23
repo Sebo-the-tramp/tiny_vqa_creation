@@ -167,7 +167,7 @@ def get_continuous_subsequences_min_length(
 
     sorted_timesteps = sorted(int(t.replace(".", "")) for t in timesteps)
     subsequences = []
-    current_subseq = [str(sorted_timesteps[0])]
+    current_subseq = [str(timesteps[0])]
 
     time_interval_in_milliseconds = int(
         (1 / SAMPLING_RATE) * 1000

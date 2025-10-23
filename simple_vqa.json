@@ -79,11 +79,33 @@
             "sub_category": "kinematics",
             "choice": "true_false",
             "question": "Is the <OBJECT> still?"
-        }
-        
-        
+        }                
     },
-    "material_undertanding": {        
+    "material_undertanding": {
+        "F_MASS_OBJECT": {
+            "task_splits": "single+multi",
+            "sub_category": "mass",
+            "choice": "mcq",
+            "question": "What is the mass of the <OBJECT>?"
+        },        
+        "F_MASS_HEAVIEST_OBJECT": {
+            "task_splits": "single+multi",
+            "sub_category": "mass",
+            "choice": "mcq",
+            "question": "Which single object has the greatest mass?"
+        },
+        "F_MASS_LIGHTEST_OBJECT": {
+            "task_splits": "single+multi",
+            "sub_category": "mass",
+            "choice": "mcq",
+            "question": "Which single object has the least mass?"
+        },
+        "F_MASS_COMPARE_OBJECTS": {
+            "task_splits": "single+multi",
+            "sub_category": "mass",
+            "choice": "true_false",
+            "question": "Is the mass of the <OBJECT_1> greater than the mass of the <OBJECT_2>?"
+        }
     },
     "view_point": {        
     },

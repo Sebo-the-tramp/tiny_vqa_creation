@@ -49,8 +49,7 @@
             "question": "How many times does <OBJECT> collide with the scene?"
         }
     },
-    "force": {
-            "task_split": "single",  
+    "force": {            
         "F_FORCE_OF_GRAVITY_OBJECT_TIME": {
             "task_split": "single",
             "question_type": "factual",

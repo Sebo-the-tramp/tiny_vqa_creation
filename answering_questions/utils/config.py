@@ -1,6 +1,5 @@
 # config.py
 import json
-from pathlib import Path
 
 _config = None
 

@@ -1,4 +1,4 @@
-from utils.helpers import _extract_attributes, _resolve_attributes, _fill_template
+from utils.helpers import extract_attributes
 
 
 # original but pretty much difficult to customize
@@ -38,7 +38,7 @@ from utils.helpers import _extract_attributes, _resolve_attributes, _fill_templa
 
 def with_resolved_attributes(func):
     def wrapper(world_state, question, *args, **kwargs):
-        attributes = _extract_attributes(question)
+        attributes = extract_attributes(question)
 
         # Useful attributes without need of recomputation every time in each function
         list_timesteps = list(world_state["simulation"].keys())

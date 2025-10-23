@@ -1,7 +1,7 @@
 # This module provides access to various force-related functions, both real and mock versions.
 # It's an abstraction layer to easily switch between real and mock implementations based on the context.
 
-# deformation_router.py
+# spatial_router.py
 from importlib import import_module
 from functools import lru_cache
 from typing import Callable, Any, Mapping, Union
@@ -15,11 +15,11 @@ Resolver = Callable[[WorldState, QuestionPayload], Answer]
 
 @lru_cache
 def _load_impl_module(mock: bool):
-    modname = ".deformation_mock" if mock else ".deformation_real"
+    modname = ".mechanics_questions" if mock else ".mechanics_real"
     return import_module(modname, package=__package__)
 
 
-def get_function_by_name_deformation(name: str, mock: bool = False) -> Resolver:
+def get_function_by_name_mechanics(name: str, mock: bool = False) -> Resolver:
     mod = _load_impl_module(mock)
     try:
         fn = getattr(mod, name)
@@ -37,11 +37,11 @@ def get_function_by_name_deformation(name: str, mock: bool = False) -> Resolver:
 
 @lru_cache
 def _load_gt_module(mock: bool):
-    modname = ".deformation_mock_results"
+    modname = ".mechanics_questions_results"
     return import_module(modname, package=__package__)
 
 
-def get_result_by_name_deformation(name: str, mock: bool = False) -> Any:
+def get_result_by_name_mechanics(name: str, mock: bool = False) -> Any:
     mod = _load_gt_module(mock)
     try:
         fn = getattr(mod, name)

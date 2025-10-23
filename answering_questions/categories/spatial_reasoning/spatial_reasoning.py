@@ -15,7 +15,7 @@ Resolver = Callable[[WorldState, QuestionPayload], Answer]
 
 @lru_cache
 def _load_impl_module(mock: bool):
-    modname = ".spatial_reasoning_questions" if mock else ".spatial_real"
+    modname = ".spatial_reasoning_questions" if mock else ".spatial_reasoning_real"
     return import_module(modname, package=__package__)
 
 

@@ -4,7 +4,6 @@ import json
 import csv
 import string
 
-from PIL import Image
 
 from utils.encoding_vlm import encode_image_file_to_base64
 
@@ -177,7 +176,7 @@ def normalize_question_json(
             # do a smart replacement
             new_image_path = image_paths[0].rsplit("/", 1)[0] + f"/{label}.png"
             image_paths.append(new_image_path)
-            labels[idx_img] = f"<image>"
+            labels[idx_img] = "<image>"
 
     option_letters = [letters[i] for i in range(min(len(labels), len(letters)))]
     option_lines = []
@@ -209,9 +208,10 @@ def normalize_question_json(
         "file_name": image_paths,
         "description": question_payload.get("description"),
         "question": formatted_question,
-        "mode": "general",
+        "mode": vqa_entry["mode"],
         "idx": idx,
         "split": question_payload.get("split", "val"),
+        "choice_type": question_payload["choice"]
     }
 
     answer_record = {
@@ -221,6 +221,7 @@ def normalize_question_json(
         "sub_type": question_payload.get("category"),
         "ability_type": question_payload.get("ability_type", ability_type),
         "mode": question_record["mode"],
+        "choice_type": question_payload["choice"]
     }
 
     return question_record, answer_record

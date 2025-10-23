@@ -1,0 +1,23 @@
+{   
+    "spatial_reasoning": {
+        "F_LAYOUT_OBJECT_FRONT":{
+            "task_splits": "single+multi",
+            "sub_category": "layout",
+            "choice": "mcq",
+            "question": "Which object is directly in front of the <OBJECT> from the camera's point of view?"
+        }
+    },
+    "mechanics": {
+       
+    },
+    "material_undertanding": {        
+    },
+    "view_point": {        
+    },
+    "temporal": {        
+    },
+    "global": {        
+    },
+    "counter_factual": {
+    }
+}

@@ -4,15 +4,9 @@ import random
 
 import numpy as np
 
-from typing import (
-    Any,
-    Mapping,
-    Optional,
-    Tuple,
-    Union,
-)
+from typing import Any, Mapping, Optional, Tuple, Union, List
 
-from utils.helpers import _as_vector
+from utils.helpers import as_vector
 
 # set random seed for reproducibility
 rng = random.Random(42)
@@ -21,6 +15,49 @@ Number = Union[int, float]
 WorldState = Mapping[str, Any]
 QuestionPayload = Mapping[str, Any]
 Answer = Union[int, float, str]
+
+from utils.helpers import fill_template
+
+from utils.frames_selection import (
+    sample_frames_at_timesteps,
+    sample_frames_before_timestep,
+)
+
+## --- Helper functions --- ##
+
+
+def fill_questions(
+    question, labels, correct_idx, world_state, timestep, resolved_attributes
+) -> List:
+    questions = []
+    if "single" in question["task_splits"]:
+        question_copy = question.copy()
+        question_copy["task_splits"] = "single"  # ensure the question knows it's
+        fill_template(question_copy, resolved_attributes)
+        questions.append(
+            [
+                question_copy,
+                labels,
+                correct_idx,
+                sample_frames_at_timesteps(world_state, [timestep]),
+            ]
+        )
+    if "multi" in question["task_splits"]:
+        question_copy = question.copy()
+        question_copy["task_splits"] = "multi"  # ensure the question knows it's
+        fill_template(question_copy, resolved_attributes)
+        questions.append(
+            [
+                question_copy,
+                labels,
+                correct_idx,
+                sample_frames_before_timestep(
+                    world_state, timestep, num_frames=8, frame_interleave=1
+                ),
+            ]
+        )
+
+    return questions
 
 
 def point_to_plane_distance(point, normal, d):
@@ -37,30 +74,27 @@ def point_to_plane_distance(point, normal, d):
     return np.dot(normal, point) - d
 
 
-# _____________________ SPATIAL HELPERS _____________________
-
-
-def _get_position(
+def get_position(
     world_state: Mapping[str, Any], object_id: str, timestep: str
 ) -> Optional[Tuple[float, ...]]:
     timestep_world = world_state["simulation"][timestep]
     current_timestep_involved_object = timestep_world["objects"][object_id]["obb"][
         "center"
     ]
-    return _as_vector(current_timestep_involved_object)
+    return as_vector(current_timestep_involved_object)
 
 
-def _get_position_camera(
+def get_position_camera(
     world_state: Mapping[str, Any], timestep: str
 ) -> Optional[Tuple[float, ...]]:
     timestep_world = world_state["simulation"][timestep]
     current_timestep_involved_object = timestep_world["camera"]["eye"]
-    return _as_vector(current_timestep_involved_object)
+    return as_vector(current_timestep_involved_object)
 
 
 def get_max_height_from_obb(obb: Mapping[str, Any]) -> float:
     """
-    Given an oriented bounding box (obb), return the maximum height (y coordinate) of the object.
+    Given an oriented bounding box (obb), return the maximum height (z coordinate) of the object.
     """
     center = np.array(obb["center"])
     extents = np.array(obb["extents"])
@@ -72,3 +106,46 @@ def get_max_height_from_obb(obb: Mapping[str, Any]) -> float:
     p_high = center + axes @ (signs * extents)
 
     return p_high[2]  # return the z coordinate since z is up
+
+
+def get_min_height_from_obb(obb: Mapping[str, Any]) -> float:
+    """
+    Given an oriented bounding box (obb), return the minimum height (z coordinate) of the object.
+    """
+    center = np.array(obb["center"])
+    extents = np.array(obb["extents"])
+    axes = np.array(obb["R"])  # 3x3 rotation matrix
+    up = np.array([0.0, 0.0, 1.0])
+
+    # Fast path: choose the sign of each extent by the up-dot for each axis
+    signs = -np.sign(axes.T @ up)  # shape (3,)
+    p_low = center + axes @ (signs * extents)
+
+    return max(
+        0, p_low[2]
+    )  # return the z coordinate since z is up # should not be negative
+
+
+def get_closest_object(
+    world_state: Mapping[str, Any],
+    object_id: str,
+    object_position_at_time: List[float],
+    timestep: str,
+) -> str:
+    min_distance = float("inf")
+    closest_object = None
+
+    for obj_id, obj_data in world_state["objects"].items():
+        if obj_id == object_id:
+            continue
+        obj_position = get_position(world_state, obj_id, timestep)
+        if obj_position is None:
+            continue
+        distance = np.linalg.norm(
+            np.array(object_position_at_time) - np.array(obj_position)
+        )
+        if distance < min_distance:
+            min_distance = distance
+            closest_object = obj_data
+
+    return closest_object

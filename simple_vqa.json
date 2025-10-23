@@ -10,7 +10,7 @@
             "task_splits": "single+multi",
             "sub_category": "distance",
             "choice": "mcq",
-            "question": "What is the distance between the geometrical center of the <OBJECT> and the nearest ground element?"
+            "question": "What is the distance between the lowest point of the <OBJECT> and the nearest ground element?"
         },
         "F_DISTANCE_OBJECT_CAMERA_DISTANCE": {
             "task_splits": "single+multi",
@@ -18,7 +18,7 @@
             "choice": "mcq",
             "question": "What is the distance between the geometrical center of the <OBJECT> and the camera?"
         },
-        "F_DISTANCE_CLOSEST_OBJET_OBJECT": {
+        "F_DISTANCE_CLOSEST_OBJECT_OBJECT": {
             "task_splits": "single+multi",
             "sub_category": "distance",
             "choice": "mcq",
@@ -30,43 +30,67 @@
             "choice": "mcq",
             "question": "What is the volume of the <OBJECT>?"
         },
-        "F_OBJECT_BIGGER": {
+        "F_SIZE_OBJECT_BIGGER": {
             "task_splits": "single+multi",
             "sub_category": "size",
             "choice": "mcq",
-            "question": "Which object is the biggest?"
+            "question": "Which single object has the biggest volume?"
         },
-        "F_OBJECT_SMALLER": {
+        "F_SIZE_OBJECT_SMALLER": {
             "task_splits": "single+multi",
             "sub_category": "size",
             "choice": "mcq",
-            "question": "Which object is the smallest?"
+            "question": "Which single object has the smallest volume?"
+        }        
+    },
+    "mechanics": {
+        "F_KINEMATICS_SPEED_OBJECT": {
+            "task_splits": "multi",
+            "sub_category": "kinematics",
+            "choice": "mcq",
+            "question": "What is the speed of the <OBJECT>?"
+        },
+        "F_KINEMATICS_FASTEST_OBJECT_SPEED": {
+            "task_splits": "multi",
+            "sub_category": "kinematics",
+            "choice": "mcq",
+            "question": "What is the speed of the fastest object?"
+        },
+        "F_KINEMATICS_ACCEL_OBJECT": {
+            "task_splits": "multi",
+            "sub_category": "kinematics",
+            "choice": "mcq",
+            "question": "What is the acceleration of the <OBJECT>?"
+        },
+        "F_KINEMATICS_DISTANCE_TRAVELED_INTERVAL": {
+            "task_splits": "multi",
+            "sub_category": "kinematics",
+            "choice": "mcq",
+            "question": "Considering the geometrical center of the object, how far has the <OBJECT> traveled between during the sequence?"
+        },
+        "F_KINEMATICS_MOVING_OBJECT": {
+            "task_splits": "multi",
+            "sub_category": "kinematics",
+            "choice": "true_false",
+            "question": "Is the <OBJECT> moving?"
+        },
+        "F_KINEMATICS_STILL_OBJECT": {
+            "task_splits": "multi",
+            "sub_category": "kinematics",
+            "choice": "true_false",
+            "question": "Is the <OBJECT> still?"
         }
+        
+        
     },
-    "mechanichs": {
-        "F_DISTANCE": {
-            "task_splits": "single"
-        }        
+    "material_undertanding": {        
     },
-    "material_undertanding": {
-        "F_DISTANCE": {
-            "task_splits": "single"
-        }        
+    "view_point": {        
     },
-    "view_point": {
-        "F_DISTANCE": {
-            "task_splits": "single"
-        }        
-    },
-    "temporal": {
-        "F_DISTANCE": {
-            "task_splits": "single"
-        }        
+    "temporal": {        
     },
     "global": {        
-
     },
-    "counter_factual": {        
-
+    "counter_factual": {
     }
 }

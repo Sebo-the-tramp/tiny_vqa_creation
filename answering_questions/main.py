@@ -15,6 +15,11 @@ from categories.spatial_reasoning.spatial_reasoning import (
     get_result_by_name_spatial_reasoning,
 )
 
+from categories.mechanics.mechanics import (
+    get_function_by_name_mechanics,
+    get_result_by_name_mechanics,
+)
+
 
 # ----- UTILS FUNCTIONS
 def read_questions(vqa_path):
@@ -33,10 +38,12 @@ def read_simulation(simulation_path):
 
 resolver_gt = {
     "spatial_reasoning": get_result_by_name_spatial_reasoning,
+    "mechanics": get_result_by_name_mechanics,
 }
 
 resolver = {
     "spatial_reasoning": get_function_by_name_spatial_reasoning,
+    "mechanics": get_function_by_name_mechanics,
 }
 
 
@@ -89,7 +96,7 @@ def create_vqa(
             try:
                 # answer_list = question, labels, correct_idx, imgs_idx
                 answer_list = fn_to_answer_question(simulation_steps, question_data)
-            except ImpossibleToAnswer as e:
+            except ImpossibleToAnswer:
                 if verbose:
                     print(
                         f"  Question: {question_key} is impossible to answer. Skipping."
@@ -116,8 +123,9 @@ def create_vqa(
                         "image_paths": file_names,
                         "labels": labels,
                         "answer_index": correct_idx,
-                        "mode": "image-only"
-                        if (question["task_splits"] == "multi")
+                        "mode": "image-only", 
+                        "choice": question["choice"]
+                        if (question["task_splits"] == "single")
                         else "general",
                     }
                 )
@@ -136,7 +144,9 @@ def create_vqa(
 
                 # Just for development, the rng function given more or less functions will break the integration test
                 if str(labels[correct_idx]) != str(gt):
-                    print("\033[91m  WARNING: Answer does not match Ground Truth!\033[0m")
+                    print(
+                        "\033[91m  WARNING: Answer does not match Ground Truth!\033[0m"
+                    )
                     # exit(1)
                 else:
                     if str(labels[correct_idx]) == "not_implemented":
@@ -168,6 +178,7 @@ def create_vqa(
     print(sum(total for _, (_, _, total) in total_correct_per_category.items()))
 
     return all_vqa
+
 
 def main(args):
     all_vqa = []

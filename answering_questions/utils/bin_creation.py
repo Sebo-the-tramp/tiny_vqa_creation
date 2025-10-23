@@ -354,10 +354,11 @@ def create_mc_object_names_from_dataset(
         raise ValueError("Ground-truth object name becomes empty after normalization.")
 
     # Normalize datasets
-    ds_norm_set = {norm(x) for x in dataset_labels if norm(x)}
-    if gt_n not in ds_norm_set:
-        # Not required, but nice to know; we still proceed.
-        pass
+    ds_norm_set = {
+        norm(x) for x in dataset_labels if (norm(x) != "" and norm(x) != gt_n)
+    }
+    if gt_n in ds_norm_set:
+        raise ValueError("Ground-truth object name found in dataset labels.")
 
     # Present objects (normalized, unique, excluding GT)
     seen_present = set()

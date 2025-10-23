@@ -10,56 +10,10 @@ from utils.my_exception import ImpossibleToAnswer
 
 # Import categories - alphabetically
 
-from categories.collision.collision import (
-    get_function_by_name_collision,
-    get_result_by_name_collision,
+from categories.spatial_reasoning.spatial_reasoning import (
+    get_function_by_name_spatial_reasoning,
+    get_result_by_name_spatial_reasoning,
 )
-
-from categories.force.force import (
-    get_function_by_name_force,
-    get_result_by_name_force,
-)
-
-from categories.kinematics.kinematics import (
-    get_function_by_name_kinematics,
-    get_result_by_name_kinematics,
-)
-
-from categories.mass.mass import (
-    get_function_by_name_mass,
-    get_result_by_name_mass,
-)
-
-from categories.material.material import (
-    get_function_by_name_material,
-    get_result_by_name_material,
-)
-
-from categories.meta.meta import (
-    get_function_by_name_meta,
-    get_result_by_name_meta,
-)
-
-from categories.spatial.spatial import (
-    get_function_by_name_spatial,
-    get_result_by_name_spatial,
-)
-
-from categories.temporal.temporal import (
-    get_function_by_name_temporal,
-    get_result_by_name_temporal,
-)
-
-from categories.visibility.visibility import (
-    get_function_by_name_visibility,
-    get_result_by_name_visibility,
-)
-
-from categories.volume.volume import (
-    get_function_by_name_volume,
-    get_result_by_name_volume,
-)
-
 
 # ----- UTILS FUNCTIONS
 def read_questions(vqa_path):
@@ -77,29 +31,11 @@ def read_simulation(simulation_path):
 # ----- FUNCTION TO GET ANSWER FROM SIMULTAION
 
 resolver_gt = {
-    "collision": get_result_by_name_collision,
-    "force": get_result_by_name_force,
-    "kinematics": get_result_by_name_kinematics,
-    "mass": get_result_by_name_mass,
-    "material": get_result_by_name_material,
-    "meta": get_result_by_name_meta,
-    "spatial": get_result_by_name_spatial,
-    "temporal": get_result_by_name_temporal,
-    "visibility": get_result_by_name_visibility,
-    "volume": get_result_by_name_volume,
+    "spatial_reasoning": get_result_by_name_spatial_reasoning,
 }
 
 resolver = {
-    "collision": get_function_by_name_collision,
-    "force": get_function_by_name_force,
-    "kinematics": get_function_by_name_kinematics,
-    "mass": get_function_by_name_mass,
-    "material": get_function_by_name_material,
-    "meta": get_function_by_name_meta,
-    "spatial": get_function_by_name_spatial,
-    "temporal": get_function_by_name_temporal,
-    "visibility": get_function_by_name_visibility,
-    "volume": get_function_by_name_volume,
+    "spatial_reasoning": get_function_by_name_spatial_reasoning,
 }
 
 
@@ -143,10 +79,12 @@ def create_vqa(
         total_correct_answers = 0
         not_implemented = 0
         for question_key, question_data in category.items():
+            # note that now question_key can have the task split appended
+            question_key_base = "_".join(question_key.split("_")[:-1])
             if verbose:
                 print(f"  Question Key: {question_key}")
             fn_to_answer_question = get_answer(
-                question_key, category_key, mock=arg_mock
+                question_key_base, category_key, mock=arg_mock
             )
 
             try:
@@ -188,7 +126,7 @@ def create_vqa(
                 print(f"  Correct Index: {correct_idx}")
                 print(f"  Images Indexes: {imgs_idx}")
 
-            gt = get_gt(question_key, category_key, mock=arg_mock)
+            gt = get_gt(question_key_base, category_key, mock=arg_mock)
             if verbose:
                 print(
                     f"  Answer from function: {labels[correct_idx]}\n  Should match GT: {gt}"
@@ -228,6 +166,21 @@ def create_vqa(
 
     return all_vqa
 
+def split_questions_by_task_splits(questions):
+    # here now we should duplicate if a question have different task splits
+    splitted_questions = {}
+
+    for category_key, category in questions.items():
+        splitted_questions[category_key] = {}
+        for question_key, question_data in category.items():
+            task_splits = question_data.get("task_splits", ["default"])
+            for task_split in task_splits.split("+"):
+                new_question_key = f"{question_key}_{task_split.upper()}"
+                new_question_data = question_data.copy()
+                new_question_data["task_splits"] = task_split
+                splitted_questions[category_key][new_question_key] = new_question_data
+
+    return splitted_questions
 
 def main(args):
     all_vqa = []
@@ -238,10 +191,9 @@ def main(args):
         else:
             print("Found simulation folder:", simulation_id)
 
-            questions_raw = read_questions(args.vqa_pat + "simple_vqa.json")
+            questions_raw = read_questions(args.vqa_path + "simple_vqa.json")
 
-            # here now we should duplicate if a question have different task splits
-
+            questions = split_questions_by_task_splits(questions_raw)
 
             simulation_id_path = os.path.join(args.simulation_path, simulation_id)
             destination_simulation_id_path = os.path.join(
@@ -303,7 +255,7 @@ if __name__ == "__main__":
         type=str,
         # default="./sample_simulation_1000_steps_v2_kinematics.json
         # default="/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/output/sims/dl3dv-hf-gso2/3-cg/c-0_no-3_d-3_s-dl3dv-1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_dbgsub-1_20251016_013244",
-        default="/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/output/sims/dl3dv-hf-gso2/3-cg/",
+        default="/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations",
         # default="/Users/sebastiancavada/Desktop/tmp_Paris/vqa/answering_questions/",
         help="Path to the simulation file containing the scenes.",
     )

@@ -17,6 +17,8 @@ from typing import (
     cast,
 )
 
+from utils.my_exception import ImpossibleToAnswer
+
 # set random seed for reproducibility
 rng = random.Random(42)
 
@@ -123,6 +125,31 @@ def get_all_objects_state_at_time(
     return objects
 
 
+def _get_visible_timesteps_for_attributes_min_objects(
+    attributes: List[Mapping[str, Any]], world_state: Mapping[str, Any], min_objects=1) -> List[str]:
+    visible_timesteps = []
+
+    for attribute in attributes:
+        attribute_category = attribute.split("_")[
+            0
+        ]  # Get the part before any underscore
+        if attribute_category == "OBJECT" or attribute_category == "OBJECT-CATEGORY":                    
+            for timestep in world_state.get("simulation", {}).keys():
+                visible_objects_id = [] 
+                for obj in _iter_objects(world_state):
+                    obj_id = obj.get("id")
+                    if not obj_id:
+                        continue
+                    obj_state = get_object_state_at_timestep(world_state, obj_id, timestep)
+                    
+                    if obj_state and obj_state["fov_visibility"] > 0.25: # at least 25% visible for now cause of a bug
+                        visible_objects_id.append(obj_id)
+                if len(visible_objects_id) >= min_objects:
+                    visible_timesteps.append(timestep)
+    return visible_timesteps
+
+
+
 def _resolve_attributes(
     attributes: List[Mapping[str, Any]], world_state: Mapping[str, Any]
 ) -> Mapping[str, Any]:
@@ -134,6 +161,26 @@ def _resolve_attributes(
             0
         ]  # Get the part before any underscore
         result = resolver[attribute_category](world_state)
+
+        attribute_resolved[attribute]["choice"] = result
+        attribute_resolved[attribute]["category"] = attribute_category
+
+    return attribute_resolved
+
+def _resolve_attributes_visible_at_timestep(
+    attributes: List[Mapping[str, Any]], world_state: Mapping[str, Any], 
+    timestep: str
+) -> Mapping[str, Any]:
+    attribute_resolved = {}
+
+    copy_of_world_state = world_state.copy()
+
+    for attribute in attributes:
+        attribute_resolved[attribute] = {}
+        attribute_category = attribute.split("_")[
+            0
+        ]  # Get the part before any underscore
+        result = resolver[attribute_category](copy_of_world_state, visible_at_timestep=timestep)
 
         attribute_resolved[attribute]["choice"] = result
         attribute_resolved[attribute]["category"] = attribute_category
@@ -154,13 +201,17 @@ def _fill_template(
             question["question"] = question["question"].replace(
                 f"<{attribute}>",
                 resolved_attributes[attribute]["choice"]["model"],
-            )
+            )        
         else:
             question["question"] = question["question"].replace(
                 f"<{attribute}>",
                 str(resolved_attributes[attribute]["choice"])
                 + resolve_units(attribute),
             )
+    
+    # check if there is a single frame or multi frame task
+    if question["task_splits"] == "multi":
+        question["question"] = "Consider all frames, but answer only based on the last frame." + question["question"]
 
 
 def get_camera(world_state: Mapping[str, Any]) -> Mapping[str, Any]:
@@ -182,16 +233,33 @@ def get_random_material(world_state: Mapping[str, Any]) -> str:
     return rng.choice(list(materials))
 
 
-def get_random_object(
-    world_state: Mapping[str, Any], OBJECT_CATEGORY: Optional[str] = None
+def get_random_object_and_remove(
+    world_state: Mapping[str, Any], OBJECT_CATEGORY: Optional[str] = None, 
+    visible_at_timestep: str = None
 ) -> Mapping[str, Any]:
     # objects = list(_objects_of_type(world_state, OBJECT_CATEGORY))
     # if not objects:
-    #     raise ValueError(f"No objects found of type '{OBJECT_CATEGORY}'")
+    #     raise ValueError(f"No objects found of type '{OBJECT_CATEGORY}'")    
 
     objects = world_state["objects"]
+    if visible_at_timestep is not None:
+        visible_objects = []
+        for obj_id, object in objects.items():
+            obj_state = get_object_state_at_timestep(world_state, obj_id, visible_at_timestep)
+            if obj_state["fov_visibility"] > 0.05: # at least 5% visible for now cause of a bug            
+                object["id"] = obj_id
+                visible_objects.append(object)                  
+        objects = {obj["id"]: obj for obj in visible_objects}
 
-    return rng.choice(list(objects.values()))
+    # also if no visible objects found, we raise an error
+    if not objects:
+        raise ImpossibleToAnswer(f"No objects found of type '{OBJECT_CATEGORY}'")
+
+    object_chosen = rng.choice(list(objects.values()))
+
+    del world_state['objects'][object_chosen['id']]
+
+    return object_chosen
 
 
 def get_random_object_visible(
@@ -257,7 +325,7 @@ resolver = {
     ),  # random mass between 0.1 and 5 kg
     "MATERIAL": get_random_material,
     "OBJECT-CATEGORY": get_random_OBJECT_CATEGORY,
-    "OBJECT": get_random_object,
+    "OBJECT": get_random_object_and_remove,
     "STRESS-THRESHOLD": lambda ws: round(
         rng.uniform(0.0, 10.0), 1
     ),  # random stress threshold between 10 and 100 MPa

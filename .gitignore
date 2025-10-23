@@ -9,3 +9,6 @@ data/
 output_done/
 
 answering_questions/categories_old/
+
+simple_vqa_old.json
+simple_vqa_m_old.json

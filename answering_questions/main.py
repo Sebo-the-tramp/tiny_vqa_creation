@@ -10,39 +10,19 @@ from utils.my_exception import ImpossibleToAnswer
 
 # Import categories - alphabetically
 
-from categories.collision.collision import (
-    get_function_by_name_collision,
-    get_result_by_name_collision,
+from categories.spatial_reasoning.spatial_reasoning import (
+    get_function_by_name_spatial_reasoning,
+    get_result_by_name_spatial_reasoning,
 )
 
-from categories.force.force import (
-    get_function_by_name_force,
-    get_result_by_name_force,
+from categories.mechanics.mechanics import (
+    get_function_by_name_mechanics,
+    get_result_by_name_mechanics,
 )
 
-from categories.kinematics.kinematics import (
-    get_function_by_name_kinematics,
-    get_result_by_name_kinematics,
-)
-
-from categories.mass.mass import (
-    get_function_by_name_mass,
-    get_result_by_name_mass,
-)
-
-from categories.material.material import (
-    get_function_by_name_material,
-    get_result_by_name_material,
-)
-
-from categories.meta.meta import (
-    get_function_by_name_meta,
-    get_result_by_name_meta,
-)
-
-from categories.spatial.spatial import (
-    get_function_by_name_spatial,
-    get_result_by_name_spatial,
+from categories.material_understanding.material_understanding import (
+    get_function_by_name_material_understanding,
+    get_result_by_name_material_understanding,
 )
 
 from categories.temporal.temporal import (
@@ -50,14 +30,9 @@ from categories.temporal.temporal import (
     get_result_by_name_temporal,
 )
 
-from categories.visibility.visibility import (
-    get_function_by_name_visibility,
-    get_result_by_name_visibility,
-)
-
-from categories.volume.volume import (
-    get_function_by_name_volume,
-    get_result_by_name_volume,
+from categories.viewpoint.viewpoint import (
+    get_function_by_name_viewpoint,
+    get_result_by_name_viewpoint,
 )
 
 
@@ -77,29 +52,19 @@ def read_simulation(simulation_path):
 # ----- FUNCTION TO GET ANSWER FROM SIMULTAION
 
 resolver_gt = {
-    "collision": get_result_by_name_collision,
-    "force": get_result_by_name_force,
-    "kinematics": get_result_by_name_kinematics,
-    "mass": get_result_by_name_mass,
-    "material": get_result_by_name_material,
-    "meta": get_result_by_name_meta,
-    "spatial": get_result_by_name_spatial,
+    "spatial_reasoning": get_result_by_name_spatial_reasoning,
+    "mechanics": get_result_by_name_mechanics,
+    "material_understanding": get_result_by_name_material_understanding,
     "temporal": get_result_by_name_temporal,
-    "visibility": get_result_by_name_visibility,
-    "volume": get_result_by_name_volume,
+    "view_point": get_result_by_name_viewpoint,
 }
 
 resolver = {
-    "collision": get_function_by_name_collision,
-    "force": get_function_by_name_force,
-    "kinematics": get_function_by_name_kinematics,
-    "mass": get_function_by_name_mass,
-    "material": get_function_by_name_material,
-    "meta": get_function_by_name_meta,
-    "spatial": get_function_by_name_spatial,
+    "spatial_reasoning": get_function_by_name_spatial_reasoning,
+    "mechanics": get_function_by_name_mechanics,
+    "material_understanding": get_function_by_name_material_understanding,
     "temporal": get_function_by_name_temporal,
-    "visibility": get_function_by_name_visibility,
-    "volume": get_function_by_name_volume,
+    "view_point": get_function_by_name_viewpoint,
 }
 
 
@@ -150,10 +115,9 @@ def create_vqa(
             )
 
             try:
-                question, labels, correct_idx, imgs_idx = fn_to_answer_question(
-                    simulation_steps, question_data
-                )
-            except ImpossibleToAnswer as e:
+                # answer_list = question, labels, correct_idx, imgs_idx
+                answer_list = fn_to_answer_question(simulation_steps, question_data)
+            except ImpossibleToAnswer:
                 if verbose:
                     print(
                         f"  Question: {question_key} is impossible to answer. Skipping."
@@ -161,50 +125,58 @@ def create_vqa(
                 not_implemented += 1
                 continue
 
-            # changing from image_paths to image_paths
-            file_names = [
-                destination_simulation_id_path + f"/render/{int(frame_idx):06d}.png"
-                for frame_idx in imgs_idx
-            ]
+            for question, labels, correct_idx, imgs_idx in answer_list:
+                # changing from image_paths to image_paths
+                file_names = [
+                    destination_simulation_id_path + f"/render/{int(frame_idx):06d}.png"
+                    for frame_idx in imgs_idx
+                ]
 
-            all_vqa.append(
-                {
-                    "scene": simulation_steps.get("scene", {}).get(
-                        "scene", "unknown_scene"
-                    ),
-                    "simulation_id": simulation_id,
-                    "question": question,
-                    "category": category_key,
-                    "question_key": question_key,
-                    "image_paths": file_names,
-                    "labels": labels,
-                    "answer_index": correct_idx,
-                }
-            )
-
-            if verbose:
-                print(f"  Question: {question}")
-                print(f"  Labels: {labels}")
-                print(f"  Correct Index: {correct_idx}")
-                print(f"  Images Indexes: {imgs_idx}")
-
-            gt = get_gt(question_key, category_key, mock=arg_mock)
-            if verbose:
-                print(
-                    f"  Answer from function: {labels[correct_idx]}\n  Should match GT: {gt}"
+                all_vqa.append(
+                    {
+                        "scene": simulation_steps.get("scene", {}).get(
+                            "scene", "unknown_scene"
+                        ),
+                        "simulation_id": simulation_id,
+                        "question": question,
+                        "category": category_key,
+                        "question_key": question_key,
+                        "image_paths": file_names,
+                        "labels": labels,
+                        "answer_index": correct_idx,
+                        "mode": "image-only"
+                        if question["task_splits"] == "single"
+                        else "general",
+                        "choice": question["choice"],
+                    }
                 )
 
-            # Just for development, the rng function given more or less functions will break the integration test
-            if str(labels[correct_idx]) != str(gt):
-                print("\033[91m  WARNING: Answer does not match Ground Truth!\033[0m")
-                # exit(1)
-            else:
-                if str(labels[correct_idx]) == "not_implemented":
-                    not_implemented += 1
+                if verbose:
+                    print(f"  Question: {question}")
+                    print(f"  Labels: {labels}")
+                    print(f"  Correct Index: {correct_idx}")
+                    print(f"  Images Indexes: {imgs_idx}")
+
+                gt = get_gt(question_key, category_key, mock=arg_mock)
+                if verbose:
+                    print(
+                        f"  Answer from function: {labels[correct_idx]}\n  Should match GT: {gt}"
+                    )
+
+                # Just for development, the rng function given more or less functions will break the integration test
+                if str(labels[correct_idx]) != str(gt):
+                    print(
+                        "\033[93m  WARNING: Answer does not match Ground Truth!\033[0m"
+                    )
+                    # exit(1)
                 else:
-                    total_correct_answers += 1
-            if verbose:
-                print("===" * 20)
+                    if str(labels[correct_idx]) == "not_implemented":
+                        not_implemented += 1
+                    else:
+                        total_correct_answers += 1
+                if verbose:
+                    print("===" * 20)
+
         total_correct_per_category[category_key] = (
             total_correct_answers,
             not_implemented,
@@ -238,10 +210,10 @@ def main(args):
         else:
             print("Found simulation folder:", simulation_id)
 
-            questions_raw = read_questions(args.vqa_pat + "simple_vqa.json")
+            questions_raw = read_questions(args.vqa_path + "simple_vqa.json")
 
-            # here now we should duplicate if a question have different task splits
-
+            # questions = split_questions_by_task_splits(questions_raw)
+            questions = questions_raw
 
             simulation_id_path = os.path.join(args.simulation_path, simulation_id)
             destination_simulation_id_path = os.path.join(
@@ -303,14 +275,14 @@ if __name__ == "__main__":
         type=str,
         # default="./sample_simulation_1000_steps_v2_kinematics.json
         # default="/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/output/sims/dl3dv-hf-gso2/3-cg/c-0_no-3_d-3_s-dl3dv-1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_dbgsub-1_20251016_013244",
-        default="/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/output/sims/dl3dv-hf-gso2/3-cg/",
+        default="/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg",
         # default="/Users/sebastiancavada/Desktop/tmp_Paris/vqa/answering_questions/",
         help="Path to the simulation file containing the scenes.",
     )
     parser.add_argument(
         "--destination_simulation_path",
         type=str,
-        default="/data0/sebastian.cavada/datasets/simulations/output/sims/dl3dv-hf-gso2/3-cg/",
+        default="/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg",
         # default="/Users/sebastiancavada/Desktop/tmp_Paris/vqa/answering_questions/",
         help="Path where the simulation files are stored (on same or different computer).",
     )
@@ -350,5 +322,7 @@ if __name__ == "__main__":
         help="Maximum number of images to save for VQA.",
     )
     args = parser.parse_args()
+
+    timestart = os.times()
 
     main(args)

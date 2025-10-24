@@ -1,0 +1,129 @@
+"""
+Mock visibility reasoning resolvers.
+
+These helpers extract best-effort visibility answers from the provided world state.
+They operate on lightweight metadata (positions, orientations, region tags, etc.)
+and fall back to sensible defaults when information is missing.
+"""
+
+from __future__ import annotations
+
+
+from typing import (
+    Any,
+    Mapping,
+    Sequence,
+    Tuple,
+    Union,
+)
+
+from utils.my_exception import ImpossibleToAnswer
+
+import random
+
+Number = Union[int, float]
+Vector = Tuple[float, float, float]
+WorldState = Mapping[str, Any]
+QuestionPayload = Mapping[str, Any]
+Answer = Union[str, float, Vector, Mapping[str, Any], Sequence[str]]
+
+from utils.decorators import with_resolved_attributes
+
+from utils.bin_creation import (
+    create_mc_options_around_gt,
+    uniform_labels,
+    create_mc_object_names_from_dataset
+)
+
+from utils.helpers import (
+    iter_objects,
+    fill_questions,    
+    distance_between,
+    resolve_attributes,
+    get_object_state_at_timestep,
+    resolve_attributes_visible_at_timestep,
+    get_visible_timesteps_for_attributes_min_objects,
+)
+
+from utils.all_objects import get_all_objects_names
+
+## --- Resolver functions -- ##
+
+
+@with_resolved_attributes
+def F_VISIBILITY_OBJECT(
+    world_state: WorldState, question: QuestionPayload, attributes, **kwargs
+) -> int:
+    assert len(attributes) == 0
+    
+     # First we find the pairs of objects visible
+    visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
+        ["OBJECT"], world_state, min_objects=2
+    )
+    # if we are in a multi-image setting, we need to ensure there are enough frames
+    if len(visible_timesteps) == 0:
+        raise ImpossibleToAnswer("No timestep with both objects visible.")
+
+    if "multi" in question.get("task_splits", ""):
+        timestep = random.choice(visible_timesteps[7:])
+    else:
+        timestep = random.choice(visible_timesteps)
+
+    resolved_attributes = resolve_attributes_visible_at_timestep(
+        ["OBJECT"], world_state, timestep
+    )
+
+    object = resolved_attributes["OBJECT"]['choice']
+
+    presents = [obj["name"] for obj in iter_objects(world_state)]
+    all_objects = get_all_objects_names()
+
+    all_objects_minus_present = [obj for obj in all_objects if obj not in presents]
+
+    labels, correct_idx = create_mc_object_names_from_dataset(
+        object["name"], all_objects_minus_present, [], num_answers=4
+    )
+
+    return fill_questions(
+        question, labels, correct_idx, world_state, timestep, resolved_attributes
+    )    
+
+
+@with_resolved_attributes
+def F_VISIBILITY_PERCENTAGE_OBJECT(
+    world_state: WorldState, question: QuestionPayload, attributes, **kwargs
+) -> int:
+    # First we find the pairs of objects visible
+    resolved_attributes = resolve_attributes(
+        ["OBJECT"], world_state
+    )
+
+    all_timesteps = list(world_state["simulation"].keys())
+
+    if "multi" in question.get("task_splits", ""):
+        timestep = random.choice(all_timesteps[7:])
+    else:
+        timestep = random.choice(all_timesteps)
+
+    object = resolved_attributes["OBJECT"]['choice']
+    visibility_object = get_object_state_at_timestep(
+        world_state, object["id"], timestep
+    )["fov_visibility"]
+
+    if visibility_object < 0.25:
+        correct_idx = 0
+    elif visibility_object < 0.5:
+        correct_idx = 1
+    elif visibility_object < 0.75:
+        correct_idx = 2
+    else:
+        correct_idx = 3
+
+    labels = ["0-25%", "26-50%", "51-75%", "76-100%"]
+
+    return fill_questions(
+        question, labels, correct_idx, world_state, timestep, resolved_attributes
+    )    
+
+
+## --- Camera characteristics resolvers --- ##

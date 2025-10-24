@@ -1,7 +1,6 @@
 import json
 import glob
 import os
-import shutil
 
 
 def read_simulation_json_files():

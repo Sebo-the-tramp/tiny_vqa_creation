@@ -20,7 +20,7 @@ from typing import (
 )
 
 from utils.helpers import (
-    _get_random_integer,
+    get_random_integer,
 )
 
 import random
@@ -42,11 +42,9 @@ RENDER_STEP = 1.0 / SAMPLING_RATE
 
 # I want to sample every quarter of a second
 FRAME_STRIDE = int(
-    -(-0.25 // SAVE_INTERVAL)
-)  # same as math.ceil(0.25 / SAVE_INTERVAL) but better quarter of a second
+    -(-0.25 // RENDER_STEP)
+)  # same as math.ceil(0.25 / RENDER_STEP) but better quarter of a second
 
-
-# OKAY NO THIS IS ALL TO DO AGAIN USING THE CORRECT SAMPLING AND STUFF
 
 @with_resolved_attributes
 def F_TEMPORAL_SEQUENCE_IMAGES(
@@ -58,9 +56,9 @@ def F_TEMPORAL_SEQUENCE_IMAGES(
     n_frames = 4
 
     total_frames = len(world_state["simulation"])
-    min = 0
-    max = total_frames - (n_frames * FRAME_STRIDE) - 1
-    start_frame = _get_random_integer(min, max)
+    min_frame = 0
+    max_frame = total_frames - (n_frames * FRAME_STRIDE) - 1
+    start_frame = get_random_integer(min_frame, max_frame)
     end_frame = start_frame + (n_frames * FRAME_STRIDE) - 1
 
     imgs_idx = uniformly_sample_frames_start_end_delta(
@@ -77,14 +75,14 @@ def F_TEMPORAL_SEQUENCE_IMAGES(
     # so here sequence will correspond to the order chose
     other_choices = ["".join(random.sample(choices, len(choices))) for _ in range(3)]
 
-    correct_index = _get_random_integer(0, 3)
+    correct_index = get_random_integer(0, 3)
     labels = (
         other_choices[:correct_index]
         + [choices_correct_order]
         + other_choices[correct_index:]
     )
 
-    return (question, labels, correct_index, shuffled_imgs_idx)
+    return [[question, labels, correct_index, shuffled_imgs_idx]]
 
 
 @with_resolved_attributes
@@ -96,35 +94,37 @@ def F_TEMPORAL_PREDICTION_NEXT_IMAGE(
     assert len(resolved_attributes) == 0
     n_frames = 5
 
-    min = 0
-    total_steps = len(world_state["simulation"])
-    max = total_steps - (n_frames * FRAME_STRIDE) - 1
+    total_frames = len(world_state["simulation"])
+    min_frame = 0
+    max_frame = total_frames - (n_frames * FRAME_STRIDE) - 1
+    start_frame = get_random_integer(min_frame, max_frame)
+    end_frame = start_frame + (n_frames * FRAME_STRIDE) - 1
 
-    sequence = [
-        f"{(i * DELTA_TIMESTEP)}".zfill(6) for i in range(total_steps // DELTA_TIMESTEP)
-    ]
+    all_frames_idx = uniformly_sample_frames_start_end_delta(
+        0, total_frames, 1
+    )
 
-    start_timestep = _get_random_integer(min, max)
+    sequence_idx = uniformly_sample_frames_start_end_delta(
+        start_frame, end_frame, FRAME_STRIDE
+    )
 
-    given_sequence = sequence[
-        start_timestep : start_timestep + 4
-    ]  # this is what we need next
-    next_image = sequence[start_timestep + 4]
+    given_sequence = sequence_idx[:4]
+    next_image = sequence_idx[4]
 
-    confounding_images = sequence[:start_timestep] + sequence[start_timestep + 5 :]
+    confounding_images = all_frames_idx[:start_frame] + all_frames_idx[end_frame:]
 
     random.shuffle(confounding_images)
 
     confounding_images = confounding_images[:3]
 
-    correct_index = _get_random_integer(0, 3)
+    correct_index = get_random_integer(0, 3)
     labels = (
         confounding_images[:correct_index]
         + [next_image]
         + confounding_images[correct_index:]
     )
 
-    return question, labels, correct_index, given_sequence
+    return [[question, labels, correct_index, given_sequence]]
 
 
 @with_resolved_attributes
@@ -134,36 +134,39 @@ def F_TEMPORAL_PREDICTION_PREVIOUS_IMAGE(
     """here we select a sequence of uniformly sampled images and return the next with random
     position in the simulations steps"""
     assert len(resolved_attributes) == 0
+    n_frames = 5
 
-    total_steps = len(world_state["simulation"])
-    min = 1
-    max = (total_steps // DELTA_TIMESTEP) - (N_FRAMES)
+    total_frames = len(world_state["simulation"])
+    min_frame = 0
+    max_frame = total_frames - (n_frames * FRAME_STRIDE) - 1
+    start_frame = get_random_integer(min_frame, max_frame)
+    end_frame = start_frame + (n_frames * FRAME_STRIDE) - 1
 
-    sequence = [
-        f"{(i * DELTA_TIMESTEP)}".zfill(6) for i in range(total_steps // DELTA_TIMESTEP)
-    ]
+    all_frames_idx = uniformly_sample_frames_start_end_delta(
+        0, total_frames, 1
+    )
 
-    start_timestep = _get_random_integer(min, max)
+    sequence_idx = uniformly_sample_frames_start_end_delta(
+        start_frame, end_frame, FRAME_STRIDE
+    )
 
-    given_sequence = sequence[
-        start_timestep : start_timestep + 4
-    ]  # this is what we need next
-    previous_image = sequence[start_timestep - 1]
+    given_sequence = sequence_idx[1:]
+    next_image = sequence_idx[0]
 
-    confounding_images = sequence[: start_timestep - 1] + sequence[start_timestep + 4 :]
+    confounding_images = all_frames_idx[:start_frame] + all_frames_idx[end_frame:]
 
     random.shuffle(confounding_images)
 
     confounding_images = confounding_images[:3]
 
-    correct_index = _get_random_integer(0, 3)
+    correct_index = get_random_integer(0, 3)
     labels = (
         confounding_images[:correct_index]
-        + [previous_image]
+        + [next_image]
         + confounding_images[correct_index:]
     )
 
-    return question, labels, correct_index, given_sequence
+    return [[question, labels, correct_index, given_sequence]]
 
 
 @with_resolved_attributes
@@ -174,37 +177,44 @@ def F_TEMPORAL_PREDICTION_MISSING_IMAGE(
     position in the simulations steps"""
     assert len(resolved_attributes) == 0
 
-    total_steps = len(world_state["simulation"])
-    min = 1
-    max = (total_steps // DELTA_TIMESTEP) - (N_FRAMES + 1)
+    n_frames = 5
 
-    sequence = [
-        f"{(i * DELTA_TIMESTEP)}".zfill(6) for i in range(total_steps // DELTA_TIMESTEP)
-    ]
+    total_frames = len(world_state["simulation"])
+    min_frame = 0
+    max_frame = total_frames - (n_frames * FRAME_STRIDE) - 1
+    start_frame = get_random_integer(min_frame, max_frame)
+    end_frame = start_frame + (n_frames * FRAME_STRIDE) - 1
 
-    start_timestep = _get_random_integer(min, max)
+    all_frames_idx = uniformly_sample_frames_start_end_delta(
+        0, total_frames, 1
+    )
 
-    given_sequence_initial = sequence[start_timestep : start_timestep + 5]
+    sequence_idx = uniformly_sample_frames_start_end_delta(
+        start_frame, end_frame, FRAME_STRIDE
+    )
 
-    # assumption
-    # we do this to ensure that the in the confounding images, we do not have by chance
-    # another one that could complete the sequence as the first or last
-    confounding_images = sequence[: start_timestep - 1] + sequence[start_timestep + 6 :]
+    # 0 - start_frame - 2*FRAME_STRIDE ... start_frame ... end_frame ... end_frame + 2*FRAME_STRIDE - total_frames
+    first_possible = max(0, start_frame - 2 * FRAME_STRIDE)
+    last_possible = min(total_frames, end_frame + 2 * FRAME_STRIDE)
+
+    confounding_images = (
+        all_frames_idx[:first_possible] + all_frames_idx[last_possible:]
+    )
 
     random.shuffle(confounding_images)
 
     confounding_images = confounding_images[:3]
 
-    index_of_image_to_remove = _get_random_integer(0, 4)
-    given_sequence = given_sequence_initial.copy()
+    index_of_image_to_remove = get_random_integer(0, 4)
+    given_sequence = sequence_idx.copy()
     given_sequence.pop(index_of_image_to_remove)
 
-    correct_index = _get_random_integer(0, 3)
+    correct_index = get_random_integer(0, 3)
 
     labels = (
         confounding_images[:correct_index]
-        + [given_sequence_initial[index_of_image_to_remove]]
+        + [sequence_idx[index_of_image_to_remove]]
         + confounding_images[correct_index:]
     )
 
-    return question, labels, correct_index, given_sequence
+    return [[question, labels, correct_index, given_sequence]]

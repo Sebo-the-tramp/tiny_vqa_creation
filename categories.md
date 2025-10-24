@@ -84,3 +84,11 @@ answer_type -> mcq
 
 new_categories:
 
+
+rsync 
+
+```bash 
+rsync -avz -e "ssh -i ~/.ssh/id_rsa_karolina" "it4i-thvu@login2.karolina.it4i.cz:/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/basic/4-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746" ./
+
+# /mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/basic/1-cg/c-1_no-1_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251021_223328
+```

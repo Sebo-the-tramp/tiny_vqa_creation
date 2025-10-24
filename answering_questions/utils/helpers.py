@@ -17,6 +17,11 @@ from typing import (
     cast,
 )
 
+from copy import deepcopy
+from utils.config import get_config
+
+from utils.my_exception import ImpossibleToAnswer
+
 # set random seed for reproducibility
 rng = random.Random(42)
 
@@ -25,10 +30,56 @@ WorldState = Mapping[str, Any]
 QuestionPayload = Mapping[str, Any]
 Answer = Union[int, float, str]
 
-MOVEMENT_TOLERANCE = 1e-3
-DEFAULT_DISPLACEMENT_THRESHOLD = 2.0
-FPS = 100.0  # frames per second
-DELTA_FRAMES = 0.01
+from utils.frames_selection import (
+    sample_frames_at_timesteps,
+    sample_frames_before_timestep,
+)
+
+SAMPLING_RATE = get_config()["sampling_rate"]
+VISIBILITY_THRESHOLD = get_config()["visibility_threshold"]
+
+SAMPLING_RATE = get_config()["sampling_rate"]
+RENDER_STEP = 1.0 / SAMPLING_RATE
+
+# I want to sample every quarter of a second
+FRAME_STRIDE = int(
+    -(-0.25 // RENDER_STEP)
+)  # same as math.ceil(0.25 / RENDER_STEP) but better quarter of a second
+
+
+def fill_questions(
+    question, labels, correct_idx, world_state, timestep, resolved_attributes
+) -> List:
+    questions = []
+    if "single" in question["task_splits"]:
+        question_copy = question.copy()
+        question_copy["task_splits"] = "single"  # ensure the question knows it's
+        fill_template(question_copy, resolved_attributes)
+        questions.append(
+            [
+                question_copy,
+                labels,
+                correct_idx,
+                sample_frames_at_timesteps(world_state, [timestep]),
+            ]
+        )
+    if "multi" in question["task_splits"]:
+        question_copy = question.copy()
+        question_copy["task_splits"] = "multi"  # ensure the question knows it's
+        fill_template(question_copy, resolved_attributes)
+        questions.append(
+            [
+                question_copy,
+                labels,
+                correct_idx,
+                sample_frames_before_timestep(
+                    world_state, timestep, num_frames=8, frame_interleave=1
+                ),
+            ]
+        )
+
+    return questions
+
 
 # ---------------------------------------------------------------------------
 # Helper utilities
@@ -63,28 +114,28 @@ def resolve_units(measurement: str) -> str:
     return units.get(measurement, "")
 
 
-def _get_random_integer(min_value: int, max_value: int) -> int:
+def get_random_integer(min_value: int, max_value: int) -> int:
     return rng.randint(min_value, max_value)
 
 
-def _shuffle_array(array: List[int]) -> List[int]:
+def shuffle_array(array: List[int]) -> List[int]:
     rng.shuffle(array)
     return array
 
 
-def _get_total_timesteps():
+def get_total_timesteps():
     # very important function for images<->state conversion
     # TODO supposing 100fps and 5 seconds of video
     return 100 * 5
 
 
-def _get_total_images():
+def get_total_images():
     # very important function for images<->state conversion
     # TODO supposing 100fps and 5 seconds of video
     return 8
 
 
-def _extract_attributes(question: Mapping[str, Any]) -> Mapping[str, Any]:
+def extract_attributes(question: Mapping[str, Any]) -> Mapping[str, Any]:
     question_text = question["question"]
 
     # Extract all tokens enclosed in <...>
@@ -106,8 +157,9 @@ def get_object_state_at_timestep(
         return None
 
     step_data = simulation_steps.get(str(timestep), {})
-    objects = step_data.get("objects", {})
-    return objects.get(object_id)
+    # print(step_data['objects'][object_id])
+    objects = step_data["objects"]
+    return objects[object_id]
 
 
 def get_all_objects_state_at_time(
@@ -123,7 +175,98 @@ def get_all_objects_state_at_time(
     return objects
 
 
-def _resolve_attributes(
+def get_list_ids_of_duplicate_objects(
+    world_state, visible_objects_id: List[str]
+) -> bool:
+    object_names = set()
+    duplicate_ids = []
+    for obj_id in visible_objects_id:
+        obj = world_state["objects"].get(obj_id, {})
+        obj_name = obj.get("name", "")
+        if obj_name in object_names:
+            duplicate_ids.append(obj_id)
+        object_names.add(obj_name)
+    return duplicate_ids
+
+
+def get_visible_timesteps_for_attributes_min_objects(
+    attributes: List[Mapping[str, Any]], world_state: Mapping[str, Any], min_objects=1
+) -> List[str]:
+    visible_timesteps = []
+
+    for attribute in attributes:
+        attribute_category = attribute.split("_")[
+            0
+        ]  # Get the part before any underscore
+        if attribute_category == "OBJECT" or attribute_category == "OBJECT-CATEGORY":
+            for timestep in world_state.get("simulation", {}).keys():
+                visible_objects_id = []
+                for obj in iter_objects(world_state):
+                    obj_id = obj.get("id")
+                    if not obj_id:
+                        continue
+                    obj_state = get_object_state_at_timestep(
+                        world_state, obj_id, timestep
+                    )
+
+                    if (
+                        obj_state
+                        and obj_state["fov_visibility"] > VISIBILITY_THRESHOLD
+                        and obj_state["infov"]
+                    ):  # at least 25% visible for now cause of a bug
+                        visible_objects_id.append(obj_id)
+
+                # we shall check that also is not the same object name to remove for
+                list_of_ids_of_duplicate_objs = get_list_ids_of_duplicate_objects(
+                    world_state, visible_objects_id
+                )
+
+                # remove duplicate objects by name
+                visible_objects_id = [
+                    obj_id
+                    for obj_id in visible_objects_id
+                    if obj_id not in list_of_ids_of_duplicate_objs
+                ]
+
+                if len(visible_objects_id) >= min_objects:
+                    visible_timesteps.append(timestep)
+    return visible_timesteps
+
+
+def get_continuous_subsequences_min_length(
+    timesteps: List[str], min_length: int
+) -> List[List[str]]:
+    if not timesteps:
+        return []
+
+    sorted_timesteps = sorted(int(t.replace(".", "")) for t in timesteps)
+    subsequences = []
+    current_subseq = [str(timesteps[0])]
+
+    time_interval_in_milliseconds = int(
+        (1 / SAMPLING_RATE) * 1000
+    )  # e.g., 100ms -> 100*10 = 1000
+
+    # we live a buffer of 1 timestep to allow for small gaps
+    for i in range(2, len(sorted_timesteps)):
+        if sorted_timesteps[i] == sorted_timesteps[i - 1] + (
+            1 * time_interval_in_milliseconds
+        ) or sorted_timesteps[i] == sorted_timesteps[i - 1] + (
+            2 * time_interval_in_milliseconds
+        ):
+            current_subseq.append(str(timesteps[i]))
+        else:
+            if len(current_subseq) >= min_length:
+                subsequences.append(current_subseq)
+            current_subseq = [str(timesteps[i])]
+
+    if len(current_subseq) >= min_length:
+        subsequences.append(current_subseq)
+
+    return subsequences
+
+
+def resolve_attributes(
     attributes: List[Mapping[str, Any]], world_state: Mapping[str, Any]
 ) -> Mapping[str, Any]:
     attribute_resolved = {}
@@ -141,7 +284,29 @@ def _resolve_attributes(
     return attribute_resolved
 
 
-def _fill_template(
+def resolve_attributes_visible_at_timestep(
+    attributes: List[Mapping[str, Any]], world_state: Mapping[str, Any], timestep: str
+) -> Mapping[str, Any]:
+    attribute_resolved = {}
+
+    copy_of_world_state = deepcopy(world_state)
+
+    for attribute in attributes:
+        attribute_resolved[attribute] = {}
+        attribute_category = attribute.split("_")[
+            0
+        ]  # Get the part before any underscore
+        result = resolver[attribute_category](
+            copy_of_world_state, visible_at_timestep=timestep
+        )
+
+        attribute_resolved[attribute]["choice"] = result
+        attribute_resolved[attribute]["category"] = attribute_category
+
+    return attribute_resolved
+
+
+def fill_template(
     question: Mapping[str, Any], resolved_attributes: Mapping[str, Any]
 ) -> None:
     for attribute in resolved_attributes:
@@ -162,6 +327,13 @@ def _fill_template(
                 + resolve_units(attribute),
             )
 
+    # check if there is a single frame or multi frame task
+    if question["task_splits"] == "multi":
+        question["question"] = (
+            "Consider all frames, but answer only based on the last frame. "
+            + question["question"]
+        )
+
 
 def get_camera(world_state: Mapping[str, Any]) -> Mapping[str, Any]:
     # taking the first camera
@@ -173,8 +345,8 @@ def get_camera(world_state: Mapping[str, Any]) -> Mapping[str, Any]:
 
 def get_random_material(world_state: Mapping[str, Any]) -> str:
     materials = set()
-    for obj in _iter_objects(world_state):
-        material = _as_lower(obj["description"]["material_group"])
+    for obj in iter_objects(world_state):
+        material = as_lower(obj["description"]["material_group"])
         if material:
             materials.add(material)
     if not materials:
@@ -182,16 +354,48 @@ def get_random_material(world_state: Mapping[str, Any]) -> str:
     return rng.choice(list(materials))
 
 
-def get_random_object(
-    world_state: Mapping[str, Any], OBJECT_CATEGORY: Optional[str] = None
+def get_random_object_and_remove(
+    world_state: Mapping[str, Any],
+    OBJECT_CATEGORY: Optional[str] = None,
+    visible_at_timestep: str = None,
 ) -> Mapping[str, Any]:
-    # objects = list(_objects_of_type(world_state, OBJECT_CATEGORY))
-    # if not objects:
-    #     raise ValueError(f"No objects found of type '{OBJECT_CATEGORY}'")
-
     objects = world_state["objects"]
+    if visible_at_timestep is not None:
+        visible_objects = []
+        visible_objects_ids = []
+        for obj_id, object in objects.items():
+            obj_state = get_object_state_at_timestep(
+                world_state, obj_id, visible_at_timestep
+            )
+            if (
+                obj_state["fov_visibility"] > VISIBILITY_THRESHOLD
+                and obj_state["infov"]
+            ):
+                object["id"] = obj_id
+                visible_objects.append(object)
+                visible_objects_ids.append(obj_id)
 
-    return rng.choice(list(objects.values()))
+        list_of_duplicate_object_ids = get_list_ids_of_duplicate_objects(
+            world_state, visible_objects_ids
+        )
+        # remove duplicate objects by name
+        visible_objects = [
+            obj
+            for obj in visible_objects
+            if obj["id"] not in list_of_duplicate_object_ids
+        ]
+
+        objects = {obj["id"]: obj for obj in visible_objects}
+
+    # also if no visible objects found, we raise an error
+    if not objects:
+        raise ImpossibleToAnswer(f"No objects found of type '{OBJECT_CATEGORY}'")
+
+    object_chosen = rng.choice(list(objects.values()))
+
+    del world_state["objects"][object_chosen["id"]]
+
+    return object_chosen
 
 
 def get_random_object_visible(
@@ -226,8 +430,8 @@ def get_random_object_visible(
 
 def get_random_OBJECT_CATEGORY(world_state: Mapping[str, Any]) -> str:
     OBJECT_CATEGORYs = set()
-    for obj in _iter_objects(world_state):
-        obj_type = _as_lower(obj["description"]["category_gso"])
+    for obj in iter_objects(world_state):
+        obj_type = as_lower(obj["description"]["category_gso"])
         if obj_type:
             OBJECT_CATEGORYs.add(obj_type)
     if not OBJECT_CATEGORYs:
@@ -257,7 +461,7 @@ resolver = {
     ),  # random mass between 0.1 and 5 kg
     "MATERIAL": get_random_material,
     "OBJECT-CATEGORY": get_random_OBJECT_CATEGORY,
-    "OBJECT": get_random_object,
+    "OBJECT": get_random_object_and_remove,
     "STRESS-THRESHOLD": lambda ws: round(
         rng.uniform(0.0, 10.0), 1
     ),  # random stress threshold between 10 and 100 MPa
@@ -268,14 +472,14 @@ resolver = {
 }
 
 
-def _round_sig(x: float, sig: int = 3) -> float:
+def round_sig(x: float, sig: int = 3) -> float:
     """Round to `sig` significant digits, preserving sign."""
     if x == 0:
         return 0.0
     return round(x, sig - 1 - int(math.floor(math.log10(abs(x)))))
 
 
-def _decimals_for_sig(x: float, sig: int = 3) -> int:
+def decimals_for_sig(x: float, sig: int = 3) -> int:
     """Number of decimal places that keeps `sig` significant digits when using round(x, decimals)."""
     if x == 0:
         # e.g., for sig=3, show 2 decimals by default
@@ -286,7 +490,7 @@ def _decimals_for_sig(x: float, sig: int = 3) -> int:
 # ____________ DON'T KNOW WHAT IS AFTER THIS LINE ____________ #
 
 
-def _iter_objects(world_state: Mapping[str, Any]) -> Iterator[Mapping[str, Any]]:
+def iter_objects(world_state: Mapping[str, Any]) -> Iterator[Mapping[str, Any]]:
     objects = world_state.get("objects", [])
     if isinstance(objects, Mapping):
         iterable: Iterable[Any] = objects.values()
@@ -299,10 +503,10 @@ def _iter_objects(world_state: Mapping[str, Any]) -> Iterator[Mapping[str, Any]]
 
 
 # TODO improve this and make it actually work
-def _iter_visible_objects(
+def iter_visible_objects(
     world_state: Mapping[str, Any],
 ) -> Iterator[Mapping[str, Any]]:
-    for obj in _iter_objects(world_state):
+    for obj in iter_objects(world_state):
         obj_id = obj.get("id")
         if not obj_id:
             continue
@@ -325,7 +529,7 @@ def iter_visible_objects_at_time(
     step_data = world_state.get("simulation", {}).get(str(timestep), {})
     objects_state = step_data.get("objects", {})
 
-    for obj in _iter_objects(world_state):
+    for obj in iter_objects(world_state):
         obj_id = obj.get("id")
         if not obj_id or obj_id not in objects_state:
             continue
@@ -335,50 +539,38 @@ def iter_visible_objects_at_time(
             yield obj
 
 
-def _objects_of_type(
+def objects_of_type(
     world_state: Mapping[str, Any], OBJECT_CATEGORY: Optional[str]
 ) -> Iterator[Mapping[str, Any]]:
     if not OBJECT_CATEGORY:
-        yield from _iter_objects(world_state)
+        yield from iter_objects(world_state)
         return
 
     target = OBJECT_CATEGORY.casefold()
-    for obj in _iter_objects(world_state):
-        obj_type = _as_lower(obj["description"]["category_gso"])
+    for obj in iter_objects(world_state):
+        obj_type = as_lower(obj["description"]["category_gso"])
         if obj_type == target:
             yield obj
 
 
-def _resolve_single_object(
+def resolve_single_object(
     world_state: Mapping[str, Any], question: Mapping[str, Any]
 ) -> Mapping[str, Any]:
-    object_name = _extract_object_name(question)
+    object_name = extract_object_name(question)
     if not object_name:
         raise KeyError("Unable to resolve object name from the question payload.")
 
     target = object_name.casefold()
-    for obj in _iter_objects(world_state):
+    for obj in iter_objects(world_state):
         for key in ("name", "id", "label", "type"):
             value = obj.get(key)
-            if isinstance(value, str) and _as_lower(value) == target:
+            if isinstance(value, str) and as_lower(value) == target:
                 return obj
 
     raise ValueError(f"Object '{object_name}' not found in the provided world state.")
 
 
-def _is_moving(object_id: str, timestep: str, world_state: Mapping[str, Any]) -> bool:
-    return _get_speed(object_id, timestep, world_state) > MOVEMENT_TOLERANCE
-
-
-def _get_speed(object_id: str, timestep: str, world_state: Mapping[str, Any]) -> float:
-    timestep_world = world_state["simulation"][timestep]
-    current_timestep_involved_object = timestep_world["objects"][object_id][
-        "kinematics"
-    ]["speed"]
-    return current_timestep_involved_object
-
-
-def _get_acceleration(
+def get_acceleration(
     object_id: str, timestep: str, world_state: Mapping[str, Any]
 ) -> float:
     timestep_world = world_state["simulation"][timestep]
@@ -398,30 +590,30 @@ def get_angular_velocity_vector(
     return current_timestep_involved_object
 
 
-def _get_vertical_velocity(obj: Mapping[str, Any]) -> float:
-    motion = _get_motion(obj)
+def get_vertical_velocity(obj: Mapping[str, Any]) -> float:
+    motion = get_motion(obj)
 
     value = motion.get("vertical_velocity") or motion.get("verticalvelocity")
-    vertical_velocity = _coerce_to_float(value)
+    vertical_velocity = coerce_to_float(value)
     if vertical_velocity is not None:
         return vertical_velocity
 
     velocity = motion.get("velocity")
-    components = _as_vector(velocity)
+    components = as_vector(velocity)
     if components and len(components) >= 3:
         return float(components[2])
 
     if isinstance(velocity, Mapping):
         for key in ("z", "vz", "vertical"):
             component = velocity.get(key)
-            component_value = _coerce_to_float(component)
+            component_value = coerce_to_float(component)
             if component_value is not None:
                 return component_value
 
     return 0.0
 
 
-def _get_displacement(
+def get_displacement(
     obj: str, timestep_start: str, timestep_end: str, world_state: Mapping[str, Any]
 ) -> float:
     position_start = world_state["simulation"][timestep_start]["objects"][obj][
@@ -430,31 +622,31 @@ def _get_displacement(
     position_end = world_state["simulation"][timestep_end]["objects"][obj]["transform"][
         :3
     ]
-    displacement = _distance_between(position_start, position_end)
+    displacement = distance_between(position_start, position_end)
 
-    displacement = _coerce_to_float(displacement)
+    displacement = coerce_to_float(displacement)
     if displacement is not None:
         return displacement
 
     return 0.0
 
 
-def _get_motion(obj: Mapping[str, Any]) -> Mapping[str, Any]:
+def get_motion(obj: Mapping[str, Any]) -> Mapping[str, Any]:
     motion = obj.get("motion")
     if isinstance(motion, Mapping):
         return motion
     return {}
 
 
-def _get_motion_property(obj: Mapping[str, Any], keys: Sequence[str]) -> Any:
-    motion = _get_motion(obj)
+def get_motion_property(obj: Mapping[str, Any], keys: Sequence[str]) -> Any:
+    motion = get_motion(obj)
     for key in keys:
         if key in motion:
             return motion[key]
     return None
 
 
-def _coerce_to_float(value: Any) -> Optional[float]:
+def coerce_to_float(value: Any) -> Optional[float]:
     if value is None:
         return None
 
@@ -467,13 +659,13 @@ def _coerce_to_float(value: Any) -> Optional[float]:
     if isinstance(value, Mapping):
         for key in ("magnitude", "value", "amount", "norm", "length"):
             if key in value:
-                coerced = _coerce_to_float(value[key])
+                coerced = coerce_to_float(value[key])
                 if coerced is not None:
                     return coerced
 
         if all(isinstance(v, (int, float)) for v in value.values()):
             numeric_values = tuple(cast(Number, v) for v in value.values())
-            return _vector_magnitude(numeric_values)
+            return vector_magnitude(numeric_values)
 
         return None
 
@@ -483,7 +675,7 @@ def _coerce_to_float(value: Any) -> Optional[float]:
 
         if all(isinstance(item, (int, float)) for item in value):
             numeric_values = tuple(cast(Number, item) for item in value)
-            return _vector_magnitude(numeric_values)
+            return vector_magnitude(numeric_values)
 
     if isinstance(value, str):
         try:
@@ -494,13 +686,13 @@ def _coerce_to_float(value: Any) -> Optional[float]:
     return None
 
 
-def _vector_magnitude(components: Tuple[Number, ...]) -> float:
+def vector_magnitude(components: Tuple[Number, ...]) -> float:
     if not components:
         return 0.0
     return math.sqrt(sum(float(component) ** 2 for component in components))
 
 
-def _as_vector(value: Any) -> Optional[Tuple[Number, ...]]:
+def as_vector(value: Any) -> Optional[Tuple[Number, ...]]:
     if isinstance(value, Sequence) and not isinstance(value, (str, bytes, bytearray)):
         if all(isinstance(item, (int, float)) for item in value):
             return tuple(cast(Number, item) for item in value)
@@ -511,32 +703,32 @@ def _as_vector(value: Any) -> Optional[Tuple[Number, ...]]:
     return None
 
 
-def _extract_OBJECT_CATEGORY(question: Mapping[str, Any]) -> Optional[str]:
-    value = _extract_text(question, "OBJECT-CATEGORY", "objectType", "type")
+def extract_OBJECT_CATEGORY(question: Mapping[str, Any]) -> Optional[str]:
+    value = extract_text(question, "OBJECT-CATEGORY", "objectType", "type")
     if value:
-        return _as_lower(value)
+        return as_lower(value)
 
     return None
 
 
-def _extract_object_name(question: Mapping[str, Any]) -> Optional[str]:
-    value = _extract_text(question, "<OBJECT>")
+def extract_object_name(question: Mapping[str, Any]) -> Optional[str]:
+    value = extract_text(question, "<OBJECT>")
     if value:
-        return _as_lower(value)
+        return as_lower(value)
 
     return None
 
 
-def _extract_numeric(question: Mapping[str, Any], *keys: str) -> Optional[float]:
+def extract_numeric(question: Mapping[str, Any], *keys: str) -> Optional[float]:
     for key in keys:
         value = question.get(key)
-        numeric = _coerce_to_float(value)
+        numeric = coerce_to_float(value)
         if numeric is not None:
             return numeric
     return None
 
 
-def _extract_text(question: Mapping[str, Any], *keys: str) -> Optional[str]:
+def extract_text(question: Mapping[str, Any], *keys: str) -> Optional[str]:
     print(question)
     for key in keys:
         value = question.get(key)
@@ -545,7 +737,7 @@ def _extract_text(question: Mapping[str, Any], *keys: str) -> Optional[str]:
     return None
 
 
-def _as_lower(value: Any) -> Optional[str]:
+def as_lower(value: Any) -> Optional[str]:
     if isinstance(value, str):
         candidate = value.strip()
         if candidate:
@@ -558,27 +750,27 @@ def _as_lower(value: Any) -> Optional[str]:
 # ---------------------------------------------------------------------------
 
 
-def _resolve_object_by_name(
+def resolve_object_by_name(
     world_state: Mapping[str, Any], object_name: str
 ) -> Mapping[str, Any]:
     """Resolve an object using any of its textual identifiers."""
     if not object_name:
         raise KeyError("Object identifier cannot be empty.")
 
-    target = _as_lower(object_name)
+    target = as_lower(object_name)
     if not target:
         raise KeyError(f"Unable to normalise identifier '{object_name}'.")
 
-    for obj in _iter_objects(world_state):
+    for obj in iter_objects(world_state):
         for key in ("name", "id", "label", "type"):
             value = obj.get(key)
-            if isinstance(value, str) and _as_lower(value) == target:
+            if isinstance(value, str) and as_lower(value) == target:
                 return obj
 
     raise ValueError(f"Object '{object_name}' not found in the provided world state.")
 
 
-def _resolve_object_from_question(
+def resolve_object_from_question(
     world_state: Mapping[str, Any],
     question: Mapping[str, Any],
     *keys: str,
@@ -588,14 +780,14 @@ def _resolve_object_from_question(
         value = question.get(key)
         if isinstance(value, str) and value.strip():
             try:
-                return _resolve_object_by_name(world_state, value)
+                return resolve_object_by_name(world_state, value)
             except ValueError:
                 continue
 
-    return _resolve_single_object(world_state, question)
+    return resolve_single_object(world_state, question)
 
 
-def _ensure_vector_size(
+def ensure_vector_size(
     components: Tuple[Number, ...], size: int = 3
 ) -> Tuple[float, ...]:
     """Normalise a vector to the desired size by truncating or padding with zeros."""
@@ -610,20 +802,20 @@ def _ensure_vector_size(
     return tuple(padded)
 
 
-def _extract_vector_from_mapping(
+def extract_vector_from_mapping(
     mapping: Mapping[str, Any], *keys: str
 ) -> Optional[Tuple[float, ...]]:
     for key in keys:
         if key not in mapping:
             continue
-        vector = _as_vector(mapping[key])
+        vector = as_vector(mapping[key])
         if vector:
             return tuple(float(component) for component in vector)
     return None
 
 
-def _extract_position(obj: Mapping[str, Any]) -> Optional[Tuple[float, ...]]:
-    position = _extract_vector_from_mapping(
+def extract_position(obj: Mapping[str, Any]) -> Optional[Tuple[float, ...]]:
+    position = extract_vector_from_mapping(
         obj,
         "position",
         "pos",
@@ -635,31 +827,31 @@ def _extract_position(obj: Mapping[str, Any]) -> Optional[Tuple[float, ...]]:
         "centroid",
     )
     if position:
-        return _ensure_vector_size(position)
+        return ensure_vector_size(position)
 
     pose = obj.get("pose")
     if isinstance(pose, Mapping):
-        position = _extract_vector_from_mapping(
+        position = extract_vector_from_mapping(
             pose, "position", "pos", "location", "translation"
         )
         if position:
-            return _ensure_vector_size(position)
+            return ensure_vector_size(position)
 
-    motion = _get_motion(obj)
-    position = _extract_vector_from_mapping(motion, "position", "pos", "location")
+    motion = get_motion(obj)
+    position = extract_vector_from_mapping(motion, "position", "pos", "location")
     if position:
-        return _ensure_vector_size(position)
+        return ensure_vector_size(position)
 
     transform = obj.get("transform")
     if isinstance(transform, Sequence) and transform:
-        vector = _as_vector(transform[-3:])
+        vector = as_vector(transform[-3:])
         if vector:
-            return _ensure_vector_size(vector)
+            return ensure_vector_size(vector)
 
     return None
 
 
-def _extract_orientation(obj: Mapping[str, Any]) -> Optional[Mapping[str, Any]]:
+def extract_orientation(obj: Mapping[str, Any]) -> Optional[Mapping[str, Any]]:
     orientation = obj.get("orientation") or obj.get("rotation")
     if isinstance(orientation, Mapping):
         return orientation
@@ -676,77 +868,77 @@ def _extract_orientation(obj: Mapping[str, Any]) -> Optional[Mapping[str, Any]]:
             value = pose.get(key)
             if isinstance(value, Mapping):
                 return value
-            vector = _as_vector(value)
+            vector = as_vector(value)
             if vector:
                 return {"vector": tuple(float(component) for component in vector)}
 
-    motion = _get_motion(obj)
+    motion = get_motion(obj)
     for key in ("orientation", "rotation"):
         value = motion.get(key)
         if isinstance(value, Mapping):
             return value
-        vector = _as_vector(value)
+        vector = as_vector(value)
         if vector:
             return {"vector": tuple(float(component) for component in vector)}
 
     return None
 
 
-def _extract_motion_vector(
+def extract_motion_vector(
     obj: Mapping[str, Any], *keys: str
 ) -> Optional[Tuple[float, ...]]:
-    motion = _get_motion(obj)
-    vector = _extract_vector_from_mapping(motion, *keys)
+    motion = get_motion(obj)
+    vector = extract_vector_from_mapping(motion, *keys)
     if vector:
-        return _ensure_vector_size(vector)
+        return ensure_vector_size(vector)
     return None
 
 
-def _extract_velocity_vector(obj: Mapping[str, Any]) -> Optional[Tuple[float, ...]]:
-    vector = _extract_motion_vector(
+def extract_velocity_vector(obj: Mapping[str, Any]) -> Optional[Tuple[float, ...]]:
+    vector = ensure_vector_size(
         obj, "velocity_vector", "velocity", "linear_velocity", "velocity_vector"
     )
     if vector:
         return vector
 
-    motion = _get_motion(obj)
+    motion = get_motion(obj)
     components = motion.get("velocity_components")
     if isinstance(components, Mapping):
         numeric_items = [components.get(axis) for axis in ("x", "y", "z")]
         if any(isinstance(item, (int, float)) for item in numeric_items):
             as_tuple = tuple(float(item or 0.0) for item in numeric_items)
-            return _ensure_vector_size(as_tuple)
+            return ensure_vector_size(as_tuple)
 
     return None
 
 
-def _extract_acceleration_vector(obj: Mapping[str, Any]) -> Optional[Tuple[float, ...]]:
-    return _extract_motion_vector(
+def extract_acceleration_vector(obj: Mapping[str, Any]) -> Optional[Tuple[float, ...]]:
+    return ensure_vector_size(
         obj, "acceleration_vector", "acceleration", "linear_acceleration"
     )
 
 
-def _extract_angular_velocity_vector(
+def extract_angular_velocity_vector(
     obj: Mapping[str, Any],
 ) -> Optional[Tuple[float, ...]]:
-    return _extract_motion_vector(
+    return ensure_vector_size(
         obj, "angular_velocity_vector", "angular_velocity", "rotation_rate", "spin"
     )
 
 
-def _extract_numeric_attribute(
+def extract_numeric_attribute(
     obj: Mapping[str, Any], *keys: str, default: Optional[float] = None
 ) -> Optional[float]:
     for key in keys:
         if key not in obj:
             continue
-        numeric = _coerce_to_float(obj[key])
+        numeric = coerce_to_float(obj[key])
         if numeric is not None:
             return numeric
     return default
 
 
-def _extract_text_attribute(obj: Mapping[str, Any], *keys: str) -> Optional[str]:
+def extract_text_attribute(obj: Mapping[str, Any], *keys: str) -> Optional[str]:
     for key in keys:
         value = obj.get(key)
         if isinstance(value, str) and value.strip():
@@ -754,7 +946,7 @@ def _extract_text_attribute(obj: Mapping[str, Any], *keys: str) -> Optional[str]
     return None
 
 
-def _object_identifier(obj: Mapping[str, Any]) -> Optional[str]:
+def object_identifier(obj: Mapping[str, Any]) -> Optional[str]:
     for key in ("name", "id", "label", "type"):
         value = obj.get(key)
         if isinstance(value, str) and value.strip():
@@ -762,14 +954,14 @@ def _object_identifier(obj: Mapping[str, Any]) -> Optional[str]:
     return None
 
 
-def _distance_between(
+def distance_between(
     first: Optional[Sequence[Number]],
     second: Optional[Sequence[Number]],
 ) -> float:
     if not first or not second:
         return 0.0
-    a = _ensure_vector_size(tuple(cast(Number, component) for component in first))
-    b = _ensure_vector_size(tuple(cast(Number, component) for component in second))
+    a = ensure_vector_size(tuple(cast(Number, component) for component in first))
+    b = ensure_vector_size(tuple(cast(Number, component) for component in second))
     return math.sqrt(
         sum((a_component - b_component) ** 2 for a_component, b_component in zip(a, b))
     )

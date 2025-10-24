@@ -1,0 +1,362 @@
+[
+    {
+        "idx": 0,
+        "answer": "C",
+        "task_type": "factual",
+        "sub_type": null,
+        "ability_type": "general",
+        "mode": "image-only",
+        "choice_type": "mcq"
+    },
+    {
+        "idx": 1,
+        "answer": "C",
+        "task_type": "factual",
+        "sub_type": null,
+        "ability_type": "general",
+        "mode": "general",
+        "choice_type": "mcq"
+    },
+    {
+        "idx": 2,
+        "answer": "A",
+        "task_type": "factual",
+        "sub_type": null,
+        "ability_type": "general",
+        "mode": "image-only",
+        "choice_type": "mcq"
+    },
+    {
+        "idx": 3,
+        "answer": "A",
+        "task_type": "factual",
+        "sub_type": null,
+        "ability_type": "general",
+        "mode": "general",
+        "choice_type": "mcq"
+    },
+    {
+        "idx": 4,
+        "answer": "A",
+        "task_type": "factual",
+        "sub_type": null,
+        "ability_type": "general",
+        "mode": "image-only",
+        "choice_type": "mcq"
+    },
+    {
+        "idx": 5,
+        "answer": "A",
+        "task_type": "factual",
+        "sub_type": null,
+        "ability_type": "general",
+        "mode": "general",
+        "choice_type": "mcq"
+    },
+    {
+        "idx": 6,
+        "answer": "C",
+        "task_type": "factual",
+        "sub_type": null,
+        "ability_type": "general",
+        "mode": "image-only",
+        "choice_type": "mcq"
+    },
+    {
+        "idx": 7,
+        "answer": "C",
+        "task_type": "factual",
+        "sub_type": null,
+        "ability_type": "general",
+        "mode": "general",
+        "choice_type": "mcq"
+    },
+    {
+        "idx": 8,
+        "answer": "B",
+        "task_type": "factual",
+        "sub_type": null,
+        "ability_type": "general",
+        "mode": "image-only",
+        "choice_type": "mcq"
+    },
+    {
+        "idx": 9,
+        "answer": "B",
+        "task_type": "factual",
+        "sub_type": null,
+        "ability_type": "general",
+        "mode": "general",
+        "choice_type": "mcq"
+    },
+    {
+        "idx": 10,
+        "answer": "D",
+        "task_type": "factual",
+        "sub_type": null,
+        "ability_type": "general",
+        "mode": "image-only",
+        "choice_type": "mcq"
+    },
+    {
+        "idx": 11,
+        "answer": "D",
+        "task_type": "factual",
+        "sub_type": null,
+        "ability_type": "general",
+        "mode": "general",
+        "choice_type": "mcq"
+    },
+    {
+        "idx": 12,
+        "answer": "C",
+        "task_type": "factual",
+        "sub_type": null,
+        "ability_type": "general",
+        "mode": "general",
+        "choice_type": "mcq"
+    },
+    {
+        "idx": 13,
+        "answer": "A",
+        "task_type": "factual",
+        "sub_type": null,
+        "ability_type": "general",
+        "mode": "general",
+        "choice_type": "mcq"
+    },
+    {
+        "idx": 14,
+        "answer": "A",
+        "task_type": "factual",
+        "sub_type": null,
+        "ability_type": "general",
+        "mode": "general",
+        "choice_type": "mcq"
+    },
+    {
+        "idx": 15,
+        "answer": "C",
+        "task_type": "factual",
+        "sub_type": null,
+        "ability_type": "general",
+        "mode": "general",
+        "choice_type": "mcq"
+    },
+    {
+        "idx": 16,
+        "answer": "A",
+        "task_type": "factual",
+        "sub_type": null,
+        "ability_type": "general",
+        "mode": "general",
+        "choice_type": "true_false"
+    },
+    {
+        "idx": 17,
+        "answer": "B",
+        "task_type": "factual",
+        "sub_type": null,
+        "ability_type": "general",
+        "mode": "general",
+        "choice_type": "true_false"
+    },
+    {
+        "idx": 18,
+        "answer": "A",
+        "task_type": "factual",
+        "sub_type": null,
+        "ability_type": "general",
+        "mode": "image-only",
+        "choice_type": "mcq"
+    },
+    {
+        "idx": 19,
+        "answer": "A",
+        "task_type": "factual",
+        "sub_type": null,
+        "ability_type": "general",
+        "mode": "general",
+        "choice_type": "mcq"
+    },
+    {
+        "idx": 20,
+        "answer": "C",
+        "task_type": "factual",
+        "sub_type": null,
+        "ability_type": "general",
+        "mode": "image-only",
+        "choice_type": "mcq"
+    },
+    {
+        "idx": 21,
+        "answer": "C",
+        "task_type": "factual",
+        "sub_type": null,
+        "ability_type": "general",
+        "mode": "general",
+        "choice_type": "mcq"
+    },
+    {
+        "idx": 22,
+        "answer": "D",
+        "task_type": "factual",
+        "sub_type": null,
+        "ability_type": "general",
+        "mode": "image-only",
+        "choice_type": "mcq"
+    },
+    {
+        "idx": 23,
+        "answer": "D",
+        "task_type": "factual",
+        "sub_type": null,
+        "ability_type": "general",
+        "mode": "general",
+        "choice_type": "mcq"
+    },
+    {
+        "idx": 24,
+        "answer": "B",
+        "task_type": "factual",
+        "sub_type": null,
+        "ability_type": "general",
+        "mode": "image-only",
+        "choice_type": "mcq"
+    },
+    {
+        "idx": 25,
+        "answer": "B",
+        "task_type": "factual",
+        "sub_type": null,
+        "ability_type": "general",
+        "mode": "general",
+        "choice_type": "mcq"
+    },
+    {
+        "idx": 26,
+        "answer": "D",
+        "task_type": "factual",
+        "sub_type": null,
+        "ability_type": "general",
+        "mode": "image-only",
+        "choice_type": "mcq"
+    },
+    {
+        "idx": 27,
+        "answer": "D",
+        "task_type": "factual",
+        "sub_type": null,
+        "ability_type": "general",
+        "mode": "general",
+        "choice_type": "mcq"
+    },
+    {
+        "idx": 28,
+        "answer": "A",
+        "task_type": "factual",
+        "sub_type": null,
+        "ability_type": "general",
+        "mode": "image-only",
+        "choice_type": "mcq"
+    },
+    {
+        "idx": 29,
+        "answer": "A",
+        "task_type": "factual",
+        "sub_type": null,
+        "ability_type": "general",
+        "mode": "general",
+        "choice_type": "mcq"
+    },
+    {
+        "idx": 30,
+        "answer": "C",
+        "task_type": "factual",
+        "sub_type": null,
+        "ability_type": "general",
+        "mode": "image-only",
+        "choice_type": "mcq"
+    },
+    {
+        "idx": 31,
+        "answer": "C",
+        "task_type": "factual",
+        "sub_type": null,
+        "ability_type": "general",
+        "mode": "general",
+        "choice_type": "mcq"
+    },
+    {
+        "idx": 32,
+        "answer": "A",
+        "task_type": "factual",
+        "sub_type": null,
+        "ability_type": "general",
+        "mode": "image-only",
+        "choice_type": "mcq"
+    },
+    {
+        "idx": 33,
+        "answer": "A",
+        "task_type": "factual",
+        "sub_type": null,
+        "ability_type": "general",
+        "mode": "general",
+        "choice_type": "mcq"
+    },
+    {
+        "idx": 34,
+        "answer": "A",
+        "task_type": "factual",
+        "sub_type": null,
+        "ability_type": "general",
+        "mode": "image-only",
+        "choice_type": "mcq"
+    },
+    {
+        "idx": 35,
+        "answer": "A",
+        "task_type": "factual",
+        "sub_type": null,
+        "ability_type": "general",
+        "mode": "general",
+        "choice_type": "mcq"
+    },
+    {
+        "idx": 36,
+        "answer": "B",
+        "task_type": "factual",
+        "sub_type": null,
+        "ability_type": "general",
+        "mode": "general",
+        "choice_type": "mcq"
+    },
+    {
+        "idx": 37,
+        "answer": "C",
+        "task_type": "factual",
+        "sub_type": null,
+        "ability_type": "general",
+        "mode": "general",
+        "choice_type": "mcq"
+    },
+    {
+        "idx": 38,
+        "answer": "B",
+        "task_type": "factual",
+        "sub_type": null,
+        "ability_type": "general",
+        "mode": "general",
+        "choice_type": "mcq"
+    },
+    {
+        "idx": 39,
+        "answer": "A",
+        "task_type": "factual",
+        "sub_type": null,
+        "ability_type": "general",
+        "mode": "general",
+        "choice_type": "mcq"
+    }
+]

@@ -25,6 +25,16 @@ from categories.material_understanding.material_understanding import (
     get_result_by_name_material_understanding,
 )
 
+from categories.temporal.temporal import (
+    get_function_by_name_temporal,
+    get_result_by_name_temporal,
+)
+
+from categories.viewpoint.viewpoint import (
+    get_function_by_name_viewpoint,
+    get_result_by_name_viewpoint,
+)
+
 
 # ----- UTILS FUNCTIONS
 def read_questions(vqa_path):
@@ -45,12 +55,16 @@ resolver_gt = {
     "spatial_reasoning": get_result_by_name_spatial_reasoning,
     "mechanics": get_result_by_name_mechanics,
     "material_understanding": get_result_by_name_material_understanding,
+    "temporal": get_result_by_name_temporal,
+    "view_point": get_result_by_name_viewpoint,
 }
 
 resolver = {
     "spatial_reasoning": get_function_by_name_spatial_reasoning,
     "mechanics": get_function_by_name_mechanics,
     "material_understanding": get_function_by_name_material_understanding,
+    "temporal": get_function_by_name_temporal,
+    "view_point": get_function_by_name_viewpoint,
 }
 
 
@@ -130,8 +144,10 @@ def create_vqa(
                         "image_paths": file_names,
                         "labels": labels,
                         "answer_index": correct_idx,
-                        "mode": "image-only" if question["task_splits"] == "single" else "general",
-                        "choice": question["choice"]                        
+                        "mode": "image-only"
+                        if question["task_splits"] == "single"
+                        else "general",
+                        "choice": question["choice"],
                     }
                 )
 
@@ -306,5 +322,7 @@ if __name__ == "__main__":
         help="Maximum number of images to save for VQA.",
     )
     args = parser.parse_args()
+
+    timestart = os.times()
 
     main(args)

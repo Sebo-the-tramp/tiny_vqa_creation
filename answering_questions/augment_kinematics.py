@@ -61,13 +61,19 @@ import numpy as np
 #                 matches.append(os.path.join(dirpath, "simulation.json"))
 #     return matches
 
+
 def find_simulation_files(base_dir: str) -> list[str]:
     matches: List[str] = []
     for depth in (3, 4):
-        print(f"Searching for simulation.json files at depth {depth} under {base_dir}...")    
-        pattern = os.path.join(base_dir[0], *("*" for _ in range(depth)), "simulation.json")
+        print(
+            f"Searching for simulation.json files at depth {depth} under {base_dir}..."
+        )
+        pattern = os.path.join(
+            base_dir[0], *("*" for _ in range(depth)), "simulation.json"
+        )
         matches.extend(glob.glob(pattern))
     return matches
+
 
 def clamp(x, a, b):
     return a if x < a else (b if x > b else x)

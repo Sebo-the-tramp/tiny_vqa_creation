@@ -46,9 +46,8 @@
             "task_splits": "single+multi",
             "sub_category": "layout",
             "choice": "mcq",
-            "question": "What is the positional relationship between the <OBJECT_1> and the <OBJECT_2> from the camera's point of view?"
-        }
-
+            "question": "From the camera’s perspective, where is the <OBJECT_1> relative to <OBJECT_2>?"
+        }        
     },
     "mechanics": {
         "F_KINEMATICS_SPEED_OBJECT": {
@@ -86,13 +85,139 @@
             "sub_category": "kinematics",
             "choice": "true_false",
             "question": "Is the <OBJECT> motionless throughout all frames?"
-        }                
+        },
+        "F_COLLISIONS_OBJ_OBJ_FIRST":{
+            "task_splits": "multi",
+            "sub_category": "dynamics",
+            "choice": "mcq",
+            "question": "Which of those objects collides first with the <OBJECT> during the sequence?"
+        },
+        "F_COLLISION_OBJECT_OBJECT_FRAME_SINGLE":{
+            "task_splits": "single",
+            "sub_category": "dynamics",
+            "choice": "true_false",
+            "question": "Is the <OBJECT> colliding with another object in the frame?"
+        },
+        "F_COLLISION_OBJECT_OBJECT_FRAME_MULTI":{
+            "task_splits": "multi",
+            "sub_category": "dynamics",
+            "choice": "mcq",
+            "question": "In which frame does the <OBJECT> collide with another object?"
+        },
+        "F_COLLISION_OBJECT_GROUND_FRAME_SINGLE":{
+            "task_splits": "single",
+            "sub_category": "dynamics",
+            "choice": "true_false",
+            "question": "Is the <OBJECT> colliding with the scene in the frame?"
+        },
+        "F_COLLISION_OBJECT_GROUND_FRAME_MULTI":{
+            "task_splits": "multi",
+            "sub_category": "dynamics",
+            "choice": "mcq",
+            "question": "In which frame does the <OBJECT> collide with the scene?"
+        }
     },
     "material_understanding": {
+         "F_MASS_OBJECT": {
+            "task_splits": "single+multi",
+            "sub_category": "mass",
+            "choice": "mcq",
+            "question": "What is the mass of the <OBJECT>?"
+        },        
+        "F_MASS_HEAVIEST_OBJECT": {
+            "task_splits": "single+multi",
+            "sub_category": "mass",
+            "choice": "mcq",
+            "question": "Which single object has the greatest mass?"
+        },
+        "F_MASS_LIGHTEST_OBJECT": {
+            "task_splits": "single+multi",
+            "sub_category": "mass",
+            "choice": "mcq",
+            "question": "Which single object has the least mass?"
+        },
+        "F_MASS_COMPARE_OBJECTS": {
+            "task_splits": "single+multi",
+            "sub_category": "mass",
+            "choice": "true_false",
+            "question": "Is the mass of the <OBJECT_1> greater than the mass of the <OBJECT_2>?"
+        },
+        "F_PHYSICS_PROPERTY_DENSITY_OBJECT": {
+            "task_splits": "single+multi",
+            "sub_category": "physics_property",
+            "choice": "mcq",
+            "question": "What is the average (or effective) density of the <OBJECT>?"
+        },
+        "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT": {
+            "task_splits": "single+multi",
+            "sub_category": "physics_property",
+            "choice": "mcq",
+            "question": "What is the Young's modulus of the <OBJECT>?"
+        },
+        "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT": {
+            "task_splits": "single+multi",
+            "sub_category": "physics_property",
+            "choice": "mcq",
+            "question": "What is the Poisson ratio of the <OBJECT>?"
+        },
+        "F_MATERIAL_IDENTIFICATION_OBJECT": {
+            "task_splits": "single+multi",
+            "sub_category": "material_identification",
+            "choice": "mcq",
+            "question": "What material is the <OBJECT> made of?"
+        }
     },
-    "view_point": {        
+    "view_point": {
+        "F_VISIBILITY_OBJECT": {
+            "task_splits": "single+multi",            
+            "sub_category": "visibility",
+            "choice": "mcq",            
+            "question": "Which of these objects is visible in the image/frame?"
+        },
+        "F_VISIBILITY_PERCENTAGE_OBJECT": {
+            "task_splits": "single+multi",            
+            "sub_category": "visibility",
+            "choice": "mcq",            
+            "question": "What percentage of the <OBJECT> is visible in the image/frame?"
+        },
+        "F_VIEWPOINT_CAMERA_ANGLE": {
+            "task_splits": "single+multi",            
+            "sub_category": "camera_characteristics",
+            "choice": "mcq",            
+            "question": "From the camera's perspective, what is the camera's angle of view?"
+        },
+        "F_FOCAL_LENGTH_CLASS":{
+            "task_splits": "single+multi",            
+            "sub_category": "camera_characteristics",
+            "choice": "mcq",            
+            "question": "Which focal‑length class best matches the perspective in the image?"
+        }
     },
-    "temporal": {        
+    "temporal": {
+        "F_TEMPORAL_SEQUENCE_IMAGES": {
+            "task_splits": "multi",
+            "sub_category": "event_ordering",
+            "choice": "mcq",            
+            "question": "Given the sequence of images A. - B. - C. - D. What is the correct rearrangement of images showing the events in the scene?"
+        },
+        "F_TEMPORAL_PREDICTION_NEXT_IMAGE": {
+            "task_splits": "multi",
+            "sub_category": "event_ordering",
+            "choice": "mcq", 
+            "question": "Which frame is most likely to occur next in the sequence?"
+        },
+        "F_TEMPORAL_PREDICTION_PREVIOUS_IMAGE": {
+            "task_splits": "multi",
+            "sub_category": "event_ordering",
+            "choice": "mcq",
+            "question": "Which frame is most likely to have occurred earlier in the sequence?"
+        },
+        "F_TEMPORAL_PREDICTION_MISSING_IMAGE": {
+            "task_splits": "multi",
+            "sub_category": "event_ordering",
+            "choice": "mcq",
+            "question": "What frame is the most likely to have been removed from the scene?"
+        }  
     },
     "global": {        
     },

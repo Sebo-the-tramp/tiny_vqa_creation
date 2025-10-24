@@ -30,8 +30,55 @@ WorldState = Mapping[str, Any]
 QuestionPayload = Mapping[str, Any]
 Answer = Union[int, float, str]
 
+from utils.frames_selection import (
+    sample_frames_at_timesteps,
+    sample_frames_before_timestep,
+)
+
 SAMPLING_RATE = get_config()["sampling_rate"]
 VISIBILITY_THRESHOLD = get_config()["visibility_threshold"]
+
+SAMPLING_RATE = get_config()["sampling_rate"]
+RENDER_STEP = 1.0 / SAMPLING_RATE
+
+# I want to sample every quarter of a second
+FRAME_STRIDE = int(
+    -(-0.25 // RENDER_STEP)
+)  # same as math.ceil(0.25 / RENDER_STEP) but better quarter of a second
+
+
+def fill_questions(
+    question, labels, correct_idx, world_state, timestep, resolved_attributes
+) -> List:
+    questions = []
+    if "single" in question["task_splits"]:
+        question_copy = question.copy()
+        question_copy["task_splits"] = "single"  # ensure the question knows it's
+        fill_template(question_copy, resolved_attributes)
+        questions.append(
+            [
+                question_copy,
+                labels,
+                correct_idx,
+                sample_frames_at_timesteps(world_state, [timestep]),
+            ]
+        )
+    if "multi" in question["task_splits"]:
+        question_copy = question.copy()
+        question_copy["task_splits"] = "multi"  # ensure the question knows it's
+        fill_template(question_copy, resolved_attributes)
+        questions.append(
+            [
+                question_copy,
+                labels,
+                correct_idx,
+                sample_frames_before_timestep(
+                    world_state, timestep, num_frames=8, frame_interleave=1
+                ),
+            ]
+        )
+
+    return questions
 
 
 # ---------------------------------------------------------------------------
@@ -108,10 +155,10 @@ def get_object_state_at_timestep(
     simulation_steps = world_state.get("simulation", {})
     if not simulation_steps:
         return None
-    
+
     step_data = simulation_steps.get(str(timestep), {})
     # print(step_data['objects'][object_id])
-    objects = step_data['objects']
+    objects = step_data["objects"]
     return objects[object_id]
 
 
@@ -126,6 +173,20 @@ def get_all_objects_state_at_time(
     step_data = simulation_steps.get(str(timestep), {})
     objects = step_data.get("objects", {})
     return objects
+
+
+def get_list_ids_of_duplicate_objects(
+    world_state, visible_objects_id: List[str]
+) -> bool:
+    object_names = set()
+    duplicate_ids = []
+    for obj_id in visible_objects_id:
+        obj = world_state["objects"].get(obj_id, {})
+        obj_name = obj.get("name", "")
+        if obj_name in object_names:
+            duplicate_ids.append(obj_id)
+        object_names.add(obj_name)
+    return duplicate_ids
 
 
 def get_visible_timesteps_for_attributes_min_objects(
@@ -154,6 +215,19 @@ def get_visible_timesteps_for_attributes_min_objects(
                         and obj_state["infov"]
                     ):  # at least 25% visible for now cause of a bug
                         visible_objects_id.append(obj_id)
+
+                # we shall check that also is not the same object name to remove for
+                list_of_ids_of_duplicate_objs = get_list_ids_of_duplicate_objects(
+                    world_state, visible_objects_id
+                )
+
+                # remove duplicate objects by name
+                visible_objects_id = [
+                    obj_id
+                    for obj_id in visible_objects_id
+                    if obj_id not in list_of_ids_of_duplicate_objs
+                ]
+
                 if len(visible_objects_id) >= min_objects:
                     visible_timesteps.append(timestep)
     return visible_timesteps
@@ -285,22 +359,32 @@ def get_random_object_and_remove(
     OBJECT_CATEGORY: Optional[str] = None,
     visible_at_timestep: str = None,
 ) -> Mapping[str, Any]:
-    # objects = list(_objects_of_type(world_state, OBJECT_CATEGORY))
-    # if not objects:
-    #     raise ValueError(f"No objects found of type '{OBJECT_CATEGORY}'")
-
     objects = world_state["objects"]
     if visible_at_timestep is not None:
         visible_objects = []
+        visible_objects_ids = []
         for obj_id, object in objects.items():
             obj_state = get_object_state_at_timestep(
                 world_state, obj_id, visible_at_timestep
             )
             if (
-                obj_state["fov_visibility"] > 0.05
-            ):  # at least 5% visible for now cause of a bug
+                obj_state["fov_visibility"] > VISIBILITY_THRESHOLD
+                and obj_state["infov"]
+            ):
                 object["id"] = obj_id
                 visible_objects.append(object)
+                visible_objects_ids.append(obj_id)
+
+        list_of_duplicate_object_ids = get_list_ids_of_duplicate_objects(
+            world_state, visible_objects_ids
+        )
+        # remove duplicate objects by name
+        visible_objects = [
+            obj
+            for obj in visible_objects
+            if obj["id"] not in list_of_duplicate_object_ids
+        ]
+
         objects = {obj["id"]: obj for obj in visible_objects}
 
     # also if no visible objects found, we raise an error

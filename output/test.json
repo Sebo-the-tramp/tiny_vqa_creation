@@ -1,0 +1,733 @@
+[
+    {
+        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "source": "simulation",
+        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "file_name": [
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000013.png"
+        ],
+        "description": null,
+        "question": "<image>\nWhat is the distance between the geometrical centers of Fresca_Peach_Citrus_Sparkling_Flavored_Soda_12_PK and the Olive_Kids_Game_On_Pack_n_Snack?\nA. 3.2 meters\nB. 2.1 meters\nC. 4.3 meters\nD. 1.1 meters",
+        "mode": "image-only",
+        "idx": 0,
+        "split": "val",
+        "choice_type": "mcq"
+    },
+    {
+        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "source": "simulation",
+        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "file_name": [
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000006.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000007.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000008.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000009.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000010.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000011.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000012.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000013.png"
+        ],
+        "description": null,
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. What is the distance between the geometrical centers of Fresca_Peach_Citrus_Sparkling_Flavored_Soda_12_PK and the Olive_Kids_Game_On_Pack_n_Snack?\nA. 3.2 meters\nB. 2.1 meters\nC. 4.3 meters\nD. 1.1 meters",
+        "mode": "general",
+        "idx": 1,
+        "split": "val",
+        "choice_type": "mcq"
+    },
+    {
+        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "source": "simulation",
+        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "file_name": [
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000030.png"
+        ],
+        "description": null,
+        "question": "<image>\nWhat is the distance between the geometrical center of the Olive_Kids_Game_On_Pack_n_Snack and the camera?\nA. 5.9 meters\nB. 1.5 meters\nC. 4.4 meters\nD. 3.0 meters",
+        "mode": "image-only",
+        "idx": 2,
+        "split": "val",
+        "choice_type": "mcq"
+    },
+    {
+        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "source": "simulation",
+        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "file_name": [
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000023.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000024.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000025.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000026.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000027.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000028.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000029.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000030.png"
+        ],
+        "description": null,
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. What is the distance between the geometrical center of the Olive_Kids_Game_On_Pack_n_Snack and the camera?\nA. 5.9 meters\nB. 1.5 meters\nC. 4.4 meters\nD. 3.0 meters",
+        "mode": "general",
+        "idx": 3,
+        "split": "val",
+        "choice_type": "mcq"
+    },
+    {
+        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "source": "simulation",
+        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "file_name": [
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000059.png"
+        ],
+        "description": null,
+        "question": "<image>\nWhat is the distance between the geometrical center of the Olive_Kids_Game_On_Pack_n_Snack and its closest object?\nA. 3.4 meters\nB. 1.7 meters\nC. 2.5 meters\nD. 0.8 meters",
+        "mode": "image-only",
+        "idx": 4,
+        "split": "val",
+        "choice_type": "mcq"
+    },
+    {
+        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "source": "simulation",
+        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "file_name": [
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000052.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000053.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000054.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000055.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000056.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000057.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000058.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000059.png"
+        ],
+        "description": null,
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. What is the distance between the geometrical center of the Olive_Kids_Game_On_Pack_n_Snack and its closest object?\nA. 3.4 meters\nB. 1.7 meters\nC. 2.5 meters\nD. 0.8 meters",
+        "mode": "general",
+        "idx": 5,
+        "split": "val",
+        "choice_type": "mcq"
+    },
+    {
+        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "source": "simulation",
+        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "file_name": [
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000009.png"
+        ],
+        "description": null,
+        "question": "<image>\nWhich single object has the biggest volume?\nA. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nB. Fresca_peach_citrus_sparkling_flavored_soda_12_pk\nC. Olive_kids_game_on_pack_n_snack\nD. Ugg_jena_womens_java_7",
+        "mode": "image-only",
+        "idx": 6,
+        "split": "val",
+        "choice_type": "mcq"
+    },
+    {
+        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "source": "simulation",
+        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "file_name": [
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000002.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000003.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000004.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000005.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000006.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000007.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000008.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000009.png"
+        ],
+        "description": null,
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which single object has the biggest volume?\nA. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nB. Fresca_peach_citrus_sparkling_flavored_soda_12_pk\nC. Olive_kids_game_on_pack_n_snack\nD. Ugg_jena_womens_java_7",
+        "mode": "general",
+        "idx": 7,
+        "split": "val",
+        "choice_type": "mcq"
+    },
+    {
+        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "source": "simulation",
+        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "file_name": [
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000013.png"
+        ],
+        "description": null,
+        "question": "<image>\nWhich single object has the smallest volume?\nA. Olive_kids_game_on_pack_n_snack\nB. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nC. Ugg_jena_womens_java_7\nD. Fresca_peach_citrus_sparkling_flavored_soda_12_pk",
+        "mode": "image-only",
+        "idx": 8,
+        "split": "val",
+        "choice_type": "mcq"
+    },
+    {
+        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "source": "simulation",
+        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "file_name": [
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000006.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000007.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000008.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000009.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000010.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000011.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000012.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000013.png"
+        ],
+        "description": null,
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which single object has the smallest volume?\nA. Olive_kids_game_on_pack_n_snack\nB. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nC. Ugg_jena_womens_java_7\nD. Fresca_peach_citrus_sparkling_flavored_soda_12_pk",
+        "mode": "general",
+        "idx": 9,
+        "split": "val",
+        "choice_type": "mcq"
+    },
+    {
+        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "source": "simulation",
+        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "file_name": [
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000014.png"
+        ],
+        "description": null,
+        "question": "<image>\nFrom the camera\u2019s perspective, where is the UGG_Jena_Womens_Java_7 relative to Fresca_Peach_Citrus_Sparkling_Flavored_Soda_12_PK?\nA. equidistant\nB. below\nC. above\nD. to the left",
+        "mode": "image-only",
+        "idx": 10,
+        "split": "val",
+        "choice_type": "mcq"
+    },
+    {
+        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "source": "simulation",
+        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "file_name": [
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000007.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000008.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000009.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000010.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000011.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000012.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000013.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000014.png"
+        ],
+        "description": null,
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. From the camera\u2019s perspective, where is the UGG_Jena_Womens_Java_7 relative to Fresca_Peach_Citrus_Sparkling_Flavored_Soda_12_PK?\nA. equidistant\nB. below\nC. above\nD. to the left",
+        "mode": "general",
+        "idx": 11,
+        "split": "val",
+        "choice_type": "mcq"
+    },
+    {
+        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "source": "simulation",
+        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "file_name": [
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000049.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000050.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000051.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000052.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000053.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000054.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000055.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000056.png"
+        ],
+        "description": null,
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. What is the speed of the Olive_Kids_Game_On_Pack_n_Snack?\nA. 0.2 m/s\nB. 0.14 m/s\nC. 0.27 m/s\nD. 0.07 m/s",
+        "mode": "general",
+        "idx": 12,
+        "split": "val",
+        "choice_type": "mcq"
+    },
+    {
+        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "source": "simulation",
+        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "file_name": [
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000024.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000025.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000026.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000027.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000028.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000029.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000030.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000031.png"
+        ],
+        "description": null,
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. What is the speed of the fastest object?\nA. 0.68 m/s\nB. 0.51 m/s\nC. 0.17 m/s\nD. 0.34 m/s",
+        "mode": "general",
+        "idx": 13,
+        "split": "val",
+        "choice_type": "mcq"
+    },
+    {
+        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "source": "simulation",
+        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "file_name": [
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000052.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000053.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000054.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000055.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000056.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000057.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000058.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000059.png"
+        ],
+        "description": null,
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. What is the acceleration of the Olive_Kids_Game_On_Pack_n_Snack?\nA. 1.93 m/s^2\nB. 0.96 m/s^2\nC. 1.45 m/s^2\nD. 0.48 m/s^2",
+        "mode": "general",
+        "idx": 14,
+        "split": "val",
+        "choice_type": "mcq"
+    },
+    {
+        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "source": "simulation",
+        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "file_name": [
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000002.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000003.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000004.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000005.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000006.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000007.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000008.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000009.png"
+        ],
+        "description": null,
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Considering the geometrical center of the object, how far has the Fresca_Peach_Citrus_Sparkling_Flavored_Soda_12_PK traveled between during the sequence?\nA. 0.3 meters\nB. 0.4 meters\nC. 0.6 meters\nD. 0.1 meters",
+        "mode": "general",
+        "idx": 15,
+        "split": "val",
+        "choice_type": "mcq"
+    },
+    {
+        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "source": "simulation",
+        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "file_name": [
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000006.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000007.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000008.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000009.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000010.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000011.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000012.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000013.png"
+        ],
+        "description": null,
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Is the Fresca_Peach_Citrus_Sparkling_Flavored_Soda_12_PK moving throughout all frames?\nA. yes\nB. no",
+        "mode": "general",
+        "idx": 16,
+        "split": "val",
+        "choice_type": "true_false"
+    },
+    {
+        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "source": "simulation",
+        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "file_name": [
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000007.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000008.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000009.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000010.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000011.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000012.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000013.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000014.png"
+        ],
+        "description": null,
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Is the Fresca_Peach_Citrus_Sparkling_Flavored_Soda_12_PK motionless throughout all frames?\nA. yes\nB. no",
+        "mode": "general",
+        "idx": 17,
+        "split": "val",
+        "choice_type": "true_false"
+    },
+    {
+        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "source": "simulation",
+        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "file_name": [
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000009.png"
+        ],
+        "description": null,
+        "question": "<image>\nWhat is the mass of the Olive_Kids_Game_On_Pack_n_Snack?\nA. 1.6 kgs\nB. 0.8 kgs\nC. 1.2 kgs\nD. 0.4 kgs",
+        "mode": "image-only",
+        "idx": 18,
+        "split": "val",
+        "choice_type": "mcq"
+    },
+    {
+        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "source": "simulation",
+        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "file_name": [
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000002.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000003.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000004.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000005.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000006.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000007.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000008.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000009.png"
+        ],
+        "description": null,
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. What is the mass of the Olive_Kids_Game_On_Pack_n_Snack?\nA. 1.6 kgs\nB. 0.8 kgs\nC. 1.2 kgs\nD. 0.4 kgs",
+        "mode": "general",
+        "idx": 19,
+        "split": "val",
+        "choice_type": "mcq"
+    },
+    {
+        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "source": "simulation",
+        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "file_name": [
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000031.png"
+        ],
+        "description": null,
+        "question": "<image>\nWhich single object has the greatest mass?\nA. Fresca_peach_citrus_sparkling_flavored_soda_12_pk\nB. Ugg_jena_womens_java_7\nC. Olive_kids_game_on_pack_n_snack\nD. Tory_burch_kaitlin_ballet_mestico_in_blackgold",
+        "mode": "image-only",
+        "idx": 20,
+        "split": "val",
+        "choice_type": "mcq"
+    },
+    {
+        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "source": "simulation",
+        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "file_name": [
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000024.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000025.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000026.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000027.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000028.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000029.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000030.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000031.png"
+        ],
+        "description": null,
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which single object has the greatest mass?\nA. Fresca_peach_citrus_sparkling_flavored_soda_12_pk\nB. Ugg_jena_womens_java_7\nC. Olive_kids_game_on_pack_n_snack\nD. Tory_burch_kaitlin_ballet_mestico_in_blackgold",
+        "mode": "general",
+        "idx": 21,
+        "split": "val",
+        "choice_type": "mcq"
+    },
+    {
+        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "source": "simulation",
+        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "file_name": [
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000030.png"
+        ],
+        "description": null,
+        "question": "<image>\nWhich single object has the least mass?\nA. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nB. Fresca_peach_citrus_sparkling_flavored_soda_12_pk\nC. Ugg_jena_womens_java_7\nD. Olive_kids_game_on_pack_n_snack",
+        "mode": "image-only",
+        "idx": 22,
+        "split": "val",
+        "choice_type": "mcq"
+    },
+    {
+        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "source": "simulation",
+        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "file_name": [
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000023.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000024.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000025.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000026.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000027.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000028.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000029.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000030.png"
+        ],
+        "description": null,
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which single object has the least mass?\nA. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nB. Fresca_peach_citrus_sparkling_flavored_soda_12_pk\nC. Ugg_jena_womens_java_7\nD. Olive_kids_game_on_pack_n_snack",
+        "mode": "general",
+        "idx": 23,
+        "split": "val",
+        "choice_type": "mcq"
+    },
+    {
+        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "source": "simulation",
+        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "file_name": [
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000063.png"
+        ],
+        "description": null,
+        "question": "<image>\nWhat is the average (or effective) density of the Olive_Kids_Game_On_Pack_n_Snack?\nA. 27.5 kg/m^3\nB. 55.0 kg/m^3\nC. 41.2 kg/m^3\nD. 13.8 kg/m^3",
+        "mode": "image-only",
+        "idx": 24,
+        "split": "val",
+        "choice_type": "mcq"
+    },
+    {
+        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "source": "simulation",
+        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "file_name": [
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000056.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000057.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000058.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000059.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000060.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000061.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000062.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000063.png"
+        ],
+        "description": null,
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. What is the average (or effective) density of the Olive_Kids_Game_On_Pack_n_Snack?\nA. 27.5 kg/m^3\nB. 55.0 kg/m^3\nC. 41.2 kg/m^3\nD. 13.8 kg/m^3",
+        "mode": "general",
+        "idx": 25,
+        "split": "val",
+        "choice_type": "mcq"
+    },
+    {
+        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "source": "simulation",
+        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "file_name": [
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000053.png"
+        ],
+        "description": null,
+        "question": "<image>\nWhat is the Young's modulus of the Olive_Kids_Game_On_Pack_n_Snack?\nA. 16.5 Pa\nB. 165.0 Pa\nC. 1.6 Pa\nD. 165000.0 Pa",
+        "mode": "image-only",
+        "idx": 26,
+        "split": "val",
+        "choice_type": "mcq"
+    },
+    {
+        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "source": "simulation",
+        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "file_name": [
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000046.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000047.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000048.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000049.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000050.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000051.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000052.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000053.png"
+        ],
+        "description": null,
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. What is the Young's modulus of the Olive_Kids_Game_On_Pack_n_Snack?\nA. 16.5 Pa\nB. 165.0 Pa\nC. 1.6 Pa\nD. 165000.0 Pa",
+        "mode": "general",
+        "idx": 27,
+        "split": "val",
+        "choice_type": "mcq"
+    },
+    {
+        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "source": "simulation",
+        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "file_name": [
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000013.png"
+        ],
+        "description": null,
+        "question": "<image>\nWhat is the Poisson ratio of the UGG_Jena_Womens_Java_7?\nA. 0.35\nB. 0.26\nC. 0.09\nD. 0.17",
+        "mode": "image-only",
+        "idx": 28,
+        "split": "val",
+        "choice_type": "mcq"
+    },
+    {
+        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "source": "simulation",
+        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "file_name": [
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000006.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000007.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000008.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000009.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000010.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000011.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000012.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000013.png"
+        ],
+        "description": null,
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. What is the Poisson ratio of the UGG_Jena_Womens_Java_7?\nA. 0.35\nB. 0.26\nC. 0.09\nD. 0.17",
+        "mode": "general",
+        "idx": 29,
+        "split": "val",
+        "choice_type": "mcq"
+    },
+    {
+        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "source": "simulation",
+        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "file_name": [
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000051.png"
+        ],
+        "description": null,
+        "question": "<image>\nWhat material is the Olive_Kids_Game_On_Pack_n_Snack made of?\nA. Plastic\nB. Leather\nC. Fabric/textile\nD. Paper/cardboard",
+        "mode": "image-only",
+        "idx": 30,
+        "split": "val",
+        "choice_type": "mcq"
+    },
+    {
+        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "source": "simulation",
+        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "file_name": [
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000044.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000045.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000046.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000047.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000048.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000049.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000050.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000051.png"
+        ],
+        "description": null,
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. What material is the Olive_Kids_Game_On_Pack_n_Snack made of?\nA. Plastic\nB. Leather\nC. Fabric/textile\nD. Paper/cardboard",
+        "mode": "general",
+        "idx": 31,
+        "split": "val",
+        "choice_type": "mcq"
+    },
+    {
+        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "source": "simulation",
+        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "file_name": [
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000011.png"
+        ],
+        "description": null,
+        "question": "<image>\nWhich of these objects is visible in the image/frame?\nA. Ugg_jena_womens_java_7\nB. Brother_printing_cartridge_pc501\nC. Lovable_huggable_cuddly_boutique_teddy_bear_beige\nD. Remington_tstudio_silk_ceramic_hair_straightener_2_inch_floating_plate",
+        "mode": "image-only",
+        "idx": 32,
+        "split": "val",
+        "choice_type": "mcq"
+    },
+    {
+        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "source": "simulation",
+        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "file_name": [
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000004.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000005.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000006.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000007.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000008.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000009.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000010.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000011.png"
+        ],
+        "description": null,
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which of these objects is visible in the image/frame?\nA. Ugg_jena_womens_java_7\nB. Brother_printing_cartridge_pc501\nC. Lovable_huggable_cuddly_boutique_teddy_bear_beige\nD. Remington_tstudio_silk_ceramic_hair_straightener_2_inch_floating_plate",
+        "mode": "general",
+        "idx": 33,
+        "split": "val",
+        "choice_type": "mcq"
+    },
+    {
+        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "source": "simulation",
+        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "file_name": [
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000099.png"
+        ],
+        "description": null,
+        "question": "<image>\nWhat percentage of the Tory_Burch_Kaitlin_Ballet_Mestico_in_BlackGold is visible in the image/frame?\nA. 0-25%\nB. 26-50%\nC. 51-75%\nD. 76-100%",
+        "mode": "image-only",
+        "idx": 34,
+        "split": "val",
+        "choice_type": "mcq"
+    },
+    {
+        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "source": "simulation",
+        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "file_name": [
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000092.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000093.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000094.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000095.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000096.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000097.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000098.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000099.png"
+        ],
+        "description": null,
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. What percentage of the Tory_Burch_Kaitlin_Ballet_Mestico_in_BlackGold is visible in the image/frame?\nA. 0-25%\nB. 26-50%\nC. 51-75%\nD. 76-100%",
+        "mode": "general",
+        "idx": 35,
+        "split": "val",
+        "choice_type": "mcq"
+    },
+    {
+        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "source": "simulation",
+        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "file_name": [
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000021.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000007.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000000.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000014.png"
+        ],
+        "description": null,
+        "question": "<image><image><image><image>\nGiven the sequence of images A. - B. - C. - D. What is the correct rearrangement of images showing the events in the scene?\nA. D.C.B.A.\nB. D.B.A.C.\nC. D.C.A.B.\nD. A.B.D.C.",
+        "mode": "general",
+        "idx": 36,
+        "split": "val",
+        "choice_type": "mcq"
+    },
+    {
+        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "source": "simulation",
+        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "file_name": [
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000054.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000061.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000068.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000075.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000016.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000095.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000082.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000031.png"
+        ],
+        "description": null,
+        "question": "<image><image><image><image>\nWhich frame is most likely to occur next in the sequence?\nA. <image>\nB. <image>\nC. <image>\nD. <image>",
+        "mode": "general",
+        "idx": 37,
+        "split": "val",
+        "choice_type": "mcq"
+    },
+    {
+        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "source": "simulation",
+        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "file_name": [
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000042.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000049.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000056.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000063.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000018.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000035.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000004.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000016.png"
+        ],
+        "description": null,
+        "question": "<image><image><image><image>\nWhich frame is most likely to have occurred earlier in the sequence?\nA. <image>\nB. <image>\nC. <image>\nD. <image>",
+        "mode": "general",
+        "idx": 38,
+        "split": "val",
+        "choice_type": "mcq"
+    },
+    {
+        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "source": "simulation",
+        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "file_name": [
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000027.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000034.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000048.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000055.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000041.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000007.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000081.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000076.png"
+        ],
+        "description": null,
+        "question": "<image><image><image><image>\nWhat frame is the most likely to have been removed from the scene?\nA. <image>\nB. <image>\nC. <image>\nD. <image>",
+        "mode": "general",
+        "idx": 39,
+        "split": "val",
+        "choice_type": "mcq"
+    }
+]

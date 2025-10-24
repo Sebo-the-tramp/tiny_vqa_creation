@@ -4,6 +4,7 @@ import math
 import random
 import re
 
+from utils.my_exception import ImpossibleToAnswer
 
 # ---------- helpers ----------
 _ws = re.compile(r"\s+")
@@ -97,146 +98,334 @@ def create_mc_options_integer(
     return options, correct_idx
 
 
-# ---------- float mode (continuous, now display-aware) ----------
+# improved version after Raoul's feedback
 def create_mc_options_around_gt(
     gt: float,
     num_answers: int = 4,
-    *,
-    seed: Optional[int] = None,
-    min_rel_gap: float = 0.05,
-    sig_digits: int = 3,
     lo: Optional[float] = None,  # e.g., 0.0 for speed
     hi: Optional[float] = None,  # upper bound if needed
-    display_decimals: Optional[
-        int
-    ] = None,  # enforce distinct labels at this resolution
+    display_decimals: int = 2,
+    min_threshold: float = 0.04,  # minimum value for the options
 ) -> Tuple[List[float], int]:
-    """
-    Create MC options around GT with a 'moderate' difficulty.
+    if abs(gt) < min_threshold:
+        raise ImpossibleToAnswer("GT too close to zero for meaningful options.")
 
-    New: if `display_decimals` is provided, we ensure that when numbers are rounded
-    to that many decimals, every label is distinct (no more [0, 0, 1, 0]).
-    """
-    if num_answers < 2:
-        raise ValueError("num_answers must be at least 2.")
-    if lo is not None and hi is not None and lo > hi:
-        raise ValueError("lo cannot be > hi")
+    gt = round(gt, display_decimals) if display_decimals is not None else gt
 
-    rng = random.Random(seed)
+    options = [(1 / 4), (2 / 4), (3 / 4), (5 / 4), (6 / 4), (7 / 4)]
 
-    spread_rel = 0.25
-    attempts_limit = 6000
+    options = [
+        round(opt * gt, display_decimals)
+        for opt in options
+        if (lo is None or opt >= lo) and (hi is None or opt <= hi)
+    ]
+    options = [opt for opt in options if opt > min_threshold]
 
-    rounded_gt = _round_sig(gt, sig_digits)
-    min_abs_gap = (
-        10 ** (math.floor(math.log10(abs(rounded_gt))) - 2) if rounded_gt != 0 else 1e-3
-    )
+    options = options[: num_answers - 1]
+    options.append(gt)
+    random.shuffle(options)
+    correct_idx = options.index(gt)
 
-    # Display resolution (size of one label bin)
-    display_unit = (10 ** (-display_decimals)) if display_decimals is not None else None
-
-    # If domain bounds + resolution make it impossible, fail fast with a helpful error.
-    if display_unit is not None and lo is not None and hi is not None:
-        # number of distinct on-screen labels possible in [lo, hi]
-        max_labels = int(math.floor((hi - lo) / display_unit)) + 1
-        if max_labels < num_answers:
-            raise ValueError(
-                f"At display_decimals={display_decimals}, interval [{lo}, {hi}] "
-                f"supports only {max_labels} distinct labels; need {num_answers}."
-            )
-
-    def in_bounds(v: float) -> bool:
-        if lo is not None and v < lo:
-            return False
-        if hi is not None and v > hi:
-            return False
-        return True
-
-    def too_close_to_any(v: float, vals: List[float]) -> bool:
-        # avoid hugging GT and other distractors in value space
-        if abs(v - rounded_gt) <= max(
-            min_abs_gap, min_rel_gap * max(abs(rounded_gt), abs(v), 1e-12)
-        ):
-            return True
-        for o in vals:
-            if abs(v - o) <= max(
-                min_abs_gap, 0.5 * min_rel_gap * max(abs(o), abs(v), 1e-12)
-            ):
-                return True
-        return False
-
-    # Track label bins we've already used at the chosen display resolution
-    def label_key(v: float) -> Optional[float]:
-        return round(v, display_decimals) if display_decimals is not None else None
-
-    used_label_keys = set()
-    if display_decimals is not None:
-        used_label_keys.add(label_key(rounded_gt))
-
-    distractors: List[float] = []
-    needed = num_answers - 1
-    attempts = 0
-
-    while len(distractors) < needed and attempts < attempts_limit:
-        attempts += 1
-
-        # multiplicative jitter around GT, with near-zero additive fallback
-        if abs(gt) > 1e-12:
-            f = rng.uniform(1.0 - spread_rel, 1.0 + spread_rel)
-            if abs(f - 1.0) < 0.8 * min_rel_gap:
-                continue
-            candidate = gt * f
-        else:
-            step = 10 ** (-max(2, _decimals_for_sig(1.0, sig_digits) + 1))  # ~0.01
-            candidate = gt + rng.choice([-3, -2, -1, 1, 2, 3]) * step
-
-        rounded_cand = float(_round_sig(candidate, sig_digits))
-        if not in_bounds(rounded_cand):
-            continue
-        if rounded_cand == rounded_gt:
-            continue
-        if too_close_to_any(rounded_cand, distractors):
-            continue
-
-        if display_decimals is not None:
-            lk = label_key(rounded_cand)
-            if lk in used_label_keys:
-                continue
-            used_label_keys.add(lk)
-
-        distractors.append(rounded_cand)
-
-    # Fallback: even-spaced steps outward; ensure we cross label bins when display_decimals is set.
-    if len(distractors) < needed:
-        base_step = max(min_abs_gap * 2.0, max(1e-12, abs(rounded_gt)) * 0.1)
-        if display_unit is not None:
-            base_step = max(
-                base_step, display_unit
-            )  # guarantees a new rounded label at given resolution
-        k = 1
-        while len(distractors) < needed and k <= 200:
-            for sgn in (-1, 1):
-                v = float(_round_sig(rounded_gt + sgn * k * base_step, sig_digits))
-                if not in_bounds(v):
-                    continue
-                if v == rounded_gt or v in distractors:
-                    continue
-                if too_close_to_any(v, distractors):
-                    continue
-                if display_decimals is not None:
-                    lk = label_key(v)
-                    if lk in used_label_keys:
-                        continue
-                    used_label_keys.add(lk)
-                distractors.append(v)
-                if len(distractors) >= needed:
-                    break
-            k += 1
-
-    options = [float(rounded_gt)] + distractors[:needed]
-    rng.shuffle(options)
-    correct_idx = options.index(float(rounded_gt))
     return options, correct_idx
+
+
+# improved version after Raoul's feedback
+def create_mc_options_around_gt_log(
+    gt: float,
+    num_answers: int = 4,
+    lo: Optional[float] = None,  # e.g., 0.0 for speed
+    hi: Optional[float] = None,  # upper bound if needed
+    display_decimals: int = 2,
+    min_threshold: float = 0.04,  # minimum value for the options
+) -> Tuple[List[float], int]:
+    f = math.log  # natural log
+    finv = math.exp
+
+    if abs(gt) < min_threshold:
+        raise ImpossibleToAnswer("GT too close to zero for meaningful options.")
+    if gt <= 0:
+        raise ImpossibleToAnswer("GT must be positive for logarithmic spacing.")
+
+    gt = round(gt, display_decimals) if display_decimals is not None else gt
+
+    options = [(1 / 4), (2 / 4), (3 / 4), (5 / 4), (6 / 4), (7 / 4)]
+
+    options = [
+        round(opt * gt, display_decimals)
+        for opt in options
+        if (lo is None or opt >= lo) and (hi is None or opt <= hi)
+    ]
+    options = [opt for opt in options if opt > min_threshold]
+
+    options = options[: num_answers - 1]
+    options.append(gt)
+    random.shuffle(options)
+    correct_idx = options.index(gt)
+
+    return options, correct_idx
+
+
+import math
+
+
+# logarithmic spacing version for young modulus
+# https://www.researchgate.net/figure/Material-property-chart-plotting-Youngs-modulus-E-against-density-r-The-heavy-envelopes_fig3_311498694
+def create_mc_options_around_gt_log(
+    gt: float,
+    num_answers: int = 4,
+    lo: Optional[float] = None,  # e.g., 0.0 for speed
+    hi: Optional[float] = None,  # upper bound if needed
+    display_decimals: int = 2,
+    min_threshold: float = 0.04,  # minimum value for the options
+) -> Tuple[List[float], int]:
+    f = math.log  # natural log
+    finv = math.exp
+
+    if abs(gt) < min_threshold:
+        raise ImpossibleToAnswer("GT too close to zero for meaningful options.")
+    if gt <= 0:
+        raise ImpossibleToAnswer("GT must be positive for logarithmic spacing.")
+
+    gt = round(gt, display_decimals) if display_decimals is not None else gt
+
+    offsets = [-5, -4, -3, -2, -1, 1, 2, 3, 4, 5]
+
+    z_gt = f(gt)
+    step = math.log(10)
+    options = [finv(z_gt + (k * step)) for k in offsets]
+
+    # Filter & round
+    options = [round(opt, display_decimals) for opt in options]
+    print("Options before filtering by min threshold:", options)
+    options = [opt for opt in options if opt > min_threshold]
+    if lo is not None:
+        options = [opt for opt in options if opt >= lo]
+    if hi is not None:
+        options = [opt for opt in options if opt <= hi]
+
+    options = options[: num_answers - 1]
+    options.append(gt)
+    random.shuffle(options)
+    correct_idx = options.index(gt)
+
+    return options, correct_idx
+
+
+# def create_mc_options_around_gt(
+#     gt: float,
+#     num_answers: int = 4,
+#     lo: Optional[float] = None,
+#     hi: Optional[float] = None,
+#     display_decimals: int = 2,
+#     range_extent: int = 3,
+#     rel_step: float = 0.25,
+# ) -> Tuple[List[float], int]:
+#     """
+#     Builds multiple-choice options around gt with spacing that
+#     stays distinct after rounding, even when gt is near zero.
+#     """
+
+#     # Quantization unit from rounding precision
+#     if display_decimals is not None:
+#         unit = 10 ** (-display_decimals)
+#         # Make absolute step at least a few units to survive rounding
+#         min_abs_step = 3 * unit
+#         gt_disp = round(gt, display_decimals)
+#     else:
+#         unit = 0.0
+#         min_abs_step = 0.0
+#         gt_disp = gt
+
+#     # Start with blended step: relative for scale, absolute floor for near-zero
+#     step = max(abs(gt) * rel_step, min_abs_step)
+
+#     # Try to build enough distinct, in-bounds options; if rounding collapses them,
+#     # bump the step and retry a few times.
+#     for _attempt in range(8):
+#         raw = [gt + i * step for i in range(-range_extent, range_extent + 1) if i != 0]
+
+#         # Apply bounds early to avoid wasting choices
+#         raw = [x for x in raw if (lo is None or x >= lo) and (hi is None or x <= hi)]
+
+#         # Round to display precision and dedupe while preserving order
+#         seen = set()
+#         rounded = []
+#         for x in raw:
+#             xr = round(x, display_decimals) if display_decimals is not None else x
+#             if xr not in seen and xr != gt_disp:
+#                 seen.add(xr)
+#                 rounded.append(xr)
+
+#         # If we have enough, stop; otherwise enlarge step and try again
+#         if len(rounded) >= num_answers - 1:
+#             options = rounded[: num_answers - 1]
+#             options.append(gt_disp)
+#             random.shuffle(options)
+#             correct_idx = options.index(gt_disp)
+#             return options, correct_idx
+
+#         # Increase step to break rounding ties and escape bounds
+#         step *= 1.8
+
+#     # Final attempt: widen the neighborhood by increasing range_extent
+#     raw = [gt + i * step for i in range(-max(5, range_extent), max(5, range_extent) + 1) if i != 0]
+#     raw = [x for x in raw if (lo is None or x >= lo) and (hi is None or x <= hi)]
+#     seen = set()
+#     rounded = []
+#     for x in raw:
+#         xr = round(x, display_decimals) if display_decimals is not None else x
+#         if xr not in seen and xr != gt_disp:
+#             seen.add(xr)
+#             rounded.append(xr)
+#     if len(rounded) < num_answers - 1:
+#         raise ImpossibleToAnswer("Not enough distinct options after applying rounding and bounds.")
+
+#     options = rounded[: num_answers - 1]
+#     options.append(gt_disp)
+#     random.shuffle(options)
+#     correct_idx = options.index(gt_disp)
+#     return options, correct_idx
+
+# ---------- float mode (continuous, now display-aware) ----------
+# def create_mc_options_around_gt(
+#     gt: float,
+#     num_answers: int = 4,
+#     *,
+#     seed: Optional[int] = None,
+#     min_rel_gap: float = 0.05,
+#     sig_digits: int = 3,
+#     lo: Optional[float] = None,  # e.g., 0.0 for speed
+#     hi: Optional[float] = None,  # upper bound if needed
+#     display_decimals: Optional[
+#         int
+#     ] = None,  # enforce distinct labels at this resolution
+# ) -> Tuple[List[float], int]:
+#     """
+#     Create MC options around GT with a 'moderate' difficulty.
+
+#     New: if `display_decimals` is provided, we ensure that when numbers are rounded
+#     to that many decimals, every label is distinct (no more [0, 0, 1, 0]).
+#     """
+#     if num_answers < 2:
+#         raise ValueError("num_answers must be at least 2.")
+#     if lo is not None and hi is not None and lo > hi:
+#         raise ValueError("lo cannot be > hi")
+
+#     rng = random.Random(seed)
+
+#     spread_rel = 0.25
+#     attempts_limit = 6000
+
+#     rounded_gt = _round_sig(gt, sig_digits)
+#     min_abs_gap = (
+#         10 ** (math.floor(math.log10(abs(rounded_gt))) - 2) if rounded_gt != 0 else 1e-3
+#     )
+
+#     # Display resolution (size of one label bin)
+#     display_unit = (10 ** (-display_decimals)) if display_decimals is not None else None
+
+#     # If domain bounds + resolution make it impossible, fail fast with a helpful error.
+#     if display_unit is not None and lo is not None and hi is not None:
+#         # number of distinct on-screen labels possible in [lo, hi]
+#         max_labels = int(math.floor((hi - lo) / display_unit)) + 1
+#         if max_labels < num_answers:
+#             raise ValueError(
+#                 f"At display_decimals={display_decimals}, interval [{lo}, {hi}] "
+#                 f"supports only {max_labels} distinct labels; need {num_answers}."
+#             )
+
+#     def in_bounds(v: float) -> bool:
+#         if lo is not None and v < lo:
+#             return False
+#         if hi is not None and v > hi:
+#             return False
+#         return True
+
+#     def too_close_to_any(v: float, vals: List[float]) -> bool:
+#         # avoid hugging GT and other distractors in value space
+#         if abs(v - rounded_gt) <= max(
+#             min_abs_gap, min_rel_gap * max(abs(rounded_gt), abs(v), 1e-12)
+#         ):
+#             return True
+#         for o in vals:
+#             if abs(v - o) <= max(
+#                 min_abs_gap, 0.5 * min_rel_gap * max(abs(o), abs(v), 1e-12)
+#             ):
+#                 return True
+#         return False
+
+#     # Track label bins we've already used at the chosen display resolution
+#     def label_key(v: float) -> Optional[float]:
+#         return round(v, display_decimals) if display_decimals is not None else None
+
+#     used_label_keys = set()
+#     if display_decimals is not None:
+#         used_label_keys.add(label_key(rounded_gt))
+
+#     distractors: List[float] = []
+#     needed = num_answers - 1
+#     attempts = 0
+
+#     while len(distractors) < needed and attempts < attempts_limit:
+#         attempts += 1
+
+#         # multiplicative jitter around GT, with near-zero additive fallback
+#         if abs(gt) > 1e-12:
+#             f = rng.uniform(1.0 - spread_rel, 1.0 + spread_rel)
+#             if abs(f - 1.0) < 0.8 * min_rel_gap:
+#                 continue
+#             candidate = gt * f
+#         else:
+#             step = 10 ** (-max(2, _decimals_for_sig(1.0, sig_digits) + 1))  # ~0.01
+#             candidate = gt + rng.choice([-3, -2, -1, 1, 2, 3]) * step
+
+#         rounded_cand = float(_round_sig(candidate, sig_digits))
+#         if not in_bounds(rounded_cand):
+#             continue
+#         if rounded_cand == rounded_gt:
+#             continue
+#         if too_close_to_any(rounded_cand, distractors):
+#             continue
+
+#         if display_decimals is not None:
+#             lk = label_key(rounded_cand)
+#             if lk in used_label_keys:
+#                 continue
+#             used_label_keys.add(lk)
+
+#         distractors.append(rounded_cand)
+
+#     # Fallback: even-spaced steps outward; ensure we cross label bins when display_decimals is set.
+#     if len(distractors) < needed:
+#         base_step = max(min_abs_gap * 2.0, max(1e-12, abs(rounded_gt)) * 0.1)
+#         if display_unit is not None:
+#             base_step = max(
+#                 base_step, display_unit
+#             )  # guarantees a new rounded label at given resolution
+#         k = 1
+#         while len(distractors) < needed and k <= 200:
+#             for sgn in (-1, 1):
+#                 v = float(_round_sig(rounded_gt + sgn * k * base_step, sig_digits))
+#                 if not in_bounds(v):
+#                     continue
+#                 if v == rounded_gt or v in distractors:
+#                     continue
+#                 if too_close_to_any(v, distractors):
+#                     continue
+#                 if display_decimals is not None:
+#                     lk = label_key(v)
+#                     if lk in used_label_keys:
+#                         continue
+#                     used_label_keys.add(lk)
+#                 distractors.append(v)
+#                 if len(distractors) >= needed:
+#                     break
+#             k += 1
+
+#     options = [float(rounded_gt)] + distractors[:needed]
+#     rng.shuffle(options)
+#     correct_idx = options.index(float(rounded_gt))
+#     return options, correct_idx
 
 
 # ---------- uniform display labels (UI layer) ----------

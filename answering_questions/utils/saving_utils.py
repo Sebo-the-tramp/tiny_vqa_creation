@@ -211,7 +211,7 @@ def normalize_question_json(
         "mode": vqa_entry["mode"],
         "idx": idx,
         "split": question_payload.get("split", "val"),
-        "choice_type": question_payload["choice"]
+        "choice_type": question_payload["choice"],
     }
 
     answer_record = {
@@ -221,7 +221,7 @@ def normalize_question_json(
         "sub_type": question_payload.get("category"),
         "ability_type": question_payload.get("ability_type", ability_type),
         "mode": question_record["mode"],
-        "choice_type": question_payload["choice"]
+        "choice_type": question_payload["choice"],
     }
 
     return question_record, answer_record

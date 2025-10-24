@@ -25,6 +25,7 @@ import numpy as np
 import rerun as rr
 from collections import deque
 
+
 # ---------------------------- Math helpers ----------------------------
 def euler_to_quat_xyz(rx, ry, rz):
     """Return quaternion [x,y,z,w] from intrinsic XYZ Euler angles (radians)."""

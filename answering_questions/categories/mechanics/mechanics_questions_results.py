@@ -20,3 +20,7 @@ def F_KINEMATICS_MOVING_OBJECT() -> str:
 
 def F_KINEMATICS_STILL_OBJECT() -> str:
     return "Whether the object is moving question result"
+
+
+def F_COLLISIONS_OBJ_OBJ_FIRST() -> str:
+    return "First object to collide with given object question result"

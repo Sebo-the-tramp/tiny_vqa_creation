@@ -28,6 +28,7 @@ from utils.all_objects import get_all_objects_names
 
 from utils.helpers import (
     iter_objects,
+    fill_questions,
     distance_between,
     resolve_attributes_visible_at_timestep,
     get_visible_timesteps_for_attributes_min_objects,
@@ -37,11 +38,10 @@ from .spatial_reasoning_helpers import (
     get_position,
     get_position_camera,
     point_to_plane_distance,
-    fill_questions,
     get_closest_object,
     get_min_height_from_obb,
     get_spatial_relationship_camera_view,
-    get_all_relational_positional_adjectives
+    get_all_relational_positional_adjectives,
 )
 
 from utils.bin_creation import (
@@ -267,10 +267,7 @@ def F_SIZE_OBJECT(
     options, correct_idx = create_mc_options_around_gt(
         volume_object,
         num_answers=4,
-        sig_digits=6,
         display_decimals=6,
-        lo=0.0,
-        min_rel_gap=0.5,
     )
     labels = uniform_labels(options, integer=False, decimals=6)
     labels = [str(label) + " cubic meters" for label in labels]
@@ -384,7 +381,9 @@ def F_SIZE_OBJECT_SMALLER(
 def F_LAYOUT_POSITION_OBJECT_OBJECT(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> str:
-    assert (len(attributes) == 2 and "OBJECT_1" in attributes and "OBJECT_2" in attributes)
+    assert (
+        len(attributes) == 2 and "OBJECT_1" in attributes and "OBJECT_2" in attributes
+    )
 
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
@@ -413,19 +412,22 @@ def F_LAYOUT_POSITION_OBJECT_OBJECT(
     )
 
     DATASET_RELATIONAL_ADJECTIVES = get_all_relational_positional_adjectives()
-    #remove correct answers
+    # remove correct answers
     DATASET_RELATIONAL_ADJECTIVES.remove(horizontal)
     DATASET_RELATIONAL_ADJECTIVES.remove(vertical)
     DATASET_RELATIONAL_ADJECTIVES.remove(depth)
-    
+
     # confounding options
     random.shuffle(DATASET_RELATIONAL_ADJECTIVES)
     confounding_options = DATASET_RELATIONAL_ADJECTIVES[:3]
 
     correct_idx = random.randint(0, 3)
-    labels = confounding_options[:correct_idx] + [horizontal] + confounding_options[correct_idx:]
+    labels = (
+        confounding_options[:correct_idx]
+        + [horizontal]
+        + confounding_options[correct_idx:]
+    )
 
     return fill_questions(
         question, labels, correct_idx, world_state, timestep, resolved_attributes
     )
-    

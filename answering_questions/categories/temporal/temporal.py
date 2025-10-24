@@ -1,7 +1,7 @@
 # This module provides access to various force-related functions, both real and mock versions.
 # It's an abstraction layer to easily switch between real and mock implementations based on the context.
 
-# spatial_router.py
+# temporal_router.py
 from importlib import import_module
 from functools import lru_cache
 from typing import Callable, Any, Mapping, Union
@@ -15,15 +15,11 @@ Resolver = Callable[[WorldState, QuestionPayload], Answer]
 
 @lru_cache
 def _load_impl_module(mock: bool):
-    modname = (
-        ".material_understanding_questions" if mock else ".material_understanding_real"
-    )
+    modname = ".temporal_mock" if mock else ".temporal_real"
     return import_module(modname, package=__package__)
 
 
-def get_function_by_name_material_understanding(
-    name: str, mock: bool = False
-) -> Resolver:
+def get_function_by_name_temporal(name: str, mock: bool = False) -> Resolver:
     mod = _load_impl_module(mock)
     try:
         fn = getattr(mod, name)
@@ -41,11 +37,11 @@ def get_function_by_name_material_understanding(
 
 @lru_cache
 def _load_gt_module(mock: bool):
-    modname = ".material_understanding_questions_results"
+    modname = ".temporal_mock_results"
     return import_module(modname, package=__package__)
 
 
-def get_result_by_name_material_understanding(name: str, mock: bool = False) -> Any:
+def get_result_by_name_temporal(name: str, mock: bool = False) -> Any:
     mod = _load_gt_module(mock)
     try:
         fn = getattr(mod, name)

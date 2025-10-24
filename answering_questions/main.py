@@ -130,7 +130,7 @@ def create_vqa(
                         "image_paths": file_names,
                         "labels": labels,
                         "answer_index": correct_idx,
-                        "mode": "image-only" if question["task_splits"] == "single" else "general"
+                        "mode": "image-only" if question["task_splits"] == "single" else "general",
                         "choice": question["choice"]                        
                     }
                 )

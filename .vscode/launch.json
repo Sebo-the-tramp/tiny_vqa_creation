@@ -12,6 +12,7 @@
             "console": "integratedTerminal",
             "cwd": "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/answering_questions",
             "args": [
+                "--simulation_path", "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations",
                 "--verbose"
             ]
         },

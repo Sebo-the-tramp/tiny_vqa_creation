@@ -230,6 +230,11 @@ def get_visible_timesteps_for_attributes_min_objects(
 
                 if len(visible_objects_id) >= min_objects:
                     visible_timesteps.append(timestep)
+
+    if visible_timesteps == []:
+        raise ImpossibleToAnswer(
+            "No timesteps found where the required objects are visible."
+        )
     return visible_timesteps
 
 
@@ -237,7 +242,8 @@ def get_continuous_subsequences_min_length(
     timesteps: List[str], min_length: int
 ) -> List[List[str]]:
     if not timesteps:
-        return []
+        print(timesteps)
+        raise ImpossibleToAnswer("No timesteps provided.")
 
     sorted_timesteps = sorted(int(t.replace(".", "")) for t in timesteps)
     subsequences = []

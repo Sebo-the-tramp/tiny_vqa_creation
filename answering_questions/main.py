@@ -200,7 +200,6 @@ def create_vqa(
 
     return all_vqa
 
-
 def main(args):
     all_vqa = []
 

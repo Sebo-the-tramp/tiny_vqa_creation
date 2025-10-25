@@ -91,31 +91,7 @@
             "sub_category": "dynamics",
             "choice": "mcq",
             "question": "Which of those objects collides first with the <OBJECT> during the sequence?"
-        },
-        "F_COLLISION_OBJECT_OBJECT_FRAME_SINGLE":{
-            "task_splits": "single",
-            "sub_category": "dynamics",
-            "choice": "true_false",
-            "question": "Is the <OBJECT> colliding with another object in the frame?"
-        },
-        "F_COLLISION_OBJECT_OBJECT_FRAME_MULTI":{
-            "task_splits": "multi",
-            "sub_category": "dynamics",
-            "choice": "mcq",
-            "question": "In which frame does the <OBJECT> collide with another object?"
-        },
-        "F_COLLISION_OBJECT_GROUND_FRAME_SINGLE":{
-            "task_splits": "single",
-            "sub_category": "dynamics",
-            "choice": "true_false",
-            "question": "Is the <OBJECT> colliding with the scene in the frame?"
-        },
-        "F_COLLISION_OBJECT_GROUND_FRAME_MULTI":{
-            "task_splits": "multi",
-            "sub_category": "dynamics",
-            "choice": "mcq",
-            "question": "In which frame does the <OBJECT> collide with the scene?"
-        }
+        }       
     },
     "material_understanding": {
          "F_MASS_OBJECT": {
@@ -185,13 +161,7 @@
             "sub_category": "camera_characteristics",
             "choice": "mcq",            
             "question": "From the camera's perspective, what is the camera's angle of view?"
-        },
-        "F_FOCAL_LENGTH_CLASS":{
-            "task_splits": "single+multi",            
-            "sub_category": "camera_characteristics",
-            "choice": "mcq",            
-            "question": "Which focal‑length class best matches the perspective in the image?"
-        }
+        } 
     },
     "temporal": {
         "F_TEMPORAL_SEQUENCE_IMAGES": {
@@ -217,7 +187,7 @@
             "sub_category": "event_ordering",
             "choice": "mcq",
             "question": "What frame is the most likely to have been removed from the scene?"
-        }  
+        }
     },
     "global": {        
     },

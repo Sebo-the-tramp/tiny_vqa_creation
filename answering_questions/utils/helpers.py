@@ -269,6 +269,11 @@ def get_continuous_subsequences_min_length(
     if len(current_subseq) >= min_length:
         subsequences.append(current_subseq)
 
+    if subsequences == []:
+        raise ImpossibleToAnswer(
+            "No continuous subsequences found with the required minimum length."
+        )
+
     return subsequences
 
 

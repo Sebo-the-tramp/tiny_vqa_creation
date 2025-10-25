@@ -607,22 +607,23 @@ def create_mc_object_names_from_dataset(
             if x != gt_n and x not in distractors and x not in seen_present
         ]
 
-        # rank: same category first (if available), then name similarity to GT
-        def rank_key(x: str):
-            same_cat = (
-                1
-                if (prefer_same_category and gt_cat is not None and cat_of(x) == gt_cat)
-                else 0
-            )
-            sim = bigram_sim(gt_n, x)
-            return (same_cat, sim)
+        # I think this is not needed we don't have categories anyway
+        # # rank: same category first (if available), then name similarity to GT
+        # def rank_key(x: str):
+        #     same_cat = (
+        #         1
+        #         if (prefer_same_category and gt_cat is not None and cat_of(x) == gt_cat)
+        #         else 0
+        #     )
+        #     sim = bigram_sim(gt_n, x)
+        #     return (same_cat, sim)
 
-        cand.sort(key=rank_key, reverse=True)
+        # cand.sort(key=rank_key, reverse=True)
 
-        # If no category info at all, enforce a tiny similarity floor so we don't pick wild, unrelated labels
-        if gt_cat is None and not category_map:
-            filtered = [x for x in cand if bigram_sim(gt_n, x) >= min_name_sim_if_uncat]
-            cand = filtered or cand  # if nothing passes, keep original to avoid failure
+        # # If no category info at all, enforce a tiny similarity floor so we don't pick wild, unrelated labels
+        # if gt_cat is None and not category_map:
+        #     filtered = [x for x in cand if bigram_sim(gt_n, x) >= min_name_sim_if_uncat]
+        #     cand = filtered or cand  # if nothing passes, keep original to avoid failure
 
         for x in cand:
             distractors.append(x)

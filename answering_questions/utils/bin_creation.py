@@ -538,11 +538,6 @@ def create_mc_object_names_from_dataset(
 
     rng = random.Random(seed)
 
-    "DEBUGGING"
-    print("GT:", gt)
-    print(f"Present objects: (len = {len(present_objects)} )", present_objects)
-    print(f"Dataset labels: (len = {len(dataset_labels)} ", dataset_labels)
-
     gt_n = norm(gt)
     if not gt_n:
         raise ValueError("Ground-truth object name becomes empty after normalization.")

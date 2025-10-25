@@ -7,8 +7,10 @@ import numpy as np
 from typing import Any, Mapping, Optional, Tuple, Union, List
 
 from utils.helpers import as_vector
+from utils.my_exception import ImpossibleToAnswer
 
 from scipy.spatial.transform import Rotation as R
+
 
 # set random seed for reproducibility
 rng = random.Random(42)
@@ -114,6 +116,9 @@ def get_closest_object(
         if distance < min_distance:
             min_distance = distance
             closest_object = obj_data
+        
+    if closest_object is None:
+        raise ImpossibleToAnswer("No other visbile objects found in the scene.")
 
     return closest_object
 

@@ -112,7 +112,7 @@
             "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000009.png"
         ],
         "description": null,
-        "question": "<image>\nWhich single object has the biggest volume?\nA. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nB. Fresca_peach_citrus_sparkling_flavored_soda_12_pk\nC. Olive_kids_game_on_pack_n_snack\nD. Ugg_jena_womens_java_7",
+        "question": "<image>\nWhich single object has the biggest volume?\nA. Olive_kids_game_on_pack_n_snack\nB. Ugg_jena_womens_java_7\nC. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nD. Fresca_peach_citrus_sparkling_flavored_soda_12_pk",
         "mode": "image-only",
         "idx": 6,
         "split": "val",
@@ -133,7 +133,7 @@
             "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000009.png"
         ],
         "description": null,
-        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which single object has the biggest volume?\nA. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nB. Fresca_peach_citrus_sparkling_flavored_soda_12_pk\nC. Olive_kids_game_on_pack_n_snack\nD. Ugg_jena_womens_java_7",
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which single object has the biggest volume?\nA. Olive_kids_game_on_pack_n_snack\nB. Ugg_jena_womens_java_7\nC. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nD. Fresca_peach_citrus_sparkling_flavored_soda_12_pk",
         "mode": "general",
         "idx": 7,
         "split": "val",
@@ -147,7 +147,7 @@
             "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000013.png"
         ],
         "description": null,
-        "question": "<image>\nWhich single object has the smallest volume?\nA. Olive_kids_game_on_pack_n_snack\nB. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nC. Ugg_jena_womens_java_7\nD. Fresca_peach_citrus_sparkling_flavored_soda_12_pk",
+        "question": "<image>\nWhich single object has the smallest volume?\nA. Olive_kids_game_on_pack_n_snack\nB. Fresca_peach_citrus_sparkling_flavored_soda_12_pk\nC. Ugg_jena_womens_java_7\nD. Tory_burch_kaitlin_ballet_mestico_in_blackgold",
         "mode": "image-only",
         "idx": 8,
         "split": "val",
@@ -168,7 +168,7 @@
             "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000013.png"
         ],
         "description": null,
-        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which single object has the smallest volume?\nA. Olive_kids_game_on_pack_n_snack\nB. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nC. Ugg_jena_womens_java_7\nD. Fresca_peach_citrus_sparkling_flavored_soda_12_pk",
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which single object has the smallest volume?\nA. Olive_kids_game_on_pack_n_snack\nB. Fresca_peach_citrus_sparkling_flavored_soda_12_pk\nC. Ugg_jena_womens_java_7\nD. Tory_burch_kaitlin_ballet_mestico_in_blackgold",
         "mode": "general",
         "idx": 9,
         "split": "val",
@@ -340,12 +340,33 @@
         "source": "simulation",
         "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
         "file_name": [
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000030.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000031.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000032.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000033.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000034.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000035.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000036.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000037.png"
+        ],
+        "description": null,
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which of those objects collides first with the Olive_Kids_Game_On_Pack_n_Snack during the sequence?\nA. Ugg_jena_womens_java_7\nB. Fresca_peach_citrus_sparkling_flavored_soda_12_pk\nC. No Object\nD. Tory_burch_kaitlin_ballet_mestico_in_blackgold",
+        "mode": "general",
+        "idx": 18,
+        "split": "val",
+        "choice_type": "mcq"
+    },
+    {
+        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "source": "simulation",
+        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "file_name": [
             "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000009.png"
         ],
         "description": null,
         "question": "<image>\nWhat is the mass of the Olive_Kids_Game_On_Pack_n_Snack?\nA. 1.6 kgs\nB. 0.8 kgs\nC. 1.2 kgs\nD. 0.4 kgs",
         "mode": "image-only",
-        "idx": 18,
+        "idx": 19,
         "split": "val",
         "choice_type": "mcq"
     },
@@ -366,7 +387,7 @@
         "description": null,
         "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. What is the mass of the Olive_Kids_Game_On_Pack_n_Snack?\nA. 1.6 kgs\nB. 0.8 kgs\nC. 1.2 kgs\nD. 0.4 kgs",
         "mode": "general",
-        "idx": 19,
+        "idx": 20,
         "split": "val",
         "choice_type": "mcq"
     },
@@ -378,9 +399,9 @@
             "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000031.png"
         ],
         "description": null,
-        "question": "<image>\nWhich single object has the greatest mass?\nA. Fresca_peach_citrus_sparkling_flavored_soda_12_pk\nB. Ugg_jena_womens_java_7\nC. Olive_kids_game_on_pack_n_snack\nD. Tory_burch_kaitlin_ballet_mestico_in_blackgold",
+        "question": "<image>\nWhich single object has the greatest mass?\nA. Olive_kids_game_on_pack_n_snack\nB. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nC. Ugg_jena_womens_java_7\nD. Fresca_peach_citrus_sparkling_flavored_soda_12_pk",
         "mode": "image-only",
-        "idx": 20,
+        "idx": 21,
         "split": "val",
         "choice_type": "mcq"
     },
@@ -399,9 +420,9 @@
             "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000031.png"
         ],
         "description": null,
-        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which single object has the greatest mass?\nA. Fresca_peach_citrus_sparkling_flavored_soda_12_pk\nB. Ugg_jena_womens_java_7\nC. Olive_kids_game_on_pack_n_snack\nD. Tory_burch_kaitlin_ballet_mestico_in_blackgold",
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which single object has the greatest mass?\nA. Olive_kids_game_on_pack_n_snack\nB. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nC. Ugg_jena_womens_java_7\nD. Fresca_peach_citrus_sparkling_flavored_soda_12_pk",
         "mode": "general",
-        "idx": 21,
+        "idx": 22,
         "split": "val",
         "choice_type": "mcq"
     },
@@ -413,9 +434,9 @@
             "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000030.png"
         ],
         "description": null,
-        "question": "<image>\nWhich single object has the least mass?\nA. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nB. Fresca_peach_citrus_sparkling_flavored_soda_12_pk\nC. Ugg_jena_womens_java_7\nD. Olive_kids_game_on_pack_n_snack",
+        "question": "<image>\nWhich single object has the least mass?\nA. Fresca_peach_citrus_sparkling_flavored_soda_12_pk\nB. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nC. Olive_kids_game_on_pack_n_snack\nD. Ugg_jena_womens_java_7",
         "mode": "image-only",
-        "idx": 22,
+        "idx": 23,
         "split": "val",
         "choice_type": "mcq"
     },
@@ -434,9 +455,9 @@
             "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000030.png"
         ],
         "description": null,
-        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which single object has the least mass?\nA. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nB. Fresca_peach_citrus_sparkling_flavored_soda_12_pk\nC. Ugg_jena_womens_java_7\nD. Olive_kids_game_on_pack_n_snack",
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which single object has the least mass?\nA. Fresca_peach_citrus_sparkling_flavored_soda_12_pk\nB. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nC. Olive_kids_game_on_pack_n_snack\nD. Ugg_jena_womens_java_7",
         "mode": "general",
-        "idx": 23,
+        "idx": 24,
         "split": "val",
         "choice_type": "mcq"
     },
@@ -450,7 +471,7 @@
         "description": null,
         "question": "<image>\nWhat is the average (or effective) density of the Olive_Kids_Game_On_Pack_n_Snack?\nA. 27.5 kg/m^3\nB. 55.0 kg/m^3\nC. 41.2 kg/m^3\nD. 13.8 kg/m^3",
         "mode": "image-only",
-        "idx": 24,
+        "idx": 25,
         "split": "val",
         "choice_type": "mcq"
     },
@@ -471,7 +492,7 @@
         "description": null,
         "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. What is the average (or effective) density of the Olive_Kids_Game_On_Pack_n_Snack?\nA. 27.5 kg/m^3\nB. 55.0 kg/m^3\nC. 41.2 kg/m^3\nD. 13.8 kg/m^3",
         "mode": "general",
-        "idx": 25,
+        "idx": 26,
         "split": "val",
         "choice_type": "mcq"
     },
@@ -485,7 +506,7 @@
         "description": null,
         "question": "<image>\nWhat is the Young's modulus of the Olive_Kids_Game_On_Pack_n_Snack?\nA. 16.5 Pa\nB. 165.0 Pa\nC. 1.6 Pa\nD. 165000.0 Pa",
         "mode": "image-only",
-        "idx": 26,
+        "idx": 27,
         "split": "val",
         "choice_type": "mcq"
     },
@@ -506,7 +527,7 @@
         "description": null,
         "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. What is the Young's modulus of the Olive_Kids_Game_On_Pack_n_Snack?\nA. 16.5 Pa\nB. 165.0 Pa\nC. 1.6 Pa\nD. 165000.0 Pa",
         "mode": "general",
-        "idx": 27,
+        "idx": 28,
         "split": "val",
         "choice_type": "mcq"
     },
@@ -518,9 +539,9 @@
             "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000013.png"
         ],
         "description": null,
-        "question": "<image>\nWhat is the Poisson ratio of the UGG_Jena_Womens_Java_7?\nA. 0.35\nB. 0.26\nC. 0.09\nD. 0.17",
+        "question": "<image>\nWhat is the Poisson ratio of the Olive_Kids_Game_On_Pack_n_Snack?\nA. 0.32\nB. 0.24\nC. 0.08\nD. 0.16",
         "mode": "image-only",
-        "idx": 28,
+        "idx": 29,
         "split": "val",
         "choice_type": "mcq"
     },
@@ -539,9 +560,9 @@
             "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000013.png"
         ],
         "description": null,
-        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. What is the Poisson ratio of the UGG_Jena_Womens_Java_7?\nA. 0.35\nB. 0.26\nC. 0.09\nD. 0.17",
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. What is the Poisson ratio of the Olive_Kids_Game_On_Pack_n_Snack?\nA. 0.32\nB. 0.24\nC. 0.08\nD. 0.16",
         "mode": "general",
-        "idx": 29,
+        "idx": 30,
         "split": "val",
         "choice_type": "mcq"
     },
@@ -553,9 +574,9 @@
             "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000051.png"
         ],
         "description": null,
-        "question": "<image>\nWhat material is the Olive_Kids_Game_On_Pack_n_Snack made of?\nA. Plastic\nB. Leather\nC. Fabric/textile\nD. Paper/cardboard",
+        "question": "<image>\nWhat material is the Olive_Kids_Game_On_Pack_n_Snack made of?\nA. Paper/cardboard\nB. Fabric/textile\nC. Leather\nD. Plastic",
         "mode": "image-only",
-        "idx": 30,
+        "idx": 31,
         "split": "val",
         "choice_type": "mcq"
     },
@@ -574,9 +595,9 @@
             "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000051.png"
         ],
         "description": null,
-        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. What material is the Olive_Kids_Game_On_Pack_n_Snack made of?\nA. Plastic\nB. Leather\nC. Fabric/textile\nD. Paper/cardboard",
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. What material is the Olive_Kids_Game_On_Pack_n_Snack made of?\nA. Paper/cardboard\nB. Fabric/textile\nC. Leather\nD. Plastic",
         "mode": "general",
-        "idx": 31,
+        "idx": 32,
         "split": "val",
         "choice_type": "mcq"
     },
@@ -588,9 +609,9 @@
             "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000011.png"
         ],
         "description": null,
-        "question": "<image>\nWhich of these objects is visible in the image/frame?\nA. Ugg_jena_womens_java_7\nB. Brother_printing_cartridge_pc501\nC. Lovable_huggable_cuddly_boutique_teddy_bear_beige\nD. Remington_tstudio_silk_ceramic_hair_straightener_2_inch_floating_plate",
+        "question": "<image>\nWhich of these objects is visible in the image/frame?\nA. Twinlab_100_whey_protein_fuel_cookies_and_cream\nB. Dpc_handmade_hat_brown\nC. Sootheze_toasty_orca\nD. Tory_burch_kaitlin_ballet_mestico_in_blackgold",
         "mode": "image-only",
-        "idx": 32,
+        "idx": 33,
         "split": "val",
         "choice_type": "mcq"
     },
@@ -609,9 +630,9 @@
             "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000011.png"
         ],
         "description": null,
-        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which of these objects is visible in the image/frame?\nA. Ugg_jena_womens_java_7\nB. Brother_printing_cartridge_pc501\nC. Lovable_huggable_cuddly_boutique_teddy_bear_beige\nD. Remington_tstudio_silk_ceramic_hair_straightener_2_inch_floating_plate",
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which of these objects is visible in the image/frame?\nA. Twinlab_100_whey_protein_fuel_cookies_and_cream\nB. Dpc_handmade_hat_brown\nC. Sootheze_toasty_orca\nD. Tory_burch_kaitlin_ballet_mestico_in_blackgold",
         "mode": "general",
-        "idx": 33,
+        "idx": 34,
         "split": "val",
         "choice_type": "mcq"
     },
@@ -623,9 +644,9 @@
             "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000099.png"
         ],
         "description": null,
-        "question": "<image>\nWhat percentage of the Tory_Burch_Kaitlin_Ballet_Mestico_in_BlackGold is visible in the image/frame?\nA. 0-25%\nB. 26-50%\nC. 51-75%\nD. 76-100%",
+        "question": "<image>\nWhat percentage of the Fresca_Peach_Citrus_Sparkling_Flavored_Soda_12_PK is visible in the image/frame?\nA. 0-25%\nB. 26-50%\nC. 51-75%\nD. 76-100%",
         "mode": "image-only",
-        "idx": 34,
+        "idx": 35,
         "split": "val",
         "choice_type": "mcq"
     },
@@ -644,24 +665,7 @@
             "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000099.png"
         ],
         "description": null,
-        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. What percentage of the Tory_Burch_Kaitlin_Ballet_Mestico_in_BlackGold is visible in the image/frame?\nA. 0-25%\nB. 26-50%\nC. 51-75%\nD. 76-100%",
-        "mode": "general",
-        "idx": 35,
-        "split": "val",
-        "choice_type": "mcq"
-    },
-    {
-        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
-        "source": "simulation",
-        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
-        "file_name": [
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000021.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000007.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000000.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000014.png"
-        ],
-        "description": null,
-        "question": "<image><image><image><image>\nGiven the sequence of images A. - B. - C. - D. What is the correct rearrangement of images showing the events in the scene?\nA. D.C.B.A.\nB. D.B.A.C.\nC. D.C.A.B.\nD. A.B.D.C.",
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. What percentage of the Fresca_Peach_Citrus_Sparkling_Flavored_Soda_12_PK is visible in the image/frame?\nA. 0-25%\nB. 26-50%\nC. 51-75%\nD. 76-100%",
         "mode": "general",
         "idx": 36,
         "split": "val",
@@ -672,18 +676,11 @@
         "source": "simulation",
         "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
         "file_name": [
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000054.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000061.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000068.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000075.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000016.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000095.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000082.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000031.png"
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000091.png"
         ],
         "description": null,
-        "question": "<image><image><image><image>\nWhich frame is most likely to occur next in the sequence?\nA. <image>\nB. <image>\nC. <image>\nD. <image>",
-        "mode": "general",
+        "question": "<image>\nFrom the camera's perspective, what is the camera's angle of view?\nA. bird's-eye (<=-60 degrees)\nB. low angle (15 to 60 degrees)\nC. eye level (-15 to 15 degrees)\nD. high angle (-60 to -15 degrees)",
+        "mode": "image-only",
         "idx": 37,
         "split": "val",
         "choice_type": "mcq"
@@ -693,17 +690,17 @@
         "source": "simulation",
         "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
         "file_name": [
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000042.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000049.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000056.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000063.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000018.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000035.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000004.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000016.png"
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000084.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000085.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000086.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000087.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000088.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000089.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000090.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000091.png"
         ],
         "description": null,
-        "question": "<image><image><image><image>\nWhich frame is most likely to have occurred earlier in the sequence?\nA. <image>\nB. <image>\nC. <image>\nD. <image>",
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. From the camera's perspective, what is the camera's angle of view?\nA. bird's-eye (<=-60 degrees)\nB. low angle (15 to 60 degrees)\nC. eye level (-15 to 15 degrees)\nD. high angle (-60 to -15 degrees)",
         "mode": "general",
         "idx": 38,
         "split": "val",
@@ -714,19 +711,153 @@
         "source": "simulation",
         "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
         "file_name": [
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000027.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000034.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000048.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000055.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000097.png"
+        ],
+        "description": null,
+        "question": "<image>\nWhich focal\u2011length class best matches the perspective in the image?\nA. ultra-wide (>=90)\nB. wide (63-90)\nC. normal (40-63)\nD. telephoto (<40)",
+        "mode": "image-only",
+        "idx": 39,
+        "split": "val",
+        "choice_type": "mcq"
+    },
+    {
+        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "source": "simulation",
+        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "file_name": [
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000090.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000091.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000092.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000093.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000094.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000095.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000096.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000097.png"
+        ],
+        "description": null,
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which focal\u2011length class best matches the perspective in the image?\nA. ultra-wide (>=90)\nB. wide (63-90)\nC. normal (40-63)\nD. telephoto (<40)",
+        "mode": "general",
+        "idx": 40,
+        "split": "val",
+        "choice_type": "mcq"
+    },
+    {
+        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "source": "simulation",
+        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "file_name": [
             "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000041.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000027.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000020.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000034.png"
+        ],
+        "description": null,
+        "question": "<image><image><image><image>\nGiven the sequence of images A. - B. - C. - D. What is the correct rearrangement of images showing the events in the scene?\nA. D.C.B.A.\nB. D.C.A.B.\nC. A.B.D.C.\nD. D.B.A.C.",
+        "mode": "general",
+        "idx": 41,
+        "split": "val",
+        "choice_type": "mcq"
+    },
+    {
+        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "source": "simulation",
+        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "file_name": [
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000043.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000050.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000057.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000064.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000016.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000095.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000071.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000031.png"
+        ],
+        "description": null,
+        "question": "<image><image><image><image>\nWhich frame is most likely to occur next in the sequence?\nA. <image>\nB. <image>\nC. <image>\nD. <image>",
+        "mode": "general",
+        "idx": 42,
+        "split": "val",
+        "choice_type": "mcq"
+    },
+    {
+        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "source": "simulation",
+        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "file_name": [
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000026.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000033.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000040.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000047.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000018.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000019.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000004.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000016.png"
+        ],
+        "description": null,
+        "question": "<image><image><image><image>\nWhich frame is most likely to have occurred earlier in the sequence?\nA. <image>\nB. <image>\nC. <image>\nD. <image>",
+        "mode": "general",
+        "idx": 43,
+        "split": "val",
+        "choice_type": "mcq"
+    },
+    {
+        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "source": "simulation",
+        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "file_name": [
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000050.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000057.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000064.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000071.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000043.png",
             "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000007.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000081.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000076.png"
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000019.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000014.png"
         ],
         "description": null,
         "question": "<image><image><image><image>\nWhat frame is the most likely to have been removed from the scene?\nA. <image>\nB. <image>\nC. <image>\nD. <image>",
         "mode": "general",
-        "idx": 39,
+        "idx": 44,
+        "split": "val",
+        "choice_type": "mcq"
+    },
+    {
+        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "source": "simulation",
+        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "file_name": [
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000024.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000031.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000038.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000045.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000052.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000059.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000066.png"
+        ],
+        "description": null,
+        "question": "<image><image><image><image><image><image><image>\nIn which direction does the camera move across the sequence the greatest?\nA. backward\nB. down then up\nC. down then backward\nD. up then left",
+        "mode": "general",
+        "idx": 45,
+        "split": "val",
+        "choice_type": "mcq"
+    },
+    {
+        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "source": "simulation",
+        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "file_name": [
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000022.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000029.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000036.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000043.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000050.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000057.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000064.png"
+        ],
+        "description": null,
+        "question": "<image><image><image><image><image><image><image>\nHow does the camera\u2019s zoom level change across the sequence?\nA. zoom out\nB. zoom in then out\nC. no zoom\nD. zoom in",
+        "mode": "general",
+        "idx": 46,
         "split": "val",
         "choice_type": "mcq"
     }

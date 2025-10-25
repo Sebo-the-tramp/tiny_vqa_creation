@@ -14,36 +14,53 @@
         }
     },
     "mechanics": {
-    },
-    "material_undertanding": {        
-        "F_MASS_OBJECT": {
-            "task_splits": "single+multi",
-            "sub_category": "mass",
-            "choice": "mcq",
-            "question": "What is the mass of the <OBJECT>?"
-        },        
-        "F_MASS_HEAVIEST_OBJECT": {
-            "task_splits": "single+multi",
-            "sub_category": "mass",
-            "choice": "mcq",
-            "question": "Which single object has the greatest mass?"
-        },
-        "F_MASS_LIGHTEST_OBJECT": {
-            "task_splits": "single+multi",
-            "sub_category": "mass",
-            "choice": "mcq",
-            "question": "Which single object has the least mass?"
-        },
-        "F_MASS_COMPARE_OBJECTS": {
-            "task_splits": "single+multi",
-            "sub_category": "mass",
+         "F_COLLISION_OBJECT_OBJECT_FRAME_SINGLE":{
+            "task_splits": "single",
+            "sub_category": "collision",
             "choice": "true_false",
-            "question": "Is the mass of the <OBJECT_1> greater than the mass of the <OBJECT_2>?"
+            "question": "Is the <OBJECT> colliding with another object in the frame?"
+        },
+        "F_COLLISION_OBJECT_OBJECT_FRAME_MULTI":{
+            "task_splits": "multi",
+            "sub_category": "collision",
+            "choice": "mcq",
+            "question": "In which frame does the <OBJECT> collide with another object?"
+        },
+        "F_COLLISION_OBJECT_GROUND_FRAME_SINGLE":{
+            "task_splits": "single",
+            "sub_category": "collision",
+            "choice": "true_false",
+            "question": "Is the <OBJECT> colliding with the scene in the frame?"
+        },
+        "F_COLLISION_OBJECT_GROUND_FRAME_MULTI":{
+            "task_splits": "multi",
+            "sub_category": "collision",
+            "choice": "mcq",
+            "question": "In which frame does the <OBJECT> collide with the scene?"
+        },
+        "F_FORCE_COLLISION_OBJECT_OBJECT":{
+            "task_splits": "multi",
+            "sub_category": "forces",
+            "choice": "mcq",
+            "question": "Which object exerts the greatest force on the <OBJECT> during their collision?"
+        },
+        "F_FORCE_COLLISION_OBJECT_SCENE":{
+            "task_splits": "multi",
+            "sub_category": "forces",
+            "choice": "mcq",
+            "question": "Whit what force does the <OBJECT> collide with the scene?"
+        },
+        "F_GRAVITY_CONSISTENCY": {
+            "task_splits": "single",
+            "sub_category": "dynamics",
+            "choice": "mcq",
+            "options": ["consistent with gravity", "opposes gravity", "independent of gravity", "cannot determine"],
+            "question": "Is <OBJECT>'s motion consistent with the direction of gravity?"
         }
     },
-    "view_point": {        
+    "material_undertanding": {
     },
-    "temporal": {        
+    "temporal": { 
     },
     "global": {        
     },

@@ -342,6 +342,12 @@ def get_camera(world_state: Mapping[str, Any]) -> Mapping[str, Any]:
         raise ValueError("No camera found in the world state.")
     return camera
 
+def get_camera_at_timestep(world_state: Mapping[str, Any], timestep: str) -> Mapping[str, Any]:
+    # taking the first camera
+    camera = world_state["simulation"][timestep]["camera"]
+    if not camera:
+        raise ValueError("No camera found in the world state.")
+    return camera
 
 def get_random_material(world_state: Mapping[str, Any]) -> str:
     materials = set()

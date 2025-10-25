@@ -1,6 +1,7 @@
 # Repository to answer VQA
 
 simple_vqa.json -> template of the questions to be asked (already implemented)
+
 simple_vqa_to_implement.json -> template of the questions to be asked (ideas, brainstorming that could be implemented) 
 
 ## TODO

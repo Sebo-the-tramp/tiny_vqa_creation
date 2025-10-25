@@ -18,6 +18,7 @@ from typing import (
 )
 
 import math
+import random
 
 Number = Union[int, float]
 Vector = Tuple[float, float, float]
@@ -69,7 +70,7 @@ def _ensure_radians(fov_value):
     # If someone passes degrees by mistake (e.g., > pi), convert to radians.
     return fov_value if fov_value <= math.pi else math.radians(fov_value)
 
-def _horizontal_fov_rad(fov_value, width, height, fov_axis="vertical"):
+def horizontal_fov_rad(fov_value, width, height, fov_axis="vertical"):
     """
     Compute horizontal FOV from a given FOV and aspect.
     - fov_axis: "vertical" (default), "horizontal"
@@ -93,15 +94,22 @@ def classify_camera_angle_index(pitch_deg):
       ["low angle","eye level","high angle","bird's-eye","worm's-eye"]
     """
     if pitch_deg <= -60.0:
-        label = "bird's-eye"
+        label = "bird's-eye (<=-60 degrees)"
     elif pitch_deg <= -15.0:
-        label = "high angle"
+        label = "high angle (-60 to -15 degrees)"
     elif pitch_deg < 15.0:
-        label = "eye level"
+        label = "eye level (-15 to 15 degrees)"
+    elif pitch_deg < 60.0:
+        label = "low angle (15 to 60 degrees)"
     else:
-        label = "low angle"
+        label = "worm's-eye (>=60 degrees)"
 
-    labels = ["low angle","eye level","high angle","bird's-eye"]
+    labels = ["low angle (15 to 60 degrees)","eye level (-15 to 15 degrees)","high angle (-60 to -15 degrees)","bird's-eye (<=-60 degrees)","worm's-eye (>=60 degrees)"]
+    # Ensure the correct label is included, then add 3 random others
+    other_labels = [l for l in labels if l != label]
+    random.shuffle(other_labels)
+    labels = [label] + other_labels[:3]
+    random.shuffle(labels)
     idx = labels.index(label)
     return labels, idx
 
@@ -111,20 +119,19 @@ def classify_focal_length_index(hfov_deg):
       ultra-wide      >= 90
       wide            63 to < 90
       normal          40 to < 63
-      short telephoto 28 to < 40
-      telephoto       < 28
+      telephoto       < 40
     Labels (fixed order):
       ["ultra-wide","wide","normal","short telephoto","telephoto"]
     """
     if hfov_deg >= 90.0:
-        label = "ultra-wide"
+        label = "ultra-wide (>=90)"
     elif hfov_deg >= 63.0:
-        label = "wide"
+        label = "wide (63-90)"
     elif hfov_deg >= 40.0:
-        label = "normal"
+        label = "normal (40-63)"
     else:
-        label = "telephoto"
+        label = "telephoto (<40)"
 
-    labels = ["ultra-wide","wide","normal","telephoto"]
+    labels = ["ultra-wide (>=90)","wide (63-90)","normal (40-63)","telephoto (<40)"]
     idx = labels.index(label)
     return labels, idx

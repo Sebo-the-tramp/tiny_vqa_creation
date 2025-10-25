@@ -88,7 +88,7 @@
         },
         "F_COLLISIONS_OBJ_OBJ_FIRST":{
             "task_splits": "multi",
-            "sub_category": "dynamics",
+            "sub_category": "collision",
             "choice": "mcq",
             "question": "Which of those objects collides first with the <OBJECT> during the sequence?"
         }       
@@ -161,7 +161,13 @@
             "sub_category": "camera_characteristics",
             "choice": "mcq",            
             "question": "From the camera's perspective, what is the camera's angle of view?"
-        } 
+        },
+        "F_FOCAL_LENGTH_CLASS":{
+            "task_splits": "single+multi",            
+            "sub_category": "camera_characteristics",
+            "choice": "mcq",            
+            "question": "Which focal‑length class best matches the perspective in the image?"
+        }
     },
     "temporal": {
         "F_TEMPORAL_SEQUENCE_IMAGES": {
@@ -187,6 +193,18 @@
             "sub_category": "event_ordering",
             "choice": "mcq",
             "question": "What frame is the most likely to have been removed from the scene?"
+        }, 
+        "F_CAMERA_MOTION_DIRECTION": {
+            "task_splits": "multi",
+            "sub_category": "camera_motion_direction",
+            "choice": "mcq",
+            "question": "What is the predominant direction of the camera’s motion across the sequence?"
+        },
+        "F_CAMERA_ZOOM_BEHAVIOR": {
+            "task_splits": "multi",
+            "sub_category": "camera_zoom",
+            "choice": "mcq",
+            "question": "How does the camera’s zoom level change across the sequence?"
         }
     },
     "global": {        

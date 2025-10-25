@@ -55,7 +55,7 @@
     },
     {
         "idx": 6,
-        "answer": "D",
+        "answer": "A",
         "task_type": "factual",
         "sub_type": null,
         "ability_type": "general",
@@ -64,7 +64,7 @@
     },
     {
         "idx": 7,
-        "answer": "D",
+        "answer": "A",
         "task_type": "factual",
         "sub_type": null,
         "ability_type": "general",
@@ -73,7 +73,7 @@
     },
     {
         "idx": 8,
-        "answer": "C",
+        "answer": "D",
         "task_type": "factual",
         "sub_type": null,
         "ability_type": "general",
@@ -82,7 +82,7 @@
     },
     {
         "idx": 9,
-        "answer": "C",
+        "answer": "D",
         "task_type": "factual",
         "sub_type": null,
         "ability_type": "general",
@@ -190,7 +190,7 @@
     },
     {
         "idx": 21,
-        "answer": "D",
+        "answer": "A",
         "task_type": "factual",
         "sub_type": null,
         "ability_type": "general",
@@ -199,7 +199,7 @@
     },
     {
         "idx": 22,
-        "answer": "D",
+        "answer": "A",
         "task_type": "factual",
         "sub_type": null,
         "ability_type": "general",
@@ -208,7 +208,7 @@
     },
     {
         "idx": 23,
-        "answer": "B",
+        "answer": "C",
         "task_type": "factual",
         "sub_type": null,
         "ability_type": "general",
@@ -217,7 +217,7 @@
     },
     {
         "idx": 24,
-        "answer": "B",
+        "answer": "C",
         "task_type": "factual",
         "sub_type": null,
         "ability_type": "general",
@@ -298,7 +298,7 @@
     },
     {
         "idx": 33,
-        "answer": "C",
+        "answer": "D",
         "task_type": "factual",
         "sub_type": null,
         "ability_type": "general",
@@ -307,7 +307,7 @@
     },
     {
         "idx": 34,
-        "answer": "C",
+        "answer": "D",
         "task_type": "factual",
         "sub_type": null,
         "ability_type": "general",
@@ -334,7 +334,7 @@
     },
     {
         "idx": 37,
-        "answer": "B",
+        "answer": "C",
         "task_type": "factual",
         "sub_type": null,
         "ability_type": "general",
@@ -343,24 +343,6 @@
     },
     {
         "idx": 38,
-        "answer": "B",
-        "task_type": "factual",
-        "sub_type": null,
-        "ability_type": "general",
-        "mode": "general",
-        "choice_type": "mcq"
-    },
-    {
-        "idx": 39,
-        "answer": "D",
-        "task_type": "factual",
-        "sub_type": null,
-        "ability_type": "general",
-        "mode": "general",
-        "choice_type": "mcq"
-    },
-    {
-        "idx": 40,
         "answer": "C",
         "task_type": "factual",
         "sub_type": null,
@@ -369,7 +351,16 @@
         "choice_type": "mcq"
     },
     {
-        "idx": 41,
+        "idx": 39,
+        "answer": "B",
+        "task_type": "factual",
+        "sub_type": null,
+        "ability_type": "general",
+        "mode": "image-only",
+        "choice_type": "mcq"
+    },
+    {
+        "idx": 40,
         "answer": "B",
         "task_type": "factual",
         "sub_type": null,
@@ -378,8 +369,53 @@
         "choice_type": "mcq"
     },
     {
+        "idx": 41,
+        "answer": "D",
+        "task_type": "factual",
+        "sub_type": null,
+        "ability_type": "general",
+        "mode": "general",
+        "choice_type": "mcq"
+    },
+    {
         "idx": 42,
+        "answer": "C",
+        "task_type": "factual",
+        "sub_type": null,
+        "ability_type": "general",
+        "mode": "general",
+        "choice_type": "mcq"
+    },
+    {
+        "idx": 43,
+        "answer": "B",
+        "task_type": "factual",
+        "sub_type": null,
+        "ability_type": "general",
+        "mode": "general",
+        "choice_type": "mcq"
+    },
+    {
+        "idx": 44,
         "answer": "A",
+        "task_type": "factual",
+        "sub_type": null,
+        "ability_type": "general",
+        "mode": "general",
+        "choice_type": "mcq"
+    },
+    {
+        "idx": 45,
+        "answer": "A",
+        "task_type": "factual",
+        "sub_type": null,
+        "ability_type": "general",
+        "mode": "general",
+        "choice_type": "mcq"
+    },
+    {
+        "idx": 46,
+        "answer": "C",
         "task_type": "factual",
         "sub_type": null,
         "ability_type": "general",

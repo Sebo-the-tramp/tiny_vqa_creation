@@ -19,6 +19,7 @@ from typing import (
 
 from utils.my_exception import ImpossibleToAnswer
 
+import math
 import random
 
 Number = Union[int, float]
@@ -51,6 +52,8 @@ from categories.viewpoint.viewpoint_helpers import (
     forward,
     pitch_deg,
     classify_camera_angle_index,
+    horizontal_fov_rad,
+    classify_focal_length_index,
 )
 
 from utils.all_objects import get_all_objects_names
@@ -137,7 +140,8 @@ def F_VISIBILITY_PERCENTAGE_OBJECT(
 ## --- Camera characteristics resolvers --- ##
 
 @with_resolved_attributes
-def F_VIEWPOINT_CAMERA_ANGLE(world_state, question, attributes, **kwargs) -> int:
+def F_VIEWPOINT_CAMERA_ANGLE(world_state: WorldState, question: QuestionPayload, attributes, **kwargs
+) -> int:
     """
     Maps camera pose to one of:
     ["low angle","eye level","high angle","bird's-eye","worm's-eye"]
@@ -162,6 +166,41 @@ def F_VIEWPOINT_CAMERA_ANGLE(world_state, question, attributes, **kwargs) -> int
     pitch = pitch_deg(fwd, world_up)
 
     labels, correct_idx = classify_camera_angle_index(pitch)
+    return fill_questions(
+        question, labels, correct_idx, world_state, timestep, resolved_attributes
+    )
+
+
+@with_resolved_attributes
+def F_FOCAL_LENGTH_CLASS(world_state: WorldState, question: QuestionPayload, attributes, **kwargs
+) -> int:
+    
+    """
+    Maps FOV to one of:
+    ["ultra-wide","wide","normal","short telephoto","telephoto"]
+    Uses horizontal FOV for stable categorization across aspect ratios.
+    """
+    resolved_attributes = resolve_attributes([], world_state)
+
+    all_timesteps = list(world_state["simulation"].keys())
+
+    if "multi" in question.get("task_splits", ""):
+        timestep = random.choice(all_timesteps[7:])
+    else:
+        timestep = random.choice(all_timesteps)
+    
+    cam = get_camera_at_timestep(world_state, timestep)
+
+    fov = cam["fov"]
+    width = cam["width"]
+    height = cam["height"]
+
+    # If your camera dict exposes an axis flag, honor it; else assume vertical FOV.
+    fov_axis = cam.get("fov_axis", "vertical")
+    hfov_rad = horizontal_fov_rad(fov, width, height, fov_axis=fov_axis)
+    hfov_deg = math.degrees(hfov_rad)
+
+    labels, correct_idx = classify_focal_length_index(hfov_deg)
     return fill_questions(
         question, labels, correct_idx, world_state, timestep, resolved_attributes
     )

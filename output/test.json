@@ -112,7 +112,7 @@
             "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000009.png"
         ],
         "description": null,
-        "question": "<image>\nWhich single object has the biggest volume?\nA. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nB. Ugg_jena_womens_java_7\nC. Fresca_peach_citrus_sparkling_flavored_soda_12_pk\nD. Olive_kids_game_on_pack_n_snack",
+        "question": "<image>\nWhich single object has the biggest volume?\nA. Olive_kids_game_on_pack_n_snack\nB. Ugg_jena_womens_java_7\nC. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nD. Fresca_peach_citrus_sparkling_flavored_soda_12_pk",
         "mode": "image-only",
         "idx": 6,
         "split": "val",
@@ -133,7 +133,7 @@
             "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000009.png"
         ],
         "description": null,
-        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which single object has the biggest volume?\nA. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nB. Ugg_jena_womens_java_7\nC. Fresca_peach_citrus_sparkling_flavored_soda_12_pk\nD. Olive_kids_game_on_pack_n_snack",
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which single object has the biggest volume?\nA. Olive_kids_game_on_pack_n_snack\nB. Ugg_jena_womens_java_7\nC. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nD. Fresca_peach_citrus_sparkling_flavored_soda_12_pk",
         "mode": "general",
         "idx": 7,
         "split": "val",
@@ -147,7 +147,7 @@
             "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000013.png"
         ],
         "description": null,
-        "question": "<image>\nWhich single object has the smallest volume?\nA. Ugg_jena_womens_java_7\nB. Fresca_peach_citrus_sparkling_flavored_soda_12_pk\nC. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nD. Olive_kids_game_on_pack_n_snack",
+        "question": "<image>\nWhich single object has the smallest volume?\nA. Olive_kids_game_on_pack_n_snack\nB. Fresca_peach_citrus_sparkling_flavored_soda_12_pk\nC. Ugg_jena_womens_java_7\nD. Tory_burch_kaitlin_ballet_mestico_in_blackgold",
         "mode": "image-only",
         "idx": 8,
         "split": "val",
@@ -168,7 +168,7 @@
             "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000013.png"
         ],
         "description": null,
-        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which single object has the smallest volume?\nA. Ugg_jena_womens_java_7\nB. Fresca_peach_citrus_sparkling_flavored_soda_12_pk\nC. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nD. Olive_kids_game_on_pack_n_snack",
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which single object has the smallest volume?\nA. Olive_kids_game_on_pack_n_snack\nB. Fresca_peach_citrus_sparkling_flavored_soda_12_pk\nC. Ugg_jena_womens_java_7\nD. Tory_burch_kaitlin_ballet_mestico_in_blackgold",
         "mode": "general",
         "idx": 9,
         "split": "val",
@@ -350,7 +350,7 @@
             "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000037.png"
         ],
         "description": null,
-        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which of those objects collides first with the Olive_Kids_Game_On_Pack_n_Snack during the sequence?\nA. Fresca_peach_citrus_sparkling_flavored_soda_12_pk\nB. Ugg_jena_womens_java_7\nC. No Object\nD. Tory_burch_kaitlin_ballet_mestico_in_blackgold",
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which of those objects collides first with the Olive_Kids_Game_On_Pack_n_Snack during the sequence?\nA. Ugg_jena_womens_java_7\nB. Fresca_peach_citrus_sparkling_flavored_soda_12_pk\nC. No Object\nD. Tory_burch_kaitlin_ballet_mestico_in_blackgold",
         "mode": "general",
         "idx": 18,
         "split": "val",
@@ -399,7 +399,7 @@
             "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000031.png"
         ],
         "description": null,
-        "question": "<image>\nWhich single object has the greatest mass?\nA. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nB. Ugg_jena_womens_java_7\nC. Fresca_peach_citrus_sparkling_flavored_soda_12_pk\nD. Olive_kids_game_on_pack_n_snack",
+        "question": "<image>\nWhich single object has the greatest mass?\nA. Olive_kids_game_on_pack_n_snack\nB. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nC. Ugg_jena_womens_java_7\nD. Fresca_peach_citrus_sparkling_flavored_soda_12_pk",
         "mode": "image-only",
         "idx": 21,
         "split": "val",
@@ -420,7 +420,7 @@
             "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000031.png"
         ],
         "description": null,
-        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which single object has the greatest mass?\nA. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nB. Ugg_jena_womens_java_7\nC. Fresca_peach_citrus_sparkling_flavored_soda_12_pk\nD. Olive_kids_game_on_pack_n_snack",
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which single object has the greatest mass?\nA. Olive_kids_game_on_pack_n_snack\nB. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nC. Ugg_jena_womens_java_7\nD. Fresca_peach_citrus_sparkling_flavored_soda_12_pk",
         "mode": "general",
         "idx": 22,
         "split": "val",
@@ -434,7 +434,7 @@
             "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000030.png"
         ],
         "description": null,
-        "question": "<image>\nWhich single object has the least mass?\nA. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nB. Olive_kids_game_on_pack_n_snack\nC. Fresca_peach_citrus_sparkling_flavored_soda_12_pk\nD. Ugg_jena_womens_java_7",
+        "question": "<image>\nWhich single object has the least mass?\nA. Fresca_peach_citrus_sparkling_flavored_soda_12_pk\nB. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nC. Olive_kids_game_on_pack_n_snack\nD. Ugg_jena_womens_java_7",
         "mode": "image-only",
         "idx": 23,
         "split": "val",
@@ -455,7 +455,7 @@
             "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000030.png"
         ],
         "description": null,
-        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which single object has the least mass?\nA. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nB. Olive_kids_game_on_pack_n_snack\nC. Fresca_peach_citrus_sparkling_flavored_soda_12_pk\nD. Ugg_jena_womens_java_7",
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which single object has the least mass?\nA. Fresca_peach_citrus_sparkling_flavored_soda_12_pk\nB. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nC. Olive_kids_game_on_pack_n_snack\nD. Ugg_jena_womens_java_7",
         "mode": "general",
         "idx": 24,
         "split": "val",
@@ -574,7 +574,7 @@
             "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000051.png"
         ],
         "description": null,
-        "question": "<image>\nWhat material is the Olive_Kids_Game_On_Pack_n_Snack made of?\nA. Plastic\nB. Fabric/textile\nC. Paper/cardboard\nD. Leather",
+        "question": "<image>\nWhat material is the Olive_Kids_Game_On_Pack_n_Snack made of?\nA. Paper/cardboard\nB. Fabric/textile\nC. Leather\nD. Plastic",
         "mode": "image-only",
         "idx": 31,
         "split": "val",
@@ -595,7 +595,7 @@
             "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000051.png"
         ],
         "description": null,
-        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. What material is the Olive_Kids_Game_On_Pack_n_Snack made of?\nA. Plastic\nB. Fabric/textile\nC. Paper/cardboard\nD. Leather",
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. What material is the Olive_Kids_Game_On_Pack_n_Snack made of?\nA. Paper/cardboard\nB. Fabric/textile\nC. Leather\nD. Plastic",
         "mode": "general",
         "idx": 32,
         "split": "val",
@@ -609,7 +609,7 @@
             "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000011.png"
         ],
         "description": null,
-        "question": "<image>\nWhich of these objects is visible in the image/frame?\nA. Olive_kids_game_on_munch_n_lunch\nB. Wishbone_pencil_case\nC. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nD. Lego_bricks_more_creative_suitcase",
+        "question": "<image>\nWhich of these objects is visible in the image/frame?\nA. Twinlab_100_whey_protein_fuel_cookies_and_cream\nB. Dpc_handmade_hat_brown\nC. Sootheze_toasty_orca\nD. Tory_burch_kaitlin_ballet_mestico_in_blackgold",
         "mode": "image-only",
         "idx": 33,
         "split": "val",
@@ -630,7 +630,7 @@
             "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000011.png"
         ],
         "description": null,
-        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which of these objects is visible in the image/frame?\nA. Olive_kids_game_on_munch_n_lunch\nB. Wishbone_pencil_case\nC. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nD. Lego_bricks_more_creative_suitcase",
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which of these objects is visible in the image/frame?\nA. Twinlab_100_whey_protein_fuel_cookies_and_cream\nB. Dpc_handmade_hat_brown\nC. Sootheze_toasty_orca\nD. Tory_burch_kaitlin_ballet_mestico_in_blackgold",
         "mode": "general",
         "idx": 34,
         "split": "val",
@@ -679,7 +679,7 @@
             "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000091.png"
         ],
         "description": null,
-        "question": "<image>\nFrom the camera's perspective, what is the camera's angle of view?\nA. low angle\nB. eye level\nC. high angle\nD. bird's-eye",
+        "question": "<image>\nFrom the camera's perspective, what is the camera's angle of view?\nA. bird's-eye (<=-60 degrees)\nB. low angle (15 to 60 degrees)\nC. eye level (-15 to 15 degrees)\nD. high angle (-60 to -15 degrees)",
         "mode": "image-only",
         "idx": 37,
         "split": "val",
@@ -700,9 +700,44 @@
             "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000091.png"
         ],
         "description": null,
-        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. From the camera's perspective, what is the camera's angle of view?\nA. low angle\nB. eye level\nC. high angle\nD. bird's-eye",
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. From the camera's perspective, what is the camera's angle of view?\nA. bird's-eye (<=-60 degrees)\nB. low angle (15 to 60 degrees)\nC. eye level (-15 to 15 degrees)\nD. high angle (-60 to -15 degrees)",
         "mode": "general",
         "idx": 38,
+        "split": "val",
+        "choice_type": "mcq"
+    },
+    {
+        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "source": "simulation",
+        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "file_name": [
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000097.png"
+        ],
+        "description": null,
+        "question": "<image>\nWhich focal\u2011length class best matches the perspective in the image?\nA. ultra-wide (>=90)\nB. wide (63-90)\nC. normal (40-63)\nD. telephoto (<40)",
+        "mode": "image-only",
+        "idx": 39,
+        "split": "val",
+        "choice_type": "mcq"
+    },
+    {
+        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "source": "simulation",
+        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "file_name": [
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000090.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000091.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000092.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000093.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000094.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000095.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000096.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000097.png"
+        ],
+        "description": null,
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which focal\u2011length class best matches the perspective in the image?\nA. ultra-wide (>=90)\nB. wide (63-90)\nC. normal (40-63)\nD. telephoto (<40)",
+        "mode": "general",
+        "idx": 40,
         "split": "val",
         "choice_type": "mcq"
     },
@@ -719,7 +754,7 @@
         "description": null,
         "question": "<image><image><image><image>\nGiven the sequence of images A. - B. - C. - D. What is the correct rearrangement of images showing the events in the scene?\nA. D.C.B.A.\nB. D.C.A.B.\nC. A.B.D.C.\nD. D.B.A.C.",
         "mode": "general",
-        "idx": 39,
+        "idx": 41,
         "split": "val",
         "choice_type": "mcq"
     },
@@ -740,7 +775,7 @@
         "description": null,
         "question": "<image><image><image><image>\nWhich frame is most likely to occur next in the sequence?\nA. <image>\nB. <image>\nC. <image>\nD. <image>",
         "mode": "general",
-        "idx": 40,
+        "idx": 42,
         "split": "val",
         "choice_type": "mcq"
     },
@@ -761,7 +796,7 @@
         "description": null,
         "question": "<image><image><image><image>\nWhich frame is most likely to have occurred earlier in the sequence?\nA. <image>\nB. <image>\nC. <image>\nD. <image>",
         "mode": "general",
-        "idx": 41,
+        "idx": 43,
         "split": "val",
         "choice_type": "mcq"
     },
@@ -782,7 +817,47 @@
         "description": null,
         "question": "<image><image><image><image>\nWhat frame is the most likely to have been removed from the scene?\nA. <image>\nB. <image>\nC. <image>\nD. <image>",
         "mode": "general",
-        "idx": 42,
+        "idx": 44,
+        "split": "val",
+        "choice_type": "mcq"
+    },
+    {
+        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "source": "simulation",
+        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "file_name": [
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000024.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000031.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000038.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000045.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000052.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000059.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000066.png"
+        ],
+        "description": null,
+        "question": "<image><image><image><image><image><image><image>\nIn which direction does the camera move across the sequence the greatest?\nA. backward\nB. down then up\nC. down then backward\nD. up then left",
+        "mode": "general",
+        "idx": 45,
+        "split": "val",
+        "choice_type": "mcq"
+    },
+    {
+        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "source": "simulation",
+        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "file_name": [
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000022.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000029.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000036.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000043.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000050.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000057.png",
+            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000064.png"
+        ],
+        "description": null,
+        "question": "<image><image><image><image><image><image><image>\nHow does the camera\u2019s zoom level change across the sequence?\nA. zoom out\nB. zoom in then out\nC. no zoom\nD. zoom in",
+        "mode": "general",
+        "idx": 46,
         "split": "val",
         "choice_type": "mcq"
     }

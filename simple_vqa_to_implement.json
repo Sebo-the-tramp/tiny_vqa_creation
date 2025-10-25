@@ -16,46 +16,51 @@
     "mechanics": {
          "F_COLLISION_OBJECT_OBJECT_FRAME_SINGLE":{
             "task_splits": "single",
-            "sub_category": "dynamics",
+            "sub_category": "collision",
             "choice": "true_false",
             "question": "Is the <OBJECT> colliding with another object in the frame?"
         },
         "F_COLLISION_OBJECT_OBJECT_FRAME_MULTI":{
             "task_splits": "multi",
-            "sub_category": "dynamics",
+            "sub_category": "collision",
             "choice": "mcq",
             "question": "In which frame does the <OBJECT> collide with another object?"
         },
         "F_COLLISION_OBJECT_GROUND_FRAME_SINGLE":{
             "task_splits": "single",
-            "sub_category": "dynamics",
+            "sub_category": "collision",
             "choice": "true_false",
             "question": "Is the <OBJECT> colliding with the scene in the frame?"
         },
         "F_COLLISION_OBJECT_GROUND_FRAME_MULTI":{
             "task_splits": "multi",
-            "sub_category": "dynamics",
+            "sub_category": "collision",
             "choice": "mcq",
             "question": "In which frame does the <OBJECT> collide with the scene?"
+        },
+        "F_FORCE_COLLISION_OBJECT_OBJECT":{
+            "task_splits": "multi",
+            "sub_category": "forces",
+            "choice": "mcq",
+            "question": "Which object exerts the greatest force on the <OBJECT> during their collision?"
+        },
+        "F_FORCE_COLLISION_OBJECT_SCENE":{
+            "task_splits": "multi",
+            "sub_category": "forces",
+            "choice": "mcq",
+            "question": "Whit what force does the <OBJECT> collide with the scene?"
+        },
+        "F_GRAVITY_CONSISTENCY": {
+            "task_splits": "single",
+            "sub_category": "dynamics",
+            "choice": "mcq",
+            "options": ["consistent with gravity", "opposes gravity", "independent of gravity", "cannot determine"],
+            "question": "Is <OBJECT>'s motion consistent with the direction of gravity?"
         }
     },
     "material_undertanding": {
     },
-    "view_point": {
-         "F_FOCAL_LENGTH_CLASS":{
-            "task_splits": "single+multi",            
-            "sub_category": "camera_characteristics",
-            "choice": "mcq",            
-            "question": "Which focal‑length class best matches the perspective in the image?"
-        }
-    },
-    "temporal": {
-         "F_CAMERA_MOTION": {
-            "task_splits": "multi",
-            "sub_category": "camera_motion",
-            "choice": "mcq",
-            "question": "What is the type of camera motion occurring in the sequence?"
-        }
+    "temporal": { 
     },
     "global": {        
     },

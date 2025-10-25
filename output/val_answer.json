@@ -55,7 +55,7 @@
     },
     {
         "idx": 6,
-        "answer": "A",
+        "answer": "D",
         "task_type": "factual",
         "sub_type": null,
         "ability_type": "general",
@@ -64,7 +64,7 @@
     },
     {
         "idx": 7,
-        "answer": "A",
+        "answer": "D",
         "task_type": "factual",
         "sub_type": null,
         "ability_type": "general",
@@ -73,7 +73,7 @@
     },
     {
         "idx": 8,
-        "answer": "D",
+        "answer": "C",
         "task_type": "factual",
         "sub_type": null,
         "ability_type": "general",
@@ -82,7 +82,7 @@
     },
     {
         "idx": 9,
-        "answer": "D",
+        "answer": "C",
         "task_type": "factual",
         "sub_type": null,
         "ability_type": "general",
@@ -163,7 +163,7 @@
     },
     {
         "idx": 18,
-        "answer": "C",
+        "answer": "D",
         "task_type": "factual",
         "sub_type": null,
         "ability_type": "general",
@@ -208,7 +208,7 @@
     },
     {
         "idx": 23,
-        "answer": "C",
+        "answer": "B",
         "task_type": "factual",
         "sub_type": null,
         "ability_type": "general",
@@ -217,7 +217,7 @@
     },
     {
         "idx": 24,
-        "answer": "C",
+        "answer": "B",
         "task_type": "factual",
         "sub_type": null,
         "ability_type": "general",
@@ -280,7 +280,7 @@
     },
     {
         "idx": 31,
-        "answer": "B",
+        "answer": "C",
         "task_type": "factual",
         "sub_type": null,
         "ability_type": "general",
@@ -289,7 +289,7 @@
     },
     {
         "idx": 32,
-        "answer": "B",
+        "answer": "C",
         "task_type": "factual",
         "sub_type": null,
         "ability_type": "general",
@@ -298,7 +298,7 @@
     },
     {
         "idx": 33,
-        "answer": "D",
+        "answer": "A",
         "task_type": "factual",
         "sub_type": null,
         "ability_type": "general",
@@ -307,7 +307,7 @@
     },
     {
         "idx": 34,
-        "answer": "D",
+        "answer": "A",
         "task_type": "factual",
         "sub_type": null,
         "ability_type": "general",

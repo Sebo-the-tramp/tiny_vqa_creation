@@ -1,5 +1,6 @@
 import os
 import json
+import glob
 import argparse
 
 from utils.saving_utils import (
@@ -200,11 +201,28 @@ def create_vqa(
 
     return all_vqa
 
+
 def main(args):
     all_vqa = []
 
-    for simulation_id in os.listdir(args.simulation_path):
-        if not os.path.isdir(os.path.join(args.simulation_path, simulation_id)):
+    simulation_root = args.simulation_path
+    pattern = os.path.join(simulation_root, '**', 'simulation.json')
+
+    list_simulations = []
+    for sim_file in glob.glob(pattern, recursive=True):
+        simulation_id = os.path.dirname(sim_file)  # folder containing the file
+
+        print(simulation_id)
+        print(sim_file)
+
+        list_simulations.append(sim_file)
+
+    print(len(list_simulations))
+
+    for simulation_id in list_simulations:
+        print(simulation_id)
+        if not os.path.isfile(simulation_id):
+            print("not folder found")
             continue
         else:
             print("Found simulation folder:", simulation_id)
@@ -214,7 +232,7 @@ def main(args):
             # questions = split_questions_by_task_splits(questions_raw)
             questions = questions_raw
 
-            simulation_id_path = os.path.join(args.simulation_path, simulation_id)
+            simulation_id_path = simulation_id.replace("simulation.json", "")
             destination_simulation_id_path = os.path.join(
                 args.destination_simulation_path, simulation_id
             )

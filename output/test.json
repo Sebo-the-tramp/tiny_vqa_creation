@@ -112,7 +112,7 @@
             "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000009.png"
         ],
         "description": null,
-        "question": "<image>\nWhich single object has the biggest volume?\nA. Olive_kids_game_on_pack_n_snack\nB. Ugg_jena_womens_java_7\nC. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nD. Fresca_peach_citrus_sparkling_flavored_soda_12_pk",
+        "question": "<image>\nWhich single object has the biggest volume?\nA. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nB. Ugg_jena_womens_java_7\nC. Fresca_peach_citrus_sparkling_flavored_soda_12_pk\nD. Olive_kids_game_on_pack_n_snack",
         "mode": "image-only",
         "idx": 6,
         "split": "val",
@@ -133,7 +133,7 @@
             "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000009.png"
         ],
         "description": null,
-        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which single object has the biggest volume?\nA. Olive_kids_game_on_pack_n_snack\nB. Ugg_jena_womens_java_7\nC. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nD. Fresca_peach_citrus_sparkling_flavored_soda_12_pk",
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which single object has the biggest volume?\nA. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nB. Ugg_jena_womens_java_7\nC. Fresca_peach_citrus_sparkling_flavored_soda_12_pk\nD. Olive_kids_game_on_pack_n_snack",
         "mode": "general",
         "idx": 7,
         "split": "val",
@@ -147,7 +147,7 @@
             "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000013.png"
         ],
         "description": null,
-        "question": "<image>\nWhich single object has the smallest volume?\nA. Olive_kids_game_on_pack_n_snack\nB. Fresca_peach_citrus_sparkling_flavored_soda_12_pk\nC. Ugg_jena_womens_java_7\nD. Tory_burch_kaitlin_ballet_mestico_in_blackgold",
+        "question": "<image>\nWhich single object has the smallest volume?\nA. Olive_kids_game_on_pack_n_snack\nB. Fresca_peach_citrus_sparkling_flavored_soda_12_pk\nC. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nD. Ugg_jena_womens_java_7",
         "mode": "image-only",
         "idx": 8,
         "split": "val",
@@ -168,7 +168,7 @@
             "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000013.png"
         ],
         "description": null,
-        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which single object has the smallest volume?\nA. Olive_kids_game_on_pack_n_snack\nB. Fresca_peach_citrus_sparkling_flavored_soda_12_pk\nC. Ugg_jena_womens_java_7\nD. Tory_burch_kaitlin_ballet_mestico_in_blackgold",
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which single object has the smallest volume?\nA. Olive_kids_game_on_pack_n_snack\nB. Fresca_peach_citrus_sparkling_flavored_soda_12_pk\nC. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nD. Ugg_jena_womens_java_7",
         "mode": "general",
         "idx": 9,
         "split": "val",
@@ -350,7 +350,7 @@
             "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000037.png"
         ],
         "description": null,
-        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which of those objects collides first with the Olive_Kids_Game_On_Pack_n_Snack during the sequence?\nA. Ugg_jena_womens_java_7\nB. Fresca_peach_citrus_sparkling_flavored_soda_12_pk\nC. No Object\nD. Tory_burch_kaitlin_ballet_mestico_in_blackgold",
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which of those objects collides first with the Olive_Kids_Game_On_Pack_n_Snack during the sequence?\nA. Ugg_jena_womens_java_7\nB. Fresca_peach_citrus_sparkling_flavored_soda_12_pk\nC. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nD. No Object",
         "mode": "general",
         "idx": 18,
         "split": "val",
@@ -399,7 +399,7 @@
             "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000031.png"
         ],
         "description": null,
-        "question": "<image>\nWhich single object has the greatest mass?\nA. Olive_kids_game_on_pack_n_snack\nB. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nC. Ugg_jena_womens_java_7\nD. Fresca_peach_citrus_sparkling_flavored_soda_12_pk",
+        "question": "<image>\nWhich single object has the greatest mass?\nA. Olive_kids_game_on_pack_n_snack\nB. Ugg_jena_womens_java_7\nC. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nD. Fresca_peach_citrus_sparkling_flavored_soda_12_pk",
         "mode": "image-only",
         "idx": 21,
         "split": "val",
@@ -420,7 +420,7 @@
             "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000031.png"
         ],
         "description": null,
-        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which single object has the greatest mass?\nA. Olive_kids_game_on_pack_n_snack\nB. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nC. Ugg_jena_womens_java_7\nD. Fresca_peach_citrus_sparkling_flavored_soda_12_pk",
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which single object has the greatest mass?\nA. Olive_kids_game_on_pack_n_snack\nB. Ugg_jena_womens_java_7\nC. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nD. Fresca_peach_citrus_sparkling_flavored_soda_12_pk",
         "mode": "general",
         "idx": 22,
         "split": "val",
@@ -434,7 +434,7 @@
             "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000030.png"
         ],
         "description": null,
-        "question": "<image>\nWhich single object has the least mass?\nA. Fresca_peach_citrus_sparkling_flavored_soda_12_pk\nB. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nC. Olive_kids_game_on_pack_n_snack\nD. Ugg_jena_womens_java_7",
+        "question": "<image>\nWhich single object has the least mass?\nA. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nB. Olive_kids_game_on_pack_n_snack\nC. Fresca_peach_citrus_sparkling_flavored_soda_12_pk\nD. Ugg_jena_womens_java_7",
         "mode": "image-only",
         "idx": 23,
         "split": "val",
@@ -455,7 +455,7 @@
             "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000030.png"
         ],
         "description": null,
-        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which single object has the least mass?\nA. Fresca_peach_citrus_sparkling_flavored_soda_12_pk\nB. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nC. Olive_kids_game_on_pack_n_snack\nD. Ugg_jena_womens_java_7",
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which single object has the least mass?\nA. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nB. Olive_kids_game_on_pack_n_snack\nC. Fresca_peach_citrus_sparkling_flavored_soda_12_pk\nD. Ugg_jena_womens_java_7",
         "mode": "general",
         "idx": 24,
         "split": "val",
@@ -574,7 +574,7 @@
             "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000051.png"
         ],
         "description": null,
-        "question": "<image>\nWhat material is the Olive_Kids_Game_On_Pack_n_Snack made of?\nA. Paper/cardboard\nB. Fabric/textile\nC. Leather\nD. Plastic",
+        "question": "<image>\nWhat material is the Olive_Kids_Game_On_Pack_n_Snack made of?\nA. Leather\nB. Plastic\nC. Fabric/textile\nD. Paper/cardboard",
         "mode": "image-only",
         "idx": 31,
         "split": "val",
@@ -595,7 +595,7 @@
             "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000051.png"
         ],
         "description": null,
-        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. What material is the Olive_Kids_Game_On_Pack_n_Snack made of?\nA. Paper/cardboard\nB. Fabric/textile\nC. Leather\nD. Plastic",
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. What material is the Olive_Kids_Game_On_Pack_n_Snack made of?\nA. Leather\nB. Plastic\nC. Fabric/textile\nD. Paper/cardboard",
         "mode": "general",
         "idx": 32,
         "split": "val",
@@ -609,7 +609,7 @@
             "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000011.png"
         ],
         "description": null,
-        "question": "<image>\nWhich of these objects is visible in the image/frame?\nA. Twinlab_100_whey_protein_fuel_cookies_and_cream\nB. Dpc_handmade_hat_brown\nC. Sootheze_toasty_orca\nD. Tory_burch_kaitlin_ballet_mestico_in_blackgold",
+        "question": "<image>\nWhich of these objects is visible in the image/frame?\nA. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nB. Reebok_reesculpt_trainer_ii\nC. Jungle_height\nD. Big_dot_aqua_pencil_case",
         "mode": "image-only",
         "idx": 33,
         "split": "val",
@@ -630,7 +630,7 @@
             "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000011.png"
         ],
         "description": null,
-        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which of these objects is visible in the image/frame?\nA. Twinlab_100_whey_protein_fuel_cookies_and_cream\nB. Dpc_handmade_hat_brown\nC. Sootheze_toasty_orca\nD. Tory_burch_kaitlin_ballet_mestico_in_blackgold",
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which of these objects is visible in the image/frame?\nA. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nB. Reebok_reesculpt_trainer_ii\nC. Jungle_height\nD. Big_dot_aqua_pencil_case",
         "mode": "general",
         "idx": 34,
         "split": "val",
@@ -835,7 +835,7 @@
             "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000066.png"
         ],
         "description": null,
-        "question": "<image><image><image><image><image><image><image>\nIn which direction does the camera move across the sequence the greatest?\nA. backward\nB. down then up\nC. down then backward\nD. up then left",
+        "question": "<image><image><image><image><image><image><image>\nWhat is the predominant direction of the camera\u2019s motion across the sequence?\nA. backward\nB. down then up\nC. right then up\nD. backward then up",
         "mode": "general",
         "idx": 45,
         "split": "val",

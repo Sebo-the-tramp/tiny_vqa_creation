@@ -190,7 +190,8 @@ def get_list_ids_of_duplicate_objects(
 
 
 def get_visible_timesteps_for_attributes_min_objects(
-    attributes: List[Mapping[str, Any]], world_state: Mapping[str, Any], min_objects=1
+    attributes: List[Mapping[str, Any]], world_state: Mapping[str, Any], min_objects=1, 
+    min_n_frames = 8
 ) -> List[str]:
     visible_timesteps = []
 
@@ -228,7 +229,7 @@ def get_visible_timesteps_for_attributes_min_objects(
                     if obj_id not in list_of_ids_of_duplicate_objs
                 ]
 
-                if len(visible_objects_id) >= min_objects:
+                if len(visible_objects_id) >= min_n_frames:
                     visible_timesteps.append(timestep)
 
     if visible_timesteps == []:

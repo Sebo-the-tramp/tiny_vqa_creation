@@ -75,9 +75,10 @@ def F_MASS_OBJECT(
     )
     # if we are in a multi-image setting, we need to ensure there are enough frames
     if len(visible_timesteps) == 0:
-        raise ImpossibleToAnswer("No timestep with both objects visible.")
+        raise ImpossibleToAnswer("No timestep with both objects visible.") 
 
     if "multi" in question.get("task_splits", ""):
+        print(visible_timesteps)
         print("visible_length", len(visible_timesteps))
         timestep = random.choice(visible_timesteps[7:])
     else:

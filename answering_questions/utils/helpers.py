@@ -229,8 +229,13 @@ def get_visible_timesteps_for_attributes_min_objects(
                     if obj_id not in list_of_ids_of_duplicate_objs
                 ]
 
-                if len(visible_objects_id) >= min_n_frames:
+                if len(visible_objects_id) >= min_objects:
                     visible_timesteps.append(timestep)
+
+    if len(visible_timesteps) < min_n_frames:
+        raise ImpossibleToAnswer(
+            f"Not enough timesteps found where the required objects are visible. Found {len(visible_timesteps)}, required at least {min_n_frames}."
+        )
 
     if visible_timesteps == []:
         raise ImpossibleToAnswer(

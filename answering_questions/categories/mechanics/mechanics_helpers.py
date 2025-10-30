@@ -54,9 +54,10 @@ def fill_questions(
             [
                 question_copy,
                 labels,
-                correct_idx,
+                correct_idx, 
+                # TODO change the frame interleave -> 2 should be good for most cases
                 sample_frames_before_timestep(
-                    world_state, timestep, num_frames=8, frame_interleave=1
+                    world_state, timestep, num_frames=8, frame_interleave=2
                 ),
             ]
         )

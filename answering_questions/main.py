@@ -129,7 +129,7 @@ def create_vqa(
             for question, labels, correct_idx, imgs_idx in answer_list:
                 # changing from image_paths to image_paths
                 file_names = [
-                    destination_simulation_id_path + f"/render/{int(frame_idx):06d}.png"
+                    destination_simulation_id_path + f"render/{int(frame_idx):06d}.png"
                     for frame_idx in imgs_idx
                 ]
 
@@ -234,7 +234,7 @@ def main(args):
 
             simulation_id_path = simulation_id.replace("simulation.json", "")
             destination_simulation_id_path = os.path.join(
-                args.destination_simulation_path, simulation_id
+                args.destination_simulation_path, simulation_id_path
             )
 
             simulation_steps = read_simulation(

@@ -12,7 +12,7 @@
             "console": "integratedTerminal",
             "cwd": "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/answering_questions",
             "args": [
-                "--simulation_path", "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations",
+                "--simulation_path", "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655",
                 "--verbose"
             ]
         },

@@ -6,7 +6,7 @@ data/
 .venv
 .vscode
 
-output_done/
+output*/
 
 answering_questions/categories_old/
 

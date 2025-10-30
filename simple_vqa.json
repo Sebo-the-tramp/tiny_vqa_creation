@@ -91,7 +91,31 @@
             "sub_category": "collision",
             "choice": "mcq",
             "question": "Which of those objects collides first with the <OBJECT> during the sequence?"
-        }       
+        }, 
+        "F_COLLISION_OBJECT_OBJECT_FRAME_SINGLE":{
+            "task_splits": "single",
+            "sub_category": "collision",
+            "choice": "true_false",
+            "question": "Is the <OBJECT> colliding with another object in the frame?"
+        },
+        "F_COLLISION_OBJECT_OBJECT_FRAME_MULTI":{
+            "task_splits": "multi",
+            "sub_category": "collision",
+            "choice": "mcq",
+            "question": "In which frame does the <OBJECT> collide with another object first?"
+        },
+        "F_COLLISION_OBJECT_GROUND_FRAME_SINGLE":{
+            "task_splits": "single",
+            "sub_category": "collision",
+            "choice": "true_false",
+            "question": "Is the <OBJECT> colliding with the scene in the frame?"
+        },
+        "F_COLLISION_OBJECT_GROUND_FRAME_MULTI":{
+            "task_splits": "multi",
+            "sub_category": "collision",
+            "choice": "mcq",
+            "question": "In which frame is the <OBJECT> most likely colliding with the scene?"
+        }
     },
     "material_understanding": {
          "F_MASS_OBJECT": {

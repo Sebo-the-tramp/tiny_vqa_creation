@@ -147,6 +147,14 @@ def extract_attributes(question: Mapping[str, Any]) -> Mapping[str, Any]:
 
     return {"attributes": attributes}
 
+def is_object_visible_at_timestep(object_id: str, timestep: str, world_state: Mapping[str, Any]) -> bool:
+    """Check if an object is visible at a specific timestep."""
+    obj_state = get_object_state_at_timestep(world_state, object_id, timestep)
+    infov = obj_state["infov"]
+    fov_visibility = obj_state["fov_visibility"]
+
+    return infov and fov_visibility > VISIBILITY_THRESHOLD
+
 
 def get_object_state_at_timestep(
     world_state: Mapping[str, Any], object_id: str, timestep: str

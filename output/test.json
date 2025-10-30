@@ -1,864 +1,934 @@
 [
     {
-        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
         "source": "simulation",
-        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "simulation_id": "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/simulation.json",
         "file_name": [
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000013.png"
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000071.png"
         ],
         "description": null,
-        "question": "<image>\nWhat is the distance between the geometrical centers of Fresca_Peach_Citrus_Sparkling_Flavored_Soda_12_PK and the Olive_Kids_Game_On_Pack_n_Snack?\nA. 3.2 meters\nB. 2.1 meters\nC. 4.3 meters\nD. 1.1 meters",
+        "question": "<image>\nWhat is the distance between the geometrical centers of Twinlab_100_Whey_Protein_Fuel_Chocolate and the Philips_60ct_Warm_White_LED_Smooth_Mini_String_Lights?\nA. 1.0 meters\nB. 0.7 meters\nC. 1.4 meters\nD. 0.3 meters",
         "mode": "image-only",
-        "idx": 0,
+        "idx": "0_i",
         "split": "val",
-        "choice_type": "mcq"
+        "choice_type": "mcq",
+        "question_id": "F_DISTANCE_OBJECT_OBJECT"
     },
     {
-        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
         "source": "simulation",
-        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "simulation_id": "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/simulation.json",
         "file_name": [
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000006.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000007.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000008.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000009.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000010.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000011.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000012.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000013.png"
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000064.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000065.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000066.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000067.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000068.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000069.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000070.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000071.png"
         ],
         "description": null,
-        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. What is the distance between the geometrical centers of Fresca_Peach_Citrus_Sparkling_Flavored_Soda_12_PK and the Olive_Kids_Game_On_Pack_n_Snack?\nA. 3.2 meters\nB. 2.1 meters\nC. 4.3 meters\nD. 1.1 meters",
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. What is the distance between the geometrical centers of Twinlab_100_Whey_Protein_Fuel_Chocolate and the Philips_60ct_Warm_White_LED_Smooth_Mini_String_Lights?\nA. 1.0 meters\nB. 0.7 meters\nC. 1.4 meters\nD. 0.3 meters",
         "mode": "general",
-        "idx": 1,
+        "idx": "0_g",
         "split": "val",
-        "choice_type": "mcq"
+        "choice_type": "mcq",
+        "question_id": "F_DISTANCE_OBJECT_OBJECT"
     },
     {
-        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
         "source": "simulation",
-        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "simulation_id": "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/simulation.json",
         "file_name": [
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000030.png"
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000036.png"
         ],
         "description": null,
-        "question": "<image>\nWhat is the distance between the geometrical center of the Olive_Kids_Game_On_Pack_n_Snack and the camera?\nA. 5.9 meters\nB. 1.5 meters\nC. 4.4 meters\nD. 3.0 meters",
+        "question": "<image>\nWhat is the distance between the geometrical center of the Philips_60ct_Warm_White_LED_Smooth_Mini_String_Lights and the camera?\nA. 3.6 meters\nB. 0.9 meters\nC. 2.7 meters\nD. 1.8 meters",
         "mode": "image-only",
-        "idx": 2,
+        "idx": "1_i",
         "split": "val",
-        "choice_type": "mcq"
+        "choice_type": "mcq",
+        "question_id": "F_DISTANCE_OBJECT_CAMERA_DISTANCE"
     },
     {
-        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
         "source": "simulation",
-        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "simulation_id": "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/simulation.json",
         "file_name": [
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000023.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000024.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000025.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000026.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000027.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000028.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000029.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000030.png"
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000029.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000030.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000031.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000032.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000033.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000034.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000035.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000036.png"
         ],
         "description": null,
-        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. What is the distance between the geometrical center of the Olive_Kids_Game_On_Pack_n_Snack and the camera?\nA. 5.9 meters\nB. 1.5 meters\nC. 4.4 meters\nD. 3.0 meters",
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. What is the distance between the geometrical center of the Philips_60ct_Warm_White_LED_Smooth_Mini_String_Lights and the camera?\nA. 3.6 meters\nB. 0.9 meters\nC. 2.7 meters\nD. 1.8 meters",
         "mode": "general",
-        "idx": 3,
+        "idx": "1_g",
         "split": "val",
-        "choice_type": "mcq"
+        "choice_type": "mcq",
+        "question_id": "F_DISTANCE_OBJECT_CAMERA_DISTANCE"
     },
     {
-        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
         "source": "simulation",
-        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "simulation_id": "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/simulation.json",
         "file_name": [
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000059.png"
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000094.png"
         ],
         "description": null,
-        "question": "<image>\nWhat is the distance between the geometrical center of the Olive_Kids_Game_On_Pack_n_Snack and its closest object?\nA. 3.4 meters\nB. 1.7 meters\nC. 2.5 meters\nD. 0.8 meters",
+        "question": "<image>\nWhat is the distance between the geometrical center of the Philips_60ct_Warm_White_LED_Smooth_Mini_String_Lights and its closest object?\nA. 0.5 meters\nB. 0.2 meters\nC. 0.4 meters\nD. 0.1 meters",
         "mode": "image-only",
-        "idx": 4,
+        "idx": "2_i",
         "split": "val",
-        "choice_type": "mcq"
+        "choice_type": "mcq",
+        "question_id": "F_DISTANCE_CLOSEST_OBJECT_OBJECT"
     },
     {
-        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
         "source": "simulation",
-        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "simulation_id": "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/simulation.json",
         "file_name": [
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000052.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000053.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000054.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000055.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000056.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000057.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000058.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000059.png"
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000087.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000088.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000089.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000090.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000091.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000092.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000093.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000094.png"
         ],
         "description": null,
-        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. What is the distance between the geometrical center of the Olive_Kids_Game_On_Pack_n_Snack and its closest object?\nA. 3.4 meters\nB. 1.7 meters\nC. 2.5 meters\nD. 0.8 meters",
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. What is the distance between the geometrical center of the Philips_60ct_Warm_White_LED_Smooth_Mini_String_Lights and its closest object?\nA. 0.5 meters\nB. 0.2 meters\nC. 0.4 meters\nD. 0.1 meters",
         "mode": "general",
-        "idx": 5,
+        "idx": "2_g",
         "split": "val",
-        "choice_type": "mcq"
+        "choice_type": "mcq",
+        "question_id": "F_DISTANCE_CLOSEST_OBJECT_OBJECT"
     },
     {
-        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
         "source": "simulation",
-        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "simulation_id": "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/simulation.json",
         "file_name": [
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000009.png"
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000011.png"
         ],
         "description": null,
-        "question": "<image>\nWhich single object has the biggest volume?\nA. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nB. Ugg_jena_womens_java_7\nC. Fresca_peach_citrus_sparkling_flavored_soda_12_pk\nD. Olive_kids_game_on_pack_n_snack",
+        "question": "<image>\nWhich single object has the biggest volume?\nA. Black_forest_fruit_snacks_juicy_filled_centers_10_pouches_9_oz_total\nB. Frozen_olafs_in_trouble_popomatic_game\nC. Diet_pepsi_soda_cola12_pack_12_oz_can\nD. Twinlab_100_whey_protein_fuel_chocolate",
         "mode": "image-only",
-        "idx": 6,
+        "idx": "3_i",
         "split": "val",
-        "choice_type": "mcq"
+        "choice_type": "mcq",
+        "question_id": "F_SIZE_OBJECT_BIGGER"
     },
     {
-        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
         "source": "simulation",
-        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "simulation_id": "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/simulation.json",
         "file_name": [
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000002.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000003.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000004.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000005.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000006.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000007.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000008.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000009.png"
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000004.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000005.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000006.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000007.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000008.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000009.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000010.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000011.png"
         ],
         "description": null,
-        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which single object has the biggest volume?\nA. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nB. Ugg_jena_womens_java_7\nC. Fresca_peach_citrus_sparkling_flavored_soda_12_pk\nD. Olive_kids_game_on_pack_n_snack",
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which single object has the biggest volume?\nA. Black_forest_fruit_snacks_juicy_filled_centers_10_pouches_9_oz_total\nB. Frozen_olafs_in_trouble_popomatic_game\nC. Diet_pepsi_soda_cola12_pack_12_oz_can\nD. Twinlab_100_whey_protein_fuel_chocolate",
         "mode": "general",
-        "idx": 7,
+        "idx": "3_g",
         "split": "val",
-        "choice_type": "mcq"
+        "choice_type": "mcq",
+        "question_id": "F_SIZE_OBJECT_BIGGER"
     },
     {
-        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
         "source": "simulation",
-        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "simulation_id": "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/simulation.json",
         "file_name": [
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000013.png"
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000019.png"
         ],
         "description": null,
-        "question": "<image>\nWhich single object has the smallest volume?\nA. Olive_kids_game_on_pack_n_snack\nB. Fresca_peach_citrus_sparkling_flavored_soda_12_pk\nC. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nD. Ugg_jena_womens_java_7",
+        "question": "<image>\nWhich single object has the smallest volume?\nA. Philips_60ct_warm_white_led_smooth_mini_string_light\nB. Black_forest_fruit_snacks_juicy_filled_centers_10_pouches_9_oz_total\nC. Schleich_spinosaurus_action_figure\nD. Twinlab_100_whey_protein_fuel_chocolate",
         "mode": "image-only",
-        "idx": 8,
+        "idx": "4_i",
         "split": "val",
-        "choice_type": "mcq"
+        "choice_type": "mcq",
+        "question_id": "F_SIZE_OBJECT_SMALLER"
     },
     {
-        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
         "source": "simulation",
-        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "simulation_id": "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/simulation.json",
         "file_name": [
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000006.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000007.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000008.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000009.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000010.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000011.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000012.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000013.png"
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000012.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000013.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000014.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000015.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000016.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000017.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000018.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000019.png"
         ],
         "description": null,
-        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which single object has the smallest volume?\nA. Olive_kids_game_on_pack_n_snack\nB. Fresca_peach_citrus_sparkling_flavored_soda_12_pk\nC. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nD. Ugg_jena_womens_java_7",
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which single object has the smallest volume?\nA. Philips_60ct_warm_white_led_smooth_mini_string_light\nB. Black_forest_fruit_snacks_juicy_filled_centers_10_pouches_9_oz_total\nC. Schleich_spinosaurus_action_figure\nD. Twinlab_100_whey_protein_fuel_chocolate",
         "mode": "general",
-        "idx": 9,
+        "idx": "4_g",
         "split": "val",
-        "choice_type": "mcq"
+        "choice_type": "mcq",
+        "question_id": "F_SIZE_OBJECT_SMALLER"
     },
     {
-        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
         "source": "simulation",
-        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "simulation_id": "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/simulation.json",
         "file_name": [
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000014.png"
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000063.png"
         ],
         "description": null,
-        "question": "<image>\nFrom the camera\u2019s perspective, where is the UGG_Jena_Womens_Java_7 relative to Fresca_Peach_Citrus_Sparkling_Flavored_Soda_12_PK?\nA. equidistant\nB. below\nC. above\nD. to the left",
+        "question": "<image>\nFrom the camera\u2019s perspective, where is the Twinlab_100_Whey_Protein_Fuel_Chocolate relative to Philips_60ct_Warm_White_LED_Smooth_Mini_String_Lights?\nA. behind\nB. below\nC. above\nD. to the right",
         "mode": "image-only",
-        "idx": 10,
+        "idx": "5_i",
         "split": "val",
-        "choice_type": "mcq"
+        "choice_type": "mcq",
+        "question_id": "F_LAYOUT_POSITION_OBJECT_OBJECT"
     },
     {
-        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
         "source": "simulation",
-        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "simulation_id": "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/simulation.json",
         "file_name": [
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000007.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000008.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000009.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000010.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000011.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000012.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000013.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000014.png"
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000056.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000057.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000058.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000059.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000060.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000061.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000062.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000063.png"
         ],
         "description": null,
-        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. From the camera\u2019s perspective, where is the UGG_Jena_Womens_Java_7 relative to Fresca_Peach_Citrus_Sparkling_Flavored_Soda_12_PK?\nA. equidistant\nB. below\nC. above\nD. to the left",
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. From the camera\u2019s perspective, where is the Twinlab_100_Whey_Protein_Fuel_Chocolate relative to Philips_60ct_Warm_White_LED_Smooth_Mini_String_Lights?\nA. behind\nB. below\nC. above\nD. to the right",
         "mode": "general",
-        "idx": 11,
+        "idx": "5_g",
         "split": "val",
-        "choice_type": "mcq"
+        "choice_type": "mcq",
+        "question_id": "F_LAYOUT_POSITION_OBJECT_OBJECT"
     },
     {
-        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
         "source": "simulation",
-        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "simulation_id": "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/simulation.json",
         "file_name": [
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000049.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000050.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000051.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000052.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000053.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000054.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000055.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000056.png"
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000008.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000010.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000012.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000014.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000016.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000018.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000020.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000022.png"
         ],
         "description": null,
-        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. What is the speed of the Olive_Kids_Game_On_Pack_n_Snack?\nA. 0.2 m/s\nB. 0.14 m/s\nC. 0.27 m/s\nD. 0.07 m/s",
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. What is the speed of the fastest object?\nA. 0.36 m/s\nB. 0.18 m/s\nC. 0.27 m/s\nD. 0.09 m/s",
         "mode": "general",
-        "idx": 12,
+        "idx": "6_g",
         "split": "val",
-        "choice_type": "mcq"
+        "choice_type": "mcq",
+        "question_id": "F_KINEMATICS_FASTEST_OBJECT_SPEED"
     },
     {
-        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
         "source": "simulation",
-        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "simulation_id": "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/simulation.json",
         "file_name": [
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000024.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000025.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000026.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000027.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000028.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000029.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000030.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000031.png"
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000025.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000027.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000029.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000031.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000033.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000035.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000037.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000039.png"
         ],
         "description": null,
-        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. What is the speed of the fastest object?\nA. 0.68 m/s\nB. 0.51 m/s\nC. 0.17 m/s\nD. 0.34 m/s",
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. What is the acceleration of the Twinlab_100_Whey_Protein_Fuel_Chocolate?\nA. 0.66 m/s^2\nB. 0.49 m/s^2\nC. 0.17 m/s^2\nD. 0.33 m/s^2",
         "mode": "general",
-        "idx": 13,
+        "idx": "7_g",
         "split": "val",
-        "choice_type": "mcq"
+        "choice_type": "mcq",
+        "question_id": "F_KINEMATICS_ACCEL_OBJECT"
     },
     {
-        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
         "source": "simulation",
-        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "simulation_id": "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/simulation.json",
         "file_name": [
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000052.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000053.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000054.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000055.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000056.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000057.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000058.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000059.png"
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000006.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000008.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000010.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000012.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000014.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000016.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000018.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000020.png"
         ],
         "description": null,
-        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. What is the acceleration of the Olive_Kids_Game_On_Pack_n_Snack?\nA. 1.93 m/s^2\nB. 0.96 m/s^2\nC. 1.45 m/s^2\nD. 0.48 m/s^2",
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Is the Twinlab_100_Whey_Protein_Fuel_Chocolate motionless throughout all frames?\nA. yes\nB. no",
         "mode": "general",
-        "idx": 14,
+        "idx": "8_g",
         "split": "val",
-        "choice_type": "mcq"
+        "choice_type": "true_false",
+        "question_id": "F_KINEMATICS_STILL_OBJECT"
     },
     {
-        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
         "source": "simulation",
-        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "simulation_id": "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/simulation.json",
         "file_name": [
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000002.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000003.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000004.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000005.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000006.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000007.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000008.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000009.png"
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000013.png"
         ],
         "description": null,
-        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Considering the geometrical center of the object, how far has the Fresca_Peach_Citrus_Sparkling_Flavored_Soda_12_PK traveled between during the sequence?\nA. 0.3 meters\nB. 0.4 meters\nC. 0.6 meters\nD. 0.1 meters",
-        "mode": "general",
-        "idx": 15,
-        "split": "val",
-        "choice_type": "mcq"
-    },
-    {
-        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
-        "source": "simulation",
-        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
-        "file_name": [
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000006.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000007.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000008.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000009.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000010.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000011.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000012.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000013.png"
-        ],
-        "description": null,
-        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Is the Fresca_Peach_Citrus_Sparkling_Flavored_Soda_12_PK moving throughout all frames?\nA. yes\nB. no",
-        "mode": "general",
-        "idx": 16,
-        "split": "val",
-        "choice_type": "true_false"
-    },
-    {
-        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
-        "source": "simulation",
-        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
-        "file_name": [
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000007.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000008.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000009.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000010.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000011.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000012.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000013.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000014.png"
-        ],
-        "description": null,
-        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Is the Fresca_Peach_Citrus_Sparkling_Flavored_Soda_12_PK motionless throughout all frames?\nA. yes\nB. no",
-        "mode": "general",
-        "idx": 17,
-        "split": "val",
-        "choice_type": "true_false"
-    },
-    {
-        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
-        "source": "simulation",
-        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
-        "file_name": [
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000030.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000031.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000032.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000033.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000034.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000035.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000036.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000037.png"
-        ],
-        "description": null,
-        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which of those objects collides first with the Olive_Kids_Game_On_Pack_n_Snack during the sequence?\nA. Ugg_jena_womens_java_7\nB. Fresca_peach_citrus_sparkling_flavored_soda_12_pk\nC. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nD. No Object",
-        "mode": "general",
-        "idx": 18,
-        "split": "val",
-        "choice_type": "mcq"
-    },
-    {
-        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
-        "source": "simulation",
-        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
-        "file_name": [
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000009.png"
-        ],
-        "description": null,
-        "question": "<image>\nWhat is the mass of the Olive_Kids_Game_On_Pack_n_Snack?\nA. 1.6 kgs\nB. 0.8 kgs\nC. 1.2 kgs\nD. 0.4 kgs",
+        "question": "<image>\nIs the Frozen_Olafs_In_Trouble_PopOMatic_Game colliding with another object in the frame?\nA. no\nB. yes\nC. impossible to tell\nD. not applicable",
         "mode": "image-only",
-        "idx": 19,
+        "idx": "9_i",
         "split": "val",
-        "choice_type": "mcq"
+        "choice_type": "true_false",
+        "question_id": "F_COLLISION_OBJECT_OBJECT_FRAME_SINGLE"
     },
     {
-        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
         "source": "simulation",
-        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "simulation_id": "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/simulation.json",
         "file_name": [
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000002.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000003.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000004.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000005.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000006.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000007.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000008.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000009.png"
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000007.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000009.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000011.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000013.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000007.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000013.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000011.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000009.png"
         ],
         "description": null,
-        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. What is the mass of the Olive_Kids_Game_On_Pack_n_Snack?\nA. 1.6 kgs\nB. 0.8 kgs\nC. 1.2 kgs\nD. 0.4 kgs",
+        "question": "<image><image><image><image>\nIn which frame does the Frozen_Olafs_In_Trouble_PopOMatic_Game collide with another object first?\nA. <image>\nB. <image>\nC. <image>\nD. <image>",
         "mode": "general",
-        "idx": 20,
+        "idx": "10_g",
         "split": "val",
-        "choice_type": "mcq"
+        "choice_type": "mcq",
+        "question_id": "F_COLLISION_OBJECT_OBJECT_FRAME_MULTI"
     },
     {
-        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
         "source": "simulation",
-        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "simulation_id": "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/simulation.json",
         "file_name": [
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000031.png"
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000011.png"
         ],
         "description": null,
-        "question": "<image>\nWhich single object has the greatest mass?\nA. Olive_kids_game_on_pack_n_snack\nB. Ugg_jena_womens_java_7\nC. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nD. Fresca_peach_citrus_sparkling_flavored_soda_12_pk",
+        "question": "<image>\nIs the Frozen_Olafs_In_Trouble_PopOMatic_Game colliding with the scene in the frame?\nA. no\nB. yes\nC. impossible to tell\nD. not applicable",
         "mode": "image-only",
-        "idx": 21,
+        "idx": "11_i",
         "split": "val",
-        "choice_type": "mcq"
+        "choice_type": "true_false",
+        "question_id": "F_COLLISION_OBJECT_GROUND_FRAME_SINGLE"
     },
     {
-        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
         "source": "simulation",
-        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "simulation_id": "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/simulation.json",
         "file_name": [
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000024.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000025.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000026.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000027.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000028.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000029.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000030.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000031.png"
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000005.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000007.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000009.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000011.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000007.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000011.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000005.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000009.png"
         ],
         "description": null,
-        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which single object has the greatest mass?\nA. Olive_kids_game_on_pack_n_snack\nB. Ugg_jena_womens_java_7\nC. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nD. Fresca_peach_citrus_sparkling_flavored_soda_12_pk",
+        "question": "<image><image><image><image>\nIn which frame is the Twinlab_100_Whey_Protein_Fuel_Chocolate most likely colliding with the scene?\nA. <image>\nB. <image>\nC. <image>\nD. <image>",
         "mode": "general",
-        "idx": 22,
+        "idx": "12_g",
         "split": "val",
-        "choice_type": "mcq"
+        "choice_type": "mcq",
+        "question_id": "F_COLLISION_OBJECT_GROUND_FRAME_MULTI"
     },
     {
-        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
         "source": "simulation",
-        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "simulation_id": "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/simulation.json",
         "file_name": [
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000030.png"
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000089.png"
         ],
         "description": null,
-        "question": "<image>\nWhich single object has the least mass?\nA. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nB. Olive_kids_game_on_pack_n_snack\nC. Fresca_peach_citrus_sparkling_flavored_soda_12_pk\nD. Ugg_jena_womens_java_7",
+        "question": "<image>\nWhat is the mass of the Twinlab_100_Whey_Protein_Fuel_Chocolate?\nA. 2.2 kgs\nB. 1.5 kgs\nC. 3.0 kgs\nD. 0.8 kgs",
         "mode": "image-only",
-        "idx": 23,
+        "idx": "13_i",
         "split": "val",
-        "choice_type": "mcq"
+        "choice_type": "mcq",
+        "question_id": "F_MASS_OBJECT"
     },
     {
-        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
         "source": "simulation",
-        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "simulation_id": "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/simulation.json",
         "file_name": [
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000023.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000024.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000025.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000026.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000027.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000028.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000029.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000030.png"
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000082.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000083.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000084.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000085.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000086.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000087.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000088.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000089.png"
         ],
         "description": null,
-        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which single object has the least mass?\nA. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nB. Olive_kids_game_on_pack_n_snack\nC. Fresca_peach_citrus_sparkling_flavored_soda_12_pk\nD. Ugg_jena_womens_java_7",
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. What is the mass of the Twinlab_100_Whey_Protein_Fuel_Chocolate?\nA. 2.2 kgs\nB. 1.5 kgs\nC. 3.0 kgs\nD. 0.8 kgs",
         "mode": "general",
-        "idx": 24,
+        "idx": "13_g",
         "split": "val",
-        "choice_type": "mcq"
+        "choice_type": "mcq",
+        "question_id": "F_MASS_OBJECT"
     },
     {
-        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
         "source": "simulation",
-        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "simulation_id": "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/simulation.json",
         "file_name": [
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000063.png"
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000039.png"
         ],
         "description": null,
-        "question": "<image>\nWhat is the average (or effective) density of the Olive_Kids_Game_On_Pack_n_Snack?\nA. 27.5 kg/m^3\nB. 55.0 kg/m^3\nC. 41.2 kg/m^3\nD. 13.8 kg/m^3",
+        "question": "<image>\nWhich single object has the greatest mass?\nA. Schleich_spinosaurus_action_figure\nB. Diet_pepsi_soda_cola12_pack_12_oz_can\nC. Frozen_olafs_in_trouble_popomatic_game\nD. Twinlab_100_whey_protein_fuel_chocolate",
         "mode": "image-only",
-        "idx": 25,
+        "idx": "14_i",
         "split": "val",
-        "choice_type": "mcq"
+        "choice_type": "mcq",
+        "question_id": "F_MASS_HEAVIEST_OBJECT"
     },
     {
-        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
         "source": "simulation",
-        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "simulation_id": "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/simulation.json",
         "file_name": [
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000056.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000057.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000058.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000059.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000060.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000061.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000062.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000063.png"
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000032.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000033.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000034.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000035.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000036.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000037.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000038.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000039.png"
         ],
         "description": null,
-        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. What is the average (or effective) density of the Olive_Kids_Game_On_Pack_n_Snack?\nA. 27.5 kg/m^3\nB. 55.0 kg/m^3\nC. 41.2 kg/m^3\nD. 13.8 kg/m^3",
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which single object has the greatest mass?\nA. Schleich_spinosaurus_action_figure\nB. Diet_pepsi_soda_cola12_pack_12_oz_can\nC. Frozen_olafs_in_trouble_popomatic_game\nD. Twinlab_100_whey_protein_fuel_chocolate",
         "mode": "general",
-        "idx": 26,
+        "idx": "14_g",
         "split": "val",
-        "choice_type": "mcq"
+        "choice_type": "mcq",
+        "question_id": "F_MASS_HEAVIEST_OBJECT"
     },
     {
-        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
         "source": "simulation",
-        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "simulation_id": "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/simulation.json",
         "file_name": [
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000053.png"
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000036.png"
         ],
         "description": null,
-        "question": "<image>\nWhat is the Young's modulus of the Olive_Kids_Game_On_Pack_n_Snack?\nA. 16.5 Pa\nB. 165.0 Pa\nC. 1.6 Pa\nD. 165000.0 Pa",
+        "question": "<image>\nWhich single object has the least mass?\nA. Diet_pepsi_soda_cola12_pack_12_oz_can\nB. Twinlab_100_whey_protein_fuel_chocolate\nC. Schleich_spinosaurus_action_figure\nD. Philips_60ct_warm_white_led_smooth_mini_string_light",
         "mode": "image-only",
-        "idx": 27,
+        "idx": "15_i",
         "split": "val",
-        "choice_type": "mcq"
+        "choice_type": "mcq",
+        "question_id": "F_MASS_LIGHTEST_OBJECT"
     },
     {
-        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
         "source": "simulation",
-        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "simulation_id": "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/simulation.json",
         "file_name": [
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000046.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000047.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000048.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000049.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000050.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000051.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000052.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000053.png"
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000029.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000030.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000031.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000032.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000033.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000034.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000035.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000036.png"
         ],
         "description": null,
-        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. What is the Young's modulus of the Olive_Kids_Game_On_Pack_n_Snack?\nA. 16.5 Pa\nB. 165.0 Pa\nC. 1.6 Pa\nD. 165000.0 Pa",
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which single object has the least mass?\nA. Diet_pepsi_soda_cola12_pack_12_oz_can\nB. Twinlab_100_whey_protein_fuel_chocolate\nC. Schleich_spinosaurus_action_figure\nD. Philips_60ct_warm_white_led_smooth_mini_string_light",
         "mode": "general",
-        "idx": 28,
+        "idx": "15_g",
         "split": "val",
-        "choice_type": "mcq"
+        "choice_type": "mcq",
+        "question_id": "F_MASS_LIGHTEST_OBJECT"
     },
     {
-        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
         "source": "simulation",
-        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "simulation_id": "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/simulation.json",
         "file_name": [
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000013.png"
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000025.png"
         ],
         "description": null,
-        "question": "<image>\nWhat is the Poisson ratio of the Olive_Kids_Game_On_Pack_n_Snack?\nA. 0.32\nB. 0.24\nC. 0.08\nD. 0.16",
+        "question": "<image>\nIs the mass of the Diet_Pepsi_Soda_Cola12_Pack_12_oz_Cans greater than the mass of the Twinlab_100_Whey_Protein_Fuel_Chocolate?\nA. yes\nB. no",
         "mode": "image-only",
-        "idx": 29,
+        "idx": "16_i",
         "split": "val",
-        "choice_type": "mcq"
+        "choice_type": "true_false",
+        "question_id": "F_MASS_COMPARE_OBJECTS"
     },
     {
-        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
         "source": "simulation",
-        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "simulation_id": "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/simulation.json",
         "file_name": [
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000006.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000007.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000008.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000009.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000010.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000011.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000012.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000013.png"
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000018.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000019.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000020.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000021.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000022.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000023.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000024.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000025.png"
         ],
         "description": null,
-        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. What is the Poisson ratio of the Olive_Kids_Game_On_Pack_n_Snack?\nA. 0.32\nB. 0.24\nC. 0.08\nD. 0.16",
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Is the mass of the Diet_Pepsi_Soda_Cola12_Pack_12_oz_Cans greater than the mass of the Twinlab_100_Whey_Protein_Fuel_Chocolate?\nA. yes\nB. no",
         "mode": "general",
-        "idx": 30,
+        "idx": "16_g",
         "split": "val",
-        "choice_type": "mcq"
+        "choice_type": "true_false",
+        "question_id": "F_MASS_COMPARE_OBJECTS"
     },
     {
-        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
         "source": "simulation",
-        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "simulation_id": "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/simulation.json",
         "file_name": [
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000051.png"
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000021.png"
         ],
         "description": null,
-        "question": "<image>\nWhat material is the Olive_Kids_Game_On_Pack_n_Snack made of?\nA. Leather\nB. Plastic\nC. Fabric/textile\nD. Paper/cardboard",
+        "question": "<image>\nWhat is the average (or effective) density of the Black_Forest_Fruit_Snacks_Juicy_Filled_Centers_10_pouches_9_oz_total?\nA. 210.0 kg/m^3\nB. 105.0 kg/m^3\nC. 157.5 kg/m^3\nD. 52.5 kg/m^3",
         "mode": "image-only",
-        "idx": 31,
+        "idx": "17_i",
         "split": "val",
-        "choice_type": "mcq"
+        "choice_type": "mcq",
+        "question_id": "F_PHYSICS_PROPERTY_DENSITY_OBJECT"
     },
     {
-        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
         "source": "simulation",
-        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "simulation_id": "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/simulation.json",
         "file_name": [
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000044.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000045.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000046.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000047.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000048.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000049.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000050.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000051.png"
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000014.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000015.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000016.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000017.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000018.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000019.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000020.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000021.png"
         ],
         "description": null,
-        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. What material is the Olive_Kids_Game_On_Pack_n_Snack made of?\nA. Leather\nB. Plastic\nC. Fabric/textile\nD. Paper/cardboard",
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. What is the average (or effective) density of the Black_Forest_Fruit_Snacks_Juicy_Filled_Centers_10_pouches_9_oz_total?\nA. 210.0 kg/m^3\nB. 105.0 kg/m^3\nC. 157.5 kg/m^3\nD. 52.5 kg/m^3",
         "mode": "general",
-        "idx": 32,
+        "idx": "17_g",
         "split": "val",
-        "choice_type": "mcq"
+        "choice_type": "mcq",
+        "question_id": "F_PHYSICS_PROPERTY_DENSITY_OBJECT"
     },
     {
-        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
         "source": "simulation",
-        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "simulation_id": "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/simulation.json",
         "file_name": [
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000011.png"
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000012.png"
         ],
         "description": null,
-        "question": "<image>\nWhich of these objects is visible in the image/frame?\nA. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nB. Reebok_reesculpt_trainer_ii\nC. Jungle_height\nD. Big_dot_aqua_pencil_case",
+        "question": "<image>\nWhat is the Young's modulus of the Black_Forest_Fruit_Snacks_Juicy_Filled_Centers_10_pouches_9_oz_total?\nA. 4150000.0 Pa\nB. 41500000.0 Pa\nC. 415000.0 Pa\nD. 41500.0 Pa",
         "mode": "image-only",
-        "idx": 33,
+        "idx": "18_i",
         "split": "val",
-        "choice_type": "mcq"
+        "choice_type": "mcq",
+        "question_id": "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT"
     },
     {
-        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
         "source": "simulation",
-        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "simulation_id": "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/simulation.json",
         "file_name": [
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000004.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000005.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000006.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000007.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000008.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000009.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000010.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000011.png"
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000005.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000006.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000007.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000008.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000009.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000010.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000011.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000012.png"
         ],
         "description": null,
-        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which of these objects is visible in the image/frame?\nA. Tory_burch_kaitlin_ballet_mestico_in_blackgold\nB. Reebok_reesculpt_trainer_ii\nC. Jungle_height\nD. Big_dot_aqua_pencil_case",
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. What is the Young's modulus of the Black_Forest_Fruit_Snacks_Juicy_Filled_Centers_10_pouches_9_oz_total?\nA. 4150000.0 Pa\nB. 41500000.0 Pa\nC. 415000.0 Pa\nD. 41500.0 Pa",
         "mode": "general",
-        "idx": 34,
+        "idx": "18_g",
         "split": "val",
-        "choice_type": "mcq"
+        "choice_type": "mcq",
+        "question_id": "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT"
     },
     {
-        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
         "source": "simulation",
-        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "simulation_id": "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/simulation.json",
         "file_name": [
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000099.png"
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000037.png"
         ],
         "description": null,
-        "question": "<image>\nWhat percentage of the Fresca_Peach_Citrus_Sparkling_Flavored_Soda_12_PK is visible in the image/frame?\nA. 0-25%\nB. 26-50%\nC. 51-75%\nD. 76-100%",
+        "question": "<image>\nWhat is the Poisson ratio of the Black_Forest_Fruit_Snacks_Juicy_Filled_Centers_10_pouches_9_oz_total?\nA. 0.17\nB. 0.35\nC. 0.26\nD. 0.09",
         "mode": "image-only",
-        "idx": 35,
+        "idx": "19_i",
         "split": "val",
-        "choice_type": "mcq"
+        "choice_type": "mcq",
+        "question_id": "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT"
     },
     {
-        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
         "source": "simulation",
-        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "simulation_id": "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/simulation.json",
         "file_name": [
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000092.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000093.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000094.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000095.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000096.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000097.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000098.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000099.png"
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000030.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000031.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000032.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000033.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000034.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000035.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000036.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000037.png"
         ],
         "description": null,
-        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. What percentage of the Fresca_Peach_Citrus_Sparkling_Flavored_Soda_12_PK is visible in the image/frame?\nA. 0-25%\nB. 26-50%\nC. 51-75%\nD. 76-100%",
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. What is the Poisson ratio of the Black_Forest_Fruit_Snacks_Juicy_Filled_Centers_10_pouches_9_oz_total?\nA. 0.17\nB. 0.35\nC. 0.26\nD. 0.09",
         "mode": "general",
-        "idx": 36,
+        "idx": "19_g",
         "split": "val",
-        "choice_type": "mcq"
+        "choice_type": "mcq",
+        "question_id": "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT"
     },
     {
-        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
         "source": "simulation",
-        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "simulation_id": "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/simulation.json",
         "file_name": [
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000091.png"
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000099.png"
+        ],
+        "description": null,
+        "question": "<image>\nWhat material is the Diet_Pepsi_Soda_Cola12_Pack_12_oz_Cans made of?\nA. Mixed (paper + Plastic)\nB. Leather\nC. Plastic\nD. Paper/cardboard",
+        "mode": "image-only",
+        "idx": "20_i",
+        "split": "val",
+        "choice_type": "mcq",
+        "question_id": "F_MATERIAL_IDENTIFICATION_OBJECT"
+    },
+    {
+        "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
+        "source": "simulation",
+        "simulation_id": "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/simulation.json",
+        "file_name": [
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000092.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000093.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000094.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000095.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000096.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000097.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000098.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000099.png"
+        ],
+        "description": null,
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. What material is the Diet_Pepsi_Soda_Cola12_Pack_12_oz_Cans made of?\nA. Mixed (paper + Plastic)\nB. Leather\nC. Plastic\nD. Paper/cardboard",
+        "mode": "general",
+        "idx": "20_g",
+        "split": "val",
+        "choice_type": "mcq",
+        "question_id": "F_MATERIAL_IDENTIFICATION_OBJECT"
+    },
+    {
+        "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
+        "source": "simulation",
+        "simulation_id": "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/simulation.json",
+        "file_name": [
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000091.png"
+        ],
+        "description": null,
+        "question": "<image>\nWhich of these objects is visible in the image/frame?\nA. Philips_60ct_warm_white_led_smooth_mini_string_light\nB. Brother_printing_cartridge_pc501\nC. Us_army_stash_lunch_bag\nD. Connect_4_launcher",
+        "mode": "image-only",
+        "idx": "21_i",
+        "split": "val",
+        "choice_type": "mcq",
+        "question_id": "F_VISIBILITY_OBJECT"
+    },
+    {
+        "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
+        "source": "simulation",
+        "simulation_id": "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/simulation.json",
+        "file_name": [
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000084.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000085.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000086.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000087.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000088.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000089.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000090.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000091.png"
+        ],
+        "description": null,
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which of these objects is visible in the image/frame?\nA. Philips_60ct_warm_white_led_smooth_mini_string_light\nB. Brother_printing_cartridge_pc501\nC. Us_army_stash_lunch_bag\nD. Connect_4_launcher",
+        "mode": "general",
+        "idx": "21_g",
+        "split": "val",
+        "choice_type": "mcq",
+        "question_id": "F_VISIBILITY_OBJECT"
+    },
+    {
+        "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
+        "source": "simulation",
+        "simulation_id": "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/simulation.json",
+        "file_name": [
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000097.png"
+        ],
+        "description": null,
+        "question": "<image>\nWhat percentage of the Schleich_Spinosaurus_Action_Figure is visible in the image/frame?\nA. 0-25%\nB. 26-50%\nC. 51-75%\nD. 76-100%",
+        "mode": "image-only",
+        "idx": "22_i",
+        "split": "val",
+        "choice_type": "mcq",
+        "question_id": "F_VISIBILITY_PERCENTAGE_OBJECT"
+    },
+    {
+        "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
+        "source": "simulation",
+        "simulation_id": "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/simulation.json",
+        "file_name": [
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000090.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000091.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000092.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000093.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000094.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000095.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000096.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000097.png"
+        ],
+        "description": null,
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. What percentage of the Schleich_Spinosaurus_Action_Figure is visible in the image/frame?\nA. 0-25%\nB. 26-50%\nC. 51-75%\nD. 76-100%",
+        "mode": "general",
+        "idx": "22_g",
+        "split": "val",
+        "choice_type": "mcq",
+        "question_id": "F_VISIBILITY_PERCENTAGE_OBJECT"
+    },
+    {
+        "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
+        "source": "simulation",
+        "simulation_id": "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/simulation.json",
+        "file_name": [
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000077.png"
         ],
         "description": null,
         "question": "<image>\nFrom the camera's perspective, what is the camera's angle of view?\nA. bird's-eye (<=-60 degrees)\nB. low angle (15 to 60 degrees)\nC. eye level (-15 to 15 degrees)\nD. high angle (-60 to -15 degrees)",
         "mode": "image-only",
-        "idx": 37,
+        "idx": "23_i",
         "split": "val",
-        "choice_type": "mcq"
+        "choice_type": "mcq",
+        "question_id": "F_VIEWPOINT_CAMERA_ANGLE"
     },
     {
-        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
         "source": "simulation",
-        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "simulation_id": "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/simulation.json",
         "file_name": [
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000084.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000085.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000086.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000087.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000088.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000089.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000090.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000091.png"
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000070.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000071.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000072.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000073.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000074.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000075.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000076.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000077.png"
         ],
         "description": null,
         "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. From the camera's perspective, what is the camera's angle of view?\nA. bird's-eye (<=-60 degrees)\nB. low angle (15 to 60 degrees)\nC. eye level (-15 to 15 degrees)\nD. high angle (-60 to -15 degrees)",
         "mode": "general",
-        "idx": 38,
+        "idx": "23_g",
         "split": "val",
-        "choice_type": "mcq"
+        "choice_type": "mcq",
+        "question_id": "F_VIEWPOINT_CAMERA_ANGLE"
     },
     {
-        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
         "source": "simulation",
-        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "simulation_id": "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/simulation.json",
         "file_name": [
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000097.png"
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000097.png"
         ],
         "description": null,
         "question": "<image>\nWhich focal\u2011length class best matches the perspective in the image?\nA. ultra-wide (>=90)\nB. wide (63-90)\nC. normal (40-63)\nD. telephoto (<40)",
         "mode": "image-only",
-        "idx": 39,
+        "idx": "24_i",
         "split": "val",
-        "choice_type": "mcq"
+        "choice_type": "mcq",
+        "question_id": "F_FOCAL_LENGTH_CLASS"
     },
     {
-        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
         "source": "simulation",
-        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "simulation_id": "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/simulation.json",
         "file_name": [
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000090.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000091.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000092.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000093.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000094.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000095.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000096.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000097.png"
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000090.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000091.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000092.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000093.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000094.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000095.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000096.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000097.png"
         ],
         "description": null,
         "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which focal\u2011length class best matches the perspective in the image?\nA. ultra-wide (>=90)\nB. wide (63-90)\nC. normal (40-63)\nD. telephoto (<40)",
         "mode": "general",
-        "idx": 40,
+        "idx": "24_g",
         "split": "val",
-        "choice_type": "mcq"
+        "choice_type": "mcq",
+        "question_id": "F_FOCAL_LENGTH_CLASS"
     },
     {
-        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
         "source": "simulation",
-        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "simulation_id": "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/simulation.json",
         "file_name": [
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000041.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000027.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000020.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000034.png"
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000056.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000042.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000035.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000049.png"
         ],
         "description": null,
-        "question": "<image><image><image><image>\nGiven the sequence of images A. - B. - C. - D. What is the correct rearrangement of images showing the events in the scene?\nA. D.C.B.A.\nB. D.C.A.B.\nC. A.B.D.C.\nD. D.B.A.C.",
+        "question": "<image><image><image><image>\nGiven the sequence of images A. - B. - C. - D. What is the correct rearrangement of images showing the events in the scene?\nA. D.B.A.C.\nB. D.C.B.A.\nC. D.C.A.B.\nD. A.B.D.C.",
         "mode": "general",
-        "idx": 41,
+        "idx": "25_g",
         "split": "val",
-        "choice_type": "mcq"
+        "choice_type": "mcq",
+        "question_id": "F_TEMPORAL_SEQUENCE_IMAGES"
     },
     {
-        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
         "source": "simulation",
-        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "simulation_id": "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/simulation.json",
         "file_name": [
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000043.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000050.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000057.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000064.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000016.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000095.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000071.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000031.png"
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000020.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000027.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000034.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000041.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000016.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000095.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000065.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000048.png"
         ],
         "description": null,
         "question": "<image><image><image><image>\nWhich frame is most likely to occur next in the sequence?\nA. <image>\nB. <image>\nC. <image>\nD. <image>",
         "mode": "general",
-        "idx": 42,
+        "idx": "26_g",
         "split": "val",
-        "choice_type": "mcq"
+        "choice_type": "mcq",
+        "question_id": "F_TEMPORAL_PREDICTION_NEXT_IMAGE"
     },
     {
-        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
         "source": "simulation",
-        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "simulation_id": "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/simulation.json",
         "file_name": [
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000026.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000033.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000040.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000047.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000018.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000019.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000004.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000016.png"
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000050.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000057.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000064.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000071.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000018.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000004.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000043.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000016.png"
         ],
         "description": null,
         "question": "<image><image><image><image>\nWhich frame is most likely to have occurred earlier in the sequence?\nA. <image>\nB. <image>\nC. <image>\nD. <image>",
         "mode": "general",
-        "idx": 43,
+        "idx": "27_g",
         "split": "val",
-        "choice_type": "mcq"
+        "choice_type": "mcq",
+        "question_id": "F_TEMPORAL_PREDICTION_PREVIOUS_IMAGE"
     },
     {
-        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
         "source": "simulation",
-        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "simulation_id": "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/simulation.json",
         "file_name": [
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000050.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000057.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000064.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000071.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000043.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000007.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000019.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000014.png"
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000019.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000033.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000040.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000047.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000069.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000081.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000026.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000076.png"
         ],
         "description": null,
         "question": "<image><image><image><image>\nWhat frame is the most likely to have been removed from the scene?\nA. <image>\nB. <image>\nC. <image>\nD. <image>",
         "mode": "general",
-        "idx": 44,
+        "idx": "28_g",
         "split": "val",
-        "choice_type": "mcq"
+        "choice_type": "mcq",
+        "question_id": "F_TEMPORAL_PREDICTION_MISSING_IMAGE"
     },
     {
-        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
         "source": "simulation",
-        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "simulation_id": "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/simulation.json",
         "file_name": [
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000024.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000031.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000038.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000045.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000052.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000059.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000066.png"
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000006.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000013.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000020.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000027.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000034.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000041.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000048.png"
         ],
         "description": null,
-        "question": "<image><image><image><image><image><image><image>\nWhat is the predominant direction of the camera\u2019s motion across the sequence?\nA. backward\nB. down then up\nC. right then up\nD. backward then up",
+        "question": "<image><image><image><image><image><image><image>\nWhat is the predominant direction of the camera\u2019s motion across the sequence?\nA. right\nB. left then forward\nC. down then right\nD. forward then up",
         "mode": "general",
-        "idx": 45,
+        "idx": "29_g",
         "split": "val",
-        "choice_type": "mcq"
+        "choice_type": "mcq",
+        "question_id": "F_CAMERA_MOTION_DIRECTION"
     },
     {
-        "scene": "5b240cc177400655866fc1ee8c6b979c7c40353ea32461c2ca388696097454bc",
+        "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
         "source": "simulation",
-        "simulation_id": "c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746",
+        "simulation_id": "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/simulation.json",
         "file_name": [
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000022.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000029.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000036.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000043.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000050.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000057.png",
-            "/mnt/proj1/eu-25-92/tiny_vqa_creation/data/simulations/dl3dv/random/7-cg/c-1_no-4_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_002746/render/000064.png"
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000024.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000031.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000038.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000045.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000052.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000059.png",
+            "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000066.png"
         ],
         "description": null,
-        "question": "<image><image><image><image><image><image><image>\nHow does the camera\u2019s zoom level change across the sequence?\nA. zoom out\nB. zoom in then out\nC. no zoom\nD. zoom in",
+        "question": "<image><image><image><image><image><image><image>\nHow does the camera\u2019s zoom level change across the sequence?\nA. no zoom\nB. zoom out\nC. zoom in then out\nD. zoom in",
         "mode": "general",
-        "idx": 46,
+        "idx": "30_g",
         "split": "val",
-        "choice_type": "mcq"
+        "choice_type": "mcq",
+        "question_id": "F_CAMERA_ZOOM_BEHAVIOR"
     }
 ]

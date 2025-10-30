@@ -264,9 +264,10 @@ def F_CAMERA_MOTION_DIRECTION(
     # e.g. the camera might look somewhere else but the movement is defined with respect to the scene center
     # TODO double check with Raoul if we should take as center the mean of objects centers
 
-    direction_vector = [0,0,0] - initial_position
+    # direction_vector = [0,0,0] - initial_position
+    direction_vector = initial_look_at
     direction_vector = direction_vector / np.linalg.norm(direction_vector)
-    right_vector = np.cross(np.array([0, 0, 1]), direction_vector) # need to be orthogonal to up
+    right_vector = np.cross(np.array([0, 0, 1]), direction_vector)  # not sure about the sign here though
     up_vector = np.array([0, 0, 1])  # assuming z is up
 
     movement_initial_to_mid_norm = movement_initial_to_mid / np.linalg.norm(movement_initial_to_mid)

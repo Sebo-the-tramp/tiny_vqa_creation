@@ -313,7 +313,7 @@ def F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT(
     youngs_modulus = object["props"]["yms"]
 
     options, correct_idx = create_mc_options_around_gt_log(
-        youngs_modulus, num_answers=4, display_decimals=1, lo=0.0
+        youngs_modulus, num_answers=4, display_decimals=1, lo=0.0, min_threshold=10000
     )
     labels = uniform_labels(options, integer=False, decimals=1)
     labels = [str(label) + " Pa" for label in labels]

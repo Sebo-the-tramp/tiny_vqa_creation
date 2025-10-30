@@ -14,30 +14,6 @@
         }
     },
     "mechanics": {
-         "F_COLLISION_OBJECT_OBJECT_FRAME_SINGLE":{
-            "task_splits": "single",
-            "sub_category": "collision",
-            "choice": "true_false",
-            "question": "Is the <OBJECT> colliding with another object in the frame?"
-        },
-        "F_COLLISION_OBJECT_OBJECT_FRAME_MULTI":{
-            "task_splits": "multi",
-            "sub_category": "collision",
-            "choice": "mcq",
-            "question": "In which frame does the <OBJECT> collide with another object?"
-        },
-        "F_COLLISION_OBJECT_GROUND_FRAME_SINGLE":{
-            "task_splits": "single",
-            "sub_category": "collision",
-            "choice": "true_false",
-            "question": "Is the <OBJECT> colliding with the scene in the frame?"
-        },
-        "F_COLLISION_OBJECT_GROUND_FRAME_MULTI":{
-            "task_splits": "multi",
-            "sub_category": "collision",
-            "choice": "mcq",
-            "question": "In which frame does the <OBJECT> collide with the scene?"
-        },
         "F_FORCE_COLLISION_OBJECT_OBJECT":{
             "task_splits": "multi",
             "sub_category": "forces",

@@ -24,3 +24,19 @@ def F_KINEMATICS_STILL_OBJECT() -> str:
 
 def F_COLLISIONS_OBJ_OBJ_FIRST() -> str:
     return "First object to collide with given object question result"
+
+
+def F_COLLISION_OBJECT_OBJECT_FRAME_SINGLE() -> str:
+    return "000150"
+
+
+def F_COLLISION_OBJECT_OBJECT_FRAME_MULTI() -> str:
+    return "First timestep object collides with object question result"
+
+
+def F_COLLISION_OBJECT_GROUND_FRAME_SINGLE() -> str:
+    return "000200"
+
+
+def F_COLLISION_OBJECT_GROUND_FRAME_MULTI() -> str:
+    return "First timestep object collides with ground question result"

@@ -125,16 +125,42 @@ def save_questions_answers_json(
     normalized_questions = []
     answers = []
 
+
+    counter = 0        
+
     for idx, entry in enumerate(all_vqa):
+
+        if idx > 0:
+            question_id_previous = all_vqa[idx-1]['question_key']
+            question_id_current  =  entry['question_key']      
+        
+            if question_id_previous != question_id_current:
+                counter +=1
+
+        mode = entry["mode"]
+        question_idx = f"{counter}_{mode[0]}"         
+
         question_record, answer_record = normalize_question_json(
             entry,
-            idx=idx,
+            idx=question_idx ,
             image_output=image_output,
             number_of_images_max=number_of_images_max,
         )
 
         normalized_questions.append(question_record)
         answers.append(answer_record)
+
+    
+    # for idx, entry in enumerate(all_vqa):
+    #     question_record, answer_record = normalize_question_json(
+    #         entry,
+    #         idx=idx ,
+    #         image_output=image_output,
+    #         number_of_images_max=number_of_images_max,
+    #     )
+
+    #     normalized_questions.append(question_record)
+    #     answers.append(answer_record)
 
     questions_path = os.path.join(output_path, "test.json")
     answers_path = os.path.join(output_path, "val_answer.json")
@@ -212,16 +238,18 @@ def normalize_question_json(
         "idx": idx,
         "split": question_payload.get("split", "val"),
         "choice_type": question_payload["choice"],
+        "question_id": vqa_entry.get("question_key", ""),
+        "category": question_payload.get("sub_category"),
     }
 
     answer_record = {
         "idx": idx,
         "answer": answer_letter,
         "task_type": "factual",
-        "sub_type": question_payload.get("category"),
         "ability_type": question_payload.get("ability_type", ability_type),
         "mode": question_record["mode"],
         "choice_type": question_payload["choice"],
+        "category": question_payload.get("sub_category"),
     }
 
     return question_record, answer_record

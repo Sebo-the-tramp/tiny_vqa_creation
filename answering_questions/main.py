@@ -141,6 +141,7 @@ def create_vqa(
                         "simulation_id": simulation_id,
                         "question": question,
                         "category": category_key,
+                        "sub_category": question_data['sub_category'],
                         "question_key": question_key,
                         "image_paths": file_names,
                         "labels": labels,

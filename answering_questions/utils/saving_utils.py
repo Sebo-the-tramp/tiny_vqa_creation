@@ -142,7 +142,7 @@ def save_questions_answers_json(
 
         question_record, answer_record = normalize_question_json(
             entry,
-            idx=question_idx ,
+            idx=question_idx,
             image_output=image_output,
             number_of_images_max=number_of_images_max,
         )
@@ -239,7 +239,8 @@ def normalize_question_json(
         "split": question_payload.get("split", "val"),
         "choice_type": question_payload["choice"],
         "question_id": vqa_entry.get("question_key", ""),
-        "category": question_payload.get("sub_category"),
+        "category": question_payload.get("category"),
+        "sub_category": question_payload.get("sub_category"),
     }
 
     answer_record = {
@@ -248,8 +249,7 @@ def normalize_question_json(
         "task_type": "factual",
         "ability_type": question_payload.get("ability_type", ability_type),
         "mode": question_record["mode"],
-        "choice_type": question_payload["choice"],
-        "category": question_payload.get("sub_category"),
+        "choice_type": question_payload["choice"],        
     }
 
     return question_record, answer_record

@@ -12,7 +12,8 @@
         "idx": "0_i",
         "split": "val",
         "choice_type": "mcq",
-        "question_id": "F_DISTANCE_OBJECT_OBJECT"
+        "question_id": "F_DISTANCE_OBJECT_OBJECT",
+        "category": "distance"
     },
     {
         "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
@@ -34,7 +35,8 @@
         "idx": "0_g",
         "split": "val",
         "choice_type": "mcq",
-        "question_id": "F_DISTANCE_OBJECT_OBJECT"
+        "question_id": "F_DISTANCE_OBJECT_OBJECT",
+        "category": "distance"
     },
     {
         "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
@@ -49,7 +51,8 @@
         "idx": "1_i",
         "split": "val",
         "choice_type": "mcq",
-        "question_id": "F_DISTANCE_OBJECT_CAMERA_DISTANCE"
+        "question_id": "F_DISTANCE_OBJECT_CAMERA_DISTANCE",
+        "category": "distance"
     },
     {
         "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
@@ -71,7 +74,8 @@
         "idx": "1_g",
         "split": "val",
         "choice_type": "mcq",
-        "question_id": "F_DISTANCE_OBJECT_CAMERA_DISTANCE"
+        "question_id": "F_DISTANCE_OBJECT_CAMERA_DISTANCE",
+        "category": "distance"
     },
     {
         "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
@@ -86,7 +90,8 @@
         "idx": "2_i",
         "split": "val",
         "choice_type": "mcq",
-        "question_id": "F_DISTANCE_CLOSEST_OBJECT_OBJECT"
+        "question_id": "F_DISTANCE_CLOSEST_OBJECT_OBJECT",
+        "category": "distance"
     },
     {
         "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
@@ -108,7 +113,8 @@
         "idx": "2_g",
         "split": "val",
         "choice_type": "mcq",
-        "question_id": "F_DISTANCE_CLOSEST_OBJECT_OBJECT"
+        "question_id": "F_DISTANCE_CLOSEST_OBJECT_OBJECT",
+        "category": "distance"
     },
     {
         "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
@@ -118,12 +124,13 @@
             "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000011.png"
         ],
         "description": null,
-        "question": "<image>\nWhich single object has the biggest volume?\nA. Black_forest_fruit_snacks_juicy_filled_centers_10_pouches_9_oz_total\nB. Frozen_olafs_in_trouble_popomatic_game\nC. Diet_pepsi_soda_cola12_pack_12_oz_can\nD. Twinlab_100_whey_protein_fuel_chocolate",
+        "question": "<image>\nWhich single object has the biggest volume?\nA. Diet_pepsi_soda_cola12_pack_12_oz_can\nB. Twinlab_100_whey_protein_fuel_chocolate\nC. Frozen_olafs_in_trouble_popomatic_game\nD. Philips_60ct_warm_white_led_smooth_mini_string_light",
         "mode": "image-only",
         "idx": "3_i",
         "split": "val",
         "choice_type": "mcq",
-        "question_id": "F_SIZE_OBJECT_BIGGER"
+        "question_id": "F_SIZE_OBJECT_BIGGER",
+        "category": "size"
     },
     {
         "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
@@ -140,12 +147,13 @@
             "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000011.png"
         ],
         "description": null,
-        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which single object has the biggest volume?\nA. Black_forest_fruit_snacks_juicy_filled_centers_10_pouches_9_oz_total\nB. Frozen_olafs_in_trouble_popomatic_game\nC. Diet_pepsi_soda_cola12_pack_12_oz_can\nD. Twinlab_100_whey_protein_fuel_chocolate",
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which single object has the biggest volume?\nA. Diet_pepsi_soda_cola12_pack_12_oz_can\nB. Twinlab_100_whey_protein_fuel_chocolate\nC. Frozen_olafs_in_trouble_popomatic_game\nD. Philips_60ct_warm_white_led_smooth_mini_string_light",
         "mode": "general",
         "idx": "3_g",
         "split": "val",
         "choice_type": "mcq",
-        "question_id": "F_SIZE_OBJECT_BIGGER"
+        "question_id": "F_SIZE_OBJECT_BIGGER",
+        "category": "size"
     },
     {
         "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
@@ -155,12 +163,13 @@
             "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000019.png"
         ],
         "description": null,
-        "question": "<image>\nWhich single object has the smallest volume?\nA. Philips_60ct_warm_white_led_smooth_mini_string_light\nB. Black_forest_fruit_snacks_juicy_filled_centers_10_pouches_9_oz_total\nC. Schleich_spinosaurus_action_figure\nD. Twinlab_100_whey_protein_fuel_chocolate",
+        "question": "<image>\nWhich single object has the smallest volume?\nA. Black_forest_fruit_snacks_juicy_filled_centers_10_pouches_9_oz_total\nB. Twinlab_100_whey_protein_fuel_chocolate\nC. Diet_pepsi_soda_cola12_pack_12_oz_can\nD. Schleich_spinosaurus_action_figure",
         "mode": "image-only",
         "idx": "4_i",
         "split": "val",
         "choice_type": "mcq",
-        "question_id": "F_SIZE_OBJECT_SMALLER"
+        "question_id": "F_SIZE_OBJECT_SMALLER",
+        "category": "size"
     },
     {
         "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
@@ -177,12 +186,13 @@
             "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000019.png"
         ],
         "description": null,
-        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which single object has the smallest volume?\nA. Philips_60ct_warm_white_led_smooth_mini_string_light\nB. Black_forest_fruit_snacks_juicy_filled_centers_10_pouches_9_oz_total\nC. Schleich_spinosaurus_action_figure\nD. Twinlab_100_whey_protein_fuel_chocolate",
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which single object has the smallest volume?\nA. Black_forest_fruit_snacks_juicy_filled_centers_10_pouches_9_oz_total\nB. Twinlab_100_whey_protein_fuel_chocolate\nC. Diet_pepsi_soda_cola12_pack_12_oz_can\nD. Schleich_spinosaurus_action_figure",
         "mode": "general",
         "idx": "4_g",
         "split": "val",
         "choice_type": "mcq",
-        "question_id": "F_SIZE_OBJECT_SMALLER"
+        "question_id": "F_SIZE_OBJECT_SMALLER",
+        "category": "size"
     },
     {
         "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
@@ -197,7 +207,8 @@
         "idx": "5_i",
         "split": "val",
         "choice_type": "mcq",
-        "question_id": "F_LAYOUT_POSITION_OBJECT_OBJECT"
+        "question_id": "F_LAYOUT_POSITION_OBJECT_OBJECT",
+        "category": "layout"
     },
     {
         "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
@@ -219,7 +230,8 @@
         "idx": "5_g",
         "split": "val",
         "choice_type": "mcq",
-        "question_id": "F_LAYOUT_POSITION_OBJECT_OBJECT"
+        "question_id": "F_LAYOUT_POSITION_OBJECT_OBJECT",
+        "category": "layout"
     },
     {
         "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
@@ -241,7 +253,8 @@
         "idx": "6_g",
         "split": "val",
         "choice_type": "mcq",
-        "question_id": "F_KINEMATICS_FASTEST_OBJECT_SPEED"
+        "question_id": "F_KINEMATICS_FASTEST_OBJECT_SPEED",
+        "category": "kinematics"
     },
     {
         "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
@@ -263,7 +276,8 @@
         "idx": "7_g",
         "split": "val",
         "choice_type": "mcq",
-        "question_id": "F_KINEMATICS_ACCEL_OBJECT"
+        "question_id": "F_KINEMATICS_ACCEL_OBJECT",
+        "category": "kinematics"
     },
     {
         "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
@@ -285,7 +299,8 @@
         "idx": "8_g",
         "split": "val",
         "choice_type": "true_false",
-        "question_id": "F_KINEMATICS_STILL_OBJECT"
+        "question_id": "F_KINEMATICS_STILL_OBJECT",
+        "category": "kinematics"
     },
     {
         "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
@@ -300,7 +315,8 @@
         "idx": "9_i",
         "split": "val",
         "choice_type": "true_false",
-        "question_id": "F_COLLISION_OBJECT_OBJECT_FRAME_SINGLE"
+        "question_id": "F_COLLISION_OBJECT_OBJECT_FRAME_SINGLE",
+        "category": "collision"
     },
     {
         "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
@@ -322,7 +338,8 @@
         "idx": "10_g",
         "split": "val",
         "choice_type": "mcq",
-        "question_id": "F_COLLISION_OBJECT_OBJECT_FRAME_MULTI"
+        "question_id": "F_COLLISION_OBJECT_OBJECT_FRAME_MULTI",
+        "category": "collision"
     },
     {
         "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
@@ -337,7 +354,8 @@
         "idx": "11_i",
         "split": "val",
         "choice_type": "true_false",
-        "question_id": "F_COLLISION_OBJECT_GROUND_FRAME_SINGLE"
+        "question_id": "F_COLLISION_OBJECT_GROUND_FRAME_SINGLE",
+        "category": "collision"
     },
     {
         "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
@@ -359,7 +377,8 @@
         "idx": "12_g",
         "split": "val",
         "choice_type": "mcq",
-        "question_id": "F_COLLISION_OBJECT_GROUND_FRAME_MULTI"
+        "question_id": "F_COLLISION_OBJECT_GROUND_FRAME_MULTI",
+        "category": "collision"
     },
     {
         "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
@@ -374,7 +393,8 @@
         "idx": "13_i",
         "split": "val",
         "choice_type": "mcq",
-        "question_id": "F_MASS_OBJECT"
+        "question_id": "F_MASS_OBJECT",
+        "category": "mass"
     },
     {
         "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
@@ -396,7 +416,8 @@
         "idx": "13_g",
         "split": "val",
         "choice_type": "mcq",
-        "question_id": "F_MASS_OBJECT"
+        "question_id": "F_MASS_OBJECT",
+        "category": "mass"
     },
     {
         "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
@@ -406,12 +427,13 @@
             "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000039.png"
         ],
         "description": null,
-        "question": "<image>\nWhich single object has the greatest mass?\nA. Schleich_spinosaurus_action_figure\nB. Diet_pepsi_soda_cola12_pack_12_oz_can\nC. Frozen_olafs_in_trouble_popomatic_game\nD. Twinlab_100_whey_protein_fuel_chocolate",
+        "question": "<image>\nWhich single object has the greatest mass?\nA. Twinlab_100_whey_protein_fuel_chocolate\nB. Frozen_olafs_in_trouble_popomatic_game\nC. Diet_pepsi_soda_cola12_pack_12_oz_can\nD. Philips_60ct_warm_white_led_smooth_mini_string_light",
         "mode": "image-only",
         "idx": "14_i",
         "split": "val",
         "choice_type": "mcq",
-        "question_id": "F_MASS_HEAVIEST_OBJECT"
+        "question_id": "F_MASS_HEAVIEST_OBJECT",
+        "category": "mass"
     },
     {
         "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
@@ -428,12 +450,13 @@
             "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000039.png"
         ],
         "description": null,
-        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which single object has the greatest mass?\nA. Schleich_spinosaurus_action_figure\nB. Diet_pepsi_soda_cola12_pack_12_oz_can\nC. Frozen_olafs_in_trouble_popomatic_game\nD. Twinlab_100_whey_protein_fuel_chocolate",
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which single object has the greatest mass?\nA. Twinlab_100_whey_protein_fuel_chocolate\nB. Frozen_olafs_in_trouble_popomatic_game\nC. Diet_pepsi_soda_cola12_pack_12_oz_can\nD. Philips_60ct_warm_white_led_smooth_mini_string_light",
         "mode": "general",
         "idx": "14_g",
         "split": "val",
         "choice_type": "mcq",
-        "question_id": "F_MASS_HEAVIEST_OBJECT"
+        "question_id": "F_MASS_HEAVIEST_OBJECT",
+        "category": "mass"
     },
     {
         "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
@@ -443,12 +466,13 @@
             "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000036.png"
         ],
         "description": null,
-        "question": "<image>\nWhich single object has the least mass?\nA. Diet_pepsi_soda_cola12_pack_12_oz_can\nB. Twinlab_100_whey_protein_fuel_chocolate\nC. Schleich_spinosaurus_action_figure\nD. Philips_60ct_warm_white_led_smooth_mini_string_light",
+        "question": "<image>\nWhich single object has the least mass?\nA. Schleich_spinosaurus_action_figure\nB. Black_forest_fruit_snacks_juicy_filled_centers_10_pouches_9_oz_total\nC. Philips_60ct_warm_white_led_smooth_mini_string_light\nD. Frozen_olafs_in_trouble_popomatic_game",
         "mode": "image-only",
         "idx": "15_i",
         "split": "val",
         "choice_type": "mcq",
-        "question_id": "F_MASS_LIGHTEST_OBJECT"
+        "question_id": "F_MASS_LIGHTEST_OBJECT",
+        "category": "mass"
     },
     {
         "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
@@ -465,12 +489,13 @@
             "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000036.png"
         ],
         "description": null,
-        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which single object has the least mass?\nA. Diet_pepsi_soda_cola12_pack_12_oz_can\nB. Twinlab_100_whey_protein_fuel_chocolate\nC. Schleich_spinosaurus_action_figure\nD. Philips_60ct_warm_white_led_smooth_mini_string_light",
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which single object has the least mass?\nA. Schleich_spinosaurus_action_figure\nB. Black_forest_fruit_snacks_juicy_filled_centers_10_pouches_9_oz_total\nC. Philips_60ct_warm_white_led_smooth_mini_string_light\nD. Frozen_olafs_in_trouble_popomatic_game",
         "mode": "general",
         "idx": "15_g",
         "split": "val",
         "choice_type": "mcq",
-        "question_id": "F_MASS_LIGHTEST_OBJECT"
+        "question_id": "F_MASS_LIGHTEST_OBJECT",
+        "category": "mass"
     },
     {
         "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
@@ -485,7 +510,8 @@
         "idx": "16_i",
         "split": "val",
         "choice_type": "true_false",
-        "question_id": "F_MASS_COMPARE_OBJECTS"
+        "question_id": "F_MASS_COMPARE_OBJECTS",
+        "category": "mass"
     },
     {
         "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
@@ -507,7 +533,8 @@
         "idx": "16_g",
         "split": "val",
         "choice_type": "true_false",
-        "question_id": "F_MASS_COMPARE_OBJECTS"
+        "question_id": "F_MASS_COMPARE_OBJECTS",
+        "category": "mass"
     },
     {
         "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
@@ -522,7 +549,8 @@
         "idx": "17_i",
         "split": "val",
         "choice_type": "mcq",
-        "question_id": "F_PHYSICS_PROPERTY_DENSITY_OBJECT"
+        "question_id": "F_PHYSICS_PROPERTY_DENSITY_OBJECT",
+        "category": "physics_property"
     },
     {
         "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
@@ -544,7 +572,8 @@
         "idx": "17_g",
         "split": "val",
         "choice_type": "mcq",
-        "question_id": "F_PHYSICS_PROPERTY_DENSITY_OBJECT"
+        "question_id": "F_PHYSICS_PROPERTY_DENSITY_OBJECT",
+        "category": "physics_property"
     },
     {
         "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
@@ -559,7 +588,8 @@
         "idx": "18_i",
         "split": "val",
         "choice_type": "mcq",
-        "question_id": "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT"
+        "question_id": "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT",
+        "category": "physics_property"
     },
     {
         "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
@@ -581,7 +611,8 @@
         "idx": "18_g",
         "split": "val",
         "choice_type": "mcq",
-        "question_id": "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT"
+        "question_id": "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT",
+        "category": "physics_property"
     },
     {
         "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
@@ -596,7 +627,8 @@
         "idx": "19_i",
         "split": "val",
         "choice_type": "mcq",
-        "question_id": "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT"
+        "question_id": "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT",
+        "category": "physics_property"
     },
     {
         "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
@@ -618,7 +650,8 @@
         "idx": "19_g",
         "split": "val",
         "choice_type": "mcq",
-        "question_id": "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT"
+        "question_id": "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT",
+        "category": "physics_property"
     },
     {
         "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
@@ -628,12 +661,13 @@
             "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000099.png"
         ],
         "description": null,
-        "question": "<image>\nWhat material is the Diet_Pepsi_Soda_Cola12_Pack_12_oz_Cans made of?\nA. Mixed (paper + Plastic)\nB. Leather\nC. Plastic\nD. Paper/cardboard",
+        "question": "<image>\nWhat material is the Diet_Pepsi_Soda_Cola12_Pack_12_oz_Cans made of?\nA. Plastic\nB. Wood\nC. Paper/cardboard\nD. Mixed (paper + Plastic)",
         "mode": "image-only",
         "idx": "20_i",
         "split": "val",
         "choice_type": "mcq",
-        "question_id": "F_MATERIAL_IDENTIFICATION_OBJECT"
+        "question_id": "F_MATERIAL_IDENTIFICATION_OBJECT",
+        "category": "material_identification"
     },
     {
         "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
@@ -650,12 +684,13 @@
             "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000099.png"
         ],
         "description": null,
-        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. What material is the Diet_Pepsi_Soda_Cola12_Pack_12_oz_Cans made of?\nA. Mixed (paper + Plastic)\nB. Leather\nC. Plastic\nD. Paper/cardboard",
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. What material is the Diet_Pepsi_Soda_Cola12_Pack_12_oz_Cans made of?\nA. Plastic\nB. Wood\nC. Paper/cardboard\nD. Mixed (paper + Plastic)",
         "mode": "general",
         "idx": "20_g",
         "split": "val",
         "choice_type": "mcq",
-        "question_id": "F_MATERIAL_IDENTIFICATION_OBJECT"
+        "question_id": "F_MATERIAL_IDENTIFICATION_OBJECT",
+        "category": "material_identification"
     },
     {
         "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
@@ -665,12 +700,13 @@
             "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000091.png"
         ],
         "description": null,
-        "question": "<image>\nWhich of these objects is visible in the image/frame?\nA. Philips_60ct_warm_white_led_smooth_mini_string_light\nB. Brother_printing_cartridge_pc501\nC. Us_army_stash_lunch_bag\nD. Connect_4_launcher",
+        "question": "<image>\nWhich of these objects is visible in the image/frame?\nA. My_little_pony_princess_celestia\nB. Philips_60ct_warm_white_led_smooth_mini_string_light\nC. Remington_tstudio_silk_ceramic_hair_straightener_2_inch_floating_plate\nD. Twinlab_100_whey_protein_fuel_vanilla",
         "mode": "image-only",
         "idx": "21_i",
         "split": "val",
         "choice_type": "mcq",
-        "question_id": "F_VISIBILITY_OBJECT"
+        "question_id": "F_VISIBILITY_OBJECT",
+        "category": "visibility"
     },
     {
         "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
@@ -687,12 +723,13 @@
             "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000091.png"
         ],
         "description": null,
-        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which of these objects is visible in the image/frame?\nA. Philips_60ct_warm_white_led_smooth_mini_string_light\nB. Brother_printing_cartridge_pc501\nC. Us_army_stash_lunch_bag\nD. Connect_4_launcher",
+        "question": "<image><image><image><image><image><image><image><image>\nConsider all frames, but answer only based on the last frame. Which of these objects is visible in the image/frame?\nA. My_little_pony_princess_celestia\nB. Philips_60ct_warm_white_led_smooth_mini_string_light\nC. Remington_tstudio_silk_ceramic_hair_straightener_2_inch_floating_plate\nD. Twinlab_100_whey_protein_fuel_vanilla",
         "mode": "general",
         "idx": "21_g",
         "split": "val",
         "choice_type": "mcq",
-        "question_id": "F_VISIBILITY_OBJECT"
+        "question_id": "F_VISIBILITY_OBJECT",
+        "category": "visibility"
     },
     {
         "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
@@ -707,7 +744,8 @@
         "idx": "22_i",
         "split": "val",
         "choice_type": "mcq",
-        "question_id": "F_VISIBILITY_PERCENTAGE_OBJECT"
+        "question_id": "F_VISIBILITY_PERCENTAGE_OBJECT",
+        "category": "visibility"
     },
     {
         "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
@@ -729,7 +767,8 @@
         "idx": "22_g",
         "split": "val",
         "choice_type": "mcq",
-        "question_id": "F_VISIBILITY_PERCENTAGE_OBJECT"
+        "question_id": "F_VISIBILITY_PERCENTAGE_OBJECT",
+        "category": "visibility"
     },
     {
         "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
@@ -744,7 +783,8 @@
         "idx": "23_i",
         "split": "val",
         "choice_type": "mcq",
-        "question_id": "F_VIEWPOINT_CAMERA_ANGLE"
+        "question_id": "F_VIEWPOINT_CAMERA_ANGLE",
+        "category": "camera_characteristics"
     },
     {
         "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
@@ -766,7 +806,8 @@
         "idx": "23_g",
         "split": "val",
         "choice_type": "mcq",
-        "question_id": "F_VIEWPOINT_CAMERA_ANGLE"
+        "question_id": "F_VIEWPOINT_CAMERA_ANGLE",
+        "category": "camera_characteristics"
     },
     {
         "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
@@ -781,7 +822,8 @@
         "idx": "24_i",
         "split": "val",
         "choice_type": "mcq",
-        "question_id": "F_FOCAL_LENGTH_CLASS"
+        "question_id": "F_FOCAL_LENGTH_CLASS",
+        "category": "camera_characteristics"
     },
     {
         "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
@@ -803,7 +845,8 @@
         "idx": "24_g",
         "split": "val",
         "choice_type": "mcq",
-        "question_id": "F_FOCAL_LENGTH_CLASS"
+        "question_id": "F_FOCAL_LENGTH_CLASS",
+        "category": "camera_characteristics"
     },
     {
         "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
@@ -821,7 +864,8 @@
         "idx": "25_g",
         "split": "val",
         "choice_type": "mcq",
-        "question_id": "F_TEMPORAL_SEQUENCE_IMAGES"
+        "question_id": "F_TEMPORAL_SEQUENCE_IMAGES",
+        "category": "event_ordering"
     },
     {
         "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
@@ -843,7 +887,8 @@
         "idx": "26_g",
         "split": "val",
         "choice_type": "mcq",
-        "question_id": "F_TEMPORAL_PREDICTION_NEXT_IMAGE"
+        "question_id": "F_TEMPORAL_PREDICTION_NEXT_IMAGE",
+        "category": "event_ordering"
     },
     {
         "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
@@ -865,7 +910,8 @@
         "idx": "27_g",
         "split": "val",
         "choice_type": "mcq",
-        "question_id": "F_TEMPORAL_PREDICTION_PREVIOUS_IMAGE"
+        "question_id": "F_TEMPORAL_PREDICTION_PREVIOUS_IMAGE",
+        "category": "event_ordering"
     },
     {
         "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
@@ -887,7 +933,8 @@
         "idx": "28_g",
         "split": "val",
         "choice_type": "mcq",
-        "question_id": "F_TEMPORAL_PREDICTION_MISSING_IMAGE"
+        "question_id": "F_TEMPORAL_PREDICTION_MISSING_IMAGE",
+        "category": "event_ordering"
     },
     {
         "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
@@ -903,12 +950,13 @@
             "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/simulations/c-1_no-6_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-34_20251022_033655/render/000048.png"
         ],
         "description": null,
-        "question": "<image><image><image><image><image><image><image>\nWhat is the predominant direction of the camera\u2019s motion across the sequence?\nA. right\nB. left then forward\nC. down then right\nD. forward then up",
+        "question": "<image><image><image><image><image><image><image>\nWhat is the predominant direction of the camera\u2019s motion across the sequence?\nA. right\nB. down then backward\nC. backward then forward\nD. down then left",
         "mode": "general",
         "idx": "29_g",
         "split": "val",
         "choice_type": "mcq",
-        "question_id": "F_CAMERA_MOTION_DIRECTION"
+        "question_id": "F_CAMERA_MOTION_DIRECTION",
+        "category": "camera_motion_direction"
     },
     {
         "scene": "1b4f0f20dc2187e5004d04f3cb0082ee1b7a57b2c54ce8d5b2fe3888816d9b62",
@@ -929,6 +977,7 @@
         "idx": "30_g",
         "split": "val",
         "choice_type": "mcq",
-        "question_id": "F_CAMERA_ZOOM_BEHAVIOR"
+        "question_id": "F_CAMERA_ZOOM_BEHAVIOR",
+        "category": "camera_zoom"
     }
 ]

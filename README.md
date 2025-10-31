@@ -7,3 +7,6 @@ simple_vqa_to_implement.json -> template of the questions to be asked (ideas, br
 ## TODO
 
 see [google sheet](https://docs.google.com/spreadsheets/d/18NZvppf9yQP1WEgr1EJgnEKST5kj4pHHcOOFMuayV8E/edit?gid=804095860#gid=804095860)
+
+c-1_no-2_d-4_s-dl3dv-*_models-hf-gso_MLP-10_smooth_h-10-40_seed-18_20251022_083601 -> old
+c-1_no-7_d-4_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251022_040646 -> new

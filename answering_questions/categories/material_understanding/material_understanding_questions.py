@@ -78,8 +78,8 @@ def F_MASS_OBJECT(
         raise ImpossibleToAnswer("No timestep with both objects visible.") 
 
     if "multi" in question.get("task_splits", ""):
-        print(visible_timesteps)
-        print("visible_length", len(visible_timesteps))
+        # print(visible_timesteps)
+        # print("visible_length", len(visible_timesteps))
         timestep = random.choice(visible_timesteps[7:])
     else:
         timestep = random.choice(visible_timesteps)

@@ -165,7 +165,7 @@ def create_vqa(
                     )
 
                 # Just for development, the rng function given more or less functions will break the integration test
-                if str(labels[correct_idx]) != str(gt):
+                if str(labels[correct_idx]) != str(gt) and verbose:
                     print(
                         "\033[93m  WARNING: Answer does not match Ground Truth!\033[0m"
                     )

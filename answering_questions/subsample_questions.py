@@ -7,7 +7,7 @@ import argparse
 import json
 import random
 from pathlib import Path
-from typing import Any, List
+from typing import Any, Dict, Iterable, List
 
 
 def parse_args() -> argparse.Namespace:
@@ -32,7 +32,10 @@ def parse_args() -> argparse.Namespace:
         "--count",
         type=int,
         required=True,
-        help="Number of questions to sample.",
+        help=(
+            "Number of index groups to sample. Entries sharing the same base index "
+            "(e.g., '12_g' and '12_i') are kept together."
+        ),
     )
     parser.add_argument(
         "--mode",
@@ -64,6 +67,29 @@ def load_questions(path: Path) -> List[dict[str, Any]]:
     return data
 
 
+def group_by_index_suffix(
+    questions: Iterable[dict[str, Any]]
+) -> Dict[str, List[dict[str, Any]]]:
+    grouped: Dict[str, List[dict[str, Any]]] = {}
+    for record in questions:
+        raw_idx = record.get("idx")
+        if raw_idx is None:
+            raise SystemExit("Found a question without an 'idx' field; cannot group by index.")
+
+        key = normalise_index(raw_idx)
+        grouped.setdefault(key, []).append(record)
+    return grouped
+
+
+def normalise_index(value: Any) -> str:
+    if isinstance(value, str):
+        base, _, suffix = value.rpartition("_")
+        if base and suffix in {"g", "i"}:
+            return base
+        return value
+    return str(value)
+
+
 def main() -> None:
     args = parse_args()
     questions = load_questions(args.input)
@@ -71,14 +97,17 @@ def main() -> None:
     if args.mode is not None:
         questions = [record for record in questions if record.get("mode") == args.mode]
 
-    if len(questions) < args.count:
+    grouped_questions = group_by_index_suffix(questions)
+
+    if len(grouped_questions) < args.count:
         raise SystemExit(
-            f"Requested {args.count} questions but only {len(questions)} available "
+            f"Requested {args.count} index groups but only {len(grouped_questions)} available "
             f"after applying filters."
         )
 
     rng = random.Random(args.seed)
-    sampled = rng.sample(questions, args.count)
+    sampled_keys = rng.sample(list(grouped_questions.keys()), args.count)
+    sampled = [item for key in sampled_keys for item in grouped_questions[key]]
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
     with args.output.open("w", encoding="utf-8") as handle:

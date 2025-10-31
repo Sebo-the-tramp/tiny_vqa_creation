@@ -162,7 +162,7 @@ def save_questions_answers_json(
     #     normalized_questions.append(question_record)
     #     answers.append(answer_record)
 
-    questions_path = os.path.join(output_path, "test.json")
+    questions_path = os.path.join(output_path, "test_full.json")
     answers_path = os.path.join(output_path, "val_answer.json")
 
     with open(questions_path, "w") as f:

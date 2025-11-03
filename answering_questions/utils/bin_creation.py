@@ -251,7 +251,7 @@ def create_mc_options_around_gt_log(
 
     # Filter & round
     options = [round(opt, display_decimals) for opt in options]
-    print("Options before filtering by min threshold:", options)
+    # print("Options before filtering by min threshold:", options)
     options = [opt for opt in options if opt > min_threshold]
     if lo is not None:
         options = [opt for opt in options if opt >= lo]

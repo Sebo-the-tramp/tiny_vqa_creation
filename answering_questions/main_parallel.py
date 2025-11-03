@@ -240,8 +240,8 @@ def create_vqa(
                 f"Category '{category}': {correct}/{total - not_implemented} correct answers, {not_implemented} not implemented"
             )
 
-    print("Total questions:")
-    print(sum(total for _, (_, _, total) in total_correct_per_category.items()))
+    # print("Total questions:")
+    # print(sum(total for _, (_, _, total) in total_correct_per_category.items()))
 
     return all_vqa
 

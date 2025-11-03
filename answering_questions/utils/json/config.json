@@ -5,7 +5,7 @@
     "rotation_tolerance": 5.0,
     "visibility_threshold": 0.7,
     "world_up_axis": "Z",
-    "frame_interleave": 1,
+    "frame_interleave": 2,
     "slope_bins": 2,
     "threshold_difference_percentage": 0.1,
     "min_pixels_visible": 1000

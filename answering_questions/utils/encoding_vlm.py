@@ -1,6 +1,5 @@
 import os
 import io
-import pandas as pd
 import os.path as osp
 import base64
 from PIL import Image
@@ -95,8 +94,8 @@ def decode_base64_to_image_file(base64_string, image_path, target_size=-1):
 def build_option_str(option_dict):
     s = "There are several options: \n"
     for c, content in option_dict.items():
-        if not pd.isna(content):
-            s += f"{c}. {content}\n"
+        # if not pd.isna(content):
+        s += f"{c}. {content}\n"
     return s
 
 

@@ -6,6 +6,7 @@ import numpy as np
 
 from typing import Any, Mapping, Optional, Tuple, Union, List
 
+from utils.config import get_config
 from utils.helpers import as_vector
 
 # set random seed for reproducibility
@@ -25,6 +26,7 @@ from utils.frames_selection import (
 
 
 MOVEMENT_TOLERANCE = 1e-3
+FRAME_INTERLEAVE = get_config()["frame_interleave"]
 
 
 ## --- Helper functions --- ##
@@ -56,7 +58,7 @@ def fill_questions(
                 labels,
                 correct_idx,
                 sample_frames_before_timestep(
-                    world_state, timestep, num_frames=8, frame_interleave=1
+                    world_state, timestep, num_frames=8, frame_interleave=FRAME_INTERLEAVE
                 ),
             ]
         )

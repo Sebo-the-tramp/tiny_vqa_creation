@@ -289,7 +289,7 @@ def F_CAMERA_MOTION_DIRECTION(
         np.dot(movement_mid_to_final, up_vector),
     ]
 
-    threshold = 0.5
+    threshold = 0.05
 
     directions = ["forward", "backward", "right", "left", "up", "down"]
     all_possible_answers = []

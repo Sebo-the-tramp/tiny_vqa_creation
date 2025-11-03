@@ -381,9 +381,16 @@ def F_MATERIAL_IDENTIFICATION_OBJECT(
 
     MATERIALS_ALL = get_all_materials()
 
-    present = [
-        obj["description"]["material_group"] for obj in iter_objects(world_state)
-    ]
+    present = []
+
+    for obj in iter_objects(world_state):
+        if obj["description"].get("material_group", None) is None:
+            print("Patched material for object:", obj["model"])
+        present.append(obj["description"].get("material_group", None))
+
+    # present = [
+    #     obj["description"]["material_group"] for obj in iter_objects(world_state)
+    # ]
 
     options, correct_idx = create_mc_object_names_from_dataset(
         material, present, MATERIALS_ALL, num_answers=4

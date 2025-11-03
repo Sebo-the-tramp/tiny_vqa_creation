@@ -23,8 +23,8 @@ material_patch = {
     "Nickelodeon_Teenage_Mutant_Ninja_Turtles_Raphael": "plastic",
     "Nintendo_Yoshi_Action_Figure": "plastic",
     "Ortho_Forward_Facing": "plush/fiberfill",
-    "Ortho_Forward_Facing_CkAW6rL25xH": "metal",
-    "Ortho_Forward_Facing_QCaor9ImJ2G": "plush/fiberfill",
+    "Ortho_Forward_Facing_CkAW6rL25xH": "plush/fiberfill",
+    "Ortho_Forward_Facing_QCaor9ImJ2G": "metal",
     "Playmates_nickelodeon_teenage_mutant_ninja_turtles_shredder": "plastic",
     "Racoon": "plush/fiberfill",
     "Retail_Leadership_Summit_eCT3zqHYIkX": "fabric/textile",
@@ -67,7 +67,7 @@ def with_resolved_attributes(func):
             object["id"] = obj_id
             object["name"] = gso_mapping[object["model"]]['name']
             if object['description'].get('material_group', None) is None:
-                object["material_group"] = material_patch[object['model']]            
+                object['description']["material_group"] = material_patch[object['model']]
 
         # Pass them along so the wrapped function can use them
         return func(world_state, question, attributes["attributes"], *args, **kwargs)

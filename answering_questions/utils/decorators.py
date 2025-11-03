@@ -1,61 +1,42 @@
-from utils.helpers import extract_attributes
+from utils.config import get_config
+from utils.all_objects import get_gso_mapping
+from utils.helpers import extract_attributes, minimum_n_visible_objects
 
+from utils.my_exception import ImpossibleToAnswer
 
-# original but pretty much difficult to customize
-# def with_resolved_attributes(func):
-#     def wrapper(world_state, question, *args, **kwargs):
-#         attributes = _extract_attributes(question)
-#         # print("I AM CALLED FROM function:", func.__name__)
-#         resolved_attributes = _resolve_attributes(
-#             world_state=world_state,
-#             attributes=attributes.get("attributes", []),
-#         )
+gso_mapping = get_gso_mapping()
 
-#         # Useful attributes without need of recomputation every time in each function
-#         timestep_start = "0.01"  # as first timestep is always 0.01
-#         timestep_end = str(0.01 * len(world_state["simulation"]) - 0.01)
-
-#         kwargs.update(
-#             {
-#                 "timestep_start": timestep_start,
-#                 "timestep_end": timestep_end,
-#             }
-#         )
-
-#         # adaptor part to original names format
-#         for obj_id, object in world_state["objects"].items():
-#             object["id"] = obj_id
-#             object["name"] = object["model"]
-#             # object.pop('model', None)
-
-#         _fill_template(question, resolved_attributes)
-
-#         # Pass them along so the wrapped function can use them
-#         return func(world_state, question, resolved_attributes, *args, **kwargs)
-
-#     return wrapper
-
+MIN_PIXELS_VISIBLE = get_config()['min_pixels_visible']
 
 def with_resolved_attributes(func):
-    def wrapper(world_state, question, *args, **kwargs):
+    def wrapper(world_state, question, destination_simulation_id_path, *args, **kwargs):        
         attributes = extract_attributes(question)
+        current_world_number_of_objects = len(world_state["objects"])
+
+        if not minimum_n_visible_objects(
+            world_state, n_objects=1, min_pixels=MIN_PIXELS_VISIBLE
+        ): 
+            print("Not enough objects with minimum pixels visible")
+            raise ImpossibleToAnswer("Not enough objects with minimum pixels visible")
 
         # Useful attributes without need of recomputation every time in each function
         list_timesteps = list(world_state["simulation"].keys())
         timestep_start = list_timesteps[0]
         timestep_end = list_timesteps[-1]
-
+                
         kwargs.update(
             {
                 "timestep_start": timestep_start,
                 "timestep_end": timestep_end,
+                "current_world_number_of_objects": current_world_number_of_objects,
+                "destination_simulation_id_path": destination_simulation_id_path, # to add /render and get the images directly
             }
         )
 
         # adaptor part to original names format
         for obj_id, object in world_state["objects"].items():
             object["id"] = obj_id
-            object["name"] = object["model"]
+            object["name"] = gso_mapping[object["model"]]['name']
             # object.pop('model', None)
 
         # Pass them along so the wrapped function can use them

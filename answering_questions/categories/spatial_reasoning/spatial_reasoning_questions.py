@@ -26,22 +26,26 @@ from utils.my_exception import ImpossibleToAnswer
 
 from utils.all_objects import get_all_objects_names
 
+from utils.load_pointclouds import load_scene_pointcloud
+
 from utils.helpers import (
     iter_objects,
     fill_questions,
     distance_between,
+    get_random_timestep_from_list,
     resolve_attributes_visible_at_timestep,
     get_visible_timesteps_for_attributes_min_objects,
 )
 
 from .spatial_reasoning_helpers import (
     get_position,
-    get_position_camera,
-    point_to_plane_distance,
     get_closest_object,
+    get_position_camera,        
     get_min_height_from_obb,
+    get_min_height_from_obb,
+    get_min_distance_pointcloud_to_obb,
     get_spatial_relationship_camera_view,
-    get_all_relational_positional_adjectives,
+    get_all_relational_positional_adjectives,    
 )
 
 from utils.bin_creation import (
@@ -60,9 +64,15 @@ Answer = Union[str, float, Vector, Mapping[str, Any], Sequence[str]]
 from utils.config import get_config
 
 VISIBILITY_THRESHOLD = get_config()["visibility_threshold"]
+FRAME_INTERLEAVE = get_config()["frame_interleave"]
+CLIP_LENGTH = get_config()["clip_length"]
+MIN_VISIBLE_PIXELS = get_config()["min_pixels_visible"]
 
 ## --- Resolver functions -- ##
-
+## Assumptions: ##
+# - All object positions are given by their OBB center
+# - Distances are Euclidean distances between object centers unless specified otherwise
+# - The valid timesteps are those where all the  objects are visible above VISIBILITY_THRESHOLD
 
 @with_resolved_attributes
 def F_DISTANCE_OBJECT_OBJECT(
@@ -72,18 +82,17 @@ def F_DISTANCE_OBJECT_OBJECT(
         len(attributes) == 2 and "OBJECT_1" in attributes and "OBJECT_2" in attributes
     )
 
+    if kwargs["current_world_number_of_objects"] < 2:
+        raise ImpossibleToAnswer("Not enough objects in the scene to answer the question.")
+
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        attributes, world_state, min_objects=2
+        attributes, world_state, min_objects=kwargs["current_world_number_of_objects"]
     )
-    # if we are in a multi-image setting, we need to ensure there are enough frames
-    if len(visible_timesteps) == 0:
-        raise ImpossibleToAnswer("No timestep with both objects visible.")
-
-    if "multi" in question.get("task_splits", ""):
-        timestep = random.choice(visible_timesteps[7:])
-    else:
-        timestep = random.choice(visible_timesteps)
+    
+    timestep = get_random_timestep_from_list(
+        visible_timesteps, question
+    )
 
     resolved_attributes = resolve_attributes_visible_at_timestep(
         attributes, world_state, timestep
@@ -98,9 +107,9 @@ def F_DISTANCE_OBJECT_OBJECT(
     distance = distance_between(obj1_pos, obj2_pos)
 
     options, correct_idx = create_mc_options_around_gt(
-        distance, num_answers=4, display_decimals=1, lo=0.0
+        distance, num_answers=4, display_decimals=2, lo=0.0
     )
-    labels = uniform_labels(options, integer=False, decimals=1)
+    labels = uniform_labels(options, integer=False, decimals=2)
     labels = [str(label) + " meters" for label in labels]
 
     return fill_questions(
@@ -116,16 +125,12 @@ def F_DISTANCE_OBJECT_GROUND(
 
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        attributes, world_state, min_objects=1
+        attributes, world_state, min_objects=kwargs["current_world_number_of_objects"]
     )
-    # if we are in a multi-image setting, we need to ensure there are enough frames
-    if len(visible_timesteps) == 0:
-        raise ImpossibleToAnswer("No timestep with visible objects.")
 
-    if "multi" in question.get("task_splits", ""):
-        timestep = random.choice(visible_timesteps[7:])
-    else:
-        timestep = random.choice(visible_timesteps)
+    timestep = get_random_timestep_from_list(
+        visible_timesteps, question
+    )
 
     resolved_attributes = resolve_attributes_visible_at_timestep(
         attributes, world_state, timestep
@@ -133,18 +138,18 @@ def F_DISTANCE_OBJECT_GROUND(
 
     obj1_id = resolved_attributes["OBJECT"]["choice"]["id"]
 
-    # TODO check if those are correct assumptions about ground plane
-    ground_normal = [0, 0, 1]
-    ground_height = 0.0
+    # loading pointcloud
+    pointcloud = load_scene_pointcloud(world_state["scene"]["scene"])
 
-    distance_to_ground = get_min_height_from_obb(
-        world_state["simulation"][timestep]["objects"][obj1_id]["obb"]
-    )
+    distance_to_scene = get_min_distance_pointcloud_to_obb(
+        pointcloud,
+        world_state["simulation"][timestep]["objects"][obj1_id]["obb"],
+    )    
 
     options, correct_idx = create_mc_options_around_gt(
-        distance_to_ground, num_answers=4, display_decimals=1, lo=0.0
+        distance_to_scene, num_answers=4, display_decimals=2, lo=0.0
     )
-    labels = uniform_labels(options, integer=False, decimals=1)
+    labels = uniform_labels(options, integer=False, decimals=2)
     labels = [str(label) + " meters" for label in labels]
 
     return fill_questions(
@@ -160,16 +165,12 @@ def F_DISTANCE_OBJECT_CAMERA_DISTANCE(
 
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        attributes, world_state, min_objects=1
+        attributes, world_state, min_objects=kwargs["current_world_number_of_objects"]
     )
-    # if we are in a multi-image setting, we need to ensure there are enough frames
-    if len(visible_timesteps) == 0:
-        raise ImpossibleToAnswer("No timestep with visible objects.")
 
-    if "multi" in question.get("task_splits", ""):
-        timestep = random.choice(visible_timesteps[7:])
-    else:
-        timestep = random.choice(visible_timesteps)
+    timestep = get_random_timestep_from_list(
+        visible_timesteps, question
+    )
 
     resolved_attributes = resolve_attributes_visible_at_timestep(
         attributes, world_state, timestep
@@ -183,9 +184,9 @@ def F_DISTANCE_OBJECT_CAMERA_DISTANCE(
     distance = distance_between(object_position_at_time, camera_position_at_time)
 
     options, correct_idx = create_mc_options_around_gt(
-        distance, num_answers=4, display_decimals=1, lo=0.0
+        distance, num_answers=4, display_decimals=2, lo=0.0
     )
-    labels = uniform_labels(options, integer=False, decimals=1)
+    labels = uniform_labels(options, integer=False, decimals=2)
     labels = [str(label) + " meters" for label in labels]
 
     return fill_questions(
@@ -194,23 +195,22 @@ def F_DISTANCE_OBJECT_CAMERA_DISTANCE(
 
 
 @with_resolved_attributes
-def F_DISTANCE_CLOSEST_OBJECT_OBJECT(
+def F_CLOSEST_OBJECT_OBJECT(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
     assert len(attributes) == 1 and "OBJECT" in attributes
 
+    if kwargs["current_world_number_of_objects"] < 2:
+        raise ImpossibleToAnswer("Not enough objects in the scene to answer the question.")
+
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        attributes, world_state, min_objects=1
+        attributes, world_state, min_objects=kwargs["current_world_number_of_objects"]
     )
-    # if we are in a multi-image setting, we need to ensure there are enough frames
-    if len(visible_timesteps) == 0:
-        raise ImpossibleToAnswer("No timestep with visible objects.")
 
-    if "multi" in question.get("task_splits", ""):
-        timestep = random.choice(visible_timesteps[7:])
-    else:
-        timestep = random.choice(visible_timesteps)
+    timestep = get_random_timestep_from_list(
+        visible_timesteps, question
+    )
 
     resolved_attributes = resolve_attributes_visible_at_timestep(
         attributes, world_state, timestep
@@ -222,19 +222,20 @@ def F_DISTANCE_CLOSEST_OBJECT_OBJECT(
     closest_object = get_closest_object(
         world_state, object_id, object_position_at_time, timestep
     )
-    closest_position_at_time = get_position(world_state, closest_object["id"], timestep)
 
-    distance = distance_between(object_position_at_time, closest_position_at_time)
+    presents = [obj["name"] for obj in iter_objects(world_state)]
 
-    options, idx = create_mc_options_around_gt(
-        distance, num_answers=4, display_decimals=1, lo=0.0
+    labels, correct_idx = create_mc_object_names_from_dataset(
+        closest_object["name"], presents, get_all_objects_names(), num_answers=4
     )
-    labels = uniform_labels(options, integer=False, decimals=1)
+    
     labels = [str(label) + " meters" for label in labels]
 
     return fill_questions(
-        question, labels, idx, world_state, timestep, resolved_attributes
+        question, labels, correct_idx, world_state, timestep, resolved_attributes
     )
+
+
 
 
 @with_resolved_attributes
@@ -245,16 +246,12 @@ def F_SIZE_OBJECT(
 
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        attributes, world_state, min_objects=1
+        attributes, world_state, min_objects=kwargs["current_world_number_of_objects"]
     )
-    # if we are in a multi-image setting, we need to ensure there are enough frames
-    if len(visible_timesteps) == 0:
-        raise ImpossibleToAnswer("No timestep with visible objects.")
 
-    if "multi" in question.get("task_splits", ""):
-        timestep = random.choice(visible_timesteps[7:])
-    else:
-        timestep = random.choice(visible_timesteps)
+    timestep = get_random_timestep_from_list(
+        visible_timesteps, question
+    )
 
     resolved_attributes = resolve_attributes_visible_at_timestep(
         attributes, world_state, timestep
@@ -283,18 +280,17 @@ def F_SIZE_OBJECT_BIGGER(
 ) -> str:
     assert len(attributes) == 0
 
+    if kwargs["current_world_number_of_objects"] < 2:
+        raise ImpossibleToAnswer("Not enough objects in the scene to answer the question.")
+
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        ["OBJECT"], world_state, min_objects=1
+        ["OBJECT"], world_state, min_objects=kwargs["current_world_number_of_objects"]
     )
-    # if we are in a multi-image setting, we need to ensure there are enough frames
-    if len(visible_timesteps) == 0:
-        raise ImpossibleToAnswer("No timestep with visible objects.")
-
-    if "multi" in question.get("task_splits", ""):
-        timestep = random.choice(visible_timesteps[7:])
-    else:
-        timestep = random.choice(visible_timesteps)
+   
+    timestep = get_random_timestep_from_list(
+        visible_timesteps, question
+    )
 
     resolved_attributes = resolve_attributes_visible_at_timestep(
         attributes, world_state, timestep
@@ -306,7 +302,7 @@ def F_SIZE_OBJECT_BIGGER(
     for obj in iter_objects(world_state):
         volume = obj.get("volume", 0.0)
         visible_at_timestep = (
-            world_state["simulation"][timestep]["objects"][obj["id"]]["infov"]
+            world_state["simulation"][timestep]["objects"][obj["id"]]["infov_pixels"] > MIN_VISIBLE_PIXELS
             and world_state["simulation"][timestep]["objects"][obj["id"]][
                 "fov_visibility"
             ]
@@ -333,18 +329,17 @@ def F_SIZE_OBJECT_SMALLER(
 ) -> str:
     assert len(attributes) == 0
 
+    if kwargs["current_world_number_of_objects"] < 2:
+        raise ImpossibleToAnswer("Not enough objects in the scene to answer the question.")
+
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        ["OBJECT"], world_state, min_objects=1
+        ["OBJECT"], world_state, min_objects=kwargs["current_world_number_of_objects"]
     )
-    # if we are in a multi-image setting, we need to ensure there are enough frames
-    if len(visible_timesteps) == 0:
-        raise ImpossibleToAnswer("No timestep with visible objects.")
 
-    if "multi" in question.get("task_splits", ""):
-        timestep = random.choice(visible_timesteps[7:])
-    else:
-        timestep = random.choice(visible_timesteps)
+    timestep = get_random_timestep_from_list(
+        visible_timesteps, question
+    )
 
     resolved_attributes = resolve_attributes_visible_at_timestep(
         attributes, world_state, timestep
@@ -356,7 +351,7 @@ def F_SIZE_OBJECT_SMALLER(
     for obj in iter_objects(world_state):
         volume = obj.get("volume", 0.0)
         visible_at_timestep = (
-            world_state["simulation"][timestep]["objects"][obj["id"]]["infov"]
+            world_state["simulation"][timestep]["objects"][obj["id"]]["infov_pixels"] > MIN_VISIBLE_PIXELS
             and world_state["simulation"][timestep]["objects"][obj["id"]][
                 "fov_visibility"
             ]
@@ -387,16 +382,12 @@ def F_LAYOUT_POSITION_OBJECT_OBJECT(
 
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        attributes, world_state, min_objects=2
+        attributes, world_state, min_objects=kwargs["current_world_number_of_objects"]
     )
-    # if we are in a multi-image setting, we need to ensure there are enough frames
-    if len(visible_timesteps) == 0:
-        raise ImpossibleToAnswer("No timestep with visible objects.")
-
-    if "multi" in question.get("task_splits", ""):
-        timestep = random.choice(visible_timesteps[7:])
-    else:
-        timestep = random.choice(visible_timesteps)
+    
+    timestep = get_random_timestep_from_list(
+        visible_timesteps, question
+    )
 
     resolved_attributes = resolve_attributes_visible_at_timestep(
         attributes, world_state, timestep

@@ -37,6 +37,7 @@ from utils.bin_creation import (
 )
 
 from utils.helpers import (
+    get_random_timestep_from_list,
     iter_objects,
     fill_questions,    
     distance_between,
@@ -58,9 +59,13 @@ from categories.viewpoint.viewpoint_helpers import (
 
 from utils.all_objects import get_all_objects_names
 
+from utils.config import get_config
+
+CLIP_LENGTH = get_config()["clip_length"]
+FRAME_INTERLEAVE = get_config()["frame_interleave"]
+MIN_VISIBLE_PIXELS = get_config()["min_pixels_visible"]
+
 ## --- Resolver functions -- ##
-
-
 @with_resolved_attributes
 def F_VISIBILITY_OBJECT(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
@@ -69,16 +74,12 @@ def F_VISIBILITY_OBJECT(
     
      # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        ["OBJECT"], world_state, min_objects=2
+        ["OBJECT"], world_state, min_objects=kwargs["current_world_number_of_objects"]
     )
-    # if we are in a multi-image setting, we need to ensure there are enough frames
-    if len(visible_timesteps) == 0:
-        raise ImpossibleToAnswer("No timestep with both objects visible.")
 
-    if "multi" in question.get("task_splits", ""):
-        timestep = random.choice(visible_timesteps[7:])
-    else:
-        timestep = random.choice(visible_timesteps)
+    timestep = get_random_timestep_from_list(
+        visible_timesteps, question
+    ) 
 
     resolved_attributes = resolve_attributes_visible_at_timestep(
         ["OBJECT"], world_state, timestep
@@ -103,7 +104,9 @@ def F_VISIBILITY_OBJECT(
 @with_resolved_attributes
 def F_VISIBILITY_PERCENTAGE_OBJECT(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
-) -> int:
+) -> int:    
+    assert len(attributes) == 1 and "OBJECT" in attributes
+
     # First we find the pairs of objects visible
     resolved_attributes = resolve_attributes(
         ["OBJECT"], world_state
@@ -112,7 +115,7 @@ def F_VISIBILITY_PERCENTAGE_OBJECT(
     all_timesteps = list(world_state["simulation"].keys())
 
     if "multi" in question.get("task_splits", ""):
-        timestep = random.choice(all_timesteps[7:])
+        timestep = random.choice(all_timesteps[CLIP_LENGTH*FRAME_INTERLEAVE - FRAME_INTERLEAVE:])
     else:
         timestep = random.choice(all_timesteps)
 
@@ -120,6 +123,9 @@ def F_VISIBILITY_PERCENTAGE_OBJECT(
     visibility_object = get_object_state_at_timestep(
         world_state, object["id"], timestep
     )["fov_visibility"]
+
+    if not world_state['simulation'][timestep]['objects'][object["id"]]['infov_pixels'] > MIN_VISIBLE_PIXELS:
+        visibility_object = 0.0
 
     if visibility_object < 0.25:
         correct_idx = 0
@@ -146,12 +152,14 @@ def F_VIEWPOINT_CAMERA_ANGLE(world_state: WorldState, question: QuestionPayload,
     Maps camera pose to one of:
     ["low angle","eye level","high angle","bird's-eye","worm's-eye"]
     """
+    assert len(attributes) == 0
+    
     resolved_attributes = resolve_attributes([], world_state)
 
     all_timesteps = list(world_state["simulation"].keys())
 
     if "multi" in question.get("task_splits", ""):
-        timestep = random.choice(all_timesteps[7:])
+        timestep = random.choice(all_timesteps[CLIP_LENGTH*FRAME_INTERLEAVE - FRAME_INTERLEAVE:])
     else:
         timestep = random.choice(all_timesteps)
     
@@ -174,7 +182,7 @@ def F_VIEWPOINT_CAMERA_ANGLE(world_state: WorldState, question: QuestionPayload,
 @with_resolved_attributes
 def F_FOCAL_LENGTH_CLASS(world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
-    
+    assert len(attributes) == 0
     """
     Maps FOV to one of:
     ["ultra-wide","wide","normal","short telephoto","telephoto"]
@@ -185,7 +193,7 @@ def F_FOCAL_LENGTH_CLASS(world_state: WorldState, question: QuestionPayload, att
     all_timesteps = list(world_state["simulation"].keys())
 
     if "multi" in question.get("task_splits", ""):
-        timestep = random.choice(all_timesteps[7:])
+        timestep = random.choice(all_timesteps[CLIP_LENGTH*FRAME_INTERLEAVE - FRAME_INTERLEAVE:])
     else:
         timestep = random.choice(all_timesteps)
     

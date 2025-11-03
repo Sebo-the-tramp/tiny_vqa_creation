@@ -4,6 +4,53 @@ import json
 import glob
 import argparse
 
+import concurrent.futures as cf
+
+from copy import deepcopy
+
+# Globals initialized in worker processes
+QUESTIONS = None
+DEST_ROOT = None
+ARG_MOCK = None
+VERBOSE = None
+
+def _init_worker(vqa_path, dest_root, arg_mock, verbose):
+    """Runs once per worker process."""
+    import os
+    global QUESTIONS, DEST_ROOT, ARG_MOCK, VERBOSE
+    QUESTIONS = read_questions(os.path.join(vqa_path, "simple_vqa.json"))
+    DEST_ROOT = dest_root
+    ARG_MOCK = arg_mock
+    VERBOSE = verbose
+
+def _process_one(sim_file):
+    """Process a single simulation.json path and return its VQA list."""
+    try:
+        if not os.path.isfile(sim_file):
+            if VERBOSE:
+                print("Skipping non-file:", sim_file)
+            return []
+        simulation_id_path = sim_file.replace("simulation.json", "")
+        destination_simulation_id_path = os.path.join(DEST_ROOT, simulation_id_path)
+        simulation_steps = read_simulation(
+            os.path.join(simulation_id_path, "simulation_kinematics.json")
+        )
+        return create_vqa(
+            QUESTIONS,
+            simulation_steps,
+            sim_file,
+            destination_simulation_id_path,
+            ARG_MOCK,
+            verbose=VERBOSE,
+        )
+    except Exception as e:
+        # Keep the pool running even if one simulation fails
+        # if VERBOSE:
+        print("Worker error on", simulation_id_path, "->", repr(e))
+        # print(e.with_traceback())
+        return []
+
+
 from utils.saving_utils import (
     save_questions_answers_json,
     save_questions_answers_tsv,
@@ -99,7 +146,7 @@ def create_vqa(
     for category_key, category in questions.items():
         # current category dev
         if (
-            category_key != "material_understanding"
+            category_key != "temporal"
         ):
             continue
 
@@ -110,21 +157,17 @@ def create_vqa(
         total_questions_in_category = len(category)
         total_correct_answers = 0
         not_implemented = 0
-        for question_key, question_data in category.items():            
+        for question_key, question_data in category.items():
+            # print(f"  Question Key: {question_key}")
             fn_to_answer_question = get_answer(
                 question_key, category_key, mock=arg_mock
             )
 
             try:
-                # answer_list = question, labels, correct_idx, imgs_idx
-                answer_list = fn_to_answer_question(simulation_steps, question_data, destination_simulation_id_path)
+                answer_list = fn_to_answer_question(simulation_steps, deepcopy(question_data), destination_simulation_id_path)
             except ImpossibleToAnswer:
                 not_implemented += 1
-                print(f"  Question Key: {question_key}")
                 continue
-            except Exception as e:
-                print(f"  ERROR processing question {question_key}: {e}")
-                exit(1)
 
             for question, labels, correct_idx, imgs_idx in answer_list:
                 # changing from image_paths to image_paths
@@ -215,51 +258,36 @@ def main(args):
     for sim_file in glob.glob(pattern, recursive=True):
         simulation_id = os.path.dirname(sim_file)  # folder containing the file
 
-        print(simulation_id)
-        print(sim_file)
+        # print(simulation_id)
+        # print(sim_file)
 
         list_simulations.append(sim_file)
 
     list_simulations.sort(key=natural_key)
 
-    # limit to 100s for now
-    for simulation_id in list_simulations:
-        print(simulation_id)
-        if not os.path.isfile(simulation_id):
-            print("not folder found")
-            continue
-        else:
-            print("Found simulation folder:", simulation_id)
+    # Using ProcessPoolExecutor for parallel processing
 
-            questions_raw = read_questions(args.vqa_path + "simple_vqa.json")
+    # Parallel execution across simulations
+    if not list_simulations:
+        print("No simulation files found.")
+        return
 
-            # questions = split_questions_by_task_splits(questions_raw)
-            questions = questions_raw
+    print("Found", len(list_simulations), "simulation files.")
+    with cf.ProcessPoolExecutor(
+        # max_workers=os.cpu_count(),
+        max_workers=24,
+        initializer=_init_worker,
+        initargs=(args.vqa_path, args.destination_simulation_path, args.mock, args.verbose),
+    ) as ex:
+        for sim_vqa in ex.map(_process_one, list_simulations): # limit to 100s for now
+            all_vqa.extend(sim_vqa)
 
-            simulation_id_path = simulation_id.replace("simulation.json", "")
-            destination_simulation_id_path = os.path.join(
-                args.destination_simulation_path, simulation_id_path
-            )
-
-            simulation_steps = read_simulation(
-                os.path.join(simulation_id_path, "simulation_kinematics.json")
-            )
-
-            simulation_vqa = create_vqa(
-                questions,
-                simulation_steps,
-                simulation_id,
-                destination_simulation_id_path,
-                args.mock,
-                verbose=args.verbose,
-            )
-            all_vqa.extend(simulation_vqa)
 
     # Finally save the questions and answers
     print(f"Saved {len(all_vqa)} questions and answers.")
 
     if args.export_format in ["json", "both"]:
-        questions_path, answers_path = save_questions_answers_json(
+        save_questions_answers_json(
             all_vqa,
             args.output_path,
             export_format=args.export_format,
@@ -267,7 +295,7 @@ def main(args):
             number_of_images_max=args.number_of_images_max,
         )
         print(
-            f"Saved questions and answers to {questions_path} and {answers_path} ({args.export_format})"
+            f"Saved questions and answers to {args.output_path} ({args.export_format})"
         )
 
     if args.export_format in ["tsv", "both"]:
@@ -281,6 +309,9 @@ def main(args):
         print(
             f"Saved questions and answers to {args.output_path} ({args.export_format})"
         )
+
+    print("VQA creation completed.")
+    print("LIST OF SIMULATIONS PROCESSED:", len(list_simulations))
 
 
 if __name__ == "__main__":
@@ -350,5 +381,4 @@ if __name__ == "__main__":
 
     main(args)
 
-
-# python main.py --simulation_path /data0/sebastian.cavada/datasets/simulations_v2
+#  python main_parallel.py --simulation_path /data0/sebastian.cavada/datasets/simulations_v2

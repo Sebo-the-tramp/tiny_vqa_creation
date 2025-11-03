@@ -599,20 +599,21 @@ def main():
             sys.exit(1)
 
     if args.search_root:
-        normalized_roots: List[str] = []
-        for root in args.search_root:
-            abs_root = os.path.abspath(root)
-            if not os.path.exists(abs_root):
-                print(f"Search root '{root}' does not exist.", file=sys.stderr)
-                sys.exit(1)
-            normalized_roots.append(abs_root)
-        matches = find_simulation_files(normalized_roots)
-        if not matches:
-            print(
-                "No simulation.json files found in supplied search roots.",
-                file=sys.stderr,
-            )
-            sys.exit(1)
+        print("Processing search root:", args.search_root)
+        simulation_root = os.path.abspath(args.search_root[0])
+        pattern = os.path.join(simulation_root, '**', 'simulation.json')
+
+        print("Searching for simulation files with pattern:", pattern)
+
+        matches = []
+        for sim_file in glob.glob(pattern, recursive=True):
+            simulation_id = os.path.dirname(sim_file)  # folder containing the file
+
+            print(simulation_id)
+            print(sim_file)
+
+            matches.append(sim_file)
+
         add_paths(sorted(matches))
 
     if not targets:
@@ -671,3 +672,6 @@ if __name__ == "__main__":
 
 # to run:
 # python augment_kinematics.py --search-root /Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/output/sims/dl3dv-hf-gso2/3-cg/
+# python augment_kinematics.py --search-root /data0/sebastian.cavada/datasets/simulations_test/
+# python augment_kinematics.py --search-root /data0/sebastian.cavada/datasets/simulations_v2
+

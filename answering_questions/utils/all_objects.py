@@ -6,11 +6,19 @@ with open("./utils/json/all_objects_data.json", "r") as f:
 all_materials = set()
 all_objects_names = set()
 
+gso_mapping = {}
+
+with open("./utils/json/gso_mapping.json", "r") as f:
+    gso_mapping = json.load(f)
+
+def get_gso_mapping():
+    return gso_mapping
+
 
 def get_all_scenes_segments():
     # TODO dummy for now
     scenes_segments = [
-        "Staue",
+        "Statue",
         "Wood Bench",
         "Marble Bench",
         "Fountain",
@@ -31,8 +39,9 @@ def get_all_objects_names():
     if len(all_objects_names) > 0:
         return list(all_objects_names)
 
-    for model in all_objects.keys():
-        all_objects_names.add(model)
+    for obj in gso_mapping.values():
+        all_objects_names.add(obj['name'])
+
     return list(all_objects_names)
 
 

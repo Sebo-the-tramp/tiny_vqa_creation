@@ -6,6 +6,8 @@ import re
 
 from utils.my_exception import ImpossibleToAnswer
 
+from utils.config import get_config
+
 # ---------- helpers ----------
 _ws = re.compile(r"\s+")
 
@@ -99,6 +101,44 @@ def create_mc_options_integer(
 
 
 # improved version after Raoul's feedback
+# def create_mc_options_around_gt(
+#     gt: float,
+#     num_answers: int = 4,
+#     lo: Optional[float] = None,  # e.g., 0.0 for speed
+#     hi: Optional[float] = None,  # upper bound if needed
+#     display_decimals: int = 2,
+#     min_threshold: float = 0.04,  # minimum value for the options
+# ) -> Tuple[List[float], int]:
+#     if abs(gt) < min_threshold and gt >= -min_threshold:
+
+#         # I mean the speed is 0, we should understand that
+#         options = [gt, 2.5, 5.0, 10.0] # some arbitrary distractors
+#         random.shuffle(options)
+#         correct_idx = options.index(gt)
+#         return options, correct_idx
+
+#         # raise ImpossibleToAnswer("GT too close to zero for meaningful options.")
+
+#     gt = round(gt, display_decimals) if display_decimals is not None else gt
+
+#     options = [(1 / 4), (2 / 4), (3 / 4), (5 / 4), (6 / 4), (7 / 4)]
+
+#     options = [
+#         round(opt * gt, display_decimals)
+#         for opt in options
+#         if (lo is None or opt >= lo) and (hi is None or opt <= hi)
+#     ]
+#     options = [opt for opt in options if opt > min_threshold]
+
+#     options = options[: num_answers - 1]
+#     options.append(gt)
+#     random.shuffle(options)
+#     correct_idx = options.index(gt)
+
+#     return options, correct_idx
+
+# improved version after Raoul's feedback
+# https://chatgpt.com/c/6906646f-be44-8325-a42e-98ddbf72eec8 -> to improve probably with slope bins
 def create_mc_options_around_gt(
     gt: float,
     num_answers: int = 4,
@@ -107,17 +147,32 @@ def create_mc_options_around_gt(
     display_decimals: int = 2,
     min_threshold: float = 0.04,  # minimum value for the options
 ) -> Tuple[List[float], int]:
-    if abs(gt) < min_threshold:
-        raise ImpossibleToAnswer("GT too close to zero for meaningful options.")
+    if abs(gt) < min_threshold and gt >= -min_threshold:
+
+        # I mean the speed is 0, we should understand that
+        gt = round(gt, display_decimals) if display_decimals is not None else gt
+
+        options = [gt, 2.5, 5.0, 10.0] # some arbitrary distractors
+        random.shuffle(options)
+        correct_idx = options.index(gt)
+        return options, correct_idx        
+
+    current_slope_bin = get_config()["slope_bins"]
+
+    if abs(gt) < 1.0:
+        current_slope_bin = 0.4
 
     gt = round(gt, display_decimals) if display_decimals is not None else gt
 
-    options = [(1 / 4), (2 / 4), (3 / 4), (5 / 4), (6 / 4), (7 / 4)]
+    intervals = [i for i in range(-3, 4) if i != 0]
+
+    options_raw = [(x + current_slope_bin) / current_slope_bin for x in intervals]
 
     options = [
         round(opt * gt, display_decimals)
-        for opt in options
-        if (lo is None or opt >= lo) and (hi is None or opt <= hi)
+        for opt in options_raw
+        if (lo is None or round(opt * gt, display_decimals) >= lo) \
+        and (hi is None or round(opt * gt, display_decimals) <= hi)
     ]
     options = [opt for opt in options if opt > min_threshold]
 
@@ -129,40 +184,40 @@ def create_mc_options_around_gt(
     return options, correct_idx
 
 
-# improved version after Raoul's feedback
-def create_mc_options_around_gt_log(
-    gt: float,
-    num_answers: int = 4,
-    lo: Optional[float] = None,  # e.g., 0.0 for speed
-    hi: Optional[float] = None,  # upper bound if needed
-    display_decimals: int = 2,
-    min_threshold: float = 0.04,  # minimum value for the options
-) -> Tuple[List[float], int]:
-    f = math.log  # natural log
-    finv = math.exp
+# # improved version after Raoul's feedback
+# def create_mc_options_around_gt_log(
+#     gt: float,
+#     num_answers: int = 4,
+#     lo: Optional[float] = None,  # e.g., 0.0 for speed
+#     hi: Optional[float] = None,  # upper bound if needed
+#     display_decimals: int = 2,
+#     min_threshold: float = 0.04,  # minimum value for the options
+# ) -> Tuple[List[float], int]:
+#     f = math.log  # natural log
+#     finv = math.exp
 
-    if abs(gt) < min_threshold:
-        raise ImpossibleToAnswer("GT too close to zero for meaningful options.")
-    if gt <= 0:
-        raise ImpossibleToAnswer("GT must be positive for logarithmic spacing.")
+#     if abs(gt) < min_threshold:
+#         raise ImpossibleToAnswer("GT too close to zero for meaningful options.")
+#     if gt <= 0:
+#         raise ImpossibleToAnswer("GT must be positive for logarithmic spacing.")
 
-    gt = round(gt, display_decimals) if display_decimals is not None else gt
+#     gt = round(gt, display_decimals) if display_decimals is not None else gt
 
-    options = [(1 / 4), (2 / 4), (3 / 4), (5 / 4), (6 / 4), (7 / 4)]
+#     options = [(1 / 4), (2 / 4), (3 / 4), (5 / 4), (6 / 4), (7 / 4)]
 
-    options = [
-        round(opt * gt, display_decimals)
-        for opt in options
-        if (lo is None or opt >= lo) and (hi is None or opt <= hi)
-    ]
-    options = [opt for opt in options if opt > min_threshold]
+#     options = [
+#         round(opt * gt, display_decimals)
+#         for opt in options
+#         if (lo is None or opt >= lo) and (hi is None or opt <= hi)
+#     ]
+#     options = [opt for opt in options if opt > min_threshold]
 
-    options = options[: num_answers - 1]
-    options.append(gt)
-    random.shuffle(options)
-    correct_idx = options.index(gt)
+#     options = options[: num_answers - 1]
+#     options.append(gt)
+#     random.shuffle(options)
+#     correct_idx = options.index(gt)
 
-    return options, correct_idx
+#     return options, correct_idx
 
 
 import math
@@ -202,6 +257,49 @@ def create_mc_options_around_gt_log(
         options = [opt for opt in options if opt >= lo]
     if hi is not None:
         options = [opt for opt in options if opt <= hi]
+
+    options = options[: num_answers - 1]
+    options.append(gt)
+    random.shuffle(options)
+    correct_idx = options.index(gt)
+
+    return options, correct_idx
+
+def create_mc_options_around_gt_poisson_ratio(
+    gt: float,
+    num_answers: int = 4,
+    lo: Optional[float] = None,  # e.g., 0.0 for speed
+    hi: Optional[float] = None,  # upper bound if needed
+    display_decimals: int = 2,
+    min_threshold: float = 0.04,  # minimum value for the options
+) -> Tuple[List[float], int]:
+        
+    if abs(gt) < min_threshold and gt >= -min_threshold:
+
+        # I mean the speed is 0, we should understand that
+        options = [gt, 2.5, 5.0, 10.0] # some arbitrary distractors
+        random.shuffle(options)
+        correct_idx = options.index(gt)
+        return options, correct_idx
+
+        # raise ImpossibleToAnswer("GT too close to zero for meaningful options.")
+
+    gt = round(gt, display_decimals) if display_decimals is not None else gt
+
+    intervals = [i for i in range(-3, 4) if i != 0]
+
+    options_raw = [(x + 3) / 3 for x in intervals]
+
+    options = [
+        round(opt * gt, display_decimals)
+        for opt in options_raw
+        if (lo is None or round(opt * gt, display_decimals) >= lo) \
+        and (hi is None or round(opt * gt, display_decimals) <= hi)
+    ]
+    options = [opt for opt in options if opt > min_threshold]
+
+    if len(options) < num_answers - 1:
+        raise ImpossibleToAnswer("Not enough options could be generated around GT.")
 
     options = options[: num_answers - 1]
     options.append(gt)

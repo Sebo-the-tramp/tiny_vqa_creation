@@ -95,6 +95,25 @@ def get_min_height_from_obb(obb: Mapping[str, Any]) -> float:
     )  # return the z coordinate since z is up # should not be negative
 
 
+def get_min_distance_pointcloud_to_obb(
+    pointcloud: Any, obb: Mapping[str, Any], iso_ratio: float = 3.0, m: int = 5
+) -> float:
+    """
+    Compute the minimum distance from a point cloud to an oriented bounding box (obb).
+    """    
+    center = np.array(obb["center"])
+
+    cnt, idx, d2 = pointcloud['kd_tree'].search_knn_vector_3d(center, 20)    
+    if cnt == 0:
+        return float('inf')
+    d = np.sqrt(np.asarray(d2))
+    m = min(int(m), cnt)
+    if d[m - 1] > iso_ratio * d[0]:
+        return float(np.median(d[:m]))
+
+    return float(d[0])
+
+
 def get_closest_object(
     world_state: Mapping[str, Any],
     object_id: str,
@@ -141,7 +160,7 @@ def get_spatial_relationship_camera_view(obj_1_state, obj_2_state, camera):
     np_pos2_world = np.array(obj_2_state["obb"]["center"])
 
     # 1. Calculate the Vector from O2 to O1 in WORLD Coordinates
-    V_rel_world = np_pos1_world - np_pos2_world
+    V_rel_world = np_pos2_world - np_pos1_world
 
     # 2. World-Relative Vertical (Above/Below)
     # Uses the designated WORLD_UP_AXIS_NUM (e.g., V_rel_world[2] for Z-Up)

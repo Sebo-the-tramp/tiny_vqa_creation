@@ -8,6 +8,8 @@ from typing import Any, Mapping, Optional, Tuple, Union, List
 
 from utils.helpers import as_vector
 
+from scipy.spatial.transform import Rotation as R
+
 # set random seed for reproducibility
 rng = random.Random(42)
 
@@ -23,9 +25,11 @@ from utils.frames_selection import (
     sample_frames_before_timestep,
 )
 
+from utils.config import get_config
 
-MOVEMENT_TOLERANCE = 1e-3
-
+MOVEMENT_TOLERANCE = get_config()["movement_tolerance"]
+FRAME_INTERLEAVE = get_config()["frame_interleave"]
+CLIP_LENGTH = get_config()["clip_length"]
 
 ## --- Helper functions --- ##
 
@@ -54,10 +58,9 @@ def fill_questions(
             [
                 question_copy,
                 labels,
-                correct_idx, 
-                # TODO change the frame interleave -> 2 should be good for most cases
+                correct_idx,
                 sample_frames_before_timestep(
-                    world_state, timestep, num_frames=8, frame_interleave=2
+                    world_state, timestep, num_frames=CLIP_LENGTH, frame_interleave=FRAME_INTERLEAVE
                 ),
             ]
         )
@@ -73,6 +76,24 @@ def get_position(
         "center"
     ]
     return as_vector(current_timestep_involved_object)
+
+def get_rotation(
+    world_state: Mapping[str, Any], object_id: str, timestep: str
+) -> Optional[Tuple[float, ...]]:
+    timestep_world = world_state["simulation"][timestep]
+    current_timestep_involved_object = timestep_world["objects"][object_id]["obb"][
+        "R"
+    ]
+    R_mat = np.array(current_timestep_involved_object)
+
+    # Re-orthogonalize via SVD to enforce det=+1
+    U, _, Vt = np.linalg.svd(R_mat)
+    R_fixed = U @ Vt
+    if np.linalg.det(R_fixed) < 0:  # handle left-handed reflections
+        U[:, -1] *= -1
+        R_fixed = U @ Vt
+        
+    return R.from_matrix(R_fixed).as_euler('xyz', degrees=True)
 
 
 def is_moving(object_id: str, timestep: str, world_state: Mapping[str, Any]) -> bool:

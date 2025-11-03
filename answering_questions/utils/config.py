@@ -10,3 +10,4 @@ def get_config():
         with open("./utils/json/config.json") as f:
             _config = json.load(f)
     return _config
+

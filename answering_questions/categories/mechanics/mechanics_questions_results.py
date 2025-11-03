@@ -2,6 +2,10 @@ def F_KINEMATICS_SPEED_OBJECT() -> str:
     return "Distance between two objects question result"
 
 
+def F_KINEMATICS_FASTEST_OBJECT() -> str:
+    return "Fastest object question result"
+
+
 def F_KINEMATICS_FASTEST_OBJECT_SPEED() -> str:
     return "Distance between object and ground question result"
 
@@ -34,9 +38,9 @@ def F_COLLISION_OBJECT_OBJECT_FRAME_MULTI() -> str:
     return "First timestep object collides with object question result"
 
 
-def F_COLLISION_OBJECT_GROUND_FRAME_SINGLE() -> str:
+def F_COLLISION_OBJECT_SCENE_FRAME_SINGLE() -> str:
     return "000200"
 
 
-def F_COLLISION_OBJECT_GROUND_FRAME_MULTI() -> str:
-    return "First timestep object collides with ground question result"
+def F_COLLISION_OBJECT_SCENE_FRAME_MULTI() -> str:
+    return "First timestep object collides with scene question result"

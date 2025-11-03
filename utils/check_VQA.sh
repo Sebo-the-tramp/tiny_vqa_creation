@@ -1,0 +1,1 @@
+python check_VQA.py ../output/test.json ../output/val_answer.json --limit 50

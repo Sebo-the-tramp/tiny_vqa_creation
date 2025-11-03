@@ -125,7 +125,6 @@ def save_questions_answers_json(
     normalized_questions = []
     answers = []
 
-
     counter = 0        
 
     for idx, entry in enumerate(all_vqa):
@@ -161,15 +160,19 @@ def save_questions_answers_json(
 
     #     normalized_questions.append(question_record)
     #     answers.append(answer_record)
-
-    questions_path = os.path.join(output_path, "test_full.json")
-    answers_path = os.path.join(output_path, "val_answer.json")
+    
+    questions_path = os.path.join(output_path, "test_test_imbalance.json")
+    answers_path = os.path.join(output_path, "val_answer_test_imbalance.json")
+    # questions_path = os.path.join(output_path, "test_big_run_no_temporal_slope_2.json")
+    # answers_path = os.path.join(output_path, "val_answer_big_run_no_temporal_slope_2.json")
 
     with open(questions_path, "w") as f:
         json.dump(normalized_questions, f, indent=4)
 
     with open(answers_path, "w") as f:
         json.dump(answers, f, indent=4)
+
+    return questions_path, answers_path
 
 
 def normalize_question_json(
@@ -184,6 +187,7 @@ def normalize_question_json(
     answer_index = vqa_entry.get("answer_index")
     image_paths = vqa_entry.get("image_paths", []) or []
     letters = list(string.ascii_uppercase)
+    simulation_path = vqa_entry["simulation_id"]
 
     # add <image> tags in place of images
     # locking in question images before adding other images in the question
@@ -196,11 +200,10 @@ def normalize_question_json(
     # regex to check if in the label we have an image
     pattern = re.compile(r"^\d{6}$")
 
-    for idx_img, label in enumerate(labels):
-        # print("label", label)
+    for idx_img, label in enumerate(labels):        
         if pattern.match(label):
             # do a smart replacement
-            new_image_path = image_paths[0].rsplit("/", 1)[0] + f"/{label}.png"
+            new_image_path = simulation_path.rsplit("/", 1)[0] + f"/render/{label}.png"
             image_paths.append(new_image_path)
             labels[idx_img] = "<image>"
 
@@ -239,7 +242,7 @@ def normalize_question_json(
         "split": question_payload.get("split", "val"),
         "choice_type": question_payload["choice"],
         "question_id": vqa_entry.get("question_key", ""),
-        "category": question_payload.get("category"),
+        "category": vqa_entry["category"],
         "sub_category": question_payload.get("sub_category"),
     }
 
@@ -247,7 +250,7 @@ def normalize_question_json(
         "idx": idx,
         "answer": answer_letter,
         "task_type": "factual",
-        "ability_type": question_payload.get("ability_type", ability_type),
+        # "ability_type": question_payload.get("ability_type", ability_type),
         "mode": question_record["mode"],
         "choice_type": question_payload["choice"],        
     }

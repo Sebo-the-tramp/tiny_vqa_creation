@@ -16,3 +16,5 @@ simple_vqa_m_old.json
 tmp_parallel.sh
 
 test/
+
+submodules/

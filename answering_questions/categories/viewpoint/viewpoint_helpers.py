@@ -116,22 +116,22 @@ def classify_camera_angle_index(pitch_deg):
 def classify_focal_length_index(hfov_deg):
     """
     Horizontal FOV thresholds:
-      ultra-wide      >= 90
-      wide            63 to < 90
-      normal          40 to < 63
-      telephoto       < 40
+      ultra-wide      >= 100
+      wide            60 to < 100
+      normal          20 to < 60
+      telephoto       < 20
     Labels (fixed order):
       ["ultra-wide","wide","normal","short telephoto","telephoto"]
     """
-    if hfov_deg >= 90.0:
-        label = "ultra-wide (>=90)"
-    elif hfov_deg >= 63.0:
-        label = "wide (63-90)"
-    elif hfov_deg >= 40.0:
-        label = "normal (40-63)"
+    if hfov_deg >= 100.0:
+        label = "ultra-wide (>=100)"
+    elif hfov_deg >= 60.0:
+        label = "wide (60-100)"
+    elif hfov_deg >= 20.0:
+        label = "normal (20-60)"
     else:
-        label = "telephoto (<40)"
+        label = "telephoto (<20)"
 
-    labels = ["ultra-wide (>=90)","wide (63-90)","normal (40-63)","telephoto (<40)"]
+    labels = ["ultra-wide (>=100)","wide (60-100)","normal (20-60)","telephoto (<20)"]
     idx = labels.index(label)
     return labels, idx

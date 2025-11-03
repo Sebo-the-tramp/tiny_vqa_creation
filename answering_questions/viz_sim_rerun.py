@@ -21,10 +21,16 @@
 #
 import argparse
 import json
-import numpy as np
-import rerun as rr
+import os
 from collections import deque
 
+import numpy as np
+import rerun as rr
+import open3d as o3d
+
+from utils.load_pointclouds import load_scene_pointcloud
+
+from scipy.spatial.transform import Rotation as R
 
 # ---------------------------- Math helpers ----------------------------
 def euler_to_quat_xyz(rx, ry, rz):
@@ -150,7 +156,7 @@ def get_obb_pose_and_dims(ent):
     """If entity has an OBB, return (p[3], q[4], half_sizes[3]); else None.
 
     - OBB dict has keys: R (3x3 rotation), center (3), extents (3).
-    - We treat extents as half-sizes for rr.Boxes3D.
+    - Extents describe full side lengths; convert to half-sizes for rr.Boxes3D.
     """
     obb = ent.get("obb")
     if not isinstance(obb, dict):
@@ -160,8 +166,23 @@ def get_obb_pose_and_dims(ent):
     extents = np.asarray(obb.get("extents"), dtype=float)
     if R.shape != (3, 3) or center.shape != (3,) or extents.shape != (3,):
         return None
-    q = rotmat_to_quat(R)
-    return center, q, extents
+
+    half_sizes = extents * 0.5
+
+    # Simulation OBBs use Z-up with swapped Y/Z axes; align with viewer basis.
+    basis_fix = np.array(
+        [
+            [1.0, 0.0, 0.0],  # keep X axis
+            [0.0, 0.0, 1.0],  # new Y axis from old Z
+            [0.0, 1.0, 0.0],  # new Z axis from old Y
+        ],
+        dtype=float,
+    )
+    R_world = R @ basis_fix
+    half_sizes = half_sizes[[0, 2, 1]]
+
+    q = rotmat_to_quat(R_world)
+    return center, q, half_sizes
 
 
 def get_velocity(obj, prev_p, dt):
@@ -336,6 +357,105 @@ def log_static_scene(sim, has_step_camera=False):
             )
 
 
+def log_scene_pointcloud(sim, json_path):
+    """Load and log the static scene point cloud if available."""
+    scene_info = sim.get("scene")
+    if not isinstance(scene_info, dict):
+        return
+
+    json_dir = os.path.dirname(os.path.abspath(json_path))
+
+    def _extract_points(entry):
+        pts = entry.get("points")
+        if isinstance(pts, list) and pts and isinstance(pts[0], (list, tuple)):
+            pts_arr = np.asarray(pts, dtype=float)
+            cols = entry.get("colors")
+            if isinstance(cols, list) and len(cols) == len(pts):
+                cols_arr = np.asarray(cols, dtype=float)
+            else:
+                cols_arr = None
+            return pts_arr, cols_arr
+        return None
+
+    points = None
+    colors = None
+
+    candidate_entries = [scene_info]
+    pc_entry = scene_info.get("pointcloud")
+    if isinstance(pc_entry, dict):
+        candidate_entries.append(pc_entry)
+
+    for entry in candidate_entries:
+        result = _extract_points(entry)
+        if result is not None:
+            points, colors = result
+            break
+
+    if points is None:
+        candidate_paths = []
+        for entry in candidate_entries:
+            if not isinstance(entry, dict):
+                continue
+            raw_path = entry.get("path")
+            if isinstance(raw_path, str) and raw_path:
+                expanded = os.path.expanduser(raw_path)
+                candidate_paths.append(expanded)
+                candidate_paths.append(
+                    os.path.normpath(os.path.join(json_dir, expanded))
+                )
+
+        pointcloud_path = next(
+            (p for p in candidate_paths if os.path.isfile(p)), None
+        )
+        if pointcloud_path and o3d is not None:
+            try:
+                pcd = o3d.io.read_point_cloud(pointcloud_path)
+            except Exception as exc:  # noqa: BLE001
+                print(f"Warning: failed to load point cloud {pointcloud_path}: {exc}")
+            else:
+                if not pcd.is_empty():
+                    points = np.asarray(pcd.points, dtype=float)
+                    colors = (
+                        np.asarray(pcd.colors, dtype=float) if pcd.has_colors() else None
+                    )
+
+    if points is None and load_scene_pointcloud is not None:
+        scene_id = scene_info.get("scene")
+        if isinstance(scene_id, str) and scene_id:
+            try:
+                pcd = load_scene_pointcloud(scene_id)['pcd']
+            except Exception as exc:  # noqa: BLE001
+                print(
+                    f"Warning: failed to load point cloud for scene '{scene_id}': {exc}"
+                )
+            else:
+                if not pcd.is_empty():
+                    points = np.asarray(pcd.points, dtype=float)
+                    colors = (
+                        np.asarray(pcd.colors, dtype=float) if pcd.has_colors() else None
+                    )
+
+    if points is None or points.size == 0:
+        return
+
+    if colors is not None and len(colors) == len(points):
+        if colors.dtype != np.uint8:
+            if colors.max() <= 1.0:
+                colors = np.clip(colors * 255.0, 0, 255).astype(np.uint8)
+            else:
+                colors = np.clip(colors, 0, 255).astype(np.uint8)
+        else:
+            colors = colors.copy()
+    else:
+        colors = None
+
+    rr.log(
+        "world/scene/pointcloud",
+        rr.Points3D(points, colors=colors, radii=0.01),
+        static=True,
+    )
+
+
 def main():
     ap = argparse.ArgumentParser(
         description="Visualize simulation JSON in Rerun Viewer."
@@ -368,7 +488,8 @@ def main():
     rr.init("simulation_view", spawn=args.spawn)
     # rr.send_blueprint(rrb.Spatial3DView())
 
-    with open(args.input, "r") as f:
+    json_path = os.path.abspath(args.input)
+    with open(json_path, "r") as f:
         sim = json.load(f)
 
     steps = sim.get("simulation", {})
@@ -377,6 +498,7 @@ def main():
     )
 
     log_static_scene(sim, has_step_camera=has_step_camera)
+    log_scene_pointcloud(sim, json_path=json_path)
 
     obj_meta = sim.get("objects", {})  # may be empty or missing shape info
     time_keys = sorted(steps.keys(), key=lambda s: float(s))
@@ -720,3 +842,8 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+# python answering_questions/viz_sim_rerun.py /data0/sebastian.cavada/datasets/simulations_test/3/c-1_no-3_d-3_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-2_20251031_185938/simulation_kinematics.json --spawn
+
+# python answering_questions/viz_sim_rerun.py /data0/sebastian.cavada/datasets/simulations_v2/dl3dv/random/3/c-1_no-3_d-4_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251101_031246/simulation_kinematics.json --spawn

@@ -10,7 +10,7 @@
             "task_splits": "single+multi",
             "sub_category": "distance",
             "choice": "mcq",
-            "question": "What is the distance between the lowest point of the <OBJECT> and the nearest ground element?"
+            "question": "What is the distance between the geometrical centers of the <OBJECT> and the nearest static scene element?"
         },
         "F_DISTANCE_OBJECT_CAMERA_DISTANCE": {
             "task_splits": "single+multi",
@@ -18,11 +18,11 @@
             "choice": "mcq",
             "question": "What is the distance between the geometrical center of the <OBJECT> and the camera?"
         },
-        "F_DISTANCE_CLOSEST_OBJECT_OBJECT": {
+        "F_CLOSEST_OBJECT_OBJECT": {
             "task_splits": "single+multi",
             "sub_category": "distance",
             "choice": "mcq",
-            "question": "What is the distance between the geometrical center of the <OBJECT> and its closest object?"
+            "question": "What is the closest object to the geometrical center of the <OBJECT>?"
         },
         "F_SIZE_OBJECT": {
             "task_splits": "single+multi",
@@ -56,12 +56,6 @@
             "choice": "mcq",
             "question": "What is the speed of the <OBJECT>?"
         },
-        "F_KINEMATICS_FASTEST_OBJECT_SPEED": {
-            "task_splits": "multi",
-            "sub_category": "kinematics",
-            "choice": "mcq",
-            "question": "What is the speed of the fastest object?"
-        },
         "F_KINEMATICS_ACCEL_OBJECT": {
             "task_splits": "multi",
             "sub_category": "kinematics",
@@ -72,7 +66,7 @@
             "task_splits": "multi",
             "sub_category": "kinematics",
             "choice": "mcq",
-            "question": "Considering the geometrical center of the object, how far has the <OBJECT> traveled between during the sequence?"
+            "question": "Considering the geometrical center of <OBJECT>, what is the straight-line distance it has traveled during the sequence?"
         },
         "F_KINEMATICS_MOVING_OBJECT": {
             "task_splits": "multi",
@@ -104,17 +98,17 @@
             "choice": "mcq",
             "question": "In which frame does the <OBJECT> collide with another object first?"
         },
-        "F_COLLISION_OBJECT_GROUND_FRAME_SINGLE":{
+        "F_COLLISION_OBJECT_SCENE_FRAME_SINGLE":{
             "task_splits": "single",
             "sub_category": "collision",
             "choice": "true_false",
-            "question": "Is the <OBJECT> colliding with the scene in the frame?"
+            "question": "Is the <OBJECT> colliding with the static scene in the frame?"
         },
-        "F_COLLISION_OBJECT_GROUND_FRAME_MULTI":{
+        "F_COLLISION_OBJECT_SCENE_FRAME_MULTI":{
             "task_splits": "multi",
             "sub_category": "collision",
             "choice": "mcq",
-            "question": "In which frame is the <OBJECT> most likely colliding with the scene?"
+            "question": "In which frame is the <OBJECT> most likely colliding with the static scene?"
         }
     },
     "material_understanding": {
@@ -171,7 +165,7 @@
         "F_VISIBILITY_OBJECT": {
             "task_splits": "single+multi",            
             "sub_category": "visibility",
-            "choice": "mcq",            
+            "choice": "mcq",
             "question": "Which of these objects is visible in the image/frame?"
         },
         "F_VISIBILITY_PERCENTAGE_OBJECT": {

@@ -17,13 +17,15 @@ from typing import (
     cast,
 )
 
+import copy
 from copy import deepcopy
 from utils.config import get_config
+from utils.all_objects import get_gso_mapping
 
 from utils.my_exception import ImpossibleToAnswer
 
 # set random seed for reproducibility
-rng = random.Random(42)
+rng = random.Random()
 
 Number = Union[int, float]
 WorldState = Mapping[str, Any]
@@ -37,6 +39,9 @@ from utils.frames_selection import (
 
 SAMPLING_RATE = get_config()["sampling_rate"]
 VISIBILITY_THRESHOLD = get_config()["visibility_threshold"]
+FRAME_INTERLEAVE = get_config()["frame_interleave"]
+CLIP_LENGTH = get_config()["clip_length"]
+MIN_VISIBLE_PIXELS = get_config()["min_pixels_visible"]
 
 SAMPLING_RATE = get_config()["sampling_rate"]
 RENDER_STEP = 1.0 / SAMPLING_RATE
@@ -47,36 +52,81 @@ FRAME_STRIDE = int(
 )  # same as math.ceil(0.25 / RENDER_STEP) but better quarter of a second
 
 
+# def fill_questions(
+#     question, labels, correct_idx, world_state, timestep, resolved_attributes
+# ) -> List:
+#     questions = []
+
+#     # rng = random.Random()
+#     # rng.shuffle(labels)
+#     # correct_idx = labels.index(labels[correct_idx])
+
+#     if "single" in question["task_splits"]:
+#         question_copy = question.copy()
+#         question_copy["task_splits"] = "single"  # ensure the question knows it's
+#         fill_template(question_copy, resolved_attributes)
+#         questions.append(
+#             [
+#                 question_copy,
+#                 labels,
+#                 correct_idx,
+#                 sample_frames_at_timesteps(world_state, [timestep]),
+#             ]
+#         )
+#     if "multi" in question["task_splits"]:
+#         question_copy = question.copy()
+#         question_copy["task_splits"] = "multi"  # ensure the question knows it's
+#         fill_template(question_copy, resolved_attributes)
+#         questions.append(
+#             [
+#                 question_copy,
+#                 labels,
+#                 correct_idx,
+#                 sample_frames_before_timestep(
+#                     world_state, timestep, num_frames=CLIP_LENGTH, frame_interleave=FRAME_INTERLEAVE
+#                 ),
+#             ]
+#         )
+
+#     return questions
+
 def fill_questions(
     question, labels, correct_idx, world_state, timestep, resolved_attributes
 ) -> List:
     questions = []
+
+    # 1) Keep the correct label before shuffling
+    correct_label = labels[correct_idx]
+
+    # 2) Shuffle a COPY so we don't mutate caller's list
+    rng = random.Random()  # or seed with (timestep, question_id) if you want reproducibility
+    shuffled = labels[:]   # copy
+    rng.shuffle(shuffled)
+
+    # 3) Remap correct index AFTER shuffle using the saved label
+    new_correct_idx = shuffled.index(correct_label)
+
+    # Helper to build one item with its own copies
+    def build_item(split):
+        q_copy = copy.deepcopy(question)
+        q_copy["task_splits"] = split  # keep type consistent with your downstream expectations
+        fill_template(q_copy, resolved_attributes)
+
+        if split == "single":
+            frames = sample_frames_at_timesteps(world_state, [timestep])
+        else:  # "multi"
+            frames = sample_frames_before_timestep(
+                world_state, timestep, num_frames=CLIP_LENGTH, frame_interleave=FRAME_INTERLEAVE
+            )
+
+        # Pass a fresh copy of the shuffled labels for each item
+        return [q_copy, shuffled[:], new_correct_idx, frames]
+
     if "single" in question["task_splits"]:
-        question_copy = question.copy()
-        question_copy["task_splits"] = "single"  # ensure the question knows it's
-        fill_template(question_copy, resolved_attributes)
-        questions.append(
-            [
-                question_copy,
-                labels,
-                correct_idx,
-                sample_frames_at_timesteps(world_state, [timestep]),
-            ]
-        )
+        questions.append(build_item("single"))
+
     if "multi" in question["task_splits"]:
-        question_copy = question.copy()
-        question_copy["task_splits"] = "multi"  # ensure the question knows it's
-        fill_template(question_copy, resolved_attributes)
-        questions.append(
-            [
-                question_copy,
-                labels,
-                correct_idx,
-                sample_frames_before_timestep(
-                    world_state, timestep, num_frames=8, frame_interleave=1
-                ),
-            ]
-        )
+        questions.append(build_item("multi"))
 
     return questions
 
@@ -98,6 +148,8 @@ def fill_questions(
 # - <CAMERA> -> the camera itself
 
 # ----- General helpers -----
+
+gso_mapping = get_gso_mapping()
 
 units = {
     "DISTANCE": "meters",
@@ -135,8 +187,22 @@ def get_total_images():
     return 8
 
 
+def get_random_timestep_from_list(visible_timesteps: List[str], question: Any) -> str:
+    # MAX_TIMESTEP = len(visible_timesteps) - 1
+    MAX_TIMESTEP = min(len(visible_timesteps), 30) # usually most things happen before 2 second/50 frames
+    if "multi" in question.get("task_splits", ""):
+        if len(visible_timesteps) < (CLIP_LENGTH * FRAME_INTERLEAVE):
+            raise ImpossibleToAnswer("No timestep with visible objects.")
+        timestep = random.choice(visible_timesteps[(CLIP_LENGTH * FRAME_INTERLEAVE) - FRAME_INTERLEAVE:MAX_TIMESTEP + 1])
+    else:
+        if len(visible_timesteps) == 0:
+            raise ImpossibleToAnswer("No timestep with visible objects.")
+        timestep = random.choice(visible_timesteps)
+
+    return timestep
+
 def extract_attributes(question: Mapping[str, Any]) -> Mapping[str, Any]:
-    question_text = question["question"]
+    question_text = question["question"]    
 
     # Extract all tokens enclosed in <...>
     attributes = re.findall(r"<(.*?)>", question_text)
@@ -150,11 +216,27 @@ def extract_attributes(question: Mapping[str, Any]) -> Mapping[str, Any]:
 def is_object_visible_at_timestep(object_id: str, timestep: str, world_state: Mapping[str, Any]) -> bool:
     """Check if an object is visible at a specific timestep."""
     obj_state = get_object_state_at_timestep(world_state, object_id, timestep)
-    infov = obj_state["infov"]
+    infov_pixels = obj_state["infov_pixels"]
     fov_visibility = obj_state["fov_visibility"]
 
-    return infov and fov_visibility > VISIBILITY_THRESHOLD
+    return infov_pixels > MIN_VISIBLE_PIXELS and fov_visibility > VISIBILITY_THRESHOLD
 
+def minimum_n_visible_objects(
+    world_state, n_objects, min_pixels
+):    
+
+    for timestep in world_state["simulation"].values():
+
+        count_objects_criteria = 0
+        for _, obj_info in timestep["objects"].items():
+            if obj_info["infov_pixels"] >= min_pixels:
+                count_objects_criteria += 1
+
+        if count_objects_criteria >= n_objects:
+            continue
+        else:
+            return False
+    return True
 
 def get_object_state_at_timestep(
     world_state: Mapping[str, Any], object_id: str, timestep: str
@@ -190,10 +272,10 @@ def get_list_ids_of_duplicate_objects(
     duplicate_ids = []
     for obj_id in visible_objects_id:
         obj = world_state["objects"].get(obj_id, {})
-        obj_name = obj.get("name", "")
-        if obj_name in object_names:
+        obj_model = obj.get("model", "")
+        if obj_model in object_names:
             duplicate_ids.append(obj_id)
-        object_names.add(obj_name)
+        object_names.add(obj_model)
     return duplicate_ids
 
 
@@ -220,9 +302,9 @@ def get_visible_timesteps_for_attributes_min_objects(
 
                     if (
                         obj_state
-                        and obj_state["fov_visibility"] > VISIBILITY_THRESHOLD
-                        and obj_state["infov"]
-                    ):  # at least 25% visible for now cause of a bug
+                        and obj_state["fov_visibility"] > VISIBILITY_THRESHOLD                        
+                        and obj_state["infov_pixels"] >= MIN_VISIBLE_PIXELS
+                    ):
                         visible_objects_id.append(obj_id)
 
                 # we shall check that also is not the same object name to remove for
@@ -340,10 +422,13 @@ def fill_template(
                 resolved_attributes[attribute]["choice"],
             )
         elif "OBJECT" in attribute:
+            mapped_name = gso_mapping[resolved_attributes[attribute]["choice"]["model"]]['name']
+            # mapped_name = resolved_attributes[attribute]["choice"]["name"] OLD way
             question["question"] = question["question"].replace(
                 f"<{attribute}>",
-                resolved_attributes[attribute]["choice"]["model"],
+                mapped_name
             )
+            # resolved_attributes[attribute]["choice"]["model"],
         else:
             question["question"] = question["question"].replace(
                 f"<{attribute}>",
@@ -399,7 +484,7 @@ def get_random_object_and_remove(
             )
             if (
                 obj_state["fov_visibility"] > VISIBILITY_THRESHOLD
-                and obj_state["infov"]
+                and obj_state["infov_pixels"] >= MIN_VISIBLE_PIXELS
             ):
                 object["id"] = obj_id
                 visible_objects.append(object)

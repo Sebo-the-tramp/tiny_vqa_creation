@@ -2,6 +2,11 @@
     "sampling_rate": 25,
     "clip_length": 8,
     "movement_tolerance": 0.05,
-    "visibility_threshold": 0.25,
-    "world_up_axis": "Z"
+    "rotation_tolerance": 5.0,
+    "visibility_threshold": 0.7,
+    "world_up_axis": "Z",
+    "frame_interleave": 1,
+    "slope_bins": 2,
+    "threshold_difference_percentage": 0.1,
+    "min_pixels_visible": 1000
 }

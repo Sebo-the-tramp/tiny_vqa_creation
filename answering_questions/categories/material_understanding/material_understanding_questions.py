@@ -376,6 +376,7 @@ def F_MATERIAL_IDENTIFICATION_OBJECT(
     )
 
     object = resolved_attributes["OBJECT"]["choice"]
+    print("Object selected for material identification:", object["model"])
     material = object["description"]["material_group"]
 
     MATERIALS_ALL = get_all_materials()

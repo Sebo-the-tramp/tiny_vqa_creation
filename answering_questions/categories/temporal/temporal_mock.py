@@ -325,7 +325,7 @@ def F_CAMERA_MOTION_DIRECTION(
         else:
             first_movement = "no significant movement"
 
-    # second movement            
+    # second movement 
     if abs(projection_mid_to_final[0]) > abs(projection_mid_to_final[1]) and abs(projection_mid_to_final[0]) > abs(projection_mid_to_final[2]):
         # forward/backward
         if projection_mid_to_final[0] > threshold:

@@ -198,13 +198,13 @@
             "task_splits": "multi",
             "sub_category": "event_ordering",
             "choice": "mcq", 
-            "question": "Which frame is most likely to occur next in the sequence?"
+            "question": "Which frame is most likely to occur after the last frame in the sequence?"
         },
         "F_TEMPORAL_PREDICTION_PREVIOUS_IMAGE": {
             "task_splits": "multi",
             "sub_category": "event_ordering",
             "choice": "mcq",
-            "question": "Which frame is most likely to have occurred earlier in the sequence?"
+            "question": "Which frame is most likely to have occurred just before the first frame in the sequence?"
         },
         "F_TEMPORAL_PREDICTION_MISSING_IMAGE": {
             "task_splits": "multi",

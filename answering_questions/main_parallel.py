@@ -145,10 +145,10 @@ def create_vqa(
 
     for category_key, category in questions.items():
         # current category dev
-        if (
-            category_key != "temporal"
-        ):
-            continue
+        # if (
+        #     category_key != "temporal"
+        # ):
+        #     continue
 
         if verbose:
             print("###" * 10, f"Processing category: {category_key}", "###" * 10)

@@ -153,12 +153,6 @@
             "sub_category": "physics_property",
             "choice": "mcq",
             "question": "What is the Poisson ratio of the <OBJECT>?"
-        },
-        "F_MATERIAL_IDENTIFICATION_OBJECT": {
-            "task_splits": "single+multi",
-            "sub_category": "material_identification",
-            "choice": "mcq",
-            "question": "What material is the <OBJECT> made of?"
         }
     },
     "view_point": {

@@ -6,6 +6,4 @@ cd ./answering_questions
 
 
 python main_parallel.py --simulation_path /scratch/project/eu-25-92/composite_physics/dataset/simulation_v3 \
-    --destination_simulation_path /scratch/project/eu-25-92/composite_physics/dataset/simulation_v3 \
-    --output_path ./output/test_karo.json \
     --export_format json

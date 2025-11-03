@@ -279,7 +279,7 @@ def main(args):
         initializer=_init_worker,
         initargs=(args.vqa_path, args.destination_simulation_path, args.mock, args.verbose),
     ) as ex:
-        for sim_vqa in ex.map(_process_one, list_simulations): # limit to 100s for now
+        for sim_vqa in ex.map(_process_one, list_simulations[:100]): # limit to 100s for now
             all_vqa.extend(sim_vqa)
 
 

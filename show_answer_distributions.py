@@ -7,8 +7,9 @@ from pathlib import Path
 # -----------------------------
 # Point these to your files
 RUN_NAME = "test_run04_full_images.json"
-ANSWERS_PATH = "/data0/sebastian.cavada/compositional-physics/tiny_vqa_creation/output/test_run04_full_images.json"
-TEST_PATH    = "/data0/sebastian.cavada/compositional-physics/tiny_vqa_creation/output/val_answer_run04_images.json"
+PATH = "/mnt/proj1/eu-25-92/tiny_vqa_creation/output/"
+ANSWERS_PATH = f"{PATH}{RUN_NAME}"
+TEST_PATH    = f"{PATH}val_answer_run04_images.json"
 
 # If your join key is not 'question_ID', set it here or leave as None to auto-detect
 JOIN_KEY = "idx"

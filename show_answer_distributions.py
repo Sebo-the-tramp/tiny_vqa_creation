@@ -6,10 +6,10 @@ from pathlib import Path
 # CONFIG
 # -----------------------------
 # Point these to your files
-RUN_NAME = "test_run04_full_images.json"
+RUN_NAME = "test_run04_full.json"
 PATH = "/mnt/proj1/eu-25-92/tiny_vqa_creation/output/"
 ANSWERS_PATH = f"{PATH}{RUN_NAME}"
-TEST_PATH    = f"{PATH}val_answer_run04_images.json"
+TEST_PATH    = f"{PATH}val_answer_run04.json"
 
 # If your join key is not 'question_ID', set it here or leave as None to auto-detect
 JOIN_KEY = "idx"

@@ -11,7 +11,7 @@ cd answering_questions
 #     --export_format json
 
 
-source ".telegram_bot.env"
+source "/home/it4i-thvu/seb_dev/.telegram_bot.env"
 
 curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage" \
      -d chat_id="${TELEGRAM_CHAT_ID}" \

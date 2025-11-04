@@ -6,7 +6,7 @@ from pathlib import Path
 # CONFIG
 # -----------------------------
 # Point these to your files
-RUN_NAME = "test_run04_full.json"
+RUN_NAME = "test_run04_1K.json"
 PATH = "/mnt/proj1/eu-25-92/tiny_vqa_creation/output/"
 ANSWERS_PATH = f"{PATH}{RUN_NAME}"
 TEST_PATH    = f"{PATH}val_answer_run04.json"
@@ -162,9 +162,9 @@ if "answer" in merged.columns:
         for subcat, sub in merged.groupby("sub_category"):
             print_histogram(sub["answer"], title=f"Answer distribution — sub_category: {subcat}")
 
-    # # By question_ID
-    for qid_col in ["question_id"] if key else []:
-        for qid, sub in merged.groupby(qid_col):
-            print_histogram(sub["answer"], title=f"Answer distribution — {qid_col}: {qid}")
+    # # # By question_ID
+    # for qid_col in ["question_id"] if key else []:
+    #     for qid, sub in merged.groupby(qid_col):
+    #         print_histogram(sub["answer"], title=f"Answer distribution — {qid_col}: {qid}")
 else:
     print("\nNo 'answer' column found in the merged data. Check your answers file.")

@@ -90,7 +90,9 @@ def create_vqa(
     arg_mock,
     verbose=False,
 ):
-    total_correct_per_category = {}
+    
+    answered = 0
+    failed = 0
 
     print("Starting VQA creation...")
 
@@ -99,7 +101,7 @@ def create_vqa(
     for category_key, category in questions.items():
         # current category dev
         if (
-            category_key != "material_understanding"
+            category_key != "mechanics"
         ):
             continue
 
@@ -179,32 +181,28 @@ def create_vqa(
                 if verbose:
                     print("===" * 20)
 
-        total_correct_per_category[category_key] = (
-            total_correct_answers,
-            not_implemented,
-            total_questions_in_category,
-        )
+        # total_correct_per_category[category_key] = (
+        #     total_correct_answers,
+        #     not_implemented,
+        #     total_questions_in_category,
+        # )
 
-    if verbose:
-        print("Summary of correct answers per category:")
-    for category, (
-        correct,
-        not_implemented,
-        total,
-    ) in total_correct_per_category.items():
-        if verbose:
-            print(
-                f"Category '{category}': {correct}/{total - not_implemented} correct answers, {not_implemented} not implemented"
-            )
+        total_answered = total_questions_in_category - not_implemented
+        # print(
+        #     f"Category '{category_key}': {total_answered}/{total_questions_in_category} correct answers."
+        # )
 
-    print("Total questions:")
-    print(sum(total for _, (_, _, total) in total_correct_per_category.items()))
+        answered += total_answered
+        failed += not_implemented
 
-    return all_vqa
+
+    return all_vqa, answered, failed
 
 
 def main(args):
     all_vqa = []
+    total_answered = 0
+    total_failed = 0
 
     simulation_root = args.simulation_path
     pattern = os.path.join(simulation_root, '**', 'simulation.json')
@@ -245,7 +243,7 @@ def main(args):
                 os.path.join(simulation_id_path, "simulation_kinematics.json")
             )
 
-            simulation_vqa = create_vqa(
+            simulation_vqa, answered, failed = create_vqa(
                 questions,
                 simulation_steps,
                 simulation_id,
@@ -254,6 +252,12 @@ def main(args):
                 verbose=args.verbose,
             )
             all_vqa.extend(simulation_vqa)
+            total_answered += answered
+            total_failed += failed 
+
+    print(
+        f"Total answered questions: {total_answered}, Total failed questions: {total_failed}"
+    )
 
     # Finally save the questions and answers
     print(f"Saved {len(all_vqa)} questions and answers.")

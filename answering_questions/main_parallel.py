@@ -228,6 +228,11 @@ def create_vqa(
             total_questions_in_category,
         )
 
+        # total_answered = total_questions_in_category - not_implemented
+        # print(
+        #     f"Category '{category_key}': {total_answered}/{total_questions_in_category} correct answers."
+        # )
+
     if verbose:
         print("Summary of correct answers per category:")
     for category, (

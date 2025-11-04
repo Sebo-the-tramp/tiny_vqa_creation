@@ -144,11 +144,11 @@ def create_vqa(
     all_vqa = []
 
     for category_key, category in questions.items():
-        # current category dev
-        if (
-            category_key != "material_understanding"
-        ):
-            continue
+        # # current category dev
+        # if (
+        #     category_key != "material_understanding"
+        # ):
+        #     continue
 
         if verbose:
             print("###" * 10, f"Processing category: {category_key}", "###" * 10)

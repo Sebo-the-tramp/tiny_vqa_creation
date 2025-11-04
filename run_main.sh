@@ -7,8 +7,15 @@ cd answering_questions
 # python main.py --simulation_path /scratch/project/eu-25-92/composite_physics/dataset/simulation_v3 \
 #     --export_format json
 
-python main_parallel.py --simulation_path /scratch/project/eu-25-92/composite_physics/dataset/simulation_v3 \
-    --export_format json
+# python main_parallel.py --simulation_path /scratch/project/eu-25-92/composite_physics/dataset/simulation_v3 \
+#     --export_format json
+
+
+source ".telegram_bot.env"
+
+curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage" \
+     -d chat_id="${TELEGRAM_CHAT_ID}" \
+     --data-urlencode text="VQA_creation_done" >/dev/null &
 
 # python main_parallel.py --simulation_path /data0/sebastian.cavada/datasets/simulations_v2 \
 #     --export_format json

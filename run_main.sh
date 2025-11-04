@@ -1,16 +1,14 @@
-# source .venv/bin/activate
+source "/home/it4i-thvu/seb_dev/.telegram_bot.env"
 
 cd answering_questions
 # python main.py --simulation_path /data0/sebastian.cavada/datasets/simulations/dl3dv \
 #     --destination_simulation_path /scratch/project/eu-25-92/composite_physics/dataset/physbench/simulation/dl3dv
 
-# python main.py --simulation_path /scratch/project/eu-25-92/composite_physics/dataset/simulation_v3 \
-#     --export_format json
-
-python main_parallel.py --simulation_path /scratch/project/eu-25-92/composite_physics/dataset/simulation_v3 \
+python main.py --simulation_path /scratch/project/eu-25-92/composite_physics/dataset/simulation_v3 \
     --export_format json
 
-source "/home/it4i-thvu/seb_dev/.telegram_bot.env"
+# python main_parallel.py --simulation_path /scratch/project/eu-25-92/composite_physics/dataset/simulation_v3 \
+#     --export_format json
 
 curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage" \
      -d chat_id="${TELEGRAM_CHAT_ID}" \

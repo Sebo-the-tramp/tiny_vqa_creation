@@ -7,9 +7,8 @@ cd answering_questions
 # python main.py --simulation_path /scratch/project/eu-25-92/composite_physics/dataset/simulation_v3 \
 #     --export_format json
 
-# python main_parallel.py --simulation_path /scratch/project/eu-25-92/composite_physics/dataset/simulation_v3 \
-#     --export_format json
-
+python main_parallel.py --simulation_path /scratch/project/eu-25-92/composite_physics/dataset/simulation_v3 \
+    --export_format json
 
 source "/home/it4i-thvu/seb_dev/.telegram_bot.env"
 

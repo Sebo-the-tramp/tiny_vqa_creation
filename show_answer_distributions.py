@@ -6,10 +6,10 @@ from pathlib import Path
 # CONFIG
 # -----------------------------
 # Point these to your files
-RUN_NAME = "test_run04_1K.json"
-PATH = "/mnt/proj1/eu-25-92/tiny_vqa_creation/output/"
-ANSWERS_PATH = f"{PATH}{RUN_NAME}"
-TEST_PATH    = f"{PATH}val_answer_run04.json"
+RUN_NAME = "_run04_1K_balanced.json"
+PATH = "/data0/sebastian.cavada/compositional-physics/tiny_vqa_creation/output/"
+ANSWERS_PATH = f"{PATH}test{RUN_NAME}"
+TEST_PATH    = f"{PATH}val_answer{RUN_NAME}"
 
 # If your join key is not 'question_ID', set it here or leave as None to auto-detect
 JOIN_KEY = "idx"
@@ -168,3 +168,6 @@ if "answer" in merged.columns:
     #         print_histogram(sub["answer"], title=f"Answer distribution — {qid_col}: {qid}")
 else:
     print("\nNo 'answer' column found in the merged data. Check your answers file.")
+
+
+# python show_answer_distributions.py 

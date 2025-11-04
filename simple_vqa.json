@@ -60,7 +60,7 @@
             "task_splits": "multi",
             "sub_category": "kinematics",
             "choice": "mcq",
-            "question": "What is the acceleration of the <OBJECT>?"
+            "question": "What is the magnitude of acceleration of the <OBJECT>?"
         },
         "F_KINEMATICS_DISTANCE_TRAVELED_INTERVAL": {
             "task_splits": "multi",
@@ -214,13 +214,13 @@
         }, 
         "F_CAMERA_MOTION_DIRECTION": {
             "task_splits": "multi",
-            "sub_category": "camera_motion_direction",
+            "sub_category": "camera_motion",
             "choice": "mcq",
             "question": "What is the predominant direction of the camera’s motion across the sequence?"
         },
         "F_CAMERA_ZOOM_BEHAVIOR": {
             "task_splits": "multi",
-            "sub_category": "camera_zoom",
+            "sub_category": "camera_motion",
             "choice": "mcq",
             "question": "How does the camera’s zoom level change across the sequence?"
         }

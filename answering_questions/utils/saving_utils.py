@@ -161,8 +161,8 @@ def save_questions_answers_json(
     #     normalized_questions.append(question_record)
     #     answers.append(answer_record)
     
-    questions_path = os.path.join(output_path, "test_test_imbalance.json")
-    answers_path = os.path.join(output_path, "val_answer_test_imbalance.json")
+    questions_path = os.path.join(output_path, "test_run04_full.json")
+    answers_path = os.path.join(output_path, "val_answer_run04.json")
     # questions_path = os.path.join(output_path, "test_big_run_no_temporal_slope_2.json")
     # answers_path = os.path.join(output_path, "val_answer_big_run_no_temporal_slope_2.json")
 

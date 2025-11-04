@@ -1,8 +1,8 @@
 import os
 import json
 
-file_1_path = "output/test_reproducibility_00.json"
-file_2_path = "output/test_reproducibility_01.json"
+file_1_path = "../output/test_reproducibility_00.json"
+file_2_path = "../output/test_reproducibility_01.json"
 
 with open(file_1_path, 'r') as f1, open(file_2_path, 'r') as f2:
     data_1 = json.load(f1)

@@ -7,7 +7,7 @@ from pathlib import Path
 # -----------------------------
 # Point these to your files
 RUN_NAME = "_reproducibility_00.json"
-PATH = "/data0/sebastian.cavada/compositional-physics/tiny_vqa_creation/output/"
+PATH = "./output/"
 ANSWERS_PATH = f"{PATH}test{RUN_NAME}"
 TEST_PATH    = f"{PATH}val_answer{RUN_NAME}"
 

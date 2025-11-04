@@ -7,11 +7,11 @@ cd answering_questions
 # python main.py --simulation_path /scratch/project/eu-25-92/composite_physics/dataset/simulation_v3 \
 #     --export_format json
 
-# python main_parallel.py --simulation_path /scratch/project/eu-25-92/composite_physics/dataset/simulation_v3 \
-#     --export_format json
-
-python main_parallel.py --simulation_path /data0/sebastian.cavada/datasets/simulations_v2 \
+python main_parallel.py --simulation_path /scratch/project/eu-25-92/composite_physics/dataset/simulation_v3 \
     --export_format json
+
+# python main_parallel.py --simulation_path /data0/sebastian.cavada/datasets/simulations_v2 \
+#     --export_format json
 
 # python main.py --simulation_path /data0/sebastian.cavada/datasets/simulations_v3 \
 #     --export_format json

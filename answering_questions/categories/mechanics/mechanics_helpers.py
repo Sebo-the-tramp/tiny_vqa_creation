@@ -112,14 +112,10 @@ def get_acceleration(
     object_id: str, timestep: str, world_state: Mapping[str, Any]
 ) -> float:
     timestep_world = world_state["simulation"][timestep]
+
+    # this should work with kinematics_ver_2
     current_timestep_involved_object_velocity = timestep_world["objects"][object_id][
-        "kinematics"
-    ]["linear_accel_world"]
+    "kinematics"
+    ]
 
-    acceleration_magnitude = (
-        current_timestep_involved_object_velocity[0] ** 2
-        + current_timestep_involved_object_velocity[1] ** 2
-        + current_timestep_involved_object_velocity[2] ** 2
-    ) ** 0.5
-
-    return acceleration_magnitude
+    return current_timestep_involved_object_velocity["accel"]

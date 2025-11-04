@@ -298,6 +298,7 @@ def main(args):
             export_format=args.export_format,
             image_output=args.image_output,
             number_of_images_max=args.number_of_images_max,
+            run_name=args.run_name,
         )
         print(
             f"Saved questions and answers to {args.output_path} ({args.export_format})"
@@ -379,6 +380,12 @@ if __name__ == "__main__":
         type=int,
         default=8,
         help="Maximum number of images to save for VQA.",
+    )
+    parser.add_argument(
+        "--run_name",
+        type=str,
+        default="run_05_full",
+        help="Name of the run for saving outputs.",
     )
     args = parser.parse_args()
 

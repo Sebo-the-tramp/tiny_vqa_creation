@@ -30,9 +30,6 @@ import numpy as np
 
 import torch
 from fused_ssim import fused_ssim # nofa
-
-random.seed(41)
-
 Number = Union[int, float]
 Vector = Tuple[float, float, float]
 WorldState = Mapping[str, Any]

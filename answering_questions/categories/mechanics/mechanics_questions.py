@@ -20,8 +20,6 @@ from typing import (
 
 import random
 
-random.seed(42)
-
 from utils.my_exception import ImpossibleToAnswer
 
 from utils.all_objects import get_all_objects_names

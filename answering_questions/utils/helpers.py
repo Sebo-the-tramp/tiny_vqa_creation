@@ -3,6 +3,7 @@ from __future__ import annotations
 import re
 import math
 import random
+from utils import seed_utils
 
 from typing import (
     Any,
@@ -23,9 +24,6 @@ from utils.config import get_config
 from utils.all_objects import get_gso_mapping
 
 from utils.my_exception import ImpossibleToAnswer
-
-# set random seed for reproducibility
-rng = random.Random()
 
 Number = Union[int, float]
 WorldState = Mapping[str, Any]
@@ -58,14 +56,22 @@ def fill_questions(
     question, labels, correct_idx, world_state, timestep, resolved_attributes
 ) -> List:
     questions = []
-
     # 1) Keep the correct label before shuffling
     correct_label = labels[correct_idx]
 
+    seed_material = "::".join(
+        [
+            str(question.get("_simulation_id", "")),
+            str(question.get("_question_key", "")),
+            str(timestep),
+        ]
+    )
+    local_seed = seed_utils.seed_from_material(seed_material)
+    local_rng = random.Random(local_seed)
+
     # 2) Shuffle a COPY so we don't mutate caller's list
-    rng = random.Random()  # or seed with (timestep, question_id) if you want reproducibility
     shuffled = labels[:]   # copy
-    rng.shuffle(shuffled)
+    local_rng.shuffle(shuffled)
 
     # 3) Remap correct index AFTER shuffle using the saved label
     new_correct_idx = shuffled.index(correct_label)
@@ -74,6 +80,8 @@ def fill_questions(
     def build_item(split):
         q_copy = copy.deepcopy(question)
         q_copy["task_splits"] = split  # keep type consistent with your downstream expectations
+        q_copy.pop("_question_key", None)
+        q_copy.pop("_simulation_id", None)
         fill_template(q_copy, resolved_attributes)
 
         if split == "single":
@@ -131,11 +139,11 @@ def resolve_units(measurement: str) -> str:
 
 
 def get_random_integer(min_value: int, max_value: int) -> int:
-    return rng.randint(min_value, max_value)
+    return random.randint(min_value, max_value)
 
 
 def shuffle_array(array: List[int]) -> List[int]:
-    rng.shuffle(array)
+    random.shuffle(array)
     return array
 
 
@@ -493,7 +501,7 @@ def get_random_material(world_state: Mapping[str, Any]) -> str:
             materials.add(material)
     if not materials:
         raise ValueError("No materials found in the world state.")
-    return rng.choice(list(materials))
+    return random.choice(list(materials))
 
 
 def get_random_object_and_remove(
@@ -533,7 +541,7 @@ def get_random_object_and_remove(
     if not objects:
         raise ImpossibleToAnswer(f"No objects found of type '{OBJECT_CATEGORY}'")
 
-    object_chosen = rng.choice(list(objects.values()))
+    object_chosen = random.choice(list(objects.values()))
 
     del world_state["objects"][object_chosen["id"]]
 
@@ -567,7 +575,7 @@ def get_random_object_visible(
     if not visible_objects:
         raise ValueError(f"No visible objects found of type '{OBJECT_CATEGORY}'")
 
-    return rng.choice(visible_objects)
+    return random.choice(visible_objects)
 
 
 def get_random_OBJECT_CATEGORY(world_state: Mapping[str, Any]) -> str:
@@ -578,14 +586,14 @@ def get_random_OBJECT_CATEGORY(world_state: Mapping[str, Any]) -> str:
             OBJECT_CATEGORYs.add(obj_type)
     if not OBJECT_CATEGORYs:
         raise ValueError("No object types found in the world state.")
-    return rng.choice(list(OBJECT_CATEGORYs))
+    return random.choice(list(OBJECT_CATEGORYs))
 
 
 def get_random_timestep(world_state: Mapping[str, Any]) -> float:
     timesteps = world_state.get("simulation", [])
     if not timesteps:
         raise ValueError("No timesteps found in the world state")
-    return rng.choice(list(timesteps.keys()))
+    return random.choice(list(timesteps.keys()))
 
 
 # TODO Those random values are just hardcoded
@@ -593,23 +601,23 @@ resolver = {
     "CAMERA": get_camera,
     "CATEGORY": get_random_OBJECT_CATEGORY,
     "DENSITY": lambda ws: round(
-        rng.uniform(10, 600), 1
+        random.uniform(10, 600), 1
     ),  # random density between 10 and 600 kg/m3
     "DISTANCE": lambda ws: round(
-        rng.uniform(1.0, 5.0), 1
+        random.uniform(1.0, 5.0), 1
     ),  # random distance between 1 and 5 meters, 1 decimal place
     "MASS": lambda ws: round(
-        rng.uniform(0.1, 3.0), 1
+        random.uniform(0.1, 3.0), 1
     ),  # random mass between 0.1 and 5 kg
     "MATERIAL": get_random_material,
     "OBJECT-CATEGORY": get_random_OBJECT_CATEGORY,
     "OBJECT": get_random_object_and_remove,
     "STRESS-THRESHOLD": lambda ws: round(
-        rng.uniform(0.0, 10.0), 1
+        random.uniform(0.0, 10.0), 1
     ),  # random stress threshold between 10 and 100 MPa
     "TIME": get_random_timestep,
     "VOLUME": lambda ws: round(
-        rng.uniform(0.001, 0.5), 1
+        random.uniform(0.001, 0.5), 1
     ),  # random volume between 0.001 and .5 cubic meters
 }
 

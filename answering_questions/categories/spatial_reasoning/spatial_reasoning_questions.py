@@ -20,8 +20,6 @@ from typing import (
 
 import random
 
-random.seed(42)
-
 from utils.my_exception import ImpossibleToAnswer
 
 from utils.all_objects import get_all_objects_names
@@ -438,17 +436,20 @@ def F_LAYOUT_POSITION_OBJECT_OBJECT(
     object_2 = resolved_attributes["OBJECT_2"]["choice"]
 
     horizontal, vertical, depth, max_movement_adj = get_spatial_relationship_camera_view(
-        world_state["simulation"][timestep]["objects"]["2"],
-        world_state["simulation"][timestep]["objects"]["3"],
+        world_state["simulation"][timestep]["objects"][object_1['id']],
+        world_state["simulation"][timestep]["objects"][object_2['id']],
         world_state["simulation"][timestep]["camera"],
         world_state["simulation"][timestep]["frame_idx"],
     )
 
     DATASET_RELATIONAL_ADJECTIVES = get_all_relational_positional_adjectives()
     # remove correct answers
-    DATASET_RELATIONAL_ADJECTIVES.remove(horizontal)
-    DATASET_RELATIONAL_ADJECTIVES.remove(vertical)
-    DATASET_RELATIONAL_ADJECTIVES.remove(depth)
+    if horizontal in DATASET_RELATIONAL_ADJECTIVES:
+        DATASET_RELATIONAL_ADJECTIVES.remove(horizontal)
+    if vertical in DATASET_RELATIONAL_ADJECTIVES:
+        DATASET_RELATIONAL_ADJECTIVES.remove(vertical)
+    if depth in DATASET_RELATIONAL_ADJECTIVES:
+        DATASET_RELATIONAL_ADJECTIVES.remove(depth)
 
     # confounding options
     random.shuffle(DATASET_RELATIONAL_ADJECTIVES)

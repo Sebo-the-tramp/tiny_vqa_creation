@@ -3,12 +3,14 @@ import re
 import json
 import glob
 import argparse
+from copy import deepcopy
 
 from utils.saving_utils import (
     save_questions_answers_json,
     save_questions_answers_tsv,
 )
 from utils.my_exception import ImpossibleToAnswer
+from utils import seed_utils
 
 # Import categories - alphabetically
 
@@ -90,6 +92,7 @@ def create_vqa(
     arg_mock,
     verbose=False,
 ):
+    seed_utils.reseed_for_context(simulation_id)
     
     answered = 0
     failed = 0
@@ -112,14 +115,22 @@ def create_vqa(
         total_questions_in_category = len(category)
         total_correct_answers = 0
         not_implemented = 0
-        for question_key, question_data in category.items():            
+        for question_key, question_data in category.items():
+            question_payload = deepcopy(question_data)
+            question_payload["_question_key"] = question_key
+            question_payload["_simulation_id"] = simulation_id
+
             fn_to_answer_question = get_answer(
                 question_key, category_key, mock=arg_mock
             )
 
             try:
                 # answer_list = question, labels, correct_idx, imgs_idx
-                answer_list = fn_to_answer_question(simulation_steps, question_data, destination_simulation_id_path)
+                answer_list = fn_to_answer_question(
+                    simulation_steps,
+                    question_payload,
+                    destination_simulation_id_path,
+                )
             except ImpossibleToAnswer:
                 not_implemented += 1
                 print(f"  Impossible to answer: {question_key}")
@@ -200,6 +211,8 @@ def create_vqa(
 
 
 def main(args):
+    seed_utils.seed_everything(args.seed)
+
     all_vqa = []
     total_answered = 0
     total_failed = 0
@@ -349,6 +362,12 @@ if __name__ == "__main__":
         type=int,
         default=8,
         help="Maximum number of images to save for VQA.",
+    )
+    parser.add_argument(
+        "--seed",
+        type=int,
+        default=1337,
+        help="Global random seed used for all stochastic operations.",
     )
     args = parser.parse_args()
 

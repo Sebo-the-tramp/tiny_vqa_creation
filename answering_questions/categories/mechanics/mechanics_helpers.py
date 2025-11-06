@@ -10,9 +10,6 @@ from utils.helpers import as_vector
 
 from scipy.spatial.transform import Rotation as R
 
-# set random seed for reproducibility
-rng = random.Random(42)
-
 Number = Union[int, float]
 WorldState = Mapping[str, Any]
 QuestionPayload = Mapping[str, Any]

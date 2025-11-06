@@ -193,6 +193,46 @@ def F_DISTANCE_OBJECT_CAMERA_DISTANCE(
         question, labels, correct_idx, world_state, timestep, resolved_attributes
     )
 
+@with_resolved_attributes
+def F_CLOSEST_OBJECT_CAMERA(
+    world_state: WorldState, question: QuestionPayload, attributes, **kwargs
+) -> int:    
+
+    # First we find the pairs of objects visible
+    visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
+        attributes, world_state, min_objects=kwargs["current_world_number_of_objects"]
+    )
+
+    timestep = get_random_timestep_from_list(
+        visible_timesteps, question
+    )
+
+    closest_object = None
+    closest_distance = float("inf")
+
+    for object in iter_objects(world_state):
+        object_id = object["id"]
+        object_position_at_time = get_position(world_state, object_id, timestep)
+        camera_position_at_time = get_position_camera(world_state, timestep)
+        distance = distance_between(object_position_at_time, camera_position_at_time)
+        if distance < closest_distance:
+            closest_distance = distance
+            closest_object = object
+    
+    presents = [obj["name"] for obj in iter_objects(world_state)]
+
+    labels, correct_idx = create_mc_object_names_from_dataset(
+        closest_object["name"], presents, get_all_objects_names(), num_answers=4
+    )
+    labels = [str(label) for label in labels]
+
+    resolved_attributes = resolve_attributes_visible_at_timestep(
+        attributes, world_state, timestep
+    )
+
+    return fill_questions(
+        question, labels, correct_idx, world_state, timestep, resolved_attributes
+    )
 
 @with_resolved_attributes
 def F_CLOSEST_OBJECT_OBJECT(
@@ -223,13 +263,13 @@ def F_CLOSEST_OBJECT_OBJECT(
         world_state, object_id, object_position_at_time, timestep
     )
 
-    presents = [obj["name"] for obj in iter_objects(world_state)]
+    presents = [obj["name"] for obj in iter_objects(world_state) if obj["id"] != object_id]
 
     labels, correct_idx = create_mc_object_names_from_dataset(
         closest_object["name"], presents, get_all_objects_names(), num_answers=4
     )
-    
-    labels = [str(label) + " meters" for label in labels]
+
+    labels = [str(label) for label in labels]
 
     return fill_questions(
         question, labels, correct_idx, world_state, timestep, resolved_attributes
@@ -382,13 +422,14 @@ def F_LAYOUT_POSITION_OBJECT_OBJECT(
 
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        attributes, world_state, min_objects=kwargs["current_world_number_of_objects"]
+        attributes, world_state, min_objects=len(attributes)
     )
     
     timestep = get_random_timestep_from_list(
         visible_timesteps, question
     )
 
+    # I should only be able to resolve the attributes that are not duplicated I hope
     resolved_attributes = resolve_attributes_visible_at_timestep(
         attributes, world_state, timestep
     )
@@ -396,10 +437,11 @@ def F_LAYOUT_POSITION_OBJECT_OBJECT(
     object_1 = resolved_attributes["OBJECT_1"]["choice"]
     object_2 = resolved_attributes["OBJECT_2"]["choice"]
 
-    horizontal, vertical, depth = get_spatial_relationship_camera_view(
-        world_state["simulation"][timestep]["objects"][object_1["id"]],
-        world_state["simulation"][timestep]["objects"][object_2["id"]],
+    horizontal, vertical, depth, max_movement_adj = get_spatial_relationship_camera_view(
+        world_state["simulation"][timestep]["objects"]["2"],
+        world_state["simulation"][timestep]["objects"]["3"],
         world_state["simulation"][timestep]["camera"],
+        world_state["simulation"][timestep]["frame_idx"],
     )
 
     DATASET_RELATIONAL_ADJECTIVES = get_all_relational_positional_adjectives()
@@ -415,7 +457,7 @@ def F_LAYOUT_POSITION_OBJECT_OBJECT(
     correct_idx = random.randint(0, 3)
     labels = (
         confounding_options[:correct_idx]
-        + [horizontal]
+        + [max_movement_adj]
         + confounding_options[correct_idx:]
     )
 

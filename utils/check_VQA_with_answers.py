@@ -5,6 +5,7 @@ import math
 import os
 import random
 import textwrap
+from collections import defaultdict
 from typing import Callable, Dict, Iterable, List, Optional, Tuple
 
 import matplotlib.image as mpimg
@@ -57,6 +58,57 @@ def ensure_answer_map(entries: Iterable) -> Dict[str, str]:
     return answer_map
 
 
+def normalize_answer_letter(raw_answer: object) -> str:
+    """Return the first alphabetical character (upper-cased) found in the answer."""
+    answer = str(raw_answer or "").strip().upper()
+    for char in answer:
+        if char.isalpha():
+            return char
+    return ""
+
+
+def load_model_answers(paths: Iterable[str]) -> Tuple[Dict[str, Dict[str, str]], Dict[str, List[Tuple[str, str]]]]:
+    """
+    Load per-model answers from one or more files/directories.
+
+    Returns a tuple with:
+        * mapping from question idx -> model name -> normalized answer letter.
+        * mapping from question idx -> list of (model name, raw answer) for entries that
+          could not be normalized to a single choice letter.
+    """
+    model_answers: Dict[str, Dict[str, str]] = {}
+    invalid_answers: Dict[str, List[Tuple[str, str]]] = defaultdict(list)
+
+    def _iter_json_files(path_item: str) -> Iterable[Tuple[str, str]]:
+        if os.path.isdir(path_item):
+            for file_path in sorted(glob.glob(os.path.join(path_item, "*.json"))):
+                yield file_path, os.path.splitext(os.path.basename(file_path))[0]
+        elif os.path.isfile(path_item):
+            yield path_item, os.path.splitext(os.path.basename(path_item))[0]
+
+    for path in paths:
+        for file_path, model_name in _iter_json_files(path):
+            try:
+                entries = load_json(file_path)
+            except Exception as exc:  # pylint: disable=broad-except
+                print(f"Warning: could not load {file_path}: {exc}")
+                continue
+
+            for item in entries:
+                if not isinstance(item, dict):
+                    continue
+                idx = str(item.get("idx", "")).strip()
+                if not idx:
+                    continue
+                answer_letter = normalize_answer_letter(item.get("answer", ""))
+                if not answer_letter:
+                    invalid_answers[idx].append((model_name, str(item.get("answer", ""))))
+                    continue
+                model_answers.setdefault(idx, {})[model_name] = answer_letter
+
+    return model_answers, invalid_answers
+
+
 def resolve_image_path(image_path: str, search_dirs: Iterable[str]) -> str:
     """Return an existing path for the given image if it can be resolved."""
     if not image_path:
@@ -78,7 +130,13 @@ def resolve_image_path(image_path: str, search_dirs: Iterable[str]) -> str:
     return image_path
 
 
-def display_entry(entry: Dict, answer_map: Dict[str, str], imgs_per_row: int) -> None:
+def display_entry(
+    entry: Dict,
+    answer_map: Dict[str, str],
+    imgs_per_row: int,
+    model_answers: Optional[Dict[str, Dict[str, str]]] = None,
+    invalid_model_answers: Optional[Dict[str, List[Tuple[str, str]]]] = None,
+) -> None:
     idx = entry.get("idx", "unknown")
     question_raw = entry.get("question", "")
     media_paths = entry.get("file_name") or []
@@ -99,6 +157,17 @@ def display_entry(entry: Dict, answer_map: Dict[str, str], imgs_per_row: int) ->
 
     question_text, options = parse_question_parts(question_raw)
     correct_letter = answer_map.get(idx, "")
+
+    model_answers_for_idx = model_answers.get(idx, {}) if model_answers else {}
+    invalid_answers_for_idx = (
+        invalid_model_answers.get(idx, []) if invalid_model_answers else []
+    )
+    models_by_letter: Dict[str, List[str]] = defaultdict(list)
+    if model_answers_for_idx:
+        for model_name, letter in model_answers_for_idx.items():
+            models_by_letter[letter].append(model_name)
+        for letter_models in models_by_letter.values():
+            letter_models.sort()
 
     entry_options = entry.get("options")
     normalized_options = {}
@@ -285,9 +354,22 @@ def display_entry(entry: Dict, answer_map: Dict[str, str], imgs_per_row: int) ->
     if options:
         option_y = info_cursor if (primary_img_path or all_video_paths) else 0.5
         option_y = max(option_y, 0.15)
+        option_letters = {letter for letter, _ in options}
         for letter, opt_text in options:
             color = "green" if letter == correct_letter else "black"
-            wrapped_option = textwrap.fill(f"{letter}. {opt_text}", width=95)
+            models_for_option = models_by_letter.get(letter, [])
+            models_preview = ""
+            if models_for_option:
+                total = len(models_for_option)
+                preview = ", ".join(models_for_option[:3])
+                if total > 3:
+                    preview += ", ..."
+                plural = "s" if total != 1 else ""
+                models_preview = f" ({total} model{plural}: {preview})"
+            wrapped_option = textwrap.fill(
+                f"{letter}. {opt_text}{models_preview}",
+                width=95,
+            )
             text_ax.text(
                 0.01,
                 option_y,
@@ -299,6 +381,61 @@ def display_entry(entry: Dict, answer_map: Dict[str, str], imgs_per_row: int) ->
                 transform=text_ax.transAxes,
             )
             option_y -= 0.12
+        off_option_answers = {
+            letter: models
+            for letter, models in models_by_letter.items()
+            if letter not in option_letters
+        }
+        if off_option_answers:
+            for letter, models in sorted(off_option_answers.items()):
+                preview = ", ".join(models[:3])
+                if len(models) > 3:
+                    preview += ", ..."
+                warning_text = textwrap.fill(
+                    f"Models answering non-listed option {letter}: {preview}",
+                    width=95,
+                )
+                text_ax.text(
+                    0.01,
+                    option_y,
+                    warning_text,
+                    fontsize=10,
+                    ha="left",
+                    va="top",
+                    color="firebrick",
+                    transform=text_ax.transAxes,
+                )
+                option_y -= 0.1
+        if invalid_answers_for_idx:
+            for model_name, raw_answer in invalid_answers_for_idx[:3]:
+                warning_text = textwrap.fill(
+                    f"{model_name} provided an unrecognized answer: {raw_answer}",
+                    width=95,
+                )
+                text_ax.text(
+                    0.01,
+                    option_y,
+                    warning_text,
+                    fontsize=10,
+                    ha="left",
+                    va="top",
+                    color="firebrick",
+                    transform=text_ax.transAxes,
+                )
+                option_y -= 0.1
+            remaining = len(invalid_answers_for_idx) - 3
+            if remaining > 0:
+                text_ax.text(
+                    0.01,
+                    option_y,
+                    f"... and {remaining} more invalid answers.",
+                    fontsize=10,
+                    ha="left",
+                    va="top",
+                    color="firebrick",
+                    transform=text_ax.transAxes,
+                )
+                option_y -= 0.1
     elif correct_letter:
         text_ax.text(
             0.01,
@@ -531,6 +668,14 @@ def main() -> None:
     parser.add_argument("test_json", help="Path to the test JSON file.")
     parser.add_argument("val_answers_json", help="Path to the answers JSON file.")
     parser.add_argument(
+        "--results-paths",
+        nargs="+",
+        help=(
+            "Optional list of JSON files or directories containing per-model VLM "
+            "answers (e.g. ../output/results_run04_1K)."
+        ),
+    )
+    parser.add_argument(
         "--limit", type=int, default=None, help="Limit the number of questions shown."
     )
     parser.add_argument(
@@ -564,6 +709,17 @@ def main() -> None:
     answer_map = ensure_answer_map(answer_entries)
     if not answer_map:
         print("Warning: No answers could be read from the answers file.")
+
+    model_answers_map: Dict[str, Dict[str, str]] = {}
+    invalid_model_answers: Dict[str, List[Tuple[str, str]]] = {}
+    if args.results_paths:
+        model_answers_map, invalid_model_answers = load_model_answers(
+            args.results_paths
+        )
+        if not model_answers_map:
+            print(
+                "Warning: No model answers were loaded from the provided results paths."
+            )
 
     count = 0
     entries = test_entries[:]
@@ -601,7 +757,15 @@ def main() -> None:
         random.shuffle(entries)
 
     for entry in entries:
-        display_entry(entry, answer_map, imgs_per_row=max(1, args.imgs_per_row))
+        display_entry(
+            entry,
+            answer_map,
+            imgs_per_row=max(1, args.imgs_per_row),
+            model_answers=model_answers_map if model_answers_map else None,
+            invalid_model_answers=(
+                invalid_model_answers if invalid_model_answers else None
+            ),
+        )
         count += 1
         if args.limit is not None and count >= args.limit:
             break

@@ -8,5 +8,5 @@
     "frame_interleave": 2,
     "slope_bins": 2,
     "threshold_difference_percentage": 0.1,
-    "min_pixels_visible": 1000
+    "min_pixels_visible": 500
 }

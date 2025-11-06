@@ -1,16 +1,17 @@
 from __future__ import annotations
 
+import itertools
 import random
 
 import numpy as np
 
 from typing import Any, Mapping, Optional, Tuple, Union, List
 
+from shapely.geometry import Polygon
+
 from utils.helpers import as_vector
 from utils.my_exception import ImpossibleToAnswer
-
-from scipy.spatial.transform import Rotation as R
-
+from utils.geometry import (OBB_to_eight_points, polygon_area, project_points, external_points_2d)
 
 # set random seed for reproducibility
 rng = random.Random(42)
@@ -22,6 +23,8 @@ Answer = Union[int, float, str]
 
 
 from utils.config import get_config
+from PIL import Image
+from pathlib import Path
 
 
 AXIS_TO_NUM = {"X": 0, "Y": 1, "Z": 2}
@@ -141,69 +144,99 @@ def get_closest_object(
 
     return closest_object
 
+def bbox_from_points(uv):
+    xymin = uv.min(axis=0)
+    xymax = uv.max(axis=0)
+    return np.array([xymin[0], xymin[1], xymax[0], xymax[1]])
 
-def get_spatial_relationship_camera_view(obj_1_state, obj_2_state, camera):
-    """
-    Calculates the positional relationship of O1 relative to O2 from the camera's view.
 
-    Uses a hybrid system:
-    - Vertical (Above/Below) is relative to the World Up Axis (Z_world).
-    - Horizontal (Left/Right) is relative to the Camera's X_cam axis.
-    - Depth (Closer/Further) is relative to the Camera's Z_cam axis.
-    """
+def get_spatial_relationship_camera_view(obj_1_state, obj_2_state, camera, timestep) -> str:
+    
 
-    rx, ry, rz = camera["at"]
-    q = R.from_euler("xyz", [rx, ry, rz], degrees=True)
-    R_world_to_cam = q.as_matrix().T  # Transpose to invert rotation
+    eight_points_1 = OBB_to_eight_points(obj_1_state["obb"])
+    center_1 = obj_1_state["obb"]["center"]
+    eight_points_2 = OBB_to_eight_points(obj_2_state["obb"])
+    center_2 = obj_2_state["obb"]["center"]
 
-    np_pos1_world = np.array(obj_1_state["obb"]["center"])
-    np_pos2_world = np.array(obj_2_state["obb"]["center"])
+    # use fake photo to load and check projection correcteness
+    fake_photo = Image.open(f"/data0/sebastian.cavada/datasets/simulations_v3/dl3dv/random/3/c-1_no-3_d-4_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-9_20251102_063341/render/{str(timestep).zfill(6)}.png")  # dummy image just to get width and height
+    numpy_image = np.array(fake_photo)
 
-    # 1. Calculate the Vector from O2 to O1 in WORLD Coordinates
-    V_rel_world = np_pos2_world - np_pos1_world
+    project_center_1_uv, z1 = project_points(np.array([center_1]), camera)
+    u1, v1 = int(project_center_1_uv[0][0]), int(project_center_1_uv[0][1])
+    project_center_2_uv, z2 = project_points(np.array([center_2]), camera)
+    u2, v2 = int(project_center_2_uv[0][0]), int(project_center_2_uv[0][1])
+    projected_eight_points_1_uv, z1 = project_points(np.array(eight_points_1), camera)    
+    hull1 = external_points_2d(projected_eight_points_1_uv)
+    projected_eight_points_2_uv, z2 = project_points(np.array(eight_points_2), camera)
+    hull2 = external_points_2d(projected_eight_points_2_uv)    
 
-    # 2. World-Relative Vertical (Above/Below)
-    # Uses the designated WORLD_UP_AXIS_NUM (e.g., V_rel_world[2] for Z-Up)
-    world_vertical_component = V_rel_world[WORLD_UP_AXIS_NUM]
-    vertical_adj = []
-    if world_vertical_component > obj_1_state["obb"]["extents"][WORLD_UP_AXIS_NUM] * 2:
-        vertical_adj.append("Above")
-    elif (
-        world_vertical_component < -obj_1_state["obb"]["extents"][WORLD_UP_AXIS_NUM] * 2
-    ):
-        vertical_adj.append("Below")
+    # add points to the image, red dots for object 1, blue dots for object 2
+    for point in hull1:
+        u, v = int(point[0]), int(point[1])
+        if 0 <= u < numpy_image.shape[1] and 0 <= v < numpy_image.shape[0]:
+            for i in range(-1, 2):
+                for j in range(-1, 2):
+                    if 0 <= v+i < numpy_image.shape[0] and 0 <= u+j < numpy_image.shape[1]:
+                        numpy_image[v+i, u+j] = [255, 0, 0]  # red dot
+
+    for point in hull2:
+        u, v = int(point[0]), int(point[1])
+        if 0 <= u < numpy_image.shape[1] and 0 <= v < numpy_image.shape[0]:
+            for i in range(-1, 2):
+                for j in range(-1, 2):
+                    if 0 <= v+i < numpy_image.shape[0] and 0 <= u+j < numpy_image.shape[1]:
+                        numpy_image[v+i, u+j] = [0, 0, 255]  # blue dot
+
+    print("DONE PROJECTION PLOTTING")
+
+    polygon1 = Polygon(hull1)
+    polygon2 = Polygon(hull2)
+    intersection_polygon = polygon1.intersection(polygon2)
+    intersection_area = intersection_polygon.area
+    intersection_points = np.array(intersection_polygon.exterior.coords)
+
+    for point in intersection_points:
+        u, v = int(point[0]), int(point[1])
+        if 0 <= u < numpy_image.shape[1] and 0 <= v < numpy_image.shape[0]:
+            for i in range(-1, 2):
+                for j in range(-1, 2):
+                    if 0 <= v+i < numpy_image.shape[0] and 0 <= u+j < numpy_image.shape[1]:
+                        numpy_image[v+i, u+j] = [0, 255, 0]  # green dot for intersection
+
+    print(f"Intersection area between object 1 and object 2 projections: {intersection_area}")
+
+    area_polygon1 = polygon1.area
+    area_polygon2 = polygon2.area
+    union_area = area_polygon1 + area_polygon2 - intersection_area
+    iou = intersection_area / union_area if union_area > 0 else 0.
+
+    horizontal = ""
+    vertical = ""
+    depth = ""
+
+    if iou > 0.6:
+        if z1 < z2:
+            depth = "in front"
+        else:
+            depth = "behind"
+
+    if abs(u2 - u1) > abs(v2 - v1):
+        if u2 > u1:
+            horizontal = "to the right"
+        else:
+            horizontal = "to the left"
     else:
-        vertical_adj.append("Vertically Aligned")
+        if v2 > v1:
+            vertical = "below"
+        else:
+            vertical = "above"
 
-    # 3. Transform V_rel from World to Camera Coordinates
-    V_rel_cam = R_world_to_cam @ V_rel_world
 
-    # 4. Camera-Relative Horizontal (Left/Right) and Depth (Closer/Further)
-
-    # Horizontal (Camera X, V_rel_cam[0])
-    horizontal_adj = []
-    if V_rel_cam[0] > 0.05:
-        horizontal_adj.append("to the Right")
-    elif V_rel_cam[0] < -0.05:
-        horizontal_adj.append("to the Left")
-    else:
-        horizontal_adj.append("Horizontally Aligned")
-
-    # Depth (Camera Z, V_rel_cam[2])
-    # Z-axis in camera space is the distance from the camera.
-    if V_rel_cam[2] > 0.05:
-        depth_adj = ["behind"]
-    elif V_rel_cam[2] < -0.05:
-        depth_adj = ["In front"]
-    else:
-        depth_adj = ["Equidistant"]
-
-    return horizontal_adj[0].lower(), vertical_adj[0].lower(), depth_adj[0].lower()
+    return "to be implemented"
 
 
 def get_all_relational_positional_adjectives():
-    horizontals = ["to the Left", "to the Right", "Horizontally Aligned"]
-    verticals = ["above", "below", "vertically aligned"]
-    depths = ["in front", "behind", "equidistant"]
-    total = horizontals + verticals + depths
-    return [adj.lower() for adj in total]
+    directions = ["behind", "in front", "to the right", "to the left", "below", "above", \
+        "horizontally aligned", "vertically aligned", "same_depth"]
+    return directions

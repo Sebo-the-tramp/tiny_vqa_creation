@@ -163,23 +163,19 @@ def save_questions_answers_json(
     #     normalized_questions.append(question_record)
     #     answers.append(answer_record)
     
-    questions_path = os.path.join(output_path, f"test_{run_name}.json")
-    answers_path = os.path.join(output_path, f"answer_val_{run_name}.json")
-    # questions_path = os.path.join(output_path, "test_big_run_no_temporal_slope_2.json")
-    # answers_path = os.path.join(output_path, "val_answer_big_run_no_temporal_slope_2.json")
-
-    with open(questions_path, "w") as f:
-        json.dump(normalized_questions, f, indent=4)
-
-    with open(answers_path, "w") as f:
-        json.dump(answers, f, indent=4)
-
-    # also dump the config used
     config = get_config()
-    config_path = os.path.join(f"test_{run_name}_config.json", "config_used.json")
+    config_path = os.path.join(output_path, f"test_{run_name}_config_used.json")        
+    answers_path = os.path.join(output_path, f"val_answer_{run_name}.json")
+    questions_path = os.path.join(output_path, f"test_{run_name}.json")    
 
-    with open(config_path, "w") as f:
-        json.dump(config, f, indent=4)
+    with open(questions_path, "w", encoding="utf-8") as f:
+        json.dump(normalized_questions, f, indent=2)
+
+    with open(answers_path, "w", encoding="utf-8") as f:
+        json.dump(answers, f, indent=2)
+
+    with open(config_path, "w", encoding="utf-8") as f:
+        json.dump(config, f, indent=2)
 
     return questions_path, answers_path
 

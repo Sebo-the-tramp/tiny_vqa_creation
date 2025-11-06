@@ -101,7 +101,7 @@ def create_vqa(
     for category_key, category in questions.items():
         # current category dev
         if (
-            category_key != "mechanics"
+            category_key != "spatial_reasoning"
         ):
             continue
 
@@ -122,7 +122,7 @@ def create_vqa(
                 answer_list = fn_to_answer_question(simulation_steps, question_data, destination_simulation_id_path)
             except ImpossibleToAnswer:
                 not_implemented += 1
-                print(f"  Question Key: {question_key}")
+                print(f"  Impossible to answer: {question_key}")
                 continue
             except Exception as e:
                 print(f"  ERROR processing question {question_key}: {e}")
@@ -238,6 +238,8 @@ def main(args):
             destination_simulation_id_path = os.path.join(
                 args.destination_simulation_path, simulation_id_path
             )
+
+            print("Reading simulation from:", simulation_id_path)
 
             simulation_steps = read_simulation(
                 os.path.join(simulation_id_path, "simulation_kinematics.json")

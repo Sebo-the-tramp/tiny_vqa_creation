@@ -437,20 +437,19 @@ def F_COLLISION_OBJECT_OBJECT_FRAME_SINGLE(
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
         attributes, world_state, min_objects=kwargs['current_world_number_of_objects']
     )
-
-    choice_collision = random.choice([0, 1]) # 0 for no, 1 for yes
-    # choice_collision = 0  # forcing to NOT look for a collision
+    
+    choice_collision = 1  # forcing to NOT look for a collision
 
     collision_timestep = None
     non_collision_timestep = []
 
-    # I just want to catch a collision here    
+    # I just want to catch a collision here
     for timestep in visible_timesteps:
         step_state = world_state["simulation"][str(timestep)]
         collisions_at_sim_step = step_state["collisions"]
 
         collisions_at_sim_step_ground = [
-            collision for collision in collisions_at_sim_step if (collision[0] == 0 or collision[1] == 0)                
+            collision for collision in collisions_at_sim_step if (collision[0] != 0 and collision[1] != 0)
         ]
 
         # if we are looking for no collision, and there is none, we are done
@@ -472,37 +471,29 @@ def F_COLLISION_OBJECT_OBJECT_FRAME_SINGLE(
             collision_timestep = timestep
             collision_objects = collisions_at_sim_visible_object
             break
-
-    if choice_collision == 1:
-        if collision_timestep is None:
-            raise ImpossibleToAnswer("No collision found in the visible timesteps.")        
-
-        collision_between_obj_a_b = random.choice(collision_objects)
-        collision_object_id = (
-            collision_between_obj_a_b[0]
-            if collision_between_obj_a_b[0] != 0
-            else collision_between_obj_a_b[1]
-        )   
-
-        """ How the object looks like:
-        {"OBJECT": {'choice': {'model': 'Olive_Kids_Game_On_Pack_n_Snack', 'sim': 'rho-medium_yms-medium_prs-medium', 'props': {...}, 'volume': 0.02960631065070629, 'mass': 1.6283470392227173, 'description': {...}, 'spawning_region': 'above_ground', 
-        'initial_condition': {...}, 'scale': 1.2468836307525635, 'obb_size': None, 'id': '2', 'name': 'Olive_Kids_Game_On_Pack_n_Snack'}, 'category': 'OBJECT'}
-        """
-        #technically the resolved object should be the one colliding
-        resolved_attributes = {"OBJECT": {"choice": world_state["objects"][str(collision_object_id)], "category": "OBJECT"}}    
-
-    else:
-        if len(non_collision_timestep) == 0:
-            raise ImpossibleToAnswer("No non-collision found in the visible timesteps.")        
-        collision_timestep = random.choice(non_collision_timestep)
-
-        resolved_attributes = resolve_attributes_visible_at_timestep(
-            attributes, world_state, collision_timestep
-        )
     
-    options = ["yes", "no"]
-    correct_idx = abs(choice_collision - 1)
-    labels = options
+    if collision_timestep is None:
+        raise ImpossibleToAnswer("No collision found in the visible timesteps.")        
+
+    collision_between_obj_a_b = random.choice(collision_objects)
+    
+    collision_object_a_id = collision_between_obj_a_b[0]
+    collision_object_b_id = collision_between_obj_a_b[1]
+
+    """ How the object looks like:
+    {"OBJECT": {'choice': {'model': 'Olive_Kids_Game_On_Pack_n_Snack', 'sim': 'rho-medium_yms-medium_prs-medium', 'props': {...}, 'volume': 0.02960631065070629, 'mass': 1.6283470392227173, 'description': {...}, 'spawning_region': 'above_ground', 
+    'initial_condition': {...}, 'scale': 1.2468836307525635, 'obb_size': None, 'id': '2', 'name': 'Olive_Kids_Game_On_Pack_n_Snack'}, 'category': 'OBJECT'}
+    """
+    #technically the resolved object should be the one colliding
+    collider_object = world_state["objects"][str(collision_object_b_id)]
+    colliding_object = world_state["objects"][str(collision_object_a_id)]
+    resolved_attributes = {"OBJECT": {"choice": collider_object, "category": "OBJECT"}}
+
+    present = [obj["name"] for obj in list(iter_objects(world_state)) if obj["id"] != collider_object["id"]]
+
+    labels, correct_idx = create_mc_object_names_from_dataset(
+        colliding_object["name"], present, get_all_objects_names()
+    )
 
     return fill_questions(
         question, labels, correct_idx, world_state, collision_timestep, resolved_attributes

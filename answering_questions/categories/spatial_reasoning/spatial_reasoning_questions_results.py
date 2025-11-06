@@ -10,6 +10,10 @@ def F_DISTANCE_OBJECT_CAMERA_DISTANCE() -> str:
     return "Distance between object and camera question result"
 
 
+def F_CLOSEST_OBJECT_CAMERA() -> str:
+    return "Closest object to camera question result"
+
+
 def F_CLOSEST_OBJECT_OBJECT() -> str:
     return "Distance between object and closest object question result"
 

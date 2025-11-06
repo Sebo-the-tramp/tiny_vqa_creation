@@ -343,10 +343,10 @@ def F_CAMERA_MOTION_DIRECTION(
         else:
             second_movement = "no significant movement"
     else:   
-        # up/down
-        if projection_mid_to_final[2] > threshold:
+        # up/down exactly I modified the sign above because of that
+        if projection_mid_to_final[2] < -threshold:
             second_movement = "up"
-        elif projection_mid_to_final[2] < -threshold:
+        elif projection_mid_to_final[2] > threshold:
             second_movement = "down"
         else:
             second_movement = "no significant movement"

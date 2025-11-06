@@ -6,7 +6,7 @@ from pathlib import Path
 # CONFIG
 # -----------------------------
 # Point these to your files
-RUN_NAME = "_reproducibility_00.json"
+RUN_NAME = ".json"
 PATH = "./output/"
 ANSWERS_PATH = f"{PATH}test{RUN_NAME}"
 TEST_PATH    = f"{PATH}val_answer{RUN_NAME}"

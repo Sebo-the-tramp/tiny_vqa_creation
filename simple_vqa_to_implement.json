@@ -11,6 +11,24 @@
             "sub_category": "layout",
             "choice": "mcq",
             "question": "Which object is directly behind the <OBJECT> from the camera's point of view?"
+        },
+        "F_SIZE_OBJECT_SMALLER": {
+            "task_splits": "single+multi",
+            "sub_category": "size",
+            "choice": "mcq",
+            "question": "Which single object has the smallest volume?"
+        },
+        "F_DISTANCE_OBJECT_GROUND": {
+            "task_splits": "single+multi",
+            "sub_category": "distance",
+            "choice": "mcq",
+            "question": "What is the distance between the geometrical centers of the <OBJECT> and the nearest static scene element?"
+        },
+        "F_COLLISION_OBJECT_SCENE_FRAME_SINGLE":{
+            "task_splits": "single",
+            "sub_category": "collision",
+            "choice": "true_false",
+            "question": "Is the <OBJECT> colliding with the static scene in the frame?"
         }
     },
     "mechanics": {

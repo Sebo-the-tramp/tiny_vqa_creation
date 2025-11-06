@@ -124,8 +124,8 @@ def F_VISIBILITY_PERCENTAGE_OBJECT(
         world_state, object["id"], timestep
     )["fov_visibility"]
 
-    if not world_state['simulation'][timestep]['objects'][object["id"]]['infov_pixels'] > MIN_VISIBLE_PIXELS:
-        visibility_object = 0.0
+    # if not world_state['simulation'][timestep]['objects'][object["id"]]['infov_pixels'] > MIN_VISIBLE_PIXELS:
+    #     visibility_object = 0.0
 
     if visibility_object < 0.25:
         correct_idx = 0

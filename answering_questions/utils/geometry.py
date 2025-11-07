@@ -71,6 +71,12 @@ def project_points(Xw, cam):
     return uv, z
 
 
+def project_obb(obb, cam):
+    corner_points = OBB_to_eight_points(obb)
+    uv, z = project_points(np.array(corner_points), cam)
+    return uv, z
+
+
 def polygon_area(poly):
     if len(poly) < 3:
         return 0.0

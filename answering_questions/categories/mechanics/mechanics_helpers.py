@@ -45,6 +45,8 @@ def fill_questions(
                 labels,
                 correct_idx,
                 sample_frames_at_timesteps(world_state, [timestep]),
+                world_state,
+                resolved_attributes
             ]
         )
     if "multi" in question["task_splits"]:
@@ -59,6 +61,8 @@ def fill_questions(
                 sample_frames_before_timestep(
                     world_state, timestep, num_frames=CLIP_LENGTH, frame_interleave=FRAME_INTERLEAVE
                 ),
+                world_state,
+                resolved_attributes
             ]
         )
 

@@ -21,62 +21,65 @@ GENERAL_RUN_COUNT=06
 #     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
 #     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_10K_general"
 
-# # 1K soft
-# python main_parallel.py --simulation_path ${BASE_PATH}/yms-variations/soft \
-#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
-#     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_1K_soft"
+# 1K soft
+python main_parallel.py --simulation_path ${BASE_PATH}/yms-variations/soft \
+    --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
+    --export_format json --run_name "run_${GENERAL_RUN_COUNT}_1K_soft"\
+    --n_scenes 100 --slope 2
 
-# # 1K medium
-# python main_parallel.py --simulation_path ${BASE_PATH}/yms-variations/medium \
-#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
-#     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_1K_medium"
+# 1K medium
+python main_parallel.py --simulation_path ${BASE_PATH}/yms-variations/medium \
+    --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
+    --export_format json --run_name "run_${GENERAL_RUN_COUNT}_1K_medium" \
+    --n_scenes 100 --slope 2
 
-# # 1K stiff
-# python main_parallel.py --simulation_path ${BASE_PATH}/yms-variations/stiff \
-#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
-#     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_1K_stiff"
+# 1K stiff
+python main_parallel.py --simulation_path ${BASE_PATH}/yms-variations/stiff \
+    --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
+    --export_format json --run_name "run_${GENERAL_RUN_COUNT}_1K_stiff" \
+    --n_scenes 100 --slope 2    
 
 # 1K slope 1
 python main_parallel.py --simulation_path ${BASE_PATH} \
     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_1K_slope_1" \
-    --n_scenes 10 --slope 1
+    --n_scenes 100 --slope 1
 
 # 1K slope 2
 python main_parallel.py --simulation_path ${BASE_PATH} \
     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_1K_slope_2" \
-    --n_scenes 10 --slope 2
+    --n_scenes 100 --slope 2
 
 # 1K slope 4
 python main_parallel.py --simulation_path ${BASE_PATH} \
     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_1K_slope_4" \
-    --n_scenes 10 --slope 4
+    --n_scenes 100 --slope 4
 
-# # 1K roi circling
-# python main_parallel.py --simulation_path ${BASE_PATH} \
-#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
-#     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_1K_roi_circling" \
-#     --roi_circling 1
+# 1K roi circling
+python main_parallel.py --simulation_path ${BASE_PATH} \
+    --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
+    --export_format json --run_name "run_${GENERAL_RUN_COUNT}_1K_roi_circling" \
+    --augmentation "roi_circling" --slope 2 --n_scenes 100
 
-# # 1K masking
-# python main_parallel.py --simulation_path ${BASE_PATH} \
-#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
-#     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_1K_masking" \
-#     --masking 1
+# 1K masking
+python main_parallel.py --simulation_path ${BASE_PATH} \
+    --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
+    --export_format json --run_name "run_${GENERAL_RUN_COUNT}_1K_masking" \
+    --augmentation "masking" --slope 2 --n_scenes 100
 
-# # 1K scene context
-# python main_parallel.py --simulation_path ${BASE_PATH} \
-#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
-#     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_1K_scene_context" \
-#     --scene_context 1
+# 1K scene context
+python main_parallel.py --simulation_path ${BASE_PATH} \
+    --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
+    --export_format json --run_name "run_${GENERAL_RUN_COUNT}_1K_scene_context" \
+    --augmentation "scene_context" --slope 2 --n_scenes 100
 
-# # 1K textual context
-# python main_parallel.py --simulation_path ${BASE_PATH} \
-#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
-#     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_1K_textual_context" \
-#     --textual_context 1
+# 1K textual context
+python main_parallel.py --simulation_path ${BASE_PATH} \
+    --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
+    --export_format json --run_name "run_${GENERAL_RUN_COUNT}_1K_textual_context" \
+    --augmentation "textual_context" --slope 2 --n_scenes 100
 
 
 ## OFFICIAL RUNS DONE

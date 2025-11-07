@@ -194,7 +194,10 @@ def F_DISTANCE_OBJECT_CAMERA_DISTANCE(
 @with_resolved_attributes
 def F_CLOSEST_OBJECT_CAMERA(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
-) -> int:    
+) -> int:
+    
+    if kwargs["current_world_number_of_objects"] < 2:
+        raise ImpossibleToAnswer("Not enough objects in the scene to answer the question.")
 
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
@@ -297,15 +300,16 @@ def F_SIZE_OBJECT(
 
     object_id = resolved_attributes["OBJECT"]["choice"]["id"]
 
-    volume_object = world_state["objects"][object_id]["volume"]
+    volume_object_cubic_meters = world_state["objects"][object_id]["volume"]
+    volume_object_cubic_centimeters = volume_object_cubic_meters * 1e6
 
     options, correct_idx = create_mc_options_around_gt(
-        volume_object,
+        volume_object_cubic_centimeters,
         num_answers=4,
-        display_decimals=6,
+        display_decimals=2,
     )
-    labels = uniform_labels(options, integer=False, decimals=6)
-    labels = [str(label) + " cubic meters" for label in labels]
+    labels = uniform_labels(options, integer=False, decimals=2)
+    labels = [str(label) + " cubic centimeters" for label in labels]
 
     return fill_questions(
         question, labels, correct_idx, world_state, timestep, resolved_attributes

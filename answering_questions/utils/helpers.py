@@ -50,8 +50,6 @@ FRAME_STRIDE = int(
 )  # same as math.ceil(0.25 / RENDER_STEP) but better quarter of a second
 
 
-
-
 def fill_questions(
     question, labels, correct_idx, world_state, timestep, resolved_attributes
 ) -> List:
@@ -80,8 +78,8 @@ def fill_questions(
     def build_item(split):
         q_copy = copy.deepcopy(question)
         q_copy["task_splits"] = split  # keep type consistent with your downstream expectations
-        q_copy.pop("_question_key", None)
-        q_copy.pop("_simulation_id", None)
+        # q_copy.pop("_question_key", None)
+        # q_copy.pop("_simulation_id", None)
         fill_template(q_copy, resolved_attributes)
 
         if split == "single":
@@ -92,7 +90,7 @@ def fill_questions(
             )
 
         # Pass a fresh copy of the shuffled labels for each item
-        return [q_copy, shuffled[:], new_correct_idx, frames]
+        return [q_copy, shuffled[:], new_correct_idx, frames, world_state, resolved_attributes]
 
     if "single" in question["task_splits"]:
         questions.append(build_item("single"))

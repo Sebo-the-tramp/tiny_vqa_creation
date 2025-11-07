@@ -168,8 +168,7 @@ def create_mc_options_around_gt(
         correct_idx = options.index(gt)
         return options, correct_idx        
 
-    current_slope_bin = get_config()["slope_bins"]
-    print("Current slope bin:", current_slope_bin)
+    current_slope_bin = get_config()["slope_bins"]    
 
     if abs(gt) < 1.0:
         current_slope_bin = 0.4

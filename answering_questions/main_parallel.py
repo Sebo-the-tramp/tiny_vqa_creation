@@ -4,7 +4,11 @@ import json
 import glob
 import argparse
 
-import concurrent.futures as cf
+import multiprocessing
+from multiprocessing import get_context
+from concurrent.futures import ProcessPoolExecutor
+from utils.config import get_config, set_config
+from utils.augment_VQA import augment_image_VQA_with_context
 
 from copy import deepcopy
 
@@ -14,7 +18,7 @@ DEST_ROOT = None
 ARG_MOCK = None
 VERBOSE = None
 
-def _init_worker(vqa_path, dest_root, arg_mock, verbose):
+def _init_worker(vqa_path, dest_root, arg_mock, verbose, base_seed):
     """Runs once per worker process."""
     import os
     global QUESTIONS, DEST_ROOT, ARG_MOCK, VERBOSE
@@ -22,8 +26,15 @@ def _init_worker(vqa_path, dest_root, arg_mock, verbose):
     DEST_ROOT = dest_root
     ARG_MOCK = arg_mock
     VERBOSE = verbose
+    seed_utils.seed_everything(base_seed)
+    try:
+        worker_name = multiprocessing.current_process().name
+        worker_idx = int(worker_name.rsplit("_", 1)[-1])
+    except Exception:
+        worker_idx = 0
+    seed_utils.reseed_for_context(f"worker::{worker_idx}")
 
-def _process_one(sim_file):
+def _process_one(sim_file, args):
     """Process a single simulation.json path and return its VQA list."""
     try:
         if not os.path.isfile(sim_file):
@@ -42,12 +53,13 @@ def _process_one(sim_file):
             destination_simulation_id_path,
             ARG_MOCK,
             verbose=VERBOSE,
+            config=args,
         )
     except Exception as e:
         # Keep the pool running even if one simulation fails
         # if VERBOSE:
         print("Worker error on", simulation_id_path, "->", repr(e))
-        # print(e.with_traceback())
+        print(e.with_traceback())
         return []
 
 
@@ -56,6 +68,7 @@ from utils.saving_utils import (
     save_questions_answers_tsv,
 )
 from utils.my_exception import ImpossibleToAnswer
+from utils import seed_utils
 
 # Import categories - alphabetically
 
@@ -136,7 +149,9 @@ def create_vqa(
     destination_simulation_id_path,
     arg_mock,
     verbose=False,
+    config=None,
 ):
+    seed_utils.reseed_for_context(simulation_id)
     total_correct_per_category = {}
 
     print("Starting VQA creation...")
@@ -146,7 +161,7 @@ def create_vqa(
     for category_key, category in questions.items():
         # # current category dev
         # if (
-        #     category_key != "material_understanding"
+        #     category_key != "temporal"
         # ):
         #     continue
 
@@ -158,23 +173,48 @@ def create_vqa(
         total_correct_answers = 0
         not_implemented = 0
         for question_key, question_data in category.items():
-            # print(f"  Question Key: {question_key}")
+            question_payload = deepcopy(question_data)
+            question_payload["_question_key"] = question_key
+            question_payload["_simulation_id"] = simulation_id
+
             fn_to_answer_question = get_answer(
                 question_key, category_key, mock=arg_mock
             )
 
             try:
-                answer_list = fn_to_answer_question(simulation_steps, deepcopy(question_data), destination_simulation_id_path)
+                answer_list = fn_to_answer_question(
+                    simulation_steps,
+                    question_payload,
+                    destination_simulation_id_path                    
+                )
             except ImpossibleToAnswer:
                 not_implemented += 1
                 continue
 
-            for question, labels, correct_idx, imgs_idx in answer_list:
+            for question, labels, correct_idx, imgs_idx, world_state, resolved_attributes in answer_list:
+                
                 # changing from image_paths to image_paths
-                file_names = [
+                file_names_to_augment = [
                     destination_simulation_id_path + f"render/{int(frame_idx):06d}.png"
                     for frame_idx in imgs_idx
                 ]
+
+                # regex to check if in the label we have an image
+                pattern = re.compile(r"^\d{6}$")
+
+                for idx_img, label in enumerate(labels):
+                    if pattern.match(label):
+                        # do a smart replacement
+                        new_image_path = destination_simulation_id_path + f"/render/{label}.png"
+                        file_names_to_augment.append(new_image_path)
+
+                file_names = augment_image_VQA_with_context(
+                    question,
+                    world_state,
+                    resolved_attributes,
+                    file_names_to_augment.copy(),
+                    augmentation=config.augmentation
+                )
 
                 all_vqa.append(
                     {
@@ -184,7 +224,7 @@ def create_vqa(
                         "simulation_id": simulation_id,
                         "question": question,
                         "category": category_key,
-                        "sub_category": question_data['sub_category'],
+                        "sub_category": question_payload["sub_category"],
                         "question_key": question_key,
                         "image_paths": file_names,
                         "labels": labels,
@@ -252,20 +292,29 @@ def create_vqa(
 
 
 def main(args):
+
+    # first changing some global variables that would affect the whole run    
+    set_config("slope_bins", args.slope)
+
+    # create output folder if it does not exist
+    if not os.path.exists(args.output_path + f"/{args.run_name}/"):
+        os.makedirs(args.output_path + f"/{args.run_name}/", exist_ok=True)
+
+    # then seeding everything
+    seed_utils.seed_everything(args.seed)
+
+    # ready to go
     all_vqa = []
 
     simulation_root = args.simulation_path
     pattern = os.path.join(simulation_root, '**', 'simulation.json')
 
+    number_simulations = args.n_scenes
+
     print("Searching for simulation files with pattern:", pattern)
 
     list_simulations = []
     for sim_file in glob.glob(pattern, recursive=True):
-        simulation_id = os.path.dirname(sim_file)  # folder containing the file
-
-        # print(simulation_id)
-        # print(sim_file)
-
         list_simulations.append(sim_file)
 
     list_simulations.sort(key=natural_key)
@@ -278,13 +327,22 @@ def main(args):
         return
 
     print("Found", len(list_simulations), "simulation files.")
-    with cf.ProcessPoolExecutor(
-        # max_workers=os.cpu_count(),
+    ctx = get_context("spawn")
+    with ProcessPoolExecutor(
         max_workers=24,
         initializer=_init_worker,
-        initargs=(args.vqa_path, args.destination_simulation_path, args.mock, args.verbose),
+        initargs=(
+            args.vqa_path,
+            args.destination_simulation_path,
+            args.mock,
+            args.verbose,
+            args.seed,
+        ),
+        mp_context=ctx,
     ) as ex:
-        for sim_vqa in ex.map(_process_one, list_simulations[:1]): # limit to 100s for now
+        max_simulations = min(number_simulations, len(list_simulations))
+        print(f"Processing {max_simulations} simulations...")
+        for sim_vqa in ex.map(_process_one, list_simulations[:max_simulations], [args]*max_simulations): # limit to 100s for now
             all_vqa.extend(sim_vqa)
 
 
@@ -384,9 +442,39 @@ if __name__ == "__main__":
     parser.add_argument(
         "--run_name",
         type=str,
-        default="run_test_save_config",
+        default="test_seed_00",
         help="Name of the run for saving outputs.",
     )
+    parser.add_argument(
+        "--seed",
+        type=int,
+        default=1337,
+        help="Global random seed used for all stochastic operations.",
+    )
+    
+    parser.add_argument(
+        "--n_scenes",
+        type=int,
+        default=4000,
+        help="Number of scenes to process.",
+    )
+    
+    # changing the slope
+    parser.add_argument(
+        "--slope",
+        type=float,
+        default=4,
+        help="Slope value to be used in the simulation.",
+    )
+
+    # different tests to run
+    parser.add_argument(
+        "--augmentation",
+        type=str,
+        default=None,
+        help="Type of augmentation to use (roi_circling, masking, scene_context, textual_context, etc).",
+    )    
+
     args = parser.parse_args()
 
     timestart = os.times()

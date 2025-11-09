@@ -13,9 +13,6 @@ from utils.helpers import as_vector
 from utils.my_exception import ImpossibleToAnswer
 from utils.geometry import (OBB_to_eight_points, polygon_area, project_points, external_points_2d)
 
-# set random seed for reproducibility
-rng = random.Random(42)
-
 Number = Union[int, float]
 WorldState = Mapping[str, Any]
 QuestionPayload = Mapping[str, Any]
@@ -158,37 +155,36 @@ def get_spatial_relationship_camera_view(obj_1_state, obj_2_state, camera, times
     eight_points_2 = OBB_to_eight_points(obj_2_state["obb"])
     center_2 = obj_2_state["obb"]["center"]
 
-    # use fake photo to load and check projection correcteness
-    fake_photo = Image.open(f"/data0/sebastian.cavada/datasets/simulations_v3/dl3dv/random/3/c-1_no-3_d-4_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-9_20251102_063341/render/{str(timestep).zfill(6)}.png")  # dummy image just to get width and height
-    numpy_image = np.array(fake_photo)
-
     project_center_1_uv, z1 = project_points(np.array([center_1]), camera)
     u1, v1 = int(project_center_1_uv[0][0]), int(project_center_1_uv[0][1])
     project_center_2_uv, z2 = project_points(np.array([center_2]), camera)
     u2, v2 = int(project_center_2_uv[0][0]), int(project_center_2_uv[0][1])
-    projected_eight_points_1_uv, z1 = project_points(np.array(eight_points_1), camera)    
+    projected_eight_points_1_uv, z1_eight = project_points(np.array(eight_points_1), camera)    
     hull1 = external_points_2d(projected_eight_points_1_uv)
-    projected_eight_points_2_uv, z2 = project_points(np.array(eight_points_2), camera)
-    hull2 = external_points_2d(projected_eight_points_2_uv)    
+    projected_eight_points_2_uv, z2_eight = project_points(np.array(eight_points_2), camera)
+    hull2 = external_points_2d(projected_eight_points_2_uv)
 
-    # add points to the image, red dots for object 1, blue dots for object 2
-    for point in hull1:
-        u, v = int(point[0]), int(point[1])
-        if 0 <= u < numpy_image.shape[1] and 0 <= v < numpy_image.shape[0]:
-            for i in range(-1, 2):
-                for j in range(-1, 2):
-                    if 0 <= v+i < numpy_image.shape[0] and 0 <= u+j < numpy_image.shape[1]:
-                        numpy_image[v+i, u+j] = [255, 0, 0]  # red dot
+    # This was for debugging purposes only
+    # # use fake photo to load and check projection correcteness
+    # fake_photo = Image.open(f"/data0/sebastian.cavada/datasets/simulations_v3/dl3dv/random/3/c-1_no-3_d-4_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-9_20251102_063341/render/{str(timestep).zfill(6)}.png")  # dummy image just to get width and height
+    # numpy_image = np.array(fake_photo)
 
-    for point in hull2:
-        u, v = int(point[0]), int(point[1])
-        if 0 <= u < numpy_image.shape[1] and 0 <= v < numpy_image.shape[0]:
-            for i in range(-1, 2):
-                for j in range(-1, 2):
-                    if 0 <= v+i < numpy_image.shape[0] and 0 <= u+j < numpy_image.shape[1]:
-                        numpy_image[v+i, u+j] = [0, 0, 255]  # blue dot
+    # # add points to the image, red dots for object 1, blue dots for object 2
+    # for point in hull1:
+    #     u, v = int(point[0]), int(point[1])
+    #     if 0 <= u < numpy_image.shape[1] and 0 <= v < numpy_image.shape[0]:
+    #         for i in range(-1, 2):
+    #             for j in range(-1, 2):
+    #                 if 0 <= v+i < numpy_image.shape[0] and 0 <= u+j < numpy_image.shape[1]:
+    #                     numpy_image[v+i, u+j] = [255, 0, 0]  # red dot
 
-    print("DONE PROJECTION PLOTTING")
+    # for point in hull2:
+    #     u, v = int(point[0]), int(point[1])
+    #     if 0 <= u < numpy_image.shape[1] and 0 <= v < numpy_image.shape[0]:
+    #         for i in range(-1, 2):
+    #             for j in range(-1, 2):
+    #                 if 0 <= v+i < numpy_image.shape[0] and 0 <= u+j < numpy_image.shape[1]:
+    #                     numpy_image[v+i, u+j] = [0, 0, 255]  # blue dot    
 
     polygon1 = Polygon(hull1)
     polygon2 = Polygon(hull2)
@@ -196,15 +192,13 @@ def get_spatial_relationship_camera_view(obj_1_state, obj_2_state, camera, times
     intersection_area = intersection_polygon.area
     intersection_points = np.array(intersection_polygon.exterior.coords)
 
-    for point in intersection_points:
-        u, v = int(point[0]), int(point[1])
-        if 0 <= u < numpy_image.shape[1] and 0 <= v < numpy_image.shape[0]:
-            for i in range(-1, 2):
-                for j in range(-1, 2):
-                    if 0 <= v+i < numpy_image.shape[0] and 0 <= u+j < numpy_image.shape[1]:
-                        numpy_image[v+i, u+j] = [0, 255, 0]  # green dot for intersection
-
-    print(f"Intersection area between object 1 and object 2 projections: {intersection_area}")
+    # for point in intersection_points:
+    #     u, v = int(point[0]), int(point[1])
+    #     if 0 <= u < numpy_image.shape[1] and 0 <= v < numpy_image.shape[0]:
+    #         for i in range(-1, 2):
+    #             for j in range(-1, 2):
+    #                 if 0 <= v+i < numpy_image.shape[0] and 0 <= u+j < numpy_image.shape[1]:
+    #                     numpy_image[v+i, u+j] = [0, 255, 0]  # green dot for intersection
 
     area_polygon1 = polygon1.area
     area_polygon2 = polygon2.area
@@ -214,8 +208,11 @@ def get_spatial_relationship_camera_view(obj_1_state, obj_2_state, camera, times
     horizontal = ""
     vertical = ""
     depth = ""
+    horizontal_movement = u2 - u1
+    vertical_movement = v2 - v1
+    depth_movement = z2 - z1
 
-    if iou > 0.6:
+    if iou > 0.0:
         if z1 < z2:
             depth = "in front"
         else:
@@ -232,8 +229,10 @@ def get_spatial_relationship_camera_view(obj_1_state, obj_2_state, camera, times
         else:
             vertical = "above"
 
+    movement_adjs = np.array([horizontal_movement, vertical_movement, float(depth_movement)])
+    max_movement_adj = np.argmax(movement_adjs)
 
-    return "to be implemented"
+    return horizontal, vertical, depth, [horizontal, vertical, depth][max_movement_adj]
 
 
 def get_all_relational_positional_adjectives():

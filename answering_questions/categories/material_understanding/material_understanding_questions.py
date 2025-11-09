@@ -20,8 +20,6 @@ from typing import (
 
 import random
 
-random.seed(42)
-
 from utils.my_exception import ImpossibleToAnswer
 
 from utils.all_objects import get_all_objects_names, get_all_materials
@@ -135,6 +133,9 @@ def F_MASS_HEAVIEST_OBJECT(
 
         if is_object_visible:
             objects_masses.append((obj["mass"], obj))
+
+    if len(objects_masses) < 2:
+        raise ImpossibleToAnswer("Not enough visible objects in the scene.")
 
     object_ordered_by_mass = sorted(objects_masses, key=lambda x: x[0], reverse=True)
     heaviest_object_mass, heaviest_visible_object = object_ordered_by_mass[0]

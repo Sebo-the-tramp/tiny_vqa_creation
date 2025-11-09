@@ -164,9 +164,9 @@ def save_questions_answers_json(
     #     answers.append(answer_record)
     
     config = get_config()
-    config_path = os.path.join(output_path, f"test_{run_name}_config_used.json")        
-    answers_path = os.path.join(output_path, f"val_answer_{run_name}.json")
-    questions_path = os.path.join(output_path, f"test_{run_name}.json")    
+    config_path = os.path.join(output_path, f"/{run_name}/test_{run_name}_config_used.json")
+    answers_path = os.path.join(output_path, f"/{run_name}/val_answer_{run_name}.json")
+    questions_path = os.path.join(output_path, f"/{run_name}/test_{run_name}.json")
 
     with open(questions_path, "w", encoding="utf-8") as f:
         json.dump(normalized_questions, f, indent=2)

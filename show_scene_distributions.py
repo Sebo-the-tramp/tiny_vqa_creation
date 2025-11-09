@@ -6,7 +6,7 @@ from pathlib import Path
 # CONFIG
 # -----------------------------
 # Point these to your files
-RUN_NAME = "_test_seed_00.json"
+RUN_NAME = "_run_06_1K_roi_circling.json"
 PATH = "./output/"
 ANSWERS_PATH = f"{PATH}test{RUN_NAME}"
 TEST_PATH    = f"{PATH}val_answer{RUN_NAME}"
@@ -125,6 +125,22 @@ unique_answers = merged["answer"].nunique() if "answer" in merged.columns else 0
 print("=== Summary ===")
 print(f"Total questions: {total_qs}")
 print(f"Unique answers: {unique_answers}")
+
+# Scene counts
+def pick_scene_column(df):
+    priority = ["scene", "scene_id", "scene_idx", "scene_index", "scene_name"]
+    priority.extend([c for c in df.columns if "scene" in c.lower() and c not in priority])
+    for col in priority:
+        if col in df.columns:
+            return col
+    return None
+
+scene_col = pick_scene_column(merged)
+if scene_col:
+    print_histogram(merged[scene_col], title=f"Questions per {scene_col}")
+else:
+    print("\nNo scene column found in the merged data. Available columns:")
+    print(", ".join(merged.columns))
 
 # Mode breakdown
 print_histogram(merged["mode_x"], title="Mode breakdown")

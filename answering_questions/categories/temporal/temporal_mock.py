@@ -30,9 +30,6 @@ import numpy as np
 
 import torch
 from fused_ssim import fused_ssim # nofa
-
-random.seed(41)
-
 Number = Union[int, float]
 Vector = Tuple[float, float, float]
 WorldState = Mapping[str, Any]
@@ -95,7 +92,8 @@ def F_TEMPORAL_SEQUENCE_IMAGES(
         + other_choices[correct_index:]
     )
 
-    return [[question, labels, correct_index, imgs_idx_shuffled]]
+    return [[question, labels, correct_index, imgs_idx_shuffled,  world_state,
+        {}]]
 
 
 @with_resolved_attributes
@@ -140,7 +138,8 @@ def F_TEMPORAL_PREDICTION_NEXT_IMAGE(
         + confounding_images[correct_index:]
     )
 
-    return [[question, labels, correct_index, given_sequence]]
+    return [[question, labels, correct_index, given_sequence, world_state,
+        {}]]
 
 
 @with_resolved_attributes
@@ -185,7 +184,8 @@ def F_TEMPORAL_PREDICTION_PREVIOUS_IMAGE(
         + confounding_images[correct_index:]
     )
 
-    return [[question, labels, correct_index, given_sequence]]
+    return [[question, labels, correct_index, given_sequence, world_state,
+        {}]]
 
 
 @with_resolved_attributes
@@ -237,7 +237,8 @@ def F_TEMPORAL_PREDICTION_MISSING_IMAGE(
         + confounding_images[correct_index:]
     )
 
-    return [[question, labels, correct_index, given_sequence]]
+    return [[question, labels, correct_index, given_sequence, world_state,
+        {}]]
 
 
 @with_resolved_attributes
@@ -370,7 +371,8 @@ def F_CAMERA_MOTION_DIRECTION(
         + [answer]
         + other_answers[correct_index:]
     )
-    return [[question, labels, correct_index, given_sequence]]
+    return [[question, labels, correct_index, given_sequence, world_state,
+        {}]]
 
     
 @with_resolved_attributes
@@ -440,4 +442,5 @@ def F_CAMERA_ZOOM_BEHAVIOR(
         + other_answers[correct_index:]
     )   
 
-    return [[question, labels, correct_index, given_sequence]]
+    return [[question, labels, correct_index, given_sequence, world_state,
+        {}]]

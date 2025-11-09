@@ -12,6 +12,17 @@ from utils.config import get_config
 _ws = re.compile(r"\s+")
 
 
+def _select_rng(seed: Optional[int]) -> Optional[random.Random]:
+    return random.Random(seed) if seed is not None else None
+
+
+def _shuffle_inplace(items: List, rng: Optional[random.Random]) -> None:
+    if rng is None:
+        random.shuffle(items)
+    else:
+        rng.shuffle(items)
+
+
 def _round_sig(x: float, sig: int = 3) -> float:
     sig = max(1, sig)
     if x == 0:
@@ -71,7 +82,7 @@ def create_mc_options_integer(
             f"Need {num_answers} unique ints but only {domain_size} available."
         )
 
-    rng = random.Random(seed)
+    rng = _select_rng(seed)
     needed = num_answers - 1
 
     neighbors: List[int] = []
@@ -86,16 +97,16 @@ def create_mc_options_integer(
             break
 
     band = neighbors[: max(needed + 2, min(5, len(neighbors)))]
-    rng.shuffle(band)
+    _shuffle_inplace(band, rng)
 
     distractors = band[:needed]
     if len(distractors) < needed:
         remaining = [v for v in neighbors if v not in distractors]
-        rng.shuffle(remaining)
+        _shuffle_inplace(remaining, rng)
         distractors += remaining[: needed - len(distractors)]
 
     options = [gt] + distractors[:needed]
-    rng.shuffle(options)
+    _shuffle_inplace(options, rng)
     correct_idx = options.index(gt)
     return options, correct_idx
 
@@ -157,7 +168,7 @@ def create_mc_options_around_gt(
         correct_idx = options.index(gt)
         return options, correct_idx        
 
-    current_slope_bin = get_config()["slope_bins"]
+    current_slope_bin = get_config()["slope_bins"]    
 
     if abs(gt) < 1.0:
         current_slope_bin = 0.4
@@ -634,7 +645,7 @@ def create_mc_object_names_from_dataset(
     if num_answers < 2:
         raise ValueError("num_answers must be at least 2")
 
-    rng = random.Random(seed)
+    rng = _select_rng(seed)
 
     gt_n = norm(gt)
     if not gt_n:
@@ -672,8 +683,8 @@ def create_mc_object_names_from_dataset(
     else:
         present_same, present_other = [], present_n
 
-    rng.shuffle(present_same)
-    rng.shuffle(present_other)
+    _shuffle_inplace(present_same, rng)
+    _shuffle_inplace(present_other, rng)
 
     distractors: List[str] = []
     needed = num_answers - 1
@@ -716,7 +727,7 @@ def create_mc_object_names_from_dataset(
 
     # Assemble + shuffle; format labels uniformly
     options_n = [gt_n] + distractors[:needed]
-    rng.shuffle(options_n)
+    _shuffle_inplace(options_n, rng)
     labels = [title_label(x) for x in options_n]
     correct_idx = options_n.index(gt_n)
     return labels, correct_idx

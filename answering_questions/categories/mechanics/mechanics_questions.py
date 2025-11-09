@@ -20,8 +20,6 @@ from typing import (
 
 import random
 
-random.seed(42)
-
 from utils.my_exception import ImpossibleToAnswer
 
 from utils.all_objects import get_all_objects_names
@@ -601,7 +599,9 @@ def F_COLLISION_OBJECT_OBJECT_FRAME_MULTI(
         question,
         labels,
         correct_idx,
-        frames
+        frames,
+        world_state,
+        resolved_attributes
     ]]
 
 
@@ -763,4 +763,6 @@ def F_COLLISION_OBJECT_SCENE_FRAME_MULTI(
         labels,
         correct_idx,
         [],
+        world_state,
+        resolved_attributes
     ]]

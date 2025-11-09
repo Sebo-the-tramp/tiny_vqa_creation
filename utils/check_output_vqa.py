@@ -11,6 +11,9 @@ with open(metadata_llm_path, 'r') as f:
     metadata = json.load(f)
 
 for run_name in os.listdir(root_out_dir):
+    if not os.path.isdir(os.path.join(root_out_dir, run_name)):
+        continue
+    
     print("-----"*5)
     print(f"Checking run: {run_name}")
     print("-----"*5)

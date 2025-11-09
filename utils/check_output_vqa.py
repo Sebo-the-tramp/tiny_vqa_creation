@@ -2,6 +2,9 @@ import os
 import json
 
 root_out_dir = "../output"
+if not os.path.exists(root_out_dir):
+    root_out_dir = "/data/sebastian.cavada/compositional-physics/tiny_vqa_creation/output"        
+
 
 metadata_llm_path = "../analysis_example/utils/metadata.json"
 with open(metadata_llm_path, 'r') as f:

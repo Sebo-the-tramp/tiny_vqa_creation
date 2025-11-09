@@ -3,7 +3,7 @@ import json
 
 root_out_dir = "../output"
 if not os.path.exists(root_out_dir):
-    root_out_dir = "/data/sebastian.cavada/compositional-physics/tiny_vqa_creation/output"        
+    root_out_dir = "/mnt/proj1/eu-25-92/tiny_vqa_creation/output"
 
 
 metadata_llm_path = "../analysis_example/utils/metadata.json"
@@ -28,17 +28,17 @@ for run_name in os.listdir(root_out_dir):
         print(f"No JSON result files found in {result_folder}")
         continue    
     
-    total_missing = 0
-    for model in metadata:
-        model_name = model['id']
-        if model_name in model_names:
-            pass
-            # print(f"Model {model_name} results found in {result_folder}")
-        else:
-            if(model['license'] == ""):
-                continue
-            print(f"Missing result for {model_name}")
-            total_missing += 1
+    # total_missing = 0
+    # for model in metadata:
+    #     model_name = model['id']
+    #     if model_name in model_names:
+    #         pass
+    #         # print(f"Model {model_name} results found in {result_folder}")
+    #     else:
+    #         if(model['license'] == ""):
+    #             continue
+    #         print(f"Missing result for {model_name}")
+    #         total_missing += 1
 
     print(f"Total missing results for {run_name}: {total_missing}")
 

@@ -65,14 +65,8 @@
         "F_KINEMATICS_MOVING_OBJECT": {
             "task_splits": "multi",
             "sub_category": "kinematics",
-            "choice": "true_false",
-            "question": "Is the <OBJECT> moving throughout all frames?"
-        },
-        "F_KINEMATICS_STILL_OBJECT": {
-            "task_splits": "multi",
-            "sub_category": "kinematics",
-            "choice": "true_false",
-            "question": "Is the <OBJECT> motionless throughout all frames?"
+            "choice": "mcq",
+            "question": "Which of the objects among the choices moves during the sequence?"
         },
         "F_COLLISIONS_OBJ_OBJ_FIRST":{
             "task_splits": "multi",
@@ -117,12 +111,6 @@
             "sub_category": "mass",
             "choice": "mcq",
             "question": "Which single object has the least mass?"
-        },
-        "F_MASS_COMPARE_OBJECTS": {
-            "task_splits": "single+multi",
-            "sub_category": "mass",
-            "choice": "true_false",
-            "question": "Is the mass of the <OBJECT_1> greater than the mass of the <OBJECT_2>?"
         },
         "F_PHYSICS_PROPERTY_DENSITY_OBJECT": {
             "task_splits": "single+multi",
@@ -212,9 +200,5 @@
             "choice": "mcq",
             "question": "How does the camera’s zoom level change across the sequence?"
         }
-    },
-    "global": {        
-    },
-    "counter_factual": {
-    }
+    } 
 }

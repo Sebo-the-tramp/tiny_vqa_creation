@@ -161,6 +161,7 @@ def load_from_model_records(model_records: list[dict]):
                     "category": r.get("category"),
                     "sub_category": r.get("sub_category"),
                     "correct_answer": normalize_choice(r.get("gt")),
+                    "num_objects": r.get("num_objects"),
                 }
             else:
                 prev = item_rows[idx]["correct_answer"]
@@ -201,10 +202,12 @@ simulations_metadata_cache = {}
 
 # here we shall add all the simulation metadata that we need/want
 def merge_sim_metadata(answers_vlm, mapping_fct=None):
-    pbar = tqdm.tqdm(answers_vlm)
-    for model in pbar:
-        for i, answer in enumerate(model["results"]):            
-            pbar.set_description(f"answer: {i}/{len(model["results"])}")
+    pbar = tqdm.tqdm(range(len(answers_vlm)))
+    for m_i in pbar:
+        model = answers_vlm[m_i]
+        for a_i in range(len(model["results"])):
+            answer = model["results"][a_i]
+            pbar.set_description(f"answer: {a_i}/{len(model["results"])}")
             simulation_path = answer["simulation_id"]
             if mapping_fct is not None:
                 simulation_path = mapping_fct(simulation_path)

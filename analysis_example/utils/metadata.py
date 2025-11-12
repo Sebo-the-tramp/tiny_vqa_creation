@@ -1,9 +1,12 @@
-import json
+import os, json
 
 metadata = {}
 
-with open("/data0/sebastian.cavada/compositional-physics/vqa_analysis/utils/metadata.json", "r") as f:
-    metadata = json.load(f)
+
+def read_metadata():
+    global metadata
+    with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "metadata.json"), "r") as f:
+        metadata = json.load(f)
 
 def merge_metadata(answers_vlm):
     """
@@ -17,7 +20,8 @@ def merge_metadata(answers_vlm):
     - list: Updated answers_vlm with merged metadata.
     """
 
-    print(metadata)
+    # Force metadata re-read
+    read_metadata()
 
     metadata_dict = {item["id"]: item for item in metadata}
 

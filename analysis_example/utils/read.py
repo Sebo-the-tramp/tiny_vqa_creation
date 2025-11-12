@@ -1,6 +1,7 @@
 import os
 import json
 import pandas as pd
+import tqdm
 
 # ROOT_DIR_SIMULATIONS = "/mnt/data1/sebastiancavada/datasets/3D_VQA/simulations"
 # ROOT_DIR_SIMULATIONS = "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/output/sims/dl3dv-hf-gso2/3-cg"
@@ -137,7 +138,7 @@ def load_from_model_records(model_records: list[dict]):
     # ---- items & predictions (normalize nested results)
     item_rows = {}   # keyed by idx to dedupe across models
     pred_rows = []
-    for m in model_records:
+    for m in tqdm.tqdm(model_records):
         model_id = m.get("model") or m.get("model_id")
         run_id = m.get("run_id", "default")
         for r in m["results"]:
@@ -199,10 +200,14 @@ def load_from_model_records(model_records: list[dict]):
 simulations_metadata_cache = {}
 
 # here we shall add all the simulation metadata that we need/want
-def merge_sim_metadata(answers_vlm):        
-    for model in answers_vlm:
-        for answer in model["results"]:            
+def merge_sim_metadata(answers_vlm, mapping_fct=None):
+    pbar = tqdm.tqdm(answers_vlm)
+    for model in pbar:
+        for i, answer in enumerate(model["results"]):            
+            pbar.set_description(f"answer: {i}/{len(model["results"])}")
             simulation_path = answer["simulation_id"]
+            if mapping_fct is not None:
+                simulation_path = mapping_fct(simulation_path)
             # print("simulation_id", simulation_id)
 
             # Check cache first

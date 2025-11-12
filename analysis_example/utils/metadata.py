@@ -39,3 +39,5 @@ def merge_metadata(answers_vlm):
             print(f"Warning: No metadata found for model '{model_name}'")
 
     return answers_vlm
+
+read_metadata()

@@ -18,3 +18,7 @@ tmp_parallel.sh
 test/
 
 submodules/
+
+analysis_example/*
+
+.vscode/

@@ -6,10 +6,12 @@ from pathlib import Path
 # CONFIG
 # -----------------------------
 # Point these to your files
-RUN_NAME = "_test_seed_00.json"
-PATH = "./output/"
-ANSWERS_PATH = f"{PATH}test{RUN_NAME}"
-TEST_PATH    = f"{PATH}val_answer{RUN_NAME}"
+run_count = "08"
+run_id = "sanity_check"
+RUN_NAME = f"_run_{run_count}_{run_id}"
+PATH = f"./output/run_{run_count}_{run_id}/"
+ANSWERS_PATH = f"{PATH}test{RUN_NAME}_10K.json"
+TEST_PATH    = f"{PATH}val_answer{RUN_NAME}.json"
 
 # If your join key is not 'question_ID', set it here or leave as None to auto-detect
 JOIN_KEY = "idx"
@@ -162,10 +164,15 @@ if "answer" in merged.columns:
         for subcat, sub in merged.groupby("sub_category"):
             print_histogram(sub["answer"], title=f"Answer distribution — sub_category: {subcat}")
 
-    # # # By question_ID
-    # for qid_col in ["question_id"] if key else []:
-    #     for qid, sub in merged.groupby(qid_col):
-    #         print_histogram(sub["answer"], title=f"Answer distribution — {qid_col}: {qid}")
+    # # By question_ID    
+    total_question_ids = 0
+    for qid_col in ["question_id"] if key else []:
+        for qid, sub in merged.groupby(qid_col):
+            total_question_ids += 1
+            print_histogram(sub["answer"], title=f"Answer distribution — {qid_col}: {qid}")
+
+    print("TOTAL NUMBER OF UNIQUE ANSWERS:", total_question_ids)
+    print("\n=== Done ===")
 else:
     print("\nNo 'answer' column found in the merged data. Check your answers file.")
 

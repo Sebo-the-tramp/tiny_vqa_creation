@@ -31,3 +31,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+# python utils/check_questions_have_answers.py --question-path /data0/sebastian.cavada/compositional-physics/tiny_vqa_deterministic/output/run_06_general/test_run_06_general_10K.json \
+#  --answer-path /data0/sebastian.cavada/compositional-physics/tiny_vqa_deterministic/output_invalid/run_06_general_wrong/val_answer_run_06_general.json

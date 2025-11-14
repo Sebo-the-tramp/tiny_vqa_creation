@@ -20,3 +20,9 @@ def error_table(df, model_id, k=50):
     cols = ["idx","scene","difficulty","ability_type","sub_type","question","answer","correct_answer","file_name"]
     cols = [c for c in cols if c in sub.columns]
     return sub[cols].head(k).sort_values("scene")
+
+def summarize_overall_accuracy(df):
+    n = len(df)
+    correct = df["is_correct"].sum()
+    accuracy = correct / n if n > 0 else 0
+    return {"n": n, "correct": correct, "accuracy": accuracy}

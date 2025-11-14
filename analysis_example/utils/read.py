@@ -1,6 +1,17 @@
 import os
 import json
 import pandas as pd
+import tqdm
+import re
+
+
+with open("/data0/sebastian.cavada/datasets/gso/gso_mapping.json", "r") as f:
+    gso_mapping = json.load(f)
+
+gso_mapping_rev = {v['name']: k for k, v in gso_mapping.items()}
+
+list_of_objects = [obj['name'] for obj in gso_mapping.values()]
+pattern = re.compile(r"\b(" + "|".join(map(re.escape, list_of_objects)) + r")\b", re.IGNORECASE)
 
 # ROOT_DIR_SIMULATIONS = "/mnt/data1/sebastiancavada/datasets/3D_VQA/simulations"
 # ROOT_DIR_SIMULATIONS = "/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/output/sims/dl3dv-hf-gso2/3-cg"
@@ -36,7 +47,7 @@ def read_results_test_and_gt(scene_path, run_name="results_tmp_test_run01_1K"):
     else:
         print(f"Ground truth file does not exist: {gt_path}")
 
-    test_path = os.path.join(scene_path, f"{run_name}/test_{run_name}.json")
+    test_path = os.path.join(scene_path, f"{run_name}/test_{run_name}_10K.json")
     print("Test path:", test_path)
     test = {}
     test_dict = {}
@@ -77,7 +88,7 @@ def merge_test(answers, test):
                 answer["category"] = test[qid]['category']
                 answer["sub_category"] = test[qid]['sub_category']
                 answer["simulation_id"] = test[qid]['simulation_id']
-                answer['mode'] = test[qid]['mode']                
+                answer['mode'] = test[qid]['mode']
             else:
                 answer["question"] = None
     return answers
@@ -137,7 +148,7 @@ def load_from_model_records(model_records: list[dict]):
     # ---- items & predictions (normalize nested results)
     item_rows = {}   # keyed by idx to dedupe across models
     pred_rows = []
-    for m in model_records:
+    for m in tqdm.tqdm(model_records):
         model_id = m.get("model") or m.get("model_id")
         run_id = m.get("run_id", "default")
         for r in m["results"]:
@@ -160,6 +171,8 @@ def load_from_model_records(model_records: list[dict]):
                     "category": r.get("category"),
                     "sub_category": r.get("sub_category"),
                     "correct_answer": normalize_choice(r.get("gt")),
+                    "num_objects": r.get("num_objects"),
+                    "object_yms": r.get("object_yms"),
                 }
             else:
                 prev = item_rows[idx]["correct_answer"]
@@ -199,10 +212,16 @@ def load_from_model_records(model_records: list[dict]):
 simulations_metadata_cache = {}
 
 # here we shall add all the simulation metadata that we need/want
-def merge_sim_metadata(answers_vlm):        
-    for model in answers_vlm:
-        for answer in model["results"]:            
+def merge_sim_metadata(answers_vlm, mapping_fct=None):
+    pbar = tqdm.tqdm(range(len(answers_vlm)))
+    for m_i in pbar:
+        model = answers_vlm[m_i]
+        for a_i in range(len(model["results"])):
+            answer = model["results"][a_i]
+            pbar.set_description(f"answer: {a_i}/{len(model["results"])}")
             simulation_path = answer["simulation_id"]
+            if mapping_fct is not None:
+                simulation_path = mapping_fct(simulation_path)
             # print("simulation_id", simulation_id)
 
             # Check cache first
@@ -221,7 +240,38 @@ def merge_sim_metadata(answers_vlm):
                 else:
                     raise FileNotFoundError(f"Simulation metadata file not found: {sim_path}")
             
+            result = get_object_yms_from_simulation(sim_metadata, answer['question'])
+            # print("result for object_yms:", result)
+            answer['object_yms'] = result
             answer['num_objects'] = len(sim_metadata["objects"].keys())
     
     return answers_vlm
+    
+
+def get_object_yms_from_simulation(sim_metadata, question):
+    # print("Question received:", question)
+    parts = question.split("\n")
+    images = parts[0]
+    question_text = parts[1]
+    answers = parts[2:]
+
+    matches = pattern.findall(question_text)
+    count = len(matches)
+
+    if count == 0:
+        return None
+
+    elif count > 1:
+        return None
+    else:
+        # append after the only match
+        matched_name = matches[0]
+        object_model = gso_mapping_rev[matched_name]        
+        for obj in sim_metadata["objects"].values():
+            if obj["model"] == object_model:
+                sim_parts = obj['sim'].split('_')
+                yms_part = sim_parts[1]  # assuming format is like 'gso2_y3m1_something'
+                yms = yms_part[4:]  # remove leading 'y'
+                return yms
+        return None
 

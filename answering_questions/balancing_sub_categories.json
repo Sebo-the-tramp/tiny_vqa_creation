@@ -1,0 +1,14 @@
+{
+    "visibility": 0.05,
+    "material_identification": 0.1,
+    "size": 0.1,
+    "camera_characteristics": 0.01,
+    "physics_property": 0.15,
+    "kinematics": 0.15,
+    "collision": 0.1,
+    "mass": 0.1,
+    "camera_motion": 0.02,
+    "layout": 0.02,
+    "distance": 0.1,
+    "event_ordering": 0.1
+}

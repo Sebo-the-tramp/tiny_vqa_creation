@@ -57,10 +57,27 @@
             "choice": "mcq",
             "options": ["consistent with gravity", "opposes gravity", "independent of gravity", "cannot determine"],
             "question": "Is <OBJECT>'s motion consistent with the direction of gravity?"
+        },
+        "F_KINEMATICS_STILL_OBJECT": {
+            "task_splits": "multi",
+            "sub_category": "kinematics",
+            "choice": "true_false",
+            "question": "Is the <OBJECT> motionless throughout all frames?"
         }
     },
-    "material_undertanding": {
- 
+    "material_understanding": {
+        "F_MASS_COMPARE_OBJECTS": {
+            "task_splits": "single+multi",
+            "sub_category": "mass",
+            "choice": "true_false",
+            "question": "Is the mass of the <OBJECT_1> greater than the mass of the <OBJECT_2>?"
+        },
+        "F_KINEMATICS_STILL_OBJECT": {
+            "task_splits": "multi",
+            "sub_category": "kinematics",
+            "choice": "true_false",
+            "question": "Is the <OBJECT> motionless throughout all frames?"
+        },
     },
     "temporal": { 
     },

@@ -1,4 +1,12 @@
-import json
+import os, json
+
+metadata = {}
+
+
+def read_metadata():
+    global metadata
+    with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "metadata.json"), "r") as f:
+        metadata = json.load(f)
 
 def merge_metadata(answers_vlm):
     """
@@ -11,13 +19,17 @@ def merge_metadata(answers_vlm):
     Returns:
     - list: Updated answers_vlm with merged metadata.
     """
+
+    # Force metadata re-read
+    read_metadata()
+
     metadata_dict = {item["id"]: item for item in metadata}
 
     for model_data in answers_vlm:
         model_name = model_data.get("model")
         if model_name in metadata_dict:
             # data to add:
-            data_to_add = metadata_dict[model_name]
+            data_to_add = metadata_dict[model_name].copy()
             if "id" in data_to_add:
                 del data_to_add["id"]  # Remove 'id' to avoid duplication
             if "updated_at" in data_to_add:
@@ -28,5 +40,4 @@ def merge_metadata(answers_vlm):
 
     return answers_vlm
 
-with open("/data0/sebastian.cavada/compositional-physics/vqa_analysis/utils/metadata.json", "r") as f:
-    metadata = json.load(f)
+read_metadata()

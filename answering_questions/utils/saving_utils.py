@@ -164,9 +164,9 @@ def save_questions_answers_json(
     #     answers.append(answer_record)
     
     config = get_config()
-    config_path = os.path.join(output_path, f"/{run_name}/test_{run_name}_config_used.json")
-    answers_path = os.path.join(output_path, f"/{run_name}/val_answer_{run_name}.json")
-    questions_path = os.path.join(output_path, f"/{run_name}/test_{run_name}.json")
+    config_path = os.path.join(output_path, f"{run_name}/test_{run_name}_config_used.json")
+    answers_path = os.path.join(output_path, f"{run_name}/val_answer_{run_name}.json")
+    questions_path = os.path.join(output_path, f"{run_name}/test_{run_name}.json")
 
     with open(questions_path, "w", encoding="utf-8") as f:
         json.dump(normalized_questions, f, indent=2)
@@ -194,23 +194,26 @@ def normalize_question_json(
     letters = list(string.ascii_uppercase)
     simulation_path = vqa_entry["simulation_id"]
 
+    # regex to check if in the label we have an image
+    pattern = re.compile(r"^\d{6}$")
+
+    images_in_labels = 0
+    for idx_img, label in enumerate(labels):        
+        if pattern.match(label):
+            # do a smart replacement
+            # I think there is no need to save the image again, just use the existing one
+            # new_image_path = simulation_path.rsplit("/", 1)[0] + f"render/{label}.png"
+            # image_paths.append(new_image_path)
+            labels[idx_img] = "<image>"
+            images_in_labels += 1    
+
     # add <image> tags in place of images
     # locking in question images before adding other images in the question
     # slop code, but guess I need to speed up
     formatted_question = question_text
     formatted_question = (
-        "".join(["<image>" for _ in image_paths]) + "\n" + formatted_question
+        "".join(["<image>" for _ in range(len(image_paths)-images_in_labels)]) + "\n" + formatted_question
     )
-
-    # regex to check if in the label we have an image
-    pattern = re.compile(r"^\d{6}$")
-
-    for idx_img, label in enumerate(labels):        
-        if pattern.match(label):
-            # do a smart replacement
-            new_image_path = simulation_path.rsplit("/", 1)[0] + f"/render/{label}.png"
-            image_paths.append(new_image_path)
-            labels[idx_img] = "<image>"
 
     option_letters = [letters[i] for i in range(min(len(labels), len(letters)))]
     option_lines = []

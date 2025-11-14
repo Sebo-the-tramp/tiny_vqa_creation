@@ -24,6 +24,7 @@ import json
 import os
 from collections import deque
 
+
 import numpy as np
 import rerun as rr
 import open3d as o3d
@@ -485,8 +486,13 @@ def main():
     )
     args = ap.parse_args()
 
-    rr.init("simulation_view", spawn=args.spawn)
+    rr.init("simulation_view")
     # rr.send_blueprint(rrb.Spatial3DView())
+
+    server_uri = rr.serve_grpc()
+
+    # Connect the web viewer to the gRPC server and open it in the browser
+    rr.serve_web_viewer(connect_to=server_uri)
 
     json_path = os.path.abspath(args.input)
     with open(json_path, "r") as f:
@@ -843,7 +849,14 @@ def main():
 if __name__ == "__main__":
     main()
 
+    # Keep server running. If we cancel it too early, data may never arrive in the browser.
+    try:
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        print("\nShutting down server…")
+
 
 # python answering_questions/viz_sim_rerun.py /data0/sebastian.cavada/datasets/simulations_test/3/c-1_no-3_d-3_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-2_20251031_185938/simulation_kinematics.json --spawn
 
-# python answering_questions/viz_sim_rerun.py /data0/sebastian.cavada/datasets/simulations_v2/dl3dv/random/3/c-1_no-3_d-4_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251101_031246/simulation_kinematics.json --spawn
+# python answering_questions/viz_sim_rerun.py /data0/sebastian.cavada/datasets/simulations_v3/dl3dv/random-cam-stationary/5/c-1_no-5_d-4_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-14_20251102_195058/simulation_kinematics.json --spawn

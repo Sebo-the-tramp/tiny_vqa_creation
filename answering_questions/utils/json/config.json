@@ -6,7 +6,7 @@
     "visibility_threshold": 0.7,
     "world_up_axis": "Z",
     "frame_interleave": 2,
-    "slope_bins": 2.0,
+    "slope_bins": 4,
     "threshold_difference_percentage": 0.1,
     "min_pixels_visible": 500
 }

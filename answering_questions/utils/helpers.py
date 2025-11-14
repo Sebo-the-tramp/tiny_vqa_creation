@@ -234,19 +234,31 @@ def get_all_objects_state_at_time(
     objects = step_data.get("objects", {})
     return objects
 
-
 def get_list_model_of_duplicate_objects(
     world_state, visible_objects_id: List[str]
 ) -> bool:
     object_names = set()
-    duplicate_models = []
-    for obj_id in visible_objects_id:
-        obj = world_state["objects"].get(obj_id, {})
+    duplicate_models = []    
+    for obj in iter_objects(world_state):
         obj_model = obj.get("model", "")
         if obj_model in object_names:
             duplicate_models.append(obj_model)
         object_names.add(obj_model)
     return duplicate_models
+
+
+# def get_list_model_of_duplicate_objects(
+#     world_state, visible_objects_id: List[str]
+# ) -> bool:
+#     object_names = set()
+#     duplicate_models = []
+#     for obj_id in visible_objects_id:
+#         obj = world_state["objects"].get(obj_id, {})
+#         obj_model = obj.get("model", "")
+#         if obj_model in object_names:
+#             duplicate_models.append(obj_model)
+#         object_names.add(obj_model)
+#     return duplicate_models
 
 def get_visible_timesteps_for_attributes_min_objects(
     attributes: List[Mapping[str, Any]], world_state: Mapping[str, Any], min_objects=1,
@@ -275,18 +287,18 @@ def get_visible_timesteps_for_attributes_min_objects(
                 visible_objects_id.append(obj_id)
 
         # we shall check that also is not the same object name to remove for
-        list_of_ids_of_duplicate_objs = get_list_model_of_duplicate_objects(
+        list_of_duplicated_objects_models = get_list_model_of_duplicate_objects(
             world_state, visible_objects_id
         )
 
         # remove duplicate objects by name
-        visible_objects_id = [
+        visible_objects_id_and_non_duplicated = [
             obj_id
             for obj_id in visible_objects_id
-            if obj_id not in list_of_ids_of_duplicate_objs
+            if world_state['objects'][obj_id]['model'] not in list_of_duplicated_objects_models
         ]
 
-        if len(visible_objects_id) >= min_objects:
+        if len(visible_objects_id_and_non_duplicated) >= min_objects:
             visible_timesteps.append(timestep)
 
     if len(visible_timesteps) < min_n_frames:
@@ -519,8 +531,9 @@ def get_random_object_and_remove(
                 obj_state["fov_visibility"] > VISIBILITY_THRESHOLD
                 and obj_state["infov_pixels"] >= MIN_VISIBLE_PIXELS
             ):
-                object["id"] = obj_id
-                visible_objects.append(object)
+                obj_copy = object.copy()
+                obj_copy["id"] = obj_id
+                visible_objects.append(obj_copy)
                 visible_objects_ids.append(obj_id)
 
         list_of_duplicate_object_models = get_list_model_of_duplicate_objects(

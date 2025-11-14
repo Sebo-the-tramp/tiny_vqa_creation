@@ -704,7 +704,7 @@ def main() -> None:
 
     test_entries = load_json(args.test_json)
     answer_entries = load_json(args.val_answers_json)
-    print(test_entries)
+    # print(test_entries)
 
     answer_map = ensure_answer_map(answer_entries)
     if not answer_map:
@@ -723,15 +723,15 @@ def main() -> None:
 
     count = 0
     entries = test_entries[:]
-    print(entries)
+    # print(entries)
     if args.categories:
         requested = {category.lower() for category in args.categories}
         all_entries = entries = [
             entry
             for entry in entries
         ]
-        print(all_entries)
-        print(requested)
+        # print(all_entries)
+        # print(requested)
         entries = [
             entry
             for entry in entries

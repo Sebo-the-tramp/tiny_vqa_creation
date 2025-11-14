@@ -7,6 +7,7 @@ import re
 from utils.my_exception import ImpossibleToAnswer
 
 from utils.config import get_config
+from utils import seed_utils
 
 # ---------- helpers ----------
 _ws = re.compile(r"\s+")
@@ -23,6 +24,16 @@ def _shuffle_inplace(items: List, rng: Optional[random.Random]) -> None:
         rng.shuffle(items)
 
 
+def _deterministic_uniform(lo: float, hi: float, material: str) -> float:
+    """Return a deterministic uniform sample in [lo, hi] using the global seed."""
+    lo = float(lo)
+    hi = float(hi)
+    if hi <= lo:
+        return lo
+    local_seed = seed_utils.seed_from_material(material)
+    return random.Random(local_seed).uniform(lo, hi)
+
+
 def _round_sig(x: float, sig: int = 3) -> float:
     sig = max(1, sig)
     if x == 0:
@@ -37,15 +48,15 @@ def _decimals_for_sig(x: float, sig: int = 3) -> int:
 
 
 def norm(name: str) -> str:
-    s = _ws.sub(" ", name.strip().lower())
-    # ultra-light singularization (good enough for most dataset labels)
-    if s.endswith("ies") and len(s) > 3:
-        s = s[:-3] + "y"
-    elif s.endswith("sses") or s.endswith("shes") or s.endswith("ches"):
-        pass
-    elif s.endswith("s") and not s.endswith("ss"):
-        s = s[:-1]
-    return s
+    # s = _ws.sub(" ", name.strip().lower())
+    # # ultra-light singularization (good enough for most dataset labels)
+    # if s.endswith("ies") and len(s) > 3:
+    #     s = s[:-3] + "y"
+    # elif s.endswith("sses") or s.endswith("shes") or s.endswith("ches"):
+    #     pass
+    # elif s.endswith("s") and not s.endswith("ss"):
+    #     s = s[:-1]
+    return name
 
 
 def title_label(name: str) -> str:
@@ -163,12 +174,31 @@ def create_mc_options_around_gt(
         # I mean the speed is 0, we should understand that
         gt = round(gt, display_decimals) if display_decimals is not None else gt
 
-        options = [gt, 2.5, 5.0, 10.0] # some arbitrary distractors
+        options = [gt, 2.50, 5.00, 10.00] # some arbitrary distractors
         random.shuffle(options)
         correct_idx = options.index(gt)
         return options, correct_idx        
 
-    current_slope_bin = get_config()["slope_bins"]    
+    slope_cfg = get_config().get("slope_bins", 4.0)
+    slope_min = 1.0
+    slope_max = 4.0
+    if isinstance(slope_cfg, dict):
+        slope_min = float(slope_cfg.get("min", slope_min))
+        slope_max = float(slope_cfg.get("max", slope_max))
+    elif isinstance(slope_cfg, (list, tuple)) and len(slope_cfg) == 2:
+        slope_min = float(min(slope_cfg))
+        slope_max = float(max(slope_cfg))
+    elif isinstance(slope_cfg, (int, float)):
+        slope_max = float(slope_cfg)
+        if slope_max < slope_min:
+            slope_min = slope_max
+    else:
+        slope_max = 4.0
+    current_slope_bin = _deterministic_uniform(
+        slope_min,
+        slope_max,
+        material=f"slope_bin::{gt}:{num_answers}:{lo}:{hi}:{display_decimals}",
+    )
 
     if abs(gt) < 1.0:
         current_slope_bin = 0.4
@@ -728,6 +758,6 @@ def create_mc_object_names_from_dataset(
     # Assemble + shuffle; format labels uniformly
     options_n = [gt_n] + distractors[:needed]
     _shuffle_inplace(options_n, rng)
-    labels = [title_label(x) for x in options_n]
+    labels = [x for x in options_n]
     correct_idx = options_n.index(gt_n)
     return labels, correct_idx

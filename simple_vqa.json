@@ -41,7 +41,7 @@
             "sub_category": "layout",
             "choice": "mcq",
             "question": "From the camera’s perspective, where is the <OBJECT_1> relative to the <OBJECT_2>?"
-        }        
+        }
     },
     "mechanics": {
         "F_KINEMATICS_SPEED_OBJECT": {
@@ -160,7 +160,7 @@
             "task_splits": "single+multi",            
             "sub_category": "camera_characteristics",
             "choice": "mcq",            
-            "question": "Which focal‑length class best matches the perspective in the image?"
+            "question": "Which focal‑length class best matches the perspective in the image/frame?"
         }
     },
     "temporal": {

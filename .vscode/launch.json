@@ -14,9 +14,10 @@
             "args": [
                 // "--simulation_path", "/data0/sebastian.cavada/datasets/simulations_v2",
                 "--verbose",
-                // "--simulation_path", "/data0/sebastian.cavada/datasets/simulations_v3/dl3dv/random/3/c-1_no-3_d-4_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-9_20251102_063341",
-                "--simulation_path", "/data0/sebastian.cavada/datasets/simulations_v3/dl3dv/random-cam-stationary/1/c-1_no-1_d-4_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-45_20251102_165527",
+                "--simulation_path", "/data0/sebastian.cavada/datasets/simulations_v3/dl3dv/random/3/c-1_no-3_d-4_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-9_20251102_063341",
+                // "--simulation_path", "/data0/sebastian.cavada/datasets/simulations_v3/dl3dv/random-cam-stationary/1/c-1_no-1_d-4_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-45_20251102_165527",
                 "--n_scenes", "1",
+                // "--augmentation", "textual_context"
                 // "--roi_circling", "1",
                 // "--masking", "1"
                 // "--scene_context", "1"

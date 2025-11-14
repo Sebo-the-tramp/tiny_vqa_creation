@@ -43,6 +43,7 @@ def _process_one(sim_file, args):
             return []
         simulation_id_path = sim_file.replace("simulation.json", "")
         destination_simulation_id_path = os.path.join(DEST_ROOT, simulation_id_path)
+        print("Processing simulation:", sim_file)
         simulation_steps = read_simulation(
             os.path.join(simulation_id_path, "simulation_kinematics.json")
         )
@@ -58,9 +59,8 @@ def _process_one(sim_file, args):
     except Exception as e:
         # Keep the pool running even if one simulation fails
         # if VERBOSE:
-        print("Worker error on", simulation_id_path, "->", repr(e))
-        print(e.with_traceback())
-        return []
+        # print("Worker error on", simulation_id_path, "->", repr(e))
+        print(e.with_traceback())        
 
 
 from utils.saving_utils import (
@@ -157,13 +157,13 @@ def create_vqa(
     print("Starting VQA creation...")
 
     all_vqa = []
-
+ 
     for category_key, category in questions.items():
         # # current category dev
         # if (
         #     category_key != "temporal"
         # ):
-        #     continue
+        #     continue        
 
         if verbose:
             print("###" * 10, f"Processing category: {category_key}", "###" * 10)
@@ -172,7 +172,7 @@ def create_vqa(
         total_questions_in_category = len(category)
         total_correct_answers = 0
         not_implemented = 0
-        for question_key, question_data in category.items():
+        for question_key, question_data in category.items():            
             question_payload = deepcopy(question_data)
             question_payload["_question_key"] = question_key
             question_payload["_simulation_id"] = simulation_id
@@ -306,16 +306,17 @@ def main(args):
     # ready to go
     all_vqa = []
 
-    simulation_root = args.simulation_path
-    pattern = os.path.join(simulation_root, '**', 'simulation.json')
-
-    number_simulations = args.n_scenes
-
-    print("Searching for simulation files with pattern:", pattern)
-
+    simulation_roots = args.simulation_paths
     list_simulations = []
-    for sim_file in glob.glob(pattern, recursive=True):
-        list_simulations.append(sim_file)
+
+    for simulation_root in simulation_roots:
+        pattern = os.path.join(simulation_root, '**', 'simulation.json')
+
+        number_simulations = args.n_scenes
+
+        print("Searching for simulation files with pattern:", pattern)        
+        for sim_file in glob.glob(pattern, recursive=True):
+            list_simulations.append(sim_file)
 
     list_simulations.sort(key=natural_key)
 
@@ -329,7 +330,7 @@ def main(args):
     print("Found", len(list_simulations), "simulation files.")
     ctx = get_context("spawn")
     with ProcessPoolExecutor(
-        max_workers=24,
+        max_workers=12,
         initializer=_init_worker,
         initargs=(
             args.vqa_path,
@@ -387,7 +388,8 @@ if __name__ == "__main__":
         help="Path to simpler.json file or similar that contain all the vqa templates.",
     )
     parser.add_argument(
-        "--simulation_path",
+        "--simulation_paths",
+        nargs='+',
         type=str,
         # default="./sample_simulation_1000_steps_v2_kinematics.json
         # default="/Users/sebastiancavada/Desktop/tmp_Paris/vqa/data/output/sims/dl3dv-hf-gso2/3-cg/c-0_no-3_d-3_s-dl3dv-1bef58393fffbf6e34cac11d0b03dd22f65954a1668b7b9dec548f6ad44f29b5_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_dbgsub-1_20251016_013244",

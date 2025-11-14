@@ -8,7 +8,7 @@ all_objects_names = set()
 
 gso_mapping = {}
 
-with open("./utils/json/gso_mapping.json", "r") as f:
+with open("/data0/sebastian.cavada/datasets/gso/gso_mapping.json", "r") as f:
     gso_mapping = json.load(f)
 
 def get_gso_mapping():

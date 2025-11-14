@@ -436,8 +436,9 @@ def F_LAYOUT_POSITION_OBJECT_OBJECT(
         attributes, world_state, timestep
     )
 
-    object_1 = resolved_attributes["OBJECT_1"]["choice"]
-    object_2 = resolved_attributes["OBJECT_2"]["choice"]
+    # is just the opposite in the question so trick to make it work
+    object_2 = resolved_attributes["OBJECT_1"]["choice"]
+    object_1 = resolved_attributes["OBJECT_2"]["choice"]
 
     horizontal, vertical, depth, max_movement_adj = get_spatial_relationship_camera_view(
         world_state["simulation"][timestep]["objects"][object_1['id']],

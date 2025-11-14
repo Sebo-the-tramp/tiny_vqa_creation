@@ -258,10 +258,9 @@ def F_KINEMATICS_DISTANCE_TRAVELED_INTERVAL(
 @with_resolved_attributes
 def F_KINEMATICS_MOVING_OBJECT(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
-) -> int:
-    """Return the velocity of the object referenced in the question."""
+) -> int:    
 
-    assert len(attributes) == 1 and "OBJECT" in attributes
+    assert len(attributes) == 0
 
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
@@ -279,7 +278,7 @@ def F_KINEMATICS_MOVING_OBJECT(
     )
 
     resolved_attributes = resolve_attributes_visible_at_timestep(
-        attributes, world_state, timestep
+        ["OBJECT"], world_state, timestep
     )
 
     object_id = resolved_attributes["OBJECT"]["choice"]["id"]
@@ -287,7 +286,7 @@ def F_KINEMATICS_MOVING_OBJECT(
     index_timestep = visible_timesteps.index(timestep)
     list_of_position = []
     list_of_rotation = []
-    for i in range((CLIP_LENGTH - 1), -1, -1):        
+    for i in range((CLIP_LENGTH - 1), -1, -1):
         current_timestep = visible_timesteps[index_timestep - i]        
         position = get_position(world_state, object_id, current_timestep)
         rotation = get_rotation(world_state, object_id, current_timestep)
@@ -307,9 +306,15 @@ def F_KINEMATICS_MOVING_OBJECT(
             is_moving = True
             break
 
-    options = ["yes", "no"]
-    correct_idx = 0 if is_moving else 1
-    labels = options
+    # should return also the correct index, but we chose later based on is_moving
+    labels, _ = create_mc_object_names_from_dataset(
+        resolved_attributes["OBJECT"]["choice"]["name"], ["No Object"], get_all_objects_names()
+    )
+
+    if is_moving:
+        correct_idx = labels.index(resolved_attributes["OBJECT"]["choice"]["name"])
+    else:
+        correct_idx = labels.index("No Object")
 
     return fill_questions(
         question, labels, correct_idx, world_state, timestep, resolved_attributes

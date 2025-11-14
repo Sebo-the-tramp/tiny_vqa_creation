@@ -165,9 +165,9 @@ def get_spatial_relationship_camera_view(obj_1_state, obj_2_state, camera, times
     hull2 = external_points_2d(projected_eight_points_2_uv)
 
     # This was for debugging purposes only
-    # # use fake photo to load and check projection correcteness
-    # fake_photo = Image.open(f"/data0/sebastian.cavada/datasets/simulations_v3/dl3dv/random/3/c-1_no-3_d-4_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-9_20251102_063341/render/{str(timestep).zfill(6)}.png")  # dummy image just to get width and height
-    # numpy_image = np.array(fake_photo)
+    # use fake photo to load and check projection correcteness
+    fake_photo = Image.open(f"/data0/sebastian.cavada/datasets/simulations_v3/dl3dv/random/3/c-1_no-3_d-4_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-9_20251102_063341/render/{str(timestep).zfill(6)}.png")  # dummy image just to get width and height
+    numpy_image = np.array(fake_photo)
 
     # # add points to the image, red dots for object 1, blue dots for object 2
     # for point in hull1:
@@ -190,7 +190,7 @@ def get_spatial_relationship_camera_view(obj_1_state, obj_2_state, camera, times
     polygon2 = Polygon(hull2)
     intersection_polygon = polygon1.intersection(polygon2)
     intersection_area = intersection_polygon.area
-    intersection_points = np.array(intersection_polygon.exterior.coords)
+    # intersection_points = np.array(intersection_polygon.exterior.coords)
 
     # for point in intersection_points:
     #     u, v = int(point[0]), int(point[1])
@@ -207,35 +207,38 @@ def get_spatial_relationship_camera_view(obj_1_state, obj_2_state, camera, times
 
     horizontal = ""
     vertical = ""
-    depth = ""
-    horizontal_movement = u2 - u1
-    vertical_movement = v2 - v1
-    depth_movement = z2 - z1
+    depth = ""    
+    combined = ""
 
     if iou > 0.0:
-        if z1 < z2:
+        if z1 > z2:
             depth = "in front"
         else:
             depth = "behind"
-
-    if abs(u2 - u1) > abs(v2 - v1):
-        if u2 > u1:
-            horizontal = "to the right"
-        else:
-            horizontal = "to the left"
+    
+    if u2 > u1:
+        horizontal = "to the right"
     else:
-        if v2 > v1:
-            vertical = "below"
+        horizontal = "to the left"
+    if v2 > v1:
+        vertical = "below"
+    else:
+        vertical = "above"
+
+    if(depth != ""):
+        return horizontal, vertical, depth, depth
+
+    if horizontal != "" and vertical != "":
+        if(abs(u2 - u1) > abs(v2 - v1)):
+            combined = horizontal
         else:
-            vertical = "above"
+            combined = vertical
+    else:
+        combined = horizontal + vertical
 
-    movement_adjs = np.array([horizontal_movement, vertical_movement, float(depth_movement)])
-    max_movement_adj = np.argmax(movement_adjs)
-
-    return horizontal, vertical, depth, [horizontal, vertical, depth][max_movement_adj]
-
+    return horizontal, vertical, depth, combined
 
 def get_all_relational_positional_adjectives():
     directions = ["behind", "in front", "to the right", "to the left", "below", "above", \
-        "horizontally aligned", "vertically aligned", "same_depth"]
+        "horizontally aligned", "vertically aligned", "same depth"]
     return directions

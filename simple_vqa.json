@@ -148,12 +148,12 @@
             "task_splits": "single+multi",            
             "sub_category": "visibility",
             "choice": "mcq",            
-            "question": "What percentage of the <OBJECT> is visible in the image/frame?"
+            "question": "To what extent is the <OBJECT> visible in the image?"
         },
         "F_VIEWPOINT_CAMERA_ANGLE": {
             "task_splits": "single+multi",            
             "sub_category": "camera_characteristics",
-            "choice": "mcq",            
+            "choice": "mcq",
             "question": "From the camera's perspective, what is the camera's angle of view?"
         },
         "F_FOCAL_LENGTH_CLASS":{

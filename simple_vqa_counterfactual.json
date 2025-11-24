@@ -1,0 +1,60 @@
+{   
+    "spatial_reasoning": {        
+        "CF_CLOSEST_OBJECT_OBJECT": {
+            "task_splits": "single+multi",
+            "sub_category": "distance",
+            "choice": "mcq",
+            "question": "<COUNTERFACT>. Which object would be the closest to the geometrical center of the <OBJECT>?"
+        },        
+        "CF_CLOSEST_OBJECT_CAMERA": {
+            "task_splits": "single+multi",
+            "sub_category": "distance",
+            "choice": "mcq",
+            "question": "<COUNTERFACT>. Which object would be the closest to the camera?"
+        },
+        "CF_SIZE_OBJECT_BIGGER": {
+            "task_splits": "single+multi",
+            "sub_category": "size",
+            "choice": "mcq",
+            "question": "<COUNTERFACT>. Which single object would have the biggest volume?"
+        },
+        "CF_LAYOUT_POSITION_OBJECT_OBJECT":{
+            "task_splits": "single+multi",
+            "sub_category": "layout",
+            "choice": "mcq",
+            "question": "<COUNTERFACT>. From the camera’s perspective, where is the <OBJECT_1> relative to the <OBJECT_2>?"
+        }
+    },
+    "mechanics": {
+        "CF_KINEMATICS_SPEED_OBJECT": {
+            "task_splits": "multi",
+            "sub_category": "kinematics",
+            "choice": "mcq",
+            "question": "<COUNTERFACT>. What would be the speed of the <OBJECT>?" // Would this thing make sense?
+        },
+        "CF_KINEMATICS_ACCEL_OBJECT": {
+            "task_splits": "multi",
+            "sub_category": "kinematics",
+            "choice": "mcq",
+            "question": "<COUNTERFACT>. What would be the magnitude of acceleration of the <OBJECT>?"  // Would this thing make sense?
+        },
+        "CF_KINEMATICS_DISTANCE_TRAVELED_INTERVAL": {
+            "task_splits": "multi",
+            "sub_category": "kinematics",
+            "choice": "mcq",
+            "question": "<COUNTERFACT>. Considering the geometrical center of <OBJECT>, what would be the straight-line distance it has traveled during the sequence?"
+        },
+        "CF_COLLISIONS_OBJ_OBJ_FIRST":{
+            "task_splits": "multi",
+            "sub_category": "collision",
+            "choice": "mcq",
+            "question": "<COUNTERFACT>. Which of those objects would collide first with the <OBJECT> during the sequence?"
+        }, 
+        "CF_COLLISION_OBJECT_OBJECT_FRAME_SINGLE":{
+            "task_splits": "single",
+            "sub_category": "collision",
+            "choice": "mcq",
+            "question": "<COUNTERFACT>. Which object would be the <OBJECT> colliding with in the frame?"
+        }      
+    }   
+}

@@ -68,6 +68,12 @@
             "choice": "mcq",
             "question": "Which of the objects among the choices moves during the sequence?"
         },
+        "F_KINEMATICS_SYSTEM_STABILITY": {
+            "task_splits": "multi",
+            "sub_category": "kinematics",
+            "choice": "mcq",
+            "question": "Analyzing the motion trend across the 8-frame sequence, which statement best describes the system's state at the final frame?"
+        },        
         "F_COLLISIONS_OBJ_OBJ_FIRST":{
             "task_splits": "multi",
             "sub_category": "collision",
@@ -129,13 +135,31 @@
             "sub_category": "physics_property",
             "choice": "mcq",
             "question": "What is the Poisson ratio of the <OBJECT>?"
-        }, 
-        "F_MATERIAL_IDENTIFICATION_OBJECT": {
+        },
+        "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_HIGH_LEVEL": {
+            "task_splits": "single+multi",
+            "sub_category": "physics_property",
+            "choice": "mcq",
+            "question": "Which attribute best describes the <OBJECT> in terms of deformability?"
+        },
+        "F_MATERIAL_IDENTIFICATION_OBJECT_LEVEL_1": {
+            "task_splits": "single+multi",
+            "sub_category": "material_identification",
+            "choice": "mcq",
+            "question": "What is the main material category of the <OBJECT> among the choices?"
+        },
+        "F_MATERIAL_IDENTIFICATION_OBJECT_LEVEL_2": {
+            "task_splits": "single+multi",
+            "sub_category": "material_identification",
+            "choice": "mcq",
+            "question": "What material category of the <OBJECT> among the choices?"
+        },
+        "F_MATERIAL_IDENTIFICATION_OBJECT_LEVEL_3": {
             "task_splits": "single+multi",
             "sub_category": "material_identification",
             "choice": "mcq",
             "question": "What material is the <OBJECT> made of?"
-        }
+        }        
     },
     "view_point": {
         "F_VISIBILITY_OBJECT": {
@@ -144,11 +168,11 @@
             "choice": "mcq",
             "question": "Which of these objects is visible in the image/frame?"
         },
-        "F_VISIBILITY_PERCENTAGE_OBJECT": {
+        "F_OCCLUSION_PERCENTAGE_OBJECT": {
             "task_splits": "single+multi",            
             "sub_category": "visibility",
             "choice": "mcq",            
-            "question": "To what extent is the <OBJECT> visible in the image?"
+            "question": "How much of the <OBJECT> is occluded in the image/frame?"
         },
         "F_VIEWPOINT_CAMERA_ANGLE": {
             "task_splits": "single+multi",            
@@ -170,7 +194,19 @@
             "choice": "mcq",            
             "question": "Given the sequence of images A. - B. - C. - D. What is the correct rearrangement of images showing the events in the scene?"
         },
-        "F_TEMPORAL_PREDICTION_NEXT_IMAGE": {
+        "F_TEMPORAL_PREDICTION_NEXT_IMAGE_GRANULARITY_1": {
+            "task_splits": "multi",
+            "sub_category": "event_ordering",
+            "choice": "mcq", 
+            "question": "Which frame is most likely to occur after the last frame in the sequence?"
+        },
+        "F_TEMPORAL_PREDICTION_NEXT_IMAGE_GRANULARITY_5": {
+            "task_splits": "multi",
+            "sub_category": "event_ordering",
+            "choice": "mcq", 
+            "question": "Which frame is most likely to occur after the last frame in the sequence?"
+        },
+        "F_TEMPORAL_PREDICTION_NEXT_IMAGE_GRANULARITY_10": {
             "task_splits": "multi",
             "sub_category": "event_ordering",
             "choice": "mcq", 
@@ -188,6 +224,12 @@
             "choice": "mcq",
             "question": "What frame is the most likely to have been removed from the scene?"
         }, 
+        "F_TEMPORAL_ACTION_BETWEEN_FRAMES": {
+            "task_splits": "multi",
+            "sub_category": "event_ordering",
+            "choice": "mcq",
+            "question": "What is happening in the sequence between frame <FRAME_1> and frame <FRAME_2>?"
+        },
         "F_CAMERA_MOTION_DIRECTION": {
             "task_splits": "multi",
             "sub_category": "camera_motion",
@@ -199,6 +241,6 @@
             "sub_category": "camera_motion",
             "choice": "mcq",
             "question": "How does the camera’s zoom level change across the sequence?"
-        }
-    } 
+        }        
+    }    
 }

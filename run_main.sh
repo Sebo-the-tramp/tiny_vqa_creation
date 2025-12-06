@@ -18,32 +18,12 @@ cd answering_questions
 
 GENERAL_RUN_COUNT=10
 
-# python main_parallel_global.py --simulation_path "${BASE_PATH}/random" "${BASE_PATH}/random-cam-stationary" \
-#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
-#     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_global_plausibility" \
-#     --n_scenes 2000
 
 # 10K general # text - no circling
 # python main_parallel.py --simulation_path "${BASE_PATH}/random/4/" \
 #     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
 #     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_test_physics_properties" \
-#     --n_scenes 100
-
-# 1K general # text counterfactual shift
-python main_parallel_counterfactual.py --simulation_path "${BASE_PATH_CF}/shift-x" "${BASE_PATH_CF}/shift-z" \
-    --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
-    --export_format json --run_name "run_${GENERAL_RUN_COUNT}_coutnerfact_shift" \
-    --counterfactual_type "shift" \
-    --n_scenes 100
-
-# # 1K roi circling - text
-# python main_parallel.py --simulation_path "${BASE_PATH}/random" "${BASE_PATH}/random-cam-stationary" \
-#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
-#     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_roi_circling" \
-#     --augmentation "roi_circling" \
 #     --n_scenes 2000
-
-# I need another for no text + just roi circling
 
 # # 1K soft
 # python main_parallel.py --simulation_path ${BASE_PATH}/yms-variations/soft \
@@ -63,6 +43,23 @@ python main_parallel_counterfactual.py --simulation_path "${BASE_PATH_CF}/shift-
 #     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_stiff" \
 #     --n_scenes 1000
 
+
+
+# 1K general # text counterfactual shift
+# python main_parallel_counterfactual.py --simulation_path "${BASE_PATH_CF}/shift-x" "${BASE_PATH_CF}/shift-z" \
+#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
+#     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_coutnerfact_shift" \
+#     --counterfactual_type "shift" \
+#     --n_scenes 100
+
+# # 1K roi circling - text
+# python main_parallel.py --simulation_path "${BASE_PATH}/random" "${BASE_PATH}/random-cam-stationary" \
+#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
+#     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_roi_circling" \
+#     --augmentation "roi_circling" \
+#     --n_scenes 2000
+
+# I need another for no text + just roi circling
 # 
 
 # # 1K contour
@@ -86,6 +83,10 @@ python main_parallel_counterfactual.py --simulation_path "${BASE_PATH_CF}/shift-
 #     --augmentation "textual_context" \
 #     --n_scenes 2000
 
+# python main_parallel_global.py --simulation_path "${BASE_PATH}/random" "${BASE_PATH}/random-cam-stationary" \
+#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
+#     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_global_plausibility" \
+#     --n_scenes 2000
 
 ### BALANCING THE RUNS ###
 

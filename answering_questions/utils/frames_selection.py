@@ -1,15 +1,13 @@
 from utils.my_exception import ImpossibleToAnswer
 
-
 MAX_FRAMES = 8
-
 
 def sample_frames_before_timestep(
     world_state, timestep, num_frames=8, frame_interleave=1
 ):
     list_timesteps = list(world_state["simulation"].keys())
     last_frame_idx = list_timesteps.index(timestep)
-
+    
     # if there are not enough frames before -> raise exception
     if last_frame_idx - (frame_interleave * (num_frames - 1)) < 0:
         raise ImpossibleToAnswer("Not enough frames before the timestep to sample.")

@@ -15,7 +15,7 @@ Resolver = Callable[[WorldState, QuestionPayload], Answer]
 
 @lru_cache
 def _load_impl_module(mock: bool):
-    modname = ".temporal_mock" if mock else ".temporal_real"
+    modname = ".temporal_questions" if mock else ".temporal_real"
     return import_module(modname, package=__package__)
 
 
@@ -37,7 +37,7 @@ def get_function_by_name_temporal(name: str, mock: bool = False) -> Resolver:
 
 @lru_cache
 def _load_gt_module(mock: bool):
-    modname = ".temporal_mock_results"
+    modname = ".temporal_questions_results"
     return import_module(modname, package=__package__)
 
 

@@ -317,9 +317,9 @@ def F_KINEMATICS_MOVING_OBJECT(
     )
 
     if is_moving:
-        correct_idx = labels.index(resolved_attributes["OBJECT"]["choice"]["name"])
+        correct_idx = labels.index(resolved_attributes["OBJECT"]["choice"]["name"].lower())
     else:
-        correct_idx = labels.index("No Object")
+        correct_idx = labels.index("no object") # this version is correct because is lowercase
 
     return fill_questions(
         question, labels, correct_idx, world_state, timestep, resolved_attributes

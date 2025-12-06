@@ -311,6 +311,31 @@
             "sub_category": "camera_motion",
             "choice": "mcq",
             "question": "How does the camera’s zoom level change across the sequence?"
-        }        
+        },
+        
+        "F_PERSISTENCE_OBJECT_PRESENT": {
+            "task_splits": "multi",
+            "sub_category": "object_persistence",
+            "choice": "mcq",
+            "question": "Which object is present in the scene?"
+        },
+        "F_PERSISTENCE_OBJECT_DISAPPEAR": {
+            "task_splits": "multi",
+            "sub_category": "object_persistence",
+            "choice": "mcq",
+            "question": "Which object disappears and does not reappear during the sequence?"
+        },
+        "F_PERSISTENCE_OBJECT_TOTAL_COUNT": {
+            "task_splits": "multi",
+            "sub_category": "object_persistence",
+            "choice": "mcq",
+            "question": "How many objects are in the scene in total, including those currently hidden?"
+        },
+        "F_PERSISTENCE_OBJECT_TOTAL_COUNT_HIDDEN": {
+            "task_splits": "multi",
+            "sub_category": "object_persistence",
+            "choice": "mcq",
+            "question": "How many objects are present but not visible in the scene?"
+        }
     } 
 }

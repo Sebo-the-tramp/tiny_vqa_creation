@@ -18,12 +18,17 @@ cd answering_questions
 
 GENERAL_RUN_COUNT=10
 
-
 # 10K general # text - no circling
-# python main_parallel.py --simulation_path "${BASE_PATH}/random/4/" \
+python main_parallel.py --simulation_path "${BASE_PATH}/random/" \
+    --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
+    --export_format json --run_name "run_${GENERAL_RUN_COUNT}_general" \
+    --n_scenes 700
+
+# # 10K general # text - no circling
+# python main_parallel.py --simulation_path "${BASE_PATH}/random-cam-stationary/" \
 #     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
-#     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_test_physics_properties" \
-#     --n_scenes 2000
+#     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_general" \
+#     --n_scenes 700
 
 # # 1K soft
 # python main_parallel.py --simulation_path ${BASE_PATH}/yms-variations/soft \

@@ -19,7 +19,7 @@ from typing import (
 
 from utils.my_exception import ImpossibleToAnswer
 
-from utils.all_objects import get_all_objects_names, get_all_materials
+from utils.all_objects import get_all_objects_names
 
 from utils.helpers import (
     fill_questions,

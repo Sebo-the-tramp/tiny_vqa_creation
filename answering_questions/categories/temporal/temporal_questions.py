@@ -13,6 +13,9 @@ from categories.temporal.temporal_helpers import (
 )
 from utils.decorators import with_resolved_attributes
 from utils.frames_selection import uniformly_sample_frames_start_end_delta
+from utils.all_objects import get_all_objects_names
+
+from utils.my_exception import ImpossibleToAnswer
 
 from typing import (
     Any,
@@ -23,8 +26,13 @@ from typing import (
 )
 
 from utils.helpers import (
+    iter_objects,
+    fill_questions,
     get_random_integer,
+    resolve_attributes_visible_at_timestep
 )
+
+from utils.bin_creation import create_mc_object_names_from_dataset
 
 import random
 import numpy as np
@@ -45,6 +53,7 @@ SAMPLING_RATE = get_config()["sampling_rate"]
 RENDER_STEP = 1.0 / SAMPLING_RATE
 FRAME_INTERLEAVE = 4  # custom only for temporal questions (heuristic)
 MIN_PIXELS_VISIBLE = get_config()["min_pixels_visible"]
+CLIP_LENGTH = get_config()["clip_length"]
 
 @with_resolved_attributes
 def F_TEMPORAL_SEQUENCE_IMAGES(
@@ -472,3 +481,225 @@ def F_CAMERA_ZOOM_BEHAVIOR(
     labels = other_answers[:correct_index] + [answer] + other_answers[correct_index:]
 
     return [[question, labels, correct_index, given_sequence, world_state, {}]]
+
+
+# I think this is the most important one
+
+def check_visibility_sequence(
+    world_state: WorldState, obj_id: str, all_timesteps: Sequence[str],
+    min_ones: int = 4, min_zeros: int = 4, gap_limit: int = 1
+) -> Sequence[int]:
+
+    phase = "ones"  # expecting ones-block first
+
+    ones_count = zeros_count = 0
+    ones_gaps = zeros_gaps = 0
+    final_timestep = None
+    found = False
+
+    for t in all_timesteps[::FRAME_INTERLEAVE]:
+        obj_states = world_state["simulation"][t]["objects"]
+        visible = (
+            obj_id in obj_states
+            and obj_states[obj_id]["infov_pixels"] >= MIN_PIXELS_VISIBLE
+        )
+        bit = 1 if visible else 0
+
+        if phase == "ones":
+            if bit == 1:
+                ones_count += 1
+            else:
+                ones_gaps += 1
+
+            # If gap tolerance exceeded → reset
+            if ones_gaps > gap_limit:
+                ones_count = ones_gaps = 0
+
+            # If ones-block satisfied → move to zeros phase
+            if ones_count >= min_ones:
+                phase = "zeros"
+
+        elif phase == "zeros":
+            if bit == 0:
+                zeros_count += 1
+            else:
+                zeros_gaps += 1
+
+            # If gap tolerance exceeded → reset zeros-phase
+            if zeros_gaps > gap_limit:
+                zeros_count = zeros_gaps = 0
+
+            # Full pattern detected
+            if zeros_count >= min_zeros:
+                found = True
+                final_timestep = t
+                break
+
+    return found, final_timestep
+
+def compute_visibility_counts(world_state, timesteps):
+    counts = []
+
+    for t in timesteps:
+        visible_count = 0
+        objects = world_state["simulation"][t]["objects"]
+
+        for obj in objects.values():
+            if obj["infov_pixels"] >= MIN_PIXELS_VISIBLE:
+                visible_count += 1
+
+        counts.append(visible_count)
+
+    return counts
+
+def find_first_visibility_drop(counts):
+    for i in range(1, len(counts)):
+        if counts[i] < counts[i-1]:       # drop ≥ 1
+            return i                      # index of timestep where drop starts
+    return None
+
+
+@with_resolved_attributes
+def F_PERSISTENCE_OBJECT_PRESENT(
+    world_state: WorldState, question: QuestionPayload, attributes, **kwargs
+) -> Sequence[str]:
+    
+    assert len(attributes) == 0
+
+    candidate_object = None
+    for object in iter_objects(world_state):
+        found_pattern, final_timestep = check_visibility_sequence(
+            world_state, object["id"],
+            list(world_state["simulation"].keys())
+        )
+
+        if found_pattern:
+            answer = object["name"]
+            # if there are 2 objects (unlikely)
+            if candidate_object is not None:
+                raise ImpossibleToAnswer("Multiple objects found with the required persistence pattern.")
+            else:
+                candidate_object = object
+                print("Found object with persistence pattern:", answer)
+                print("At timestep:", final_timestep)
+                break
+
+    if candidate_object is None:
+        raise ImpossibleToAnswer("No object found with the required persistence pattern.")
+    
+    labels, correct_idx = create_mc_object_names_from_dataset(
+        candidate_object["name"],
+        [],
+        get_all_objects_names(),
+        num_answers=4,
+    )
+
+    resolved_attributes = resolve_attributes_visible_at_timestep(
+        attributes, world_state, final_timestep
+    )
+
+    return fill_questions(
+        question, labels, correct_idx, world_state, final_timestep, resolved_attributes
+    )
+
+
+@with_resolved_attributes
+def F_PERSISTENCE_OBJECT_DISAPPEAR(
+    world_state: WorldState, question: QuestionPayload, attributes, **kwargs
+) -> Sequence[str]:
+    
+    return F_PERSISTENCE_OBJECT_PRESENT(
+        world_state, question, kwargs["destination_simulation_id_path"]
+    )
+# this has to be really thought throughly cause as it is it can not be factually answered
+
+
+@with_resolved_attributes
+def F_PERSISTENCE_OBJECT_TOTAL_COUNT(
+    world_state: WorldState, question: QuestionPayload, attributes, **kwargs
+) -> Sequence[str]:
+
+    assert len(attributes) == 0
+
+    list_indexes = list(world_state["simulation"].keys())[::FRAME_INTERLEAVE] 
+
+    # I need to start from timestep 4*FRAME_INTERLEAVE to have enough margin if the second frame is dropping a number of visibility
+    timestep_counts = compute_visibility_counts(
+        world_state, list_indexes[4:-4]
+    )
+
+    timestep_of_hidden = find_first_visibility_drop(timestep_counts)
+
+    if timestep_of_hidden is None:
+        raise ImpossibleToAnswer("No visibility drop detected in the simulation.")
+
+    # checking the final timestep after the drop
+    final_timestep_index = min(timestep_of_hidden + 4, len(list_indexes) - 1)
+    initial_timestep_index = max(0, final_timestep_index - CLIP_LENGTH)
+
+    if final_timestep_index - initial_timestep_index < CLIP_LENGTH:
+        raise ImpossibleToAnswer("Not enough timesteps before visibility drop to answer the question.")
+
+    final_timestep = list_indexes[final_timestep_index]
+    count_objects_initial = timestep_counts[initial_timestep_index]
+
+    labels, correct_idx = create_mc_object_names_from_dataset(
+        str(count_objects_initial),
+        [],
+        [str(i) for i in range(0, 11)],
+        num_answers=4,
+    )
+
+    resolved_attributes = resolve_attributes_visible_at_timestep(
+        attributes, world_state, final_timestep
+    )
+
+    return fill_questions(
+        question, labels, correct_idx, world_state, final_timestep, resolved_attributes 
+    )
+
+
+@with_resolved_attributes
+def F_PERSISTENCE_OBJECT_TOTAL_COUNT_HIDDEN(
+    world_state: WorldState, question: QuestionPayload, attributes, **kwargs
+) -> Sequence[str]:
+
+    assert len(attributes) == 0
+
+    list_indexes = list(world_state["simulation"].keys())[::FRAME_INTERLEAVE] 
+
+    # I need to start from timestep 4*FRAME_INTERLEAVE to have enough margin if the second frame is dropping a number of visibility
+    timestep_counts = compute_visibility_counts(
+        world_state, list_indexes[4:-4]
+    )
+
+    timestep_of_hidden = find_first_visibility_drop(timestep_counts)
+
+    if timestep_of_hidden is None:
+        raise ImpossibleToAnswer("No visibility drop detected in the simulation.")
+
+    # checking the final timestep after the drop
+    final_timestep_index = min(timestep_of_hidden + 4, len(timestep_counts) - 1)
+    initial_timestep_index = max(0, final_timestep_index - CLIP_LENGTH)
+
+    if final_timestep_index - initial_timestep_index < CLIP_LENGTH:
+        raise ImpossibleToAnswer("Not enough timesteps before visibility drop to answer the question.")
+
+    final_timestep = list_indexes[final_timestep_index]
+    count_objects_initial = timestep_counts[initial_timestep_index]
+    count_objects_final = timestep_counts[final_timestep_index]
+
+    labels, correct_idx = create_mc_object_names_from_dataset(
+        str(count_objects_initial - count_objects_final),
+        [],
+        [str(i) for i in range(0, 11)],
+        num_answers=4,
+    )
+
+    resolved_attributes = resolve_attributes_visible_at_timestep(
+        attributes, world_state, final_timestep
+    )
+
+    return fill_questions(
+        question, labels, correct_idx, world_state, final_timestep, resolved_attributes 
+    )

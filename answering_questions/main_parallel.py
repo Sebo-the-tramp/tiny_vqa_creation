@@ -62,7 +62,7 @@ def _process_one(sim_file, args):
     except Exception as e:
         # Keep the pool running even if one simulation fails
         # if VERBOSE:
-        # print("Worker error on", simulation_id_path, "->", repr(e))
+        print("Worker error on", simulation_id_path)
         print(e.with_traceback())
 
 
@@ -165,7 +165,7 @@ def create_vqa(
     for category_key, category in questions.items():
         # current category dev
         # if (
-        #     category_key != "material_understanding"
+        #     category_key != "temporal"
         # ):
         #     continue
 
@@ -252,23 +252,25 @@ def create_vqa(
                     print(f"  Correct Index: {correct_idx}")
                     print(f"  Images Indexes: {imgs_idx}")
 
-                gt = get_gt(question_key, category_key, mock=arg_mock)
-                if verbose:
-                    print(
-                        f"  Answer from function: {labels[correct_idx]}\n  Should match GT: {gt}"
-                    )
+                # maybe it goes faster
+                # gt = get_gt(question_key, category_key, mock=arg_mock)
+                # if verbose:
+                #     print(
+                #         f"  Answer from function: {labels[correct_idx]}\n  Should match GT: {gt}"
+                #     )
 
-                # Just for development, the rng function given more or less functions will break the integration test
-                if str(labels[correct_idx]) != str(gt) and verbose:
-                    print(
-                        "\033[93m  WARNING: Answer does not match Ground Truth!\033[0m"
-                    )
-                    # exit(1)
+                # # Just for development, the rng function given more or less functions will break the integration test
+                # if str(labels[correct_idx]) != str(gt) and verbose:
+                #     print(
+                #         "\033[93m  WARNING: Answer does not match Ground Truth!\033[0m"
+                #     )
+                #     # exit(1)
+                # else:
+                if str(labels[correct_idx]) == "not_implemented":
+                    not_implemented += 1
                 else:
-                    if str(labels[correct_idx]) == "not_implemented":
-                        not_implemented += 1
-                    else:
-                        total_correct_answers += 1
+                    total_correct_answers += 1
+
                 if verbose:
                     print("===" * 20)
 

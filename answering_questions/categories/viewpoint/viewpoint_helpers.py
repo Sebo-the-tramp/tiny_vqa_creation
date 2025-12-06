@@ -30,10 +30,11 @@ Answer = Union[str, float, Vector, Mapping[str, Any], Sequence[str]]
 
 
 def _normalize(v):
-    n = math.sqrt(sum(x*x for x in v))
+    n = math.sqrt(sum(x * x for x in v))
     if n == 0:
         return [0.0, 0.0, 0.0]
-    return [x/n for x in v]
+    return [x / n for x in v]
+
 
 def infer_world_up(world_state, cam_up):
     """
@@ -47,28 +48,32 @@ def infer_world_up(world_state, cam_up):
         return _normalize(wu)
 
     # choose the unit axis with the largest absolute dot to cam_up
-    candidates = [[0,0,1], [0,1,0], [1,0,0]]
+    candidates = [[0, 0, 1], [0, 1, 0], [1, 0, 0]]
     cam_up_n = _normalize(cam_up)
-    best = max(candidates, key=lambda a: abs(sum(a[i]*cam_up_n[i] for i in range(3))))
+    best = max(candidates, key=lambda a: abs(sum(a[i] * cam_up_n[i] for i in range(3))))
     # align sign so cam_up • world_up >= 0
-    sign = 1.0 if sum(best[i]*cam_up_n[i] for i in range(3)) >= 0 else -1.0
-    return [sign*best[0], sign*best[1], sign*best[2]]
+    sign = 1.0 if sum(best[i] * cam_up_n[i] for i in range(3)) >= 0 else -1.0
+    return [sign * best[0], sign * best[1], sign * best[2]]
+
 
 def forward(eye, at):
-    return _normalize([at[0]-eye[0], at[1]-eye[1], at[2]-eye[2]])
+    return _normalize([at[0] - eye[0], at[1] - eye[1], at[2] - eye[2]])
+
 
 def pitch_deg(forward_vec, world_up):
     """
     Pitch is the angle above (+) or below (-) the horizontal plane.
     Using sin(pitch) = forward • world_up. Range [-90, +90] degrees.
     """
-    dot_fu = sum(forward_vec[i]*world_up[i] for i in range(3))
+    dot_fu = sum(forward_vec[i] * world_up[i] for i in range(3))
     dot_fu = max(-1.0, min(1.0, dot_fu))
     return math.degrees(math.asin(dot_fu))
+
 
 def _ensure_radians(fov_value):
     # If someone passes degrees by mistake (e.g., > pi), convert to radians.
     return fov_value if fov_value <= math.pi else math.radians(fov_value)
+
 
 def horizontal_fov_rad(fov_value, width, height, fov_axis="vertical"):
     """
@@ -81,6 +86,7 @@ def horizontal_fov_rad(fov_value, width, height, fov_axis="vertical"):
         return fov_rad
     # assume vertical FOV otherwise
     return 2.0 * math.atan(math.tan(fov_rad * 0.5) * aspect)
+
 
 def classify_camera_angle_index(pitch_deg):
     """
@@ -104,7 +110,13 @@ def classify_camera_angle_index(pitch_deg):
     else:
         label = "worm's-eye (>=60 degrees)"
 
-    labels = ["low angle (15 to 60 degrees)","eye level (-15 to 15 degrees)","high angle (-60 to -15 degrees)","bird's-eye (<=-60 degrees)","worm's-eye (>=60 degrees)"]
+    labels = [
+        "low angle (15 to 60 degrees)",
+        "eye level (-15 to 15 degrees)",
+        "high angle (-60 to -15 degrees)",
+        "bird's-eye (<=-60 degrees)",
+        "worm's-eye (>=60 degrees)",
+    ]
     # Ensure the correct label is included, then add 3 random others
     other_labels = [l for l in labels if l != label]
     random.shuffle(other_labels)
@@ -112,6 +124,7 @@ def classify_camera_angle_index(pitch_deg):
     random.shuffle(labels)
     idx = labels.index(label)
     return labels, idx
+
 
 def classify_focal_length_index(hfov_deg):
     """
@@ -132,6 +145,11 @@ def classify_focal_length_index(hfov_deg):
     else:
         label = "telephoto (<20)"
 
-    labels = ["ultra-wide (>=100)","wide (60-100)","normal (20-60)","telephoto (<20)"]
+    labels = [
+        "ultra-wide (>=100)",
+        "wide (60-100)",
+        "normal (20-60)",
+        "telephoto (<20)",
+    ]
     idx = labels.index(label)
     return labels, idx

@@ -108,16 +108,22 @@ def summarize(counts: dict) -> dict:
         "entries": total_entries,
         "encoding": counts["encoding"],
         "total_text_tokens": total_text_tokens,
-        "avg_text_tokens": (total_text_tokens / total_entries) if total_entries else 0.0,
+        "avg_text_tokens": (total_text_tokens / total_entries)
+        if total_entries
+        else 0.0,
         "max_text_tokens": max_tokens,
         "max_text_tokens_entry": max_idx,
         "total_image_tokens": total_image_tokens,
         "total_images": total_images,
-        "avg_images_per_question": (total_images / total_entries) if total_entries else 0.0,
+        "avg_images_per_question": (total_images / total_entries)
+        if total_entries
+        else 0.0,
         "image_tokens_per_image": counts["image_tokens_per_image"],
         "image_width": counts["image_width"],
         "image_height": counts["image_height"],
-        "avg_total_tokens_per_question": (total_tokens / total_entries) if total_entries else 0.0,
+        "avg_total_tokens_per_question": (total_tokens / total_entries)
+        if total_entries
+        else 0.0,
         "total_tokens": total_tokens,
     }
 
@@ -146,7 +152,9 @@ def print_report(summary: dict, dataset_path: Path, model_name: str) -> None:
     print(f"Total images referenced: {summary['total_images']}")
     print(f"Average images per question: {summary['avg_images_per_question']:.2f}")
     print(f"Total tokens (text + image): {summary['total_tokens']}")
-    print(f"Average total tokens per question: {summary['avg_total_tokens_per_question']:.2f}")
+    print(
+        f"Average total tokens per question: {summary['avg_total_tokens_per_question']:.2f}"
+    )
 
 
 def parse_args() -> argparse.Namespace:

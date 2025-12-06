@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import itertools
-import random
 
 import numpy as np
 
@@ -11,7 +9,11 @@ from shapely.geometry import Polygon
 
 from utils.helpers import as_vector
 from utils.my_exception import ImpossibleToAnswer
-from utils.geometry import (OBB_to_eight_points, polygon_area, project_points, external_points_2d)
+from utils.geometry import (
+    OBB_to_eight_points,
+    project_points,
+    external_points_2d,
+)
 
 Number = Union[int, float]
 WorldState = Mapping[str, Any]
@@ -21,7 +23,6 @@ Answer = Union[int, float, str]
 
 from utils.config import get_config
 from PIL import Image
-from pathlib import Path
 
 
 AXIS_TO_NUM = {"X": 0, "Y": 1, "Z": 2}
@@ -100,12 +101,12 @@ def get_min_distance_pointcloud_to_obb(
 ) -> float:
     """
     Compute the minimum distance from a point cloud to an oriented bounding box (obb).
-    """    
+    """
     center = np.array(obb["center"])
 
-    cnt, idx, d2 = pointcloud['kd_tree'].search_knn_vector_3d(center, 20)    
+    cnt, idx, d2 = pointcloud["kd_tree"].search_knn_vector_3d(center, 20)
     if cnt == 0:
-        return float('inf')
+        return float("inf")
     d = np.sqrt(np.asarray(d2))
     m = min(int(m), cnt)
     if d[m - 1] > iso_ratio * d[0]:
@@ -135,11 +136,12 @@ def get_closest_object(
         if distance < min_distance:
             min_distance = distance
             closest_object = obj_data
-        
+
     if closest_object is None:
         raise ImpossibleToAnswer("No other visbile objects found in the scene.")
 
     return closest_object
+
 
 def bbox_from_points(uv):
     xymin = uv.min(axis=0)
@@ -147,9 +149,9 @@ def bbox_from_points(uv):
     return np.array([xymin[0], xymin[1], xymax[0], xymax[1]])
 
 
-def get_spatial_relationship_camera_view(obj_1_state, obj_2_state, camera, timestep) -> str:
-    
-
+def get_spatial_relationship_camera_view(
+    obj_1_state, obj_2_state, camera, timestep
+) -> str:
     eight_points_1 = OBB_to_eight_points(obj_1_state["obb"])
     center_1 = obj_1_state["obb"]["center"]
     eight_points_2 = OBB_to_eight_points(obj_2_state["obb"])
@@ -159,14 +161,20 @@ def get_spatial_relationship_camera_view(obj_1_state, obj_2_state, camera, times
     u1, v1 = int(project_center_1_uv[0][0]), int(project_center_1_uv[0][1])
     project_center_2_uv, z2 = project_points(np.array([center_2]), camera)
     u2, v2 = int(project_center_2_uv[0][0]), int(project_center_2_uv[0][1])
-    projected_eight_points_1_uv, z1_eight = project_points(np.array(eight_points_1), camera)    
+    projected_eight_points_1_uv, z1_eight = project_points(
+        np.array(eight_points_1), camera
+    )
     hull1 = external_points_2d(projected_eight_points_1_uv)
-    projected_eight_points_2_uv, z2_eight = project_points(np.array(eight_points_2), camera)
+    projected_eight_points_2_uv, z2_eight = project_points(
+        np.array(eight_points_2), camera
+    )
     hull2 = external_points_2d(projected_eight_points_2_uv)
 
     # This was for debugging purposes only
     # use fake photo to load and check projection correcteness
-    fake_photo = Image.open(f"/data0/sebastian.cavada/datasets/simulations_v3/dl3dv/random/3/c-1_no-3_d-4_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-9_20251102_063341/render/{str(timestep).zfill(6)}.png")  # dummy image just to get width and height
+    fake_photo = Image.open(
+        f"/data0/sebastian.cavada/datasets/simulations_v3/dl3dv/random/3/c-1_no-3_d-4_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-9_20251102_063341/render/{str(timestep).zfill(6)}.png"
+    )  # dummy image just to get width and height
     numpy_image = np.array(fake_photo)
 
     # # add points to the image, red dots for object 1, blue dots for object 2
@@ -184,7 +192,7 @@ def get_spatial_relationship_camera_view(obj_1_state, obj_2_state, camera, times
     #         for i in range(-1, 2):
     #             for j in range(-1, 2):
     #                 if 0 <= v+i < numpy_image.shape[0] and 0 <= u+j < numpy_image.shape[1]:
-    #                     numpy_image[v+i, u+j] = [0, 0, 255]  # blue dot    
+    #                     numpy_image[v+i, u+j] = [0, 0, 255]  # blue dot
 
     polygon1 = Polygon(hull1)
     polygon2 = Polygon(hull2)
@@ -203,11 +211,11 @@ def get_spatial_relationship_camera_view(obj_1_state, obj_2_state, camera, times
     area_polygon1 = polygon1.area
     area_polygon2 = polygon2.area
     union_area = area_polygon1 + area_polygon2 - intersection_area
-    iou = intersection_area / union_area if union_area > 0 else 0.
+    iou = intersection_area / union_area if union_area > 0 else 0.0
 
     horizontal = ""
     vertical = ""
-    depth = ""    
+    depth = ""
     combined = ""
 
     if iou > 0.0:
@@ -215,7 +223,7 @@ def get_spatial_relationship_camera_view(obj_1_state, obj_2_state, camera, times
             depth = "in front"
         else:
             depth = "behind"
-    
+
     if u2 > u1:
         horizontal = "to the right"
     else:
@@ -225,11 +233,11 @@ def get_spatial_relationship_camera_view(obj_1_state, obj_2_state, camera, times
     else:
         vertical = "above"
 
-    if(depth != ""):
+    if depth != "":
         return horizontal, vertical, depth, depth
 
     if horizontal != "" and vertical != "":
-        if(abs(u2 - u1) > abs(v2 - v1)):
+        if abs(u2 - u1) > abs(v2 - v1):
             combined = horizontal
         else:
             combined = vertical
@@ -238,7 +246,17 @@ def get_spatial_relationship_camera_view(obj_1_state, obj_2_state, camera, times
 
     return horizontal, vertical, depth, combined
 
+
 def get_all_relational_positional_adjectives():
-    directions = ["behind", "in front", "to the right", "to the left", "below", "above", \
-        "horizontally aligned", "vertically aligned", "same depth"]
+    directions = [
+        "behind",
+        "in front",
+        "to the right",
+        "to the left",
+        "below",
+        "above",
+        "horizontally aligned",
+        "vertically aligned",
+        "same depth",
+    ]
     return directions

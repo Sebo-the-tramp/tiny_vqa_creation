@@ -11,7 +11,16 @@ gso_mapping = {}
 with open("/data0/sebastian.cavada/datasets/gso/gso_mapping.json", "r") as f:
     gso_mapping = json.load(f)
 
+
 def get_gso_mapping():
+
+    # adding an immediate fix:
+    gso_mapping["Rexy_Glove_Heavy_Duty_Large"] = {
+        "name": "Rexy Glove Heavy Duty Large",}
+    gso_mapping["Avengers_Gamma_Green_Smash_Fists"] = {
+        "name": "Avengers Gamma Green Smash Fists",
+    }
+
     return gso_mapping
 
 
@@ -40,7 +49,7 @@ def get_all_objects_names():
         return list(all_objects_names)
 
     for obj in gso_mapping.values():
-        all_objects_names.add(obj['name'])
+        all_objects_names.add(obj["name"])
 
     return list(all_objects_names)
 

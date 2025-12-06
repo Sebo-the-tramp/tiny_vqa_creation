@@ -1,9 +1,7 @@
 """
-Mock spatial reasoning resolvers.
+Mock material understanding resolvers.
 
-These helpers extract best-effort spatial answers from the provided world state.
-They operate on lightweight metadata (positions, orientations, region tags, etc.)
-and fall back to sensible defaults when information is missing.
+These helpers extract best-effort material answers from the provided world state.
 """
 
 from __future__ import annotations
@@ -18,26 +16,17 @@ from typing import (
     Union,
 )
 
-import random
 
 from utils.my_exception import ImpossibleToAnswer
 
 from utils.all_objects import get_all_objects_names, get_all_materials
 
 from utils.helpers import (
+    fill_questions,
     iter_objects,
-    distance_between,
     get_random_timestep_from_list,
     resolve_attributes_visible_at_timestep,
     get_visible_timesteps_for_attributes_min_objects,
-    get_continuous_subsequences_min_length,
-)
-
-from .material_understanding_helpers import (
-    get_speed,
-    fill_questions,
-    get_acceleration,
-    get_position,
 )
 
 from utils.config import get_config
@@ -50,6 +39,8 @@ from utils.bin_creation import (
     create_mc_object_names_from_dataset,
 )
 
+from .material_understanding_helpers import get_material_dataset_different_from_target
+
 Number = Union[int, float]
 Vector = Tuple[float, float, float]
 WorldState = Mapping[str, Any]
@@ -61,6 +52,8 @@ MOVEMENT_TOLERANCE = get_config()["movement_tolerance"]
 VISIBILITY_THRESHOLD = get_config()["visibility_threshold"]
 THRESHOLD_DIFFERENCE_PERCENTAGE = get_config()["threshold_difference_percentage"]
 MIN_VISIBLE_PIXELS = get_config()["min_pixels_visible"]
+MAX_ALLOWED_DIFFERENCE_YOUNGS_MODULUS = get_config()["max_allowed_difference_youngs_modulus"]
+MAX_ALLOWED_DIFFERENCE_POISSON_RATIO = get_config()["max_allowed_difference_poisson_ratio"]
 
 ## --- Resolver functions -- ##
 
@@ -73,12 +66,10 @@ def F_MASS_OBJECT(
 
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        attributes, world_state, min_objects=kwargs['current_world_number_of_objects']
+        attributes, world_state, min_objects=kwargs["current_world_number_of_objects"]
     )
-    
-    timestep = get_random_timestep_from_list(
-        visible_timesteps, question
-    )
+
+    timestep = get_random_timestep_from_list(visible_timesteps, question)
 
     resolved_attributes = resolve_attributes_visible_at_timestep(
         attributes, world_state, timestep
@@ -105,17 +96,15 @@ def F_MASS_HEAVIEST_OBJECT(
 ) -> int:
     assert len(attributes) == 0
 
-    if kwargs['current_world_number_of_objects'] < 2:
+    if kwargs["current_world_number_of_objects"] < 2:
         raise ImpossibleToAnswer("Not enough objects in the scene.")
 
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        ["OBJECT"], world_state, min_objects=kwargs['current_world_number_of_objects']
+        ["OBJECT"], world_state, min_objects=kwargs["current_world_number_of_objects"]
     )
 
-    timestep = get_random_timestep_from_list(
-        visible_timesteps, question
-    )
+    timestep = get_random_timestep_from_list(visible_timesteps, question)
 
     resolved_attributes = resolve_attributes_visible_at_timestep(
         attributes, world_state, timestep
@@ -141,7 +130,10 @@ def F_MASS_HEAVIEST_OBJECT(
     heaviest_object_mass, heaviest_visible_object = object_ordered_by_mass[0]
     second_heaviest_object_mass, _ = object_ordered_by_mass[1]
 
-    if heaviest_object_mass - second_heaviest_object_mass < THRESHOLD_DIFFERENCE_PERCENTAGE * second_heaviest_object_mass:
+    if (
+        heaviest_object_mass - second_heaviest_object_mass
+        < THRESHOLD_DIFFERENCE_PERCENTAGE * second_heaviest_object_mass
+    ):
         raise ImpossibleToAnswer("No single heaviest object in the scene.")
 
     presents = [obj["name"] for obj in iter_objects(world_state)]
@@ -164,17 +156,15 @@ def F_MASS_LIGHTEST_OBJECT(
 ) -> int:
     assert len(attributes) == 0
 
-    if kwargs['current_world_number_of_objects'] < 2:
+    if kwargs["current_world_number_of_objects"] < 2:
         raise ImpossibleToAnswer("Not enough objects in the scene.")
 
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
         ["OBJECT"], world_state, min_objects=1
     )
-    
-    timestep = get_random_timestep_from_list(
-        visible_timesteps, question
-    )
+
+    timestep = get_random_timestep_from_list(visible_timesteps, question)
 
     resolved_attributes = resolve_attributes_visible_at_timestep(
         attributes, world_state, timestep
@@ -200,7 +190,10 @@ def F_MASS_LIGHTEST_OBJECT(
     lightest_object_mass, lightest_visible_object = object_ordered_by_mass[-1]
     second_lightest_object_mass, _ = object_ordered_by_mass[-2]
 
-    if lightest_object_mass - second_lightest_object_mass < THRESHOLD_DIFFERENCE_PERCENTAGE * second_lightest_object_mass:
+    if (
+        lightest_object_mass - second_lightest_object_mass
+        < THRESHOLD_DIFFERENCE_PERCENTAGE * second_lightest_object_mass
+    ):
         raise ImpossibleToAnswer("No single lightest object in the scene.")
 
     presents = [obj["name"] for obj in iter_objects(world_state)]
@@ -218,56 +211,17 @@ def F_MASS_LIGHTEST_OBJECT(
 
 
 @with_resolved_attributes
-def F_MASS_COMPARE_OBJECTS(
-    world_state: WorldState, question: QuestionPayload, attributes, **kwargs
-) -> int:
-    assert (
-        len(attributes) == 2 and "OBJECT_1" in attributes and "OBJECT_2" in attributes
-    )
-
-    # First we find the pairs of objects visible
-    visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        ["OBJECT"], world_state, min_objects=1
-    )
-    
-    timestep = get_random_timestep_from_list(
-        visible_timesteps, question
-    )
-
-    resolved_attributes = resolve_attributes_visible_at_timestep(
-        attributes, world_state, timestep
-    )
-
-    obj1 = resolved_attributes["OBJECT_1"]["choice"]
-    obj2 = resolved_attributes["OBJECT_2"]["choice"]
-
-    options = ["yes", "no"]
-
-    if obj1["mass"] < obj2["mass"]:
-        correct_idx = 1  # no
-    else:
-        correct_idx = 0  # yes
-
-    return fill_questions(
-        question, options, correct_idx, world_state, timestep, resolved_attributes
-    )
-
-
-@with_resolved_attributes
 def F_PHYSICS_PROPERTY_DENSITY_OBJECT(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
     assert len(attributes) == 1 and "OBJECT"
 
-    # First we find the pairs of objects visible
-    # First we find the pairs of objects visible
+    # First we find the pairs of objects visible    
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
         ["OBJECT"], world_state, min_objects=1
     )
-    
-    timestep = get_random_timestep_from_list(
-        visible_timesteps, question
-    )
+
+    timestep = get_random_timestep_from_list(visible_timesteps, question)
 
     resolved_attributes = resolve_attributes_visible_at_timestep(
         attributes, world_state, timestep
@@ -287,6 +241,48 @@ def F_PHYSICS_PROPERTY_DENSITY_OBJECT(
         question, labels, correct_idx, world_state, timestep, resolved_attributes
     )
 
+@with_resolved_attributes
+def F_PHYSICS_PROPERTY_DENSITY_OBJECT_RELATIVE(
+    world_state: WorldState, question: QuestionPayload, attributes, **kwargs
+) -> int:
+    assert len(attributes) == 0
+
+    # First we find the pairs of objects visible    
+    visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
+        ["OBJECT"], world_state, min_objects=1
+    )
+
+    timestep = get_random_timestep_from_list(visible_timesteps, question)
+
+    denser_object = None    
+    for object in iter_objects(world_state):
+        obj_state = world_state["simulation"][timestep]["objects"][object["id"]]
+
+        is_object_visible = (
+            obj_state["infov_pixels"] > MIN_VISIBLE_PIXELS
+            and obj_state["fov_visibility"] >= VISIBILITY_THRESHOLD
+        )
+
+        if is_object_visible:
+            if denser_object is None or object["props"]["rhos"] > denser_object["props"]["rhos"]:
+                denser_object = object
+
+    resolved_attributes = resolve_attributes_visible_at_timestep(
+        attributes, world_state, timestep
+    )
+
+    presents = [obj["name"] for obj in iter_objects(world_state)]
+    labels, correct_idx = create_mc_object_names_from_dataset(
+        denser_object["name"],
+        presents,
+        get_all_objects_names(),
+        num_answers=4,
+    )
+
+    return fill_questions(
+        question, labels, correct_idx, world_state, timestep, resolved_attributes
+    )
+
 
 @with_resolved_attributes
 def F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT(
@@ -294,15 +290,12 @@ def F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT(
 ) -> int:
     assert len(attributes) == 1 and "OBJECT"
 
-    # First we find the pairs of objects visible
-    # First we find the pairs of objects visible
+    # First we find the pairs of objects visible    
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
         ["OBJECT"], world_state, min_objects=1
     )
     # if we are in a multi-image setting, we need to ensure there are enough frames
-    timestep = get_random_timestep_from_list(
-        visible_timesteps, question
-    )
+    timestep = get_random_timestep_from_list(visible_timesteps, question)
 
     resolved_attributes = resolve_attributes_visible_at_timestep(
         attributes, world_state, timestep
@@ -322,6 +315,214 @@ def F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT(
         question, labels, correct_idx, world_state, timestep, resolved_attributes
     )
 
+@with_resolved_attributes
+def F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR(
+    world_state: WorldState, question: QuestionPayload, attributes, **kwargs
+) -> int:    
+
+    assert len(attributes) == 1 and "OBJECT"
+
+    # First we find the pairs of objects visible    
+    visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
+        ["OBJECT"], world_state, min_objects=1
+    )
+    # if we are in a multi-image setting, we need to ensure there are enough frames
+    timestep = get_random_timestep_from_list(visible_timesteps, question)
+
+    resolved_attributes = resolve_attributes_visible_at_timestep(
+        attributes, world_state, timestep
+    )
+
+    object = resolved_attributes["OBJECT"]["choice"]
+
+    youngs_modulus = object["props"]["yms"]
+
+    # search for another object with similar young's modulus
+    similar_object = None
+    similar_object_count = 0
+    
+    for obj in iter_objects(world_state):
+        if obj["id"] == object["id"]:
+            continue  # skip the same object
+        difference = abs(obj["props"]["yms"] - youngs_modulus)
+
+        if difference < MAX_ALLOWED_DIFFERENCE_YOUNGS_MODULUS:            
+            similar_object = obj
+            similar_object_count += 1
+
+    if similar_object_count >= 2:
+        raise ImpossibleToAnswer("Too many similar objects in the scene. Ambiguous question.")
+
+    if similar_object is None:
+        similar_object = {"name": "None of the objects"}
+    
+    presents = [obj["name"] for obj in iter_objects(world_state)]
+    labels, correct_idx = create_mc_object_names_from_dataset(
+        similar_object["name"],
+        presents,
+        get_all_objects_names(),
+        num_answers=4,
+    )
+
+    return fill_questions(
+        question, labels, correct_idx, world_state, timestep, resolved_attributes
+    )
+
+@with_resolved_attributes
+def F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR_NON_TECHNICAL(
+    world_state: WorldState, question: QuestionPayload, attributes, **kwargs
+) -> int:
+    # better to reuse the previous function
+    return F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR(
+        world_state, question, kwargs["destination_simulation_id_path"]
+    )
+
+@with_resolved_attributes
+def F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST(
+    world_state: WorldState, question: QuestionPayload, attributes, **kwargs
+) -> int:
+    
+    assert len(attributes) == 0
+
+    # First we find the pairs of objects visible    
+    visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
+        ["OBJECT"], world_state, min_objects=1
+    )
+    # if we are in a multi-image setting, we need to ensure there are enough frames
+    timestep = get_random_timestep_from_list(visible_timesteps, question)
+
+    resolved_attributes = resolve_attributes_visible_at_timestep(
+        attributes, world_state, timestep
+    )
+
+    # search for another object with similar young's modulus
+    highest_modulus_object = None    
+    highest_modulus = -float('inf')
+    highest_modulus_count = 0
+    MIN_DIFFERENCE_YOUNGS_MODULUS_PERCENTAGE = 0.1  # to avoid selecting objects with very similar modulus
+
+    for obj in iter_objects(world_state):
+        if obj["props"]["yms"] > highest_modulus + MIN_DIFFERENCE_YOUNGS_MODULUS_PERCENTAGE * highest_modulus:
+            highest_modulus = obj["props"]["yms"]
+            highest_modulus_object = obj
+            highest_modulus_count += 1
+
+    if highest_modulus_count > 1:
+        raise ImpossibleToAnswer("Too many objects with similar highest Young's modulus. Ambiguous question.")
+
+    if highest_modulus_object is None:
+        raise ImpossibleToAnswer("No objects found in the scene.")
+
+    presents = [obj["name"] + str(obj["props"]["yms"]) for obj in iter_objects(world_state)]
+    labels, correct_idx = create_mc_object_names_from_dataset(
+        highest_modulus_object["name"] + str(highest_modulus_object["props"]["yms"]),
+        presents,
+        get_all_objects_names(),
+        num_answers=4,
+    )
+
+    return fill_questions(
+        question, labels, correct_idx, world_state, timestep, resolved_attributes
+    )
+
+@with_resolved_attributes
+def F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST_NON_TECHNICAL(
+    world_state: WorldState, question: QuestionPayload, attributes, **kwargs
+) -> int:
+    # better to reuse the previous function
+    return F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST(
+        world_state, question, kwargs["destination_simulation_id_path"]
+    )
+
+@with_resolved_attributes
+def F_PHYSICS_PROPERTY_YOUNG_MODULUS_BEHAVIOR(
+    world_state: WorldState, question: QuestionPayload, attributes, **kwargs
+) -> int:
+
+    assert len(attributes) == 1 and "OBJECT" in attributes
+
+    # First we find the pairs of objects visible    
+    visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
+        ["OBJECT"], world_state, min_objects=1
+    )
+    # if we are in a multi-image setting, we need to ensure there are enough frames
+    timestep = get_random_timestep_from_list(visible_timesteps, question)
+
+    resolved_attributes = resolve_attributes_visible_at_timestep(
+        attributes, world_state, timestep
+    )
+
+    object = resolved_attributes["OBJECT"]["choice"]
+    youngs_modulus = object["props"]["yms"]
+
+    E = youngs_modulus  # in Pascals
+    E_steel = 200e9
+    r = E / E_steel
+
+    if r > 3:
+        correct_idx = 0   # Much stiffer
+    elif r > 0.3:
+        correct_idx = 1   # Similar stiffness
+    elif r > 0.05:
+        correct_idx = 2   # Slightly softer
+    else:
+        correct_idx = 3   # Much softer
+
+    labels = [
+        "Much stiffer than a steel rod",
+        "Similar stiffness to a steel rod",
+        "Slightly softer than a steel rod",
+        "Much softer than a steel rod"
+    ]
+
+    return fill_questions(
+        question, labels, correct_idx, world_state, timestep, resolved_attributes
+    )
+
+
+@with_resolved_attributes
+def F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_HIGH_LEVEL(
+    world_state: WorldState, question: QuestionPayload, attributes, **kwargs
+) -> int:
+
+    assert len(attributes) == 1 and "OBJECT" in attributes
+
+    # First we find the pairs of objects visible    
+    visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
+        ["OBJECT"], world_state, min_objects=1
+    )
+    # if we are in a multi-image setting, we need to ensure there are enough frames
+    timestep = get_random_timestep_from_list(visible_timesteps, question)
+
+    resolved_attributes = resolve_attributes_visible_at_timestep(
+        attributes, world_state, timestep
+    )
+
+    object = resolved_attributes["OBJECT"]["choice"]
+    youngs_modulus = object["props"]["yms"]
+
+    E = youngs_modulus  # in Pascals
+
+    if E < 0.5e9:
+        correct_idx = 3   # Highly Deformable
+    elif E < 10e9:
+        correct_idx = 2   # Soft/Compliant
+    elif E < 100e9:
+        correct_idx = 1   # Semi-Rigid
+    else:
+        correct_idx = 0   # Rigid
+
+    labels = [
+        "Rigid (No visible deformation)",
+        "Semi-Rigid (Slight flex)",
+        "Soft (keeps its shape)",
+        "Highly deformable (loses its shape)"
+    ]
+
+    return fill_questions(
+        question, labels, correct_idx, world_state, timestep, resolved_attributes
+    )
+
 
 @with_resolved_attributes
 def F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT(
@@ -329,15 +530,12 @@ def F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT(
 ) -> int:
     assert len(attributes) == 1 and "OBJECT"
 
-    # First we find the pairs of objects visible
-    # First we find the pairs of objects visible
+    # First we find the pairs of objects visible    
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
         ["OBJECT"], world_state, min_objects=1
     )
 
-    timestep = get_random_timestep_from_list(
-        visible_timesteps, question
-    )
+    timestep = get_random_timestep_from_list(visible_timesteps, question)
 
     resolved_attributes = resolve_attributes_visible_at_timestep(
         attributes, world_state, timestep
@@ -357,9 +555,8 @@ def F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT(
         question, labels, correct_idx, world_state, timestep, resolved_attributes
     )
 
-
 @with_resolved_attributes
-def F_MATERIAL_IDENTIFICATION_OBJECT(
+def F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
     assert len(attributes) == 1 and "OBJECT"
@@ -368,18 +565,289 @@ def F_MATERIAL_IDENTIFICATION_OBJECT(
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
         ["OBJECT"], world_state, min_objects=1
     )
-    timestep = get_random_timestep_from_list(
-        visible_timesteps, question
-    )
+
+    timestep = get_random_timestep_from_list(visible_timesteps, question)
 
     resolved_attributes = resolve_attributes_visible_at_timestep(
         attributes, world_state, timestep
     )
 
-    object = resolved_attributes["OBJECT"]["choice"]    
+    object = resolved_attributes["OBJECT"]["choice"]
+    poisson_ratio = object["props"]["prs"]
+
+    similar_object = None
+    similar_object_count = 0    
+
+    for obj in iter_objects(world_state):
+        if obj["id"] == object["id"]:
+            continue  # skip the same object
+        difference = abs(obj["props"]["prs"] - poisson_ratio)
+        if difference < MAX_ALLOWED_DIFFERENCE_POISSON_RATIO:
+            similar_object = obj
+            similar_object_count += 1
+
+        if similar_object_count >= 2:
+            raise ImpossibleToAnswer("Too many similar objects in the scene. Ambiguous question.")
+        
+    if similar_object is None:
+        similar_object = {"name": "None of the objects", "props": {"prs": -1}}
+
+    presents = [obj["name"] + " " + str(obj["props"]["prs"]) for obj in iter_objects(world_state)]
+    labels, correct_idx = create_mc_object_names_from_dataset(
+        similar_object["name"] + " " + str(similar_object["props"]["prs"]),
+        presents,
+        get_all_objects_names(),
+        num_answers=4,
+    )
+
+    return fill_questions(
+        question, labels, correct_idx, world_state, timestep, resolved_attributes
+    )
+
+@with_resolved_attributes
+def F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR_NON_TECHNICAL(
+    world_state: WorldState, question: QuestionPayload, attributes, **kwargs
+) -> int:
+    # better to reuse the previous function
+    return F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR(
+        world_state, question, kwargs["destination_simulation_id_path"]
+    )
+
+
+@with_resolved_attributes
+def F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST(
+    world_state: WorldState, question: QuestionPayload, attributes, **kwargs
+) -> int:
+
+    assert len(attributes) == 0
+
+    # First we find the pairs of objects visible    
+    visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
+        ["OBJECT"], world_state, min_objects=1
+    )
+
+    timestep = get_random_timestep_from_list(visible_timesteps, question)
+
+    resolved_attributes = resolve_attributes_visible_at_timestep(
+        attributes, world_state, timestep
+    )
+
+    highest_poisson_ratio_object = None    
+    highest_poisson_ratio = -float('inf')
+    highest_poisson_ratio_count = 0
+
+    for obj in iter_objects(world_state):        
+        if obj["props"]["prs"] >= highest_poisson_ratio:            
+            highest_poisson_ratio = obj["props"]["prs"]
+            highest_poisson_ratio_object = obj
+            highest_poisson_ratio_count += 1
+    if highest_poisson_ratio_object is None:
+        raise ImpossibleToAnswer("No objects found in the scene.")
+    
+    if highest_poisson_ratio_count >= 2:
+        raise ImpossibleToAnswer("Too many objects with similar highest Poisson's ratio. Ambiguous question.")
+    
+    presents = [obj["name"] for obj in iter_objects(world_state)]
+    labels, correct_idx = create_mc_object_names_from_dataset(
+        highest_poisson_ratio_object["name"],
+        presents,
+        get_all_objects_names(),
+        num_answers=4,
+    )
+
+    return fill_questions(
+        question, labels, correct_idx, world_state, timestep, resolved_attributes
+    )
+
+
+@with_resolved_attributes
+def F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST_NON_TECHNICAL(
+    world_state: WorldState, question: QuestionPayload, attributes, **kwargs
+) -> int:
+    # better to reuse the previous function
+    return F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST(
+        world_state, question, kwargs["destination_simulation_id_path"]
+    )
+
+@with_resolved_attributes
+def F_PHYSICS_PROPERTY_POISSON_DEFORMATION(
+    world_state: WorldState, question: QuestionPayload, attributes, **kwargs
+) -> int:
+    
+    assert len(attributes) == 1 and "OBJECT"
+
+    # First we find the pairs of objects visible    
+    visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
+        ["OBJECT"], world_state, min_objects=1
+    )
+
+    timestep = get_random_timestep_from_list(visible_timesteps, question)
+
+    resolved_attributes = resolve_attributes_visible_at_timestep(
+        attributes, world_state, timestep
+    )
+
+    object = resolved_attributes["OBJECT"]["choice"]
+
+    poisson_ratio = object["props"]["prs"]
+
+    if poisson_ratio < 0.0:
+        correct_idx = 0  # Auxetic
+    if poisson_ratio <= 0.35:
+        correct_idx = 1  # Rigid
+    elif poisson_ratio <= 0.45:    
+        correct_idx = 2  # Soft/Compliant
+    else:
+        correct_idx = 3  # Highly Deformable
+
+    labels = [
+        "It would contract sideways instead of expanding",
+        "It would show almost no sideways change",
+        "It would expand sideways slightly",
+        "It would expand sideways noticeably"
+    ]
+    
+    return fill_questions(
+        question, labels, correct_idx, world_state, timestep, resolved_attributes
+    )
+
+
+@with_resolved_attributes
+def F_MATERIAL_IDENTIFICATION_SIMILAR_OBJECT(
+    world_state: WorldState, question: QuestionPayload, attributes, **kwargs
+) -> int:
+    assert len(attributes) == 1 and "OBJECT"
+
+    # First we find the pairs of objects visible
+    visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
+        ["OBJECT"], world_state, min_objects=1
+    )
+    timestep = get_random_timestep_from_list(visible_timesteps, question)
+
+    resolved_attributes = resolve_attributes_visible_at_timestep(
+        attributes, world_state, timestep
+    )
+
+    object = resolved_attributes["OBJECT"]["choice"]
+    material = object["description"]["material_group"]
+        
+    present = []
+
+    object_similar = None
+    similar_object_count = 0
+
+    for obj in iter_objects(world_state):
+        if obj["description"]["material_group"] == material and obj["id"] != object["id"]:            
+            object_similar = obj
+            similar_object_count += 1        
+    
+    present = []
+    for obj in iter_objects(world_state):
+        if object_similar is not None and obj["id"] == object_similar["id"]:
+            continue  # skip the similar object
+        present.append(obj["name"])
+
+    if similar_object_count != 1:
+        object_similar = {"name": "None of the objects"}
+
+    if similar_object_count > 1:
+        raise ImpossibleToAnswer("Too many similar objects in the scene. Ambiguous question.")
+
+    options, correct_idx = create_mc_object_names_from_dataset(
+        object_similar["name"], present, get_all_objects_names(), num_answers=4
+    )
+
+    return fill_questions(
+        question, options, correct_idx, world_state, timestep, resolved_attributes
+    )
+
+
+@with_resolved_attributes
+def F_MATERIAL_IDENTIFICATION_OBJECT_LEVEL_1(
+    world_state: WorldState, question: QuestionPayload, attributes, **kwargs
+) -> int:
+    assert len(attributes) == 1 and "OBJECT"
+
+    # First we find the pairs of objects visible
+    visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
+        ["OBJECT"], world_state, min_objects=1
+    )
+    timestep = get_random_timestep_from_list(visible_timesteps, question)
+
+    resolved_attributes = resolve_attributes_visible_at_timestep(
+        attributes, world_state, timestep
+    )
+
+    object = resolved_attributes["OBJECT"]["choice"]
     material = object["description"]["material_group"]
 
-    MATERIALS_ALL = get_all_materials()
+    MATERIALS_ALL, target_material_level_1 = \
+        get_material_dataset_different_from_target(material, target_level=1)
+
+    present = []
+
+    options, correct_idx = create_mc_object_names_from_dataset(
+        target_material_level_1, present, MATERIALS_ALL, num_answers=4
+    )
+
+    return fill_questions(
+        question, options, correct_idx, world_state, timestep, resolved_attributes
+    )
+
+
+@with_resolved_attributes
+def F_MATERIAL_IDENTIFICATION_OBJECT_LEVEL_2(
+    world_state: WorldState, question: QuestionPayload, attributes, **kwargs
+) -> int:
+    assert len(attributes) == 1 and "OBJECT"
+
+    # First we find the pairs of objects visible
+    visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
+        ["OBJECT"], world_state, min_objects=1
+    )
+    timestep = get_random_timestep_from_list(visible_timesteps, question)
+
+    resolved_attributes = resolve_attributes_visible_at_timestep(
+        attributes, world_state, timestep
+    )
+
+    object = resolved_attributes["OBJECT"]["choice"]
+    material = object["description"]["material_group"]
+
+    MATERIALS_ALL, target_material_level_2 = \
+        get_material_dataset_different_from_target(material, target_level=2)
+
+    present = []
+
+    options, correct_idx = create_mc_object_names_from_dataset(
+        target_material_level_2, present, MATERIALS_ALL, num_answers=4
+    )
+
+    return fill_questions(
+        question, options, correct_idx, world_state, timestep, resolved_attributes
+    )
+
+
+@with_resolved_attributes
+def F_MATERIAL_IDENTIFICATION_OBJECT_LEVEL_3(
+    world_state: WorldState, question: QuestionPayload, attributes, **kwargs
+) -> int:
+    assert len(attributes) == 1 and "OBJECT"
+
+    # First we find the pairs of objects visible
+    visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
+        ["OBJECT"], world_state, min_objects=1
+    )
+    timestep = get_random_timestep_from_list(visible_timesteps, question)
+
+    resolved_attributes = resolve_attributes_visible_at_timestep(
+        attributes, world_state, timestep
+    )
+
+    object = resolved_attributes["OBJECT"]["choice"]
+    material = object["description"]["material_group"]
+
+    MATERIALS_ALL, target_material_level_3 = get_material_dataset_different_from_target(material, target_level=3)
 
     present = []
 
@@ -388,12 +856,8 @@ def F_MATERIAL_IDENTIFICATION_OBJECT(
             print("Patched material for object:", obj["model"])
         present.append(obj["description"].get("material_group", None))
 
-    # present = [
-    #     obj["description"]["material_group"] for obj in iter_objects(world_state)
-    # ]
-
     options, correct_idx = create_mc_object_names_from_dataset(
-        material, present, MATERIALS_ALL, num_answers=4
+        target_material_level_3, present, MATERIALS_ALL, num_answers=4
     )
 
     return fill_questions(

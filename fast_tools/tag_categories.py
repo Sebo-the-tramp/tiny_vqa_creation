@@ -63,7 +63,9 @@ def normalise_question(raw: str) -> str:
     return text
 
 
-def match_template(question: str, templates: Dict[str, Tuple[str, str, dict]]) -> Tuple[str, str, dict]:
+def match_template(
+    question: str, templates: Dict[str, Tuple[str, str, dict]]
+) -> Tuple[str, str, dict]:
     """Find the template whose normalised text is contained in the question."""
     normalised = normalise_question(question)
     for template, meta in templates.items():

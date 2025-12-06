@@ -1,10 +1,9 @@
 from __future__ import annotations
 
-import random
 
 import numpy as np
 
-from typing import Any, Mapping, Optional, Tuple, Union, List
+from typing import Any, Mapping, Optional, Tuple, Union
 
 from utils.helpers import as_vector
 
@@ -15,12 +14,12 @@ WorldState = Mapping[str, Any]
 QuestionPayload = Mapping[str, Any]
 Answer = Union[int, float, str]
 
-from utils.helpers import fill_template
+# from utils.helpers import fill_template
 
-from utils.frames_selection import (
-    sample_frames_at_timesteps,
-    sample_frames_before_timestep,
-)
+# from utils.frames_selection import (
+#     sample_frames_at_timesteps,
+#     sample_frames_before_timestep,
+# )
 
 from utils.config import get_config
 
@@ -31,42 +30,45 @@ CLIP_LENGTH = get_config()["clip_length"]
 ## --- Helper functions --- ##
 
 
-def fill_questions(
-    question, labels, correct_idx, world_state, timestep, resolved_attributes
-) -> List:
-    questions = []
-    if "single" in question["task_splits"]:
-        question_copy = question.copy()
-        question_copy["task_splits"] = "single"  # ensure the question knows it's
-        fill_template(question_copy, resolved_attributes)
-        questions.append(
-            [
-                question_copy,
-                labels,
-                correct_idx,
-                sample_frames_at_timesteps(world_state, [timestep]),
-                world_state,
-                resolved_attributes
-            ]
-        )
-    if "multi" in question["task_splits"]:
-        question_copy = question.copy()
-        question_copy["task_splits"] = "multi"  # ensure the question knows it's
-        fill_template(question_copy, resolved_attributes)
-        questions.append(
-            [
-                question_copy,
-                labels,
-                correct_idx,
-                sample_frames_before_timestep(
-                    world_state, timestep, num_frames=CLIP_LENGTH, frame_interleave=FRAME_INTERLEAVE
-                ),
-                world_state,
-                resolved_attributes
-            ]
-        )
+# def fill_questions(
+#     question, labels, correct_idx, world_state, timestep, resolved_attributes
+# ) -> List:
+#     questions = []
+#     if "single" in question["task_splits"]:
+#         question_copy = question.copy()
+#         question_copy["task_splits"] = "single"  # ensure the question knows it's
+#         fill_template(question_copy, resolved_attributes)
+#         questions.append(
+#             [
+#                 question_copy,
+#                 labels,
+#                 correct_idx,
+#                 sample_frames_at_timesteps(world_state, [timestep]),
+#                 world_state,
+#                 resolved_attributes,
+#             ]
+#         )
+#     if "multi" in question["task_splits"]:
+#         question_copy = question.copy()
+#         question_copy["task_splits"] = "multi"  # ensure the question knows it's
+#         fill_template(question_copy, resolved_attributes)
+#         questions.append(
+#             [
+#                 question_copy,
+#                 labels,
+#                 correct_idx,
+#                 sample_frames_before_timestep(
+#                     world_state,
+#                     timestep,
+#                     num_frames=CLIP_LENGTH,
+#                     frame_interleave=FRAME_INTERLEAVE,
+#                 ),
+#                 world_state,
+#                 resolved_attributes,
+#             ]
+#         )
 
-    return questions
+#     return questions
 
 
 def get_position(
@@ -78,13 +80,12 @@ def get_position(
     ]
     return as_vector(current_timestep_involved_object)
 
+
 def get_rotation(
     world_state: Mapping[str, Any], object_id: str, timestep: str
 ) -> Optional[Tuple[float, ...]]:
     timestep_world = world_state["simulation"][timestep]
-    current_timestep_involved_object = timestep_world["objects"][object_id]["obb"][
-        "R"
-    ]
+    current_timestep_involved_object = timestep_world["objects"][object_id]["obb"]["R"]
     R_mat = np.array(current_timestep_involved_object)
 
     # Re-orthogonalize via SVD to enforce det=+1
@@ -93,8 +94,8 @@ def get_rotation(
     if np.linalg.det(R_fixed) < 0:  # handle left-handed reflections
         U[:, -1] *= -1
         R_fixed = U @ Vt
-        
-    return R.from_matrix(R_fixed).as_euler('xyz', degrees=True)
+
+    return R.from_matrix(R_fixed).as_euler("xyz", degrees=True)
 
 
 def is_moving(object_id: str, timestep: str, world_state: Mapping[str, Any]) -> bool:
@@ -116,7 +117,7 @@ def get_acceleration(
 
     # this should work with kinematics_ver_2
     current_timestep_involved_object_velocity = timestep_world["objects"][object_id][
-    "kinematics"
+        "kinematics"
     ]
 
     return current_timestep_involved_object_velocity["accel"]

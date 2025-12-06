@@ -30,7 +30,9 @@ def discover_videos(root: Path, suffix: str) -> List[Path]:
     if not root.exists():
         raise FileNotFoundError(f"Source directory not found: {root}")
     matches = sorted(
-        path for path in root.rglob("*") if path.is_file() and path.name.endswith(suffix)
+        path
+        for path in root.rglob("*")
+        if path.is_file() and path.name.endswith(suffix)
     )
     if not matches:
         raise FileNotFoundError(f"No videos ending with {suffix!r} found under {root}")
@@ -61,7 +63,9 @@ def probe_resolution(video: Path) -> Tuple[int, int]:
         width_str, height_str = result.stdout.strip().split("x")
         width, height = int(width_str), int(height_str)
     except ValueError as exc:
-        raise RuntimeError(f"Could not parse resolution from ffprobe output: {result.stdout!r}") from exc
+        raise RuntimeError(
+            f"Could not parse resolution from ffprobe output: {result.stdout!r}"
+        ) from exc
     return width, height
 
 

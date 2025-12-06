@@ -58,6 +58,3 @@ else:
                 subset["sub_category"],
                 title=f"Sub_category distribution — category: {category}",
             )
-
-
-

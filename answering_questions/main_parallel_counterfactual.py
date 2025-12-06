@@ -8,7 +8,7 @@ import multiprocessing
 from multiprocessing import get_context
 from concurrent.futures import ProcessPoolExecutor
 from utils.config import set_config
-from utils.augment_VQA import augment_image_VQA_with_context
+from utils.augment_VQA import get_counterfactual_image_paths 
 
 from copy import deepcopy
 
@@ -18,13 +18,14 @@ DEST_ROOT = None
 ARG_MOCK = None
 VERBOSE = None
 
-
-def _init_worker(vqa_path, dest_root, arg_mock, verbose, base_seed):
+def _init_worker(vqa_path, dest_root, arg_mock, verbose, base_seed, counterfactual_type):
     """Runs once per worker process."""
     import os
 
     global QUESTIONS, DEST_ROOT, ARG_MOCK, VERBOSE
-    QUESTIONS = read_questions(os.path.join(vqa_path, "simple_vqa.json"))
+    counterfactual_type = counterfactual_type.lower()
+    counterfactual_file = f"simple_vqa_counterfactual_{counterfactual_type}.json"
+    QUESTIONS = read_questions(os.path.join(vqa_path, counterfactual_file))
     DEST_ROOT = dest_root
     ARG_MOCK = arg_mock
     VERBOSE = verbose
@@ -47,12 +48,28 @@ def _process_one(sim_file, args):
         simulation_id_path = sim_file.replace("simulation.json", "")
         destination_simulation_id_path = os.path.join(DEST_ROOT, simulation_id_path)
         print("Processing simulation:", sim_file)
-        simulation_steps = read_simulation(
+        simulation_steps_modified = read_simulation(
             os.path.join(simulation_id_path, "simulation_kinematics.json")
         )
+
+        simulation_id_path_og = re.sub(r"/dl3dv-counterfact/[^/]+/", "/dl3dv/", simulation_id_path)
+        # I need to check the folder that contains the original simulation
+        base_dir = simulation_id_path_og.split("seed-")[0]
+        seed = simulation_id_path_og.split("seed-")[1].split("_")[0]
+
+        matches = glob.glob(base_dir + "seed-" + seed + "_*")
+        if len(matches) == 0:
+            raise FileNotFoundError(f"Original simulation folder not found for {simulation_id_path_og}")
+        simulation_id_path_og = matches[0]
+
+        simulation_steps_og = read_simulation(
+            os.path.join(simulation_id_path_og, "simulation_kinematics.json")
+        )
+
         return create_vqa(
             QUESTIONS,
-            simulation_steps,
+            simulation_steps_og,
+            simulation_steps_modified,
             sim_file,
             destination_simulation_id_path,
             ARG_MOCK,
@@ -62,13 +79,12 @@ def _process_one(sim_file, args):
     except Exception as e:
         # Keep the pool running even if one simulation fails
         # if VERBOSE:
-        # print("Worker error on", simulation_id_path, "->", repr(e))
+        print("Worker error on", simulation_id_path, "->", repr(e))
         print(e.with_traceback())
 
 
 from utils.saving_utils import (
     save_questions_answers_json,
-    save_questions_answers_tsv,
 )
 from utils.my_exception import ImpossibleToAnswer
 from utils import seed_utils
@@ -76,30 +92,19 @@ from utils import seed_utils
 # Import categories - alphabetically
 
 from categories.spatial_reasoning.spatial_reasoning import (
-    get_function_by_name_spatial_reasoning,
-    get_result_by_name_spatial_reasoning,
+    get_function_by_name_spatial_reasoning_cf,
+    get_result_by_name_spatial_reasoning_cf,
 )
 
 from categories.mechanics.mechanics import (
-    get_function_by_name_mechanics,
-    get_result_by_name_mechanics,
+    get_function_by_name_mechanics_cf,
+    get_result_by_name_mechanics_cf,
 )
 
 from categories.material_understanding.material_understanding import (
-    get_function_by_name_material_understanding,
-    get_result_by_name_material_understanding,
+    get_function_by_name_material_understanding_cf,
+    get_result_by_name_material_understanding_cf,
 )
-
-from categories.temporal.temporal import (
-    get_function_by_name_temporal,
-    get_result_by_name_temporal,
-)
-
-from categories.viewpoint.viewpoint import (
-    get_function_by_name_viewpoint,
-    get_result_by_name_viewpoint,
-)
-
 
 # ----- UTILS FUNCTIONS
 def read_questions(vqa_path):
@@ -117,21 +122,16 @@ def read_simulation(simulation_path):
 # ----- FUNCTION TO GET ANSWER FROM SIMULTAION
 
 resolver_gt = {
-    "spatial_reasoning": get_result_by_name_spatial_reasoning,
-    "mechanics": get_result_by_name_mechanics,
-    "material_understanding": get_result_by_name_material_understanding,
-    "temporal": get_result_by_name_temporal,
-    "view_point": get_result_by_name_viewpoint,
+    "spatial_reasoning": get_result_by_name_spatial_reasoning_cf,
+    "mechanics": get_result_by_name_mechanics_cf,
+    "material_understanding": get_result_by_name_material_understanding_cf,
 }
 
 resolver = {
-    "spatial_reasoning": get_function_by_name_spatial_reasoning,
-    "mechanics": get_function_by_name_mechanics,
-    "material_understanding": get_function_by_name_material_understanding,
-    "temporal": get_function_by_name_temporal,
-    "view_point": get_function_by_name_viewpoint,
+    "spatial_reasoning": get_function_by_name_spatial_reasoning_cf,
+    "mechanics": get_function_by_name_mechanics_cf,
+    "material_understanding": get_function_by_name_material_understanding_cf,
 }
-
 
 def get_answer(question_key, question_category, mock=False):
     return resolver[question_category](question_key, mock=mock)
@@ -148,7 +148,8 @@ def natural_key(s):
 # ----- MAIN VQA CREATION LOGIC
 def create_vqa(
     questions,
-    simulation_steps,
+    simulation_steps_og,
+    simulation_steps_modified,
     simulation_id,
     destination_simulation_id_path,
     arg_mock,
@@ -164,10 +165,11 @@ def create_vqa(
 
     for category_key, category in questions.items():
         # current category dev
-        # if (
-        #     category_key != "material_understanding"
-        # ):
-        #     continue
+        if (
+            # category_key != "material_understanding"
+            category_key != "spatial_reasoning"
+        ):
+            continue
 
         if verbose:
             print("###" * 10, f"Processing category: {category_key}", "###" * 10)
@@ -181,16 +183,39 @@ def create_vqa(
             question_payload["_question_key"] = question_key
             question_payload["_simulation_id"] = simulation_id
 
-            fn_to_answer_question = get_answer(
+            fn_to_answer_question_cf = get_answer(
                 question_key, category_key, mock=arg_mock
             )
 
             try:
-                answer_list = fn_to_answer_question(
-                    simulation_steps, question_payload, destination_simulation_id_path
+                answer_list_cf = fn_to_answer_question_cf(
+                    simulation_steps_og, simulation_steps_modified, question_payload, destination_simulation_id_path
                 )
             except ImpossibleToAnswer:
                 not_implemented += 1
+                continue
+
+            # check answer factual
+            fn_to_check_answer_factual = get_answer(
+                question_key, category_key, mock=arg_mock
+            )
+
+            try:
+                answer_list_factual = fn_to_check_answer_factual(
+                    simulation_steps_og, simulation_steps_modified, question_payload, destination_simulation_id_path
+                )
+            except ImpossibleToAnswer:
+                not_implemented += 1
+                continue
+            
+            # checking that the counterfactual answer is different from the factual one
+            # so we have an interesting question
+            correct_answer_counterfactual = answer_list_cf[0][1][answer_list_cf[0][2]]
+            correct_answer_factual = answer_list_factual[0][1][answer_list_factual[0][2]]
+
+            if(str(correct_answer_counterfactual) == str(correct_answer_factual)):
+                print("WARNING: Counterfactual answer matches factual answer!")
+                print("NOT INTERESTING AT ALL!")
                 continue
 
             for (
@@ -200,7 +225,7 @@ def create_vqa(
                 imgs_idx,
                 world_state,
                 resolved_attributes,
-            ) in answer_list:
+            ) in answer_list_cf:
                 # changing from image_paths to image_paths
                 file_names_to_augment = [
                     destination_simulation_id_path + f"render/{int(frame_idx):06d}.png"
@@ -218,17 +243,22 @@ def create_vqa(
                         )
                         file_names_to_augment.append(new_image_path)
 
-                file_names = augment_image_VQA_with_context(
-                    question,
-                    world_state,
-                    resolved_attributes,
-                    file_names_to_augment.copy(),
-                    augmentation=config.augmentation,
+                file_names = get_counterfactual_image_paths(
+                    file_names_to_augment.copy()
                 )
+
+                # This should only be for the factual questions I think but we can bring it back
+                # file_names = augment_image_VQA_with_context(
+                #     question,
+                #     world_state,
+                #     resolved_attributes,
+                #     file_names_to_augment.copy(),
+                #     augmentation=config.augmentation,
+                # )
 
                 all_vqa.append(
                     {
-                        "scene": simulation_steps.get("scene", {}).get(
+                        "scene": simulation_steps_modified['scene'].get(
                             "scene", "unknown_scene"
                         ),
                         "simulation_id": simulation_id,
@@ -337,6 +367,7 @@ def main(args):
             args.mock,
             args.verbose,
             args.seed,
+            args.counterfactual_type,
         ),
         mp_context=ctx,
     ) as ex:
@@ -345,6 +376,7 @@ def main(args):
         for sim_vqa in ex.map(_process_one, list_simulations[:max_simulations], [args]*max_simulations): # limit to 100s for now
             all_vqa.extend(sim_vqa)
 
+    
     print(f"Saved {len(all_vqa)} questions and answers.")
 
     if args.export_format in ["json"]:
@@ -376,7 +408,7 @@ if __name__ == "__main__":
         "--simulation_paths",
         nargs="+",
         type=str,        
-        default="/data0/sebastian.cavada/datasets/simulations_v3/dl3dv/random",
+        default="/data0/sebastian.cavada/datasets/simulations_v3/dl3dv",
         help="Path to the simulation file containing the scenes.",
     )
     parser.add_argument(
@@ -454,6 +486,12 @@ if __name__ == "__main__":
         type=str,
         default=None,
         help="Type of augmentation to use (roi_circling, masking, scene_context, textual_context, etc).",
+    )
+    parser.add_argument(
+        "--counterfactual_type",
+        choices=["gravity", "shift", "volume"],
+        default="shift",
+        help="Select which counterfactual JSON template (gravity, shift, volume) is loaded.",
     )
 
     args = parser.parse_args()

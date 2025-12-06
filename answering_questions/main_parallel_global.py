@@ -75,29 +75,9 @@ from utils import seed_utils
 
 # Import categories - alphabetically
 
-from categories.spatial_reasoning.spatial_reasoning import (
-    get_function_by_name_spatial_reasoning,
-    get_result_by_name_spatial_reasoning,
-)
-
-from categories.mechanics.mechanics import (
-    get_function_by_name_mechanics,
-    get_result_by_name_mechanics,
-)
-
-from categories.material_understanding.material_understanding import (
-    get_function_by_name_material_understanding,
-    get_result_by_name_material_understanding,
-)
-
-from categories.temporal.temporal import (
-    get_function_by_name_temporal,
-    get_result_by_name_temporal,
-)
-
-from categories.viewpoint.viewpoint import (
-    get_function_by_name_viewpoint,
-    get_result_by_name_viewpoint,
+from categories.global_plausibility.global_plausibility import (
+    get_function_by_name_global_plausibility,
+    get_result_by_name_global_plausibility,
 )
 
 
@@ -117,19 +97,11 @@ def read_simulation(simulation_path):
 # ----- FUNCTION TO GET ANSWER FROM SIMULTAION
 
 resolver_gt = {
-    "spatial_reasoning": get_result_by_name_spatial_reasoning,
-    "mechanics": get_result_by_name_mechanics,
-    "material_understanding": get_result_by_name_material_understanding,
-    "temporal": get_result_by_name_temporal,
-    "view_point": get_result_by_name_viewpoint,
+    "global_plausibility": get_result_by_name_global_plausibility,
 }
 
 resolver = {
-    "spatial_reasoning": get_function_by_name_spatial_reasoning,
-    "mechanics": get_function_by_name_mechanics,
-    "material_understanding": get_function_by_name_material_understanding,
-    "temporal": get_function_by_name_temporal,
-    "view_point": get_function_by_name_viewpoint,
+    "global_plausibility": get_function_by_name_global_plausibility,
 }
 
 
@@ -163,9 +135,9 @@ def create_vqa(
     all_vqa = []
 
     for category_key, category in questions.items():
-        # current category dev
+        # # current category dev
         # if (
-        #     category_key != "material_understanding"
+        #     category_key != "temporal"
         # ):
         #     continue
 
@@ -342,9 +314,11 @@ def main(args):
     ) as ex:
         max_simulations = min(number_simulations, len(list_simulations))
         print(f"Processing {max_simulations} simulations...")
-        for sim_vqa in ex.map(_process_one, list_simulations[:max_simulations], [args]*max_simulations): # limit to 100s for now
+        for sim_vqa in ex.map(
+            _process_one, list_simulations[:max_simulations], [args] * max_simulations
+        ):
             all_vqa.extend(sim_vqa)
-
+    
     print(f"Saved {len(all_vqa)} questions and answers.")
 
     if args.export_format in ["json"]:
@@ -376,7 +350,7 @@ if __name__ == "__main__":
         "--simulation_paths",
         nargs="+",
         type=str,        
-        default="/data0/sebastian.cavada/datasets/simulations_v3/dl3dv/random",
+        default="/data0/sebastian.cavada/datasets/simulations_v3/dl3dv",
         help="Path to the simulation file containing the scenes.",
     )
     parser.add_argument(

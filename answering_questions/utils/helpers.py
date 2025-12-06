@@ -25,6 +25,10 @@ from utils.all_objects import get_gso_mapping
 
 from utils.my_exception import ImpossibleToAnswer
 
+# just for test
+from PIL import Image
+import numpy as np
+
 Number = Union[int, float]
 WorldState = Mapping[str, Any]
 QuestionPayload = Mapping[str, Any]
@@ -33,6 +37,11 @@ Answer = Union[int, float, str]
 from utils.frames_selection import (
     sample_frames_at_timesteps,
     sample_frames_before_timestep,
+)
+
+from utils.geometry import (    
+    project_points,
+    world_to_camera_view
 )
 
 SAMPLING_RATE = get_config()["sampling_rate"]
@@ -68,7 +77,7 @@ def fill_questions(
     local_rng = random.Random(local_seed)
 
     # 2) Shuffle a COPY so we don't mutate caller's list
-    shuffled = labels[:]   # copy
+    shuffled = labels[:]  # copy
     local_rng.shuffle(shuffled)
 
     # 3) Remap correct index AFTER shuffle using the saved label
@@ -77,7 +86,9 @@ def fill_questions(
     # Helper to build one item with its own copies
     def build_item(split):
         q_copy = copy.deepcopy(question)
-        q_copy["task_splits"] = split  # keep type consistent with your downstream expectations
+        q_copy["task_splits"] = (
+            split  # keep type consistent with your downstream expectations
+        )
         # q_copy.pop("_question_key", None)
         # q_copy.pop("_simulation_id", None)
         fill_template(q_copy, resolved_attributes)
@@ -86,11 +97,21 @@ def fill_questions(
             frames = sample_frames_at_timesteps(world_state, [timestep])
         else:  # "multi"
             frames = sample_frames_before_timestep(
-                world_state, timestep, num_frames=CLIP_LENGTH, frame_interleave=FRAME_INTERLEAVE
+                world_state,
+                timestep,
+                num_frames=CLIP_LENGTH,
+                frame_interleave=FRAME_INTERLEAVE,
             )
 
         # Pass a fresh copy of the shuffled labels for each item
-        return [q_copy, shuffled[:], new_correct_idx, frames, world_state, resolved_attributes]
+        return [
+            q_copy,
+            shuffled[:],
+            new_correct_idx,
+            frames,
+            world_state,
+            resolved_attributes,
+        ]
 
     if "single" in question["task_splits"]:
         questions.append(build_item("single"))
@@ -100,6 +121,170 @@ def fill_questions(
 
     return questions
 
+
+def compute_counterfactual_string(
+    question, resolved_attributes, world_state_og, world_state_modified, timestep
+):
+    timestep = "0000.010"  # for test only
+    transform_per_object = world_state_modified["config"]["scene"]["spawning"]["transform_per_object"]
+
+    object_id = list(transform_per_object.keys())[0]  # only one object changed
+    object_pos_shift = transform_per_object[object_id]["pos_shift"]
+
+    real_object_id = str(int(object_id) + 1)
+    object_pos_og = get_position(world_state_og, real_object_id, timestep)
+    object_pos_mod = get_position(world_state_modified, real_object_id, timestep)
+
+    # project the position to the camera view
+    # It only depends from the camera at the modified simulation.
+    camera_position = get_camera_at_timestep(world_state_og, timestep)
+
+    center_og = object_pos_og["center"]
+    center_mod = object_pos_mod["center"]
+
+    cam_pos_og = world_to_camera_view(np.array([center_og]), camera_position)
+    cam_pos_mod = world_to_camera_view(np.array([center_mod]), camera_position)
+
+    x_og, y_og, z_og = cam_pos_og[0]
+    x_mod, y_mod, z_mod = cam_pos_mod[0]
+
+    dx = x_mod - x_og
+    dy = y_mod - y_og
+    dz = z_mod - z_og
+
+    horizontal_movement = "right" if dx > 0 else "left"
+    vertical_movement = "down" if dy < 0 else "up"
+    depth_movement = "closer to the camera" if dz < 0 else "further from the camera"
+
+    # print("Position in World Space OG:", center_og)
+    # print("Position in World Space MOD:", center_mod)
+
+    counterfact_phrase = f"Assume the <OBJECT-CF> is moved"
+    if abs(dx) >= 0.1:
+        counterfact_phrase += f" {abs(round_sig(dx, 2))} meters to the {horizontal_movement}"
+    if abs(dy) >= 0.1 and abs(dx) >= 0.1:
+        counterfact_phrase += f", {abs(round_sig(dy, 2))} meters {vertical_movement},"
+    if abs(dy) >= 0.1 and abs(dx) <= 0.1:
+        counterfact_phrase += f" and {abs(round_sig(dy, 2))} meters {vertical_movement},"
+    if abs(dz) >= 0.1:
+        counterfact_phrase += f" and {abs(round_sig(dz, 2))} meters {depth_movement}."
+    counterfact_phrase += " Under this new condition, "
+    print(counterfact_phrase)
+
+    # print("Check pitagora:")
+    # print("Distance in camera view:", math.sqrt(dx**2 + dy**2 + dz**2))     
+    # print(f"The above should be {d}")
+
+    # # check the image and see the 2 center
+    # # this is only for test
+
+    # timestep_number = world_state_modified['simulation'][timestep]['frame_idx']
+
+    # fake_photo = Image.open(
+    #     f"/data0/sebastian.cavada/datasets/simulations_v3/dl3dv/random/2/c-1_no-2_d-4_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-11_20251102_060343/render/{str(timestep_number).zfill(6)}.png"
+    # )  # dummy image just to get width and height
+    # numpy_image = np.array(fake_photo)
+
+    # project_center_og_uv, z1 = project_points(np.array([center_og]), camera_position)
+    # project_center_mod_uv, z2 = project_points(np.array([center_mod]), camera_position)
+
+    # # add points to the image, red dots for object 1, blue dots for object 2    
+    # u1, v1 = int(project_center_og_uv[0][0]), int(project_center_og_uv[0][1])
+    # if 0 <= u1 < numpy_image.shape[1] and 0 <= v1 < numpy_image.shape[0]:
+    #     for i in range(-1, 2):
+    #         for j in range(-1, 2):
+    #             if 0 <= v1+i < numpy_image.shape[0] and 0 <= u1+j < numpy_image.shape[1]:
+    #                 numpy_image[v1+i, u1+j] = [255, 0, 0]  # red dot
+    
+    # u2, v2 = int(project_center_mod_uv[0][0]), int(project_center_mod_uv[0][1])
+    # if 0 <= u2 < numpy_image.shape[1] and 0 <= v2 < numpy_image.shape[0]:
+    #     for i in range(-1, 2):
+    #         for j in range(-1, 2):
+    #             if 0 <= v2+i < numpy_image.shape[0] and 0 <= u2+j < numpy_image.shape[1]:
+    #                 numpy_image[v2+i, u2+j] = [0, 0, 255]  # blue dot
+    
+    return counterfact_phrase
+
+
+def fill_questions_cf(
+    question, labels, correct_idx, world_state_og, world_state_modified, timestep, resolved_attributes
+) -> List:
+    questions = []
+    # 1) Keep the correct label before shuffling
+    correct_label = labels[correct_idx]
+
+    seed_material = "::".join(
+        [
+            str(question.get("_simulation_id", "")),
+            str(question.get("_question_key", "")),
+            str(timestep),
+        ]
+    )
+    local_seed = seed_utils.seed_from_material(seed_material)
+    local_rng = random.Random(local_seed)
+
+    # 2) Shuffle a COPY so we don't mutate caller's list
+    shuffled = labels[:]  # copy
+    local_rng.shuffle(shuffled)
+
+    # 3) Remap correct index AFTER shuffle using the saved label
+    new_correct_idx = shuffled.index(correct_label)
+
+    # Helper to build one item with its own copies
+    def build_item(split):
+        q_copy = copy.deepcopy(question)
+        q_copy["task_splits"] = (
+            split  # keep type consistent with your downstream expectations
+        )
+        # check if spawning is present in the modified world state
+        world_state_modified_spawning = world_state_modified.get("config", {}).get("scene", {}).get("spawning", {})
+
+        if world_state_modified_spawning == {}:
+            diff = "gravity"  # default
+        else:
+            if 'metricscale' in world_state_modified_spawning.get('transform_per_object', {}).get('0', {}):
+                diff = "2xsmaller"
+            else:
+                diff = "shift"
+
+        if diff == "shift":        
+            counterfact = compute_counterfactual_string(
+                question, resolved_attributes, world_state_og, world_state_modified, timestep
+            )        
+        elif diff == "2xsmaller":
+            counterfact = "How would the answer change if the object is scaled down to half of its original size."
+        elif diff == "low-gravity":
+            counterfact = "How would the answer change if the gravity is reduced to 10% of its original value."
+
+        fill_template_cf(q_copy, resolved_attributes, counterfact)
+
+        if split == "single":
+            frames = sample_frames_at_timesteps(world_state_modified, [timestep])
+        else:  # "multi"
+            frames = sample_frames_before_timestep(
+                world_state_modified,
+                timestep,
+                num_frames=CLIP_LENGTH,
+                frame_interleave=FRAME_INTERLEAVE,
+            )
+
+        # Pass a fresh copy of the shuffled labels for each item
+        return [
+            q_copy,
+            shuffled[:],
+            new_correct_idx,
+            frames,
+            world_state_modified,
+            resolved_attributes,
+        ]
+
+    if "single" in question["task_splits"]:
+        questions.append(build_item("single"))
+
+    if "multi" in question["task_splits"]:
+        questions.append(build_item("multi"))
+
+    return questions
 
 # ---------------------------------------------------------------------------
 # Helper utilities
@@ -159,11 +344,17 @@ def get_total_images():
 
 def get_random_timestep_from_list(visible_timesteps: List[str], question: Any) -> str:
     # MAX_TIMESTEP = len(visible_timesteps) - 1
-    MAX_TIMESTEP = min(len(visible_timesteps), 30) # usually most things happen before 2 second/50 frames
+    MAX_TIMESTEP = min(
+        len(visible_timesteps), 30
+    )  # usually most things happen before 2 second/50 frames
     if "multi" in question.get("task_splits", ""):
         if len(visible_timesteps) < (CLIP_LENGTH * FRAME_INTERLEAVE):
             raise ImpossibleToAnswer("No timestep with visible objects.")
-        timestep = random.choice(visible_timesteps[(CLIP_LENGTH * FRAME_INTERLEAVE) - FRAME_INTERLEAVE:MAX_TIMESTEP + 1])
+        timestep = random.choice(
+            visible_timesteps[
+                (CLIP_LENGTH * FRAME_INTERLEAVE) - FRAME_INTERLEAVE : MAX_TIMESTEP + 1
+            ]
+        )
     else:
         if len(visible_timesteps) == 0:
             raise ImpossibleToAnswer("No timestep with visible objects.")
@@ -171,8 +362,9 @@ def get_random_timestep_from_list(visible_timesteps: List[str], question: Any) -
 
     return timestep
 
+
 def extract_attributes(question: Mapping[str, Any]) -> Mapping[str, Any]:
-    question_text = question["question"]    
+    question_text = question["question"]
 
     # Extract all tokens enclosed in <...>
     attributes = re.findall(r"<(.*?)>", question_text)
@@ -183,7 +375,10 @@ def extract_attributes(question: Mapping[str, Any]) -> Mapping[str, Any]:
 
     return {"attributes": attributes}
 
-def is_object_visible_at_timestep(object_id: str, timestep: str, world_state: Mapping[str, Any]) -> bool:
+
+def is_object_visible_at_timestep(
+    object_id: str, timestep: str, world_state: Mapping[str, Any]
+) -> bool:
     """Check if an object is visible at a specific timestep."""
     obj_state = get_object_state_at_timestep(world_state, object_id, timestep)
     infov_pixels = obj_state["infov_pixels"]
@@ -191,12 +386,9 @@ def is_object_visible_at_timestep(object_id: str, timestep: str, world_state: Ma
 
     return infov_pixels > MIN_VISIBLE_PIXELS and fov_visibility > VISIBILITY_THRESHOLD
 
-def minimum_n_visible_objects(
-    world_state, n_objects, min_pixels
-):    
 
+def minimum_n_visible_objects(world_state, n_objects, min_pixels):
     for timestep in world_state["simulation"].values():
-
         count_objects_criteria = 0
         for _, obj_info in timestep["objects"].items():
             if obj_info["infov_pixels"] >= min_pixels:
@@ -207,6 +399,7 @@ def minimum_n_visible_objects(
         else:
             return False
     return True
+
 
 def get_object_state_at_timestep(
     world_state: Mapping[str, Any], object_id: str, timestep: str
@@ -234,11 +427,12 @@ def get_all_objects_state_at_time(
     objects = step_data.get("objects", {})
     return objects
 
+
 def get_list_model_of_duplicate_objects(
     world_state, visible_objects_id: List[str]
 ) -> bool:
     object_names = set()
-    duplicate_models = []    
+    duplicate_models = []
     for obj in iter_objects(world_state):
         obj_model = obj.get("model", "")
         if obj_model in object_names:
@@ -247,27 +441,23 @@ def get_list_model_of_duplicate_objects(
     return duplicate_models
 
 
-# def get_list_model_of_duplicate_objects(
-#     world_state, visible_objects_id: List[str]
-# ) -> bool:
-#     object_names = set()
-#     duplicate_models = []
-#     for obj_id in visible_objects_id:
-#         obj = world_state["objects"].get(obj_id, {})
-#         obj_model = obj.get("model", "")
-#         if obj_model in object_names:
-#             duplicate_models.append(obj_model)
-#         object_names.add(obj_model)
-#     return duplicate_models
+def get_position(world_state: Mapping[str, Any], object_id: str, timestep: str) -> Optional[Mapping[str, Any]]:
+    """Retrieve the position of an object at a specific timestep."""
+    obj_state = get_object_state_at_timestep(world_state, object_id, timestep)
+    if not obj_state:
+        return None
+    return obj_state["obb"]
+
 
 def get_visible_timesteps_for_attributes_min_objects(
-    attributes: List[Mapping[str, Any]], world_state: Mapping[str, Any], min_objects=1,
-    min_n_frames=8
+    attributes: List[Mapping[str, Any]],
+    world_state: Mapping[str, Any],
+    min_objects=1,
+    min_n_frames=8,
 ) -> List[str]:
-    
     # I think attributes is not needed I just need to check that more than min_objects with
     # different models are visible at the same time
-    
+
     visible_timesteps = []
 
     for timestep in world_state.get("simulation", {}).keys():
@@ -276,12 +466,10 @@ def get_visible_timesteps_for_attributes_min_objects(
             obj_id = obj.get("id")
             if not obj_id:
                 continue
-            obj_state = get_object_state_at_timestep(
-                world_state, obj_id, timestep
-            )
+            obj_state = get_object_state_at_timestep(world_state, obj_id, timestep)
             if (
                 obj_state
-                and obj_state["fov_visibility"] > VISIBILITY_THRESHOLD                        
+                and obj_state["fov_visibility"] > VISIBILITY_THRESHOLD
                 and obj_state["infov_pixels"] >= MIN_VISIBLE_PIXELS
             ):
                 visible_objects_id.append(obj_id)
@@ -295,7 +483,8 @@ def get_visible_timesteps_for_attributes_min_objects(
         visible_objects_id_and_non_duplicated = [
             obj_id
             for obj_id in visible_objects_id
-            if world_state['objects'][obj_id]['model'] not in list_of_duplicated_objects_models
+            if world_state["objects"][obj_id]["model"]
+            not in list_of_duplicated_objects_models
         ]
 
         if len(visible_objects_id_and_non_duplicated) >= min_objects:
@@ -311,73 +500,6 @@ def get_visible_timesteps_for_attributes_min_objects(
             "No timesteps found where the required objects are visible."
         )
     return visible_timesteps
-
-# def get_visible_timesteps_for_attributes_min_objects(
-#     attributes: List[Mapping[str, Any]], world_state: Mapping[str, Any], min_objects=1,
-#     min_n_frames=8
-# ) -> List[str]:
-#     visible_timesteps_attributes = []
-
-#     for attribute in attributes:
-#         attribute_category = attribute.split("_")[
-#             0
-#         ]  # Get the part before any underscore
-#         visible_timesteps = []
-#         if attribute_category == "OBJECT" or attribute_category == "OBJECT-CATEGORY":
-#             for timestep in world_state.get("simulation", {}).keys():
-#                 visible_objects_id = []
-#                 for obj in iter_objects(world_state):
-#                     obj_id = obj.get("id")
-#                     if not obj_id:
-#                         continue
-#                     obj_state = get_object_state_at_timestep(
-#                         world_state, obj_id, timestep
-#                     )
-
-#                     if (
-#                         obj_state
-#                         and obj_state["fov_visibility"] > VISIBILITY_THRESHOLD                        
-#                         and obj_state["infov_pixels"] >= MIN_VISIBLE_PIXELS
-#                     ):
-#                         visible_objects_id.append(obj_id)
-
-#                 # we shall check that also is not the same object name to remove for
-#                 list_of_ids_of_duplicate_objs = get_list_model_of_duplicate_objects(
-#                     world_state, visible_objects_id
-#                 )
-
-#                 # remove duplicate objects by name
-#                 visible_objects_id = [
-#                     obj_id
-#                     for obj_id in visible_objects_id
-#                     if obj_id not in list_of_ids_of_duplicate_objs
-#                 ]
-
-#                 if len(visible_objects_id) >= min_objects:
-#                     visible_timesteps.append(timestep)
-#             visible_timesteps_attributes.append(visible_timesteps)
-
-#     visible_timesteps_both = set()
-
-#     for attribute_timesteps in visible_timesteps_attributes:
-#         if not visible_timesteps_both:
-#             visible_timesteps_both = set(attribute_timesteps)
-#         else:
-#             visible_timesteps_both = visible_timesteps_both.intersection(set(attribute_timesteps))
-
-#     visible_timesteps_both = sorted(list(visible_timesteps_both))
-
-#     if len(visible_timesteps_both) < min_n_frames:
-#         raise ImpossibleToAnswer(
-#             f"Not enough timesteps found where the required objects are visible. Found {len(visible_timesteps_both)}, required at least {min_n_frames}."
-#         )
-
-#     if visible_timesteps_both == []:
-#         raise ImpossibleToAnswer(
-#             "No timesteps found where the required objects are visible."
-#         )
-#     return visible_timesteps_both
-
 
 def get_continuous_subsequences_min_length(
     timesteps: List[str], min_length: int
@@ -467,19 +589,20 @@ def fill_template(
                 resolved_attributes[attribute]["choice"],
             )
         elif "OBJECT" in attribute:
-            mapped_name = gso_mapping[resolved_attributes[attribute]["choice"]["model"]]['name']
+            mapped_name = gso_mapping[
+                resolved_attributes[attribute]["choice"]["model"]
+            ]["name"]
             # mapped_name = resolved_attributes[attribute]["choice"]["name"] OLD way
             question["question"] = question["question"].replace(
-                f"<{attribute}>",
-                mapped_name
+                f"<{attribute}>", mapped_name
             )
-            # resolved_attributes[attribute]["choice"]["model"],
+            # resolved_attributes[attribute]["choice"]["model"],        
         else:
             question["question"] = question["question"].replace(
                 f"<{attribute}>",
                 str(resolved_attributes[attribute]["choice"])
                 + resolve_units(attribute),
-            )
+            )        
 
     # check if there is a single frame or multi frame task
     if question["task_splits"] == "multi":
@@ -489,6 +612,53 @@ def fill_template(
         )
 
 
+def fill_template_cf(
+    question: Mapping[str, Any], resolved_attributes: Mapping[str, Any],
+    counterfact: str
+) -> None:
+    
+    # Adding counterfactual at the end of the question
+    question["question"] = counterfact + question["question"][0].lower() + question["question"][1:] if question["question"] else counterfact
+
+    for attribute in resolved_attributes:
+        if "OBJECT-CATEGORY" in attribute:
+            question["question"] = question["question"].replace(
+                f"<{attribute}>",
+                resolved_attributes[attribute]["choice"],
+            )
+        elif "OBJECT-CF" in attribute:
+            mapped_name = gso_mapping[
+                resolved_attributes[attribute]["choice"]["model"]
+            ]["name"]
+            # mapped_name = resolved_attributes[attribute]["choice"]["name"] OLD way
+            question["question"] = question["question"].replace(
+                f"<{attribute}>", mapped_name
+            )     
+        elif "OBJECT" in attribute:
+            mapped_name = gso_mapping[
+                resolved_attributes[attribute]["choice"]["model"]
+            ]["name"]
+            # mapped_name = resolved_attributes[attribute]["choice"]["name"] OLD way
+            question["question"] = question["question"].replace(
+                f"<{attribute}>", mapped_name
+            )
+        else:
+            question["question"] = question["question"].replace(
+                f"<{attribute}>",
+                str(resolved_attributes[attribute]["choice"])
+                + resolve_units(attribute),
+            )        
+
+    # check if there is a single frame or multi frame task
+    if question["task_splits"] == "multi":
+        question["question"] = (
+            "Consider all frames, but answer only based on the last frame. "
+            + question["question"]
+        )
+
+    
+
+
 def get_camera(world_state: Mapping[str, Any]) -> Mapping[str, Any]:
     # taking the first camera
     camera = world_state["simulation"]["0000.010"]["camera"]
@@ -496,12 +666,16 @@ def get_camera(world_state: Mapping[str, Any]) -> Mapping[str, Any]:
         raise ValueError("No camera found in the world state.")
     return camera
 
-def get_camera_at_timestep(world_state: Mapping[str, Any], timestep: str) -> Mapping[str, Any]:
+
+def get_camera_at_timestep(
+    world_state: Mapping[str, Any], timestep: str
+) -> Mapping[str, Any]:
     # taking the first camera
     camera = world_state["simulation"][timestep]["camera"]
     if not camera:
         raise ValueError("No camera found in the world state.")
     return camera
+
 
 def get_random_material(world_state: Mapping[str, Any]) -> str:
     materials = set()
@@ -553,6 +727,52 @@ def get_random_object_and_remove(
         raise ImpossibleToAnswer(f"No objects found of type '{OBJECT_CATEGORY}'")
 
     object_chosen = random.choice(list(objects.values()))
+
+    del world_state["objects"][object_chosen["id"]]
+
+    return object_chosen
+
+def get_first_object_and_remove(
+    world_state: Mapping[str, Any],
+    OBJECT_CATEGORY: Optional[str] = None,
+    visible_at_timestep: str = None,
+) -> Mapping[str, Any]:
+    
+    objects = world_state["objects"]
+    if visible_at_timestep is not None:
+        visible_objects = []
+        visible_objects_ids = []
+        obj_id = '1'
+        object = objects[obj_id]
+        obj_state = get_object_state_at_timestep(
+            world_state, obj_id, visible_at_timestep
+        )
+        if (
+            obj_state["fov_visibility"] > VISIBILITY_THRESHOLD
+            and obj_state["infov_pixels"] >= MIN_VISIBLE_PIXELS
+        ):
+            obj_copy = object.copy()
+            obj_copy["id"] = obj_id
+            visible_objects.append(obj_copy)
+            visible_objects_ids.append(obj_id)
+
+        list_of_duplicate_object_models = get_list_model_of_duplicate_objects(
+            world_state, visible_objects_ids
+        )
+        # remove duplicate objects by name
+        visible_objects = [
+            obj
+            for obj in visible_objects
+            if obj["model"] not in list_of_duplicate_object_models
+        ]
+
+        objects = {obj["id"]: obj for obj in visible_objects}
+
+    # also if no visible objects found, we raise an error
+    if not objects:
+        raise ImpossibleToAnswer(f"No objects found of type '{OBJECT_CATEGORY}'")
+
+    object_chosen = list(objects.values())[0]
 
     del world_state["objects"][object_chosen["id"]]
 
@@ -623,6 +843,7 @@ resolver = {
     "MATERIAL": get_random_material,
     "OBJECT-CATEGORY": get_random_OBJECT_CATEGORY,
     "OBJECT": get_random_object_and_remove,
+    "OBJECT-CF": get_first_object_and_remove,
     "STRESS-THRESHOLD": lambda ws: round(
         random.uniform(0.0, 10.0), 1
     ),  # random stress threshold between 10 and 100 MPa
@@ -731,65 +952,65 @@ def resolve_single_object(
     raise ValueError(f"Object '{object_name}' not found in the provided world state.")
 
 
-def get_acceleration(
-    object_id: str, timestep: str, world_state: Mapping[str, Any]
-) -> float:
-    timestep_world = world_state["simulation"][timestep]
-    current_timestep_involved_object = timestep_world["objects"][object_id][
-        "kinematics"
-    ]["normal_accel"]
-    return current_timestep_involved_object
+# def get_acceleration(
+#     object_id: str, timestep: str, world_state: Mapping[str, Any]
+# ) -> float:
+#     timestep_world = world_state["simulation"][timestep]
+#     current_timestep_involved_object = timestep_world["objects"][object_id][
+#         "kinematics"
+#     ]["normal_accel"]
+#     return current_timestep_involved_object
 
 
-def get_angular_velocity_vector(
-    object_id: str, timestep: str, world_state: Mapping[str, Any]
-) -> float:
-    timestep_world = world_state["simulation"][timestep]
-    current_timestep_involved_object = timestep_world["objects"][object_id][
-        "kinematics"
-    ]["angular_velocity_world"]
-    return current_timestep_involved_object
+# def get_angular_velocity_vector(
+#     object_id: str, timestep: str, world_state: Mapping[str, Any]
+# ) -> float:
+#     timestep_world = world_state["simulation"][timestep]
+#     current_timestep_involved_object = timestep_world["objects"][object_id][
+#         "kinematics"
+#     ]["angular_velocity_world"]
+#     return current_timestep_involved_object
 
 
-def get_vertical_velocity(obj: Mapping[str, Any]) -> float:
-    motion = get_motion(obj)
+# def get_vertical_velocity(obj: Mapping[str, Any]) -> float:
+#     motion = get_motion(obj)
 
-    value = motion.get("vertical_velocity") or motion.get("verticalvelocity")
-    vertical_velocity = coerce_to_float(value)
-    if vertical_velocity is not None:
-        return vertical_velocity
+#     value = motion.get("vertical_velocity") or motion.get("verticalvelocity")
+#     vertical_velocity = coerce_to_float(value)
+#     if vertical_velocity is not None:
+#         return vertical_velocity
 
-    velocity = motion.get("velocity")
-    components = as_vector(velocity)
-    if components and len(components) >= 3:
-        return float(components[2])
+#     velocity = motion.get("velocity")
+#     components = as_vector(velocity)
+#     if components and len(components) >= 3:
+#         return float(components[2])
 
-    if isinstance(velocity, Mapping):
-        for key in ("z", "vz", "vertical"):
-            component = velocity.get(key)
-            component_value = coerce_to_float(component)
-            if component_value is not None:
-                return component_value
+#     if isinstance(velocity, Mapping):
+#         for key in ("z", "vz", "vertical"):
+#             component = velocity.get(key)
+#             component_value = coerce_to_float(component)
+#             if component_value is not None:
+#                 return component_value
 
-    return 0.0
+#     return 0.0
 
 
-def get_displacement(
-    obj: str, timestep_start: str, timestep_end: str, world_state: Mapping[str, Any]
-) -> float:
-    position_start = world_state["simulation"][timestep_start]["objects"][obj][
-        "transform"
-    ][:3]
-    position_end = world_state["simulation"][timestep_end]["objects"][obj]["transform"][
-        :3
-    ]
-    displacement = distance_between(position_start, position_end)
+# def get_displacement(
+#     obj: str, timestep_start: str, timestep_end: str, world_state: Mapping[str, Any]
+# ) -> float:
+#     position_start = world_state["simulation"][timestep_start]["objects"][obj][
+#         "transform"
+#     ][:3]
+#     position_end = world_state["simulation"][timestep_end]["objects"][obj]["transform"][
+#         :3
+#     ]
+#     displacement = distance_between(position_start, position_end)
 
-    displacement = coerce_to_float(displacement)
-    if displacement is not None:
-        return displacement
+#     displacement = coerce_to_float(displacement)
+#     if displacement is not None:
+#         return displacement
 
-    return 0.0
+#     return 0.0
 
 
 def get_motion(obj: Mapping[str, Any]) -> Mapping[str, Any]:

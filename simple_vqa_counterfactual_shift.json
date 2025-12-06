@@ -1,0 +1,68 @@
+{
+    "spatial_reasoning": {
+        "CF_CLOSEST_OBJECT_OBJECT": {
+            "task_splits": "single+multi",
+            "sub_category": "distance",
+            "choice": "mcq",
+            "question": "Which object would be the closest to the geometrical center of the <OBJECT-CF>?"
+        },
+        "CF_CLOSEST_OBJECT_CAMERA": {
+            "task_splits": "single+multi",
+            "sub_category": "distance",
+            "choice": "mcq",
+            "question": "Which object would be the closest to the camera?"
+        },
+        "CF_LAYOUT_POSITION_OBJECT_OBJECT": {
+            "task_splits": "single+multi",
+            "sub_category": "layout",
+            "choice": "mcq",
+            "question": "From the camera’s perspective, where is the <OBJECT-CF> relative to the <OBJECT_2>?"
+        }
+    },
+    "mechanics": {
+        "CF_KINEMATICS_SPEED_OBJECT": {
+            "task_splits": "multi",
+            "sub_category": "kinematics",
+            "choice": "mcq",
+            "question": "What would be the speed of the <OBJECT-CF>?"
+        },
+        "CF_KINEMATICS_ACCEL_OBJECT": {
+            "task_splits": "multi",
+            "sub_category": "kinematics",
+            "choice": "mcq",
+            "question": "What would be the magnitude of acceleration of the <OBJECT-CF>?"
+        },
+        "CF_KINEMATICS_DISTANCE_TRAVELED_INTERVAL": {
+            "task_splits": "multi",
+            "sub_category": "kinematics",
+            "choice": "mcq",
+            "question": "Considering the geometrical center of <OBJECT-CF>, what would be the straight-line distance it has traveled during the sequence?"
+        },
+        "CF_COLLISIONS_OBJ_OBJ_FIRST": {
+            "task_splits": "multi",
+            "sub_category": "collision",
+            "choice": "mcq",
+            "question": "Which of those objects would collide first with the <OBJECT-CF> during the sequence?"
+        },
+        "CF_COLLISION_OBJECT_OBJECT_FRAME_SINGLE": {
+            "task_splits": "single",
+            "sub_category": "collision",
+            "choice": "mcq",
+            "question": "Which object would be the <OBJECT-CF> colliding with in the frame?"
+        }
+    },
+    "view_point": {
+        "F_VISIBILITY_OBJECT": {
+            "task_splits": "single+multi",
+            "sub_category": "visibility",
+            "choice": "mcq",
+            "question": "Which of these objects is visible in the image/frame?"
+        },
+        "F_OCCLUSION_PERCENTAGE_OBJECT": {
+            "task_splits": "single+multi",
+            "sub_category": "visibility",
+            "choice": "mcq",
+            "question": "How much of the <OBJECT> is occluded in the image/frame?"
+        }
+    }
+}

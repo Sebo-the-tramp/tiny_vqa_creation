@@ -22,3 +22,6 @@ submodules/
 analysis_example/*
 
 .vscode/
+
+main_parallel.dist/**
+main_parallel.build/**

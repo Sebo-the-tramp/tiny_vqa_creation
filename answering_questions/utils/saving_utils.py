@@ -127,19 +127,18 @@ def save_questions_answers_json(
     normalized_questions = []
     answers = []
 
-    counter = 0        
+    counter = 0
 
     for idx, entry in enumerate(all_vqa):
-
         if idx > 0:
-            question_id_previous = all_vqa[idx-1]['question_key']
-            question_id_current  =  entry['question_key']      
-        
+            question_id_previous = all_vqa[idx - 1]["question_key"]
+            question_id_current = entry["question_key"]
+
             if question_id_previous != question_id_current:
-                counter +=1
+                counter += 1
 
         mode = entry["mode"]
-        question_idx = f"{counter}_{mode[0]}"         
+        question_idx = f"{counter}_{mode[0]}"
 
         question_record, answer_record = normalize_question_json(
             entry,
@@ -151,7 +150,6 @@ def save_questions_answers_json(
         normalized_questions.append(question_record)
         answers.append(answer_record)
 
-    
     # for idx, entry in enumerate(all_vqa):
     #     question_record, answer_record = normalize_question_json(
     #         entry,
@@ -162,9 +160,11 @@ def save_questions_answers_json(
 
     #     normalized_questions.append(question_record)
     #     answers.append(answer_record)
-    
+
     config = get_config()
-    config_path = os.path.join(output_path, f"{run_name}/test_{run_name}_config_used.json")
+    config_path = os.path.join(
+        output_path, f"{run_name}/test_{run_name}_config_used.json"
+    )
     answers_path = os.path.join(output_path, f"{run_name}/val_answer_{run_name}.json")
     questions_path = os.path.join(output_path, f"{run_name}/test_{run_name}.json")
 
@@ -198,21 +198,23 @@ def normalize_question_json(
     pattern = re.compile(r"^\d{6}$")
 
     images_in_labels = 0
-    for idx_img, label in enumerate(labels):        
+    for idx_img, label in enumerate(labels):
         if pattern.match(label):
             # do a smart replacement
             # I think there is no need to save the image again, just use the existing one
             # new_image_path = simulation_path.rsplit("/", 1)[0] + f"render/{label}.png"
             # image_paths.append(new_image_path)
             labels[idx_img] = "<image>"
-            images_in_labels += 1    
+            images_in_labels += 1
 
     # add <image> tags in place of images
     # locking in question images before adding other images in the question
     # slop code, but guess I need to speed up
     formatted_question = question_text
     formatted_question = (
-        "".join(["<image>" for _ in range(len(image_paths)-images_in_labels)]) + "\n" + formatted_question
+        "".join(["<image>" for _ in range(len(image_paths) - images_in_labels)])
+        + "\n"
+        + formatted_question
     )
 
     option_letters = [letters[i] for i in range(min(len(labels), len(letters)))]
@@ -260,7 +262,7 @@ def normalize_question_json(
         "task_type": "factual",
         # "ability_type": question_payload.get("ability_type", ability_type),
         "mode": question_record["mode"],
-        "choice_type": question_payload["choice"],        
+        "choice_type": question_payload["choice"],
     }
 
     return question_record, answer_record

@@ -81,7 +81,8 @@ def get_gt(question_key, question_category, mock=False):
 
 
 def natural_key(s):
-    return [int(t) if t.isdigit() else t.lower() for t in re.split(r'(\d+)', s)]
+    return [int(t) if t.isdigit() else t.lower() for t in re.split(r"(\d+)", s)]
+
 
 # ----- MAIN VQA CREATION LOGIC
 def create_vqa(
@@ -93,7 +94,7 @@ def create_vqa(
     verbose=False,
 ):
     seed_utils.reseed_for_context(simulation_id)
-    
+
     answered = 0
     failed = 0
 
@@ -103,9 +104,7 @@ def create_vqa(
 
     for category_key, category in questions.items():
         # current category dev
-        if (
-            category_key != "spatial_reasoning"
-        ):
+        if category_key != "spatial_reasoning":
             continue
 
         if verbose:
@@ -154,7 +153,7 @@ def create_vqa(
                         "simulation_id": simulation_id,
                         "question": question,
                         "category": category_key,
-                        "sub_category": question_data['sub_category'],
+                        "sub_category": question_data["sub_category"],
                         "question_key": question_key,
                         "image_paths": file_names,
                         "labels": labels,
@@ -206,7 +205,6 @@ def create_vqa(
         answered += total_answered
         failed += not_implemented
 
-
     return all_vqa, answered, failed
 
 
@@ -218,7 +216,7 @@ def main(args):
     total_failed = 0
 
     simulation_root = args.simulation_path
-    pattern = os.path.join(simulation_root, '**', 'simulation.json')
+    pattern = os.path.join(simulation_root, "**", "simulation.json")
 
     print("Searching for simulation files with pattern:", pattern)
 
@@ -268,7 +266,7 @@ def main(args):
             )
             all_vqa.extend(simulation_vqa)
             total_answered += answered
-            total_failed += failed 
+            total_failed += failed
 
     print(
         f"Total answered questions: {total_answered}, Total failed questions: {total_failed}"

@@ -17,7 +17,6 @@ from typing import (
     Union,
 )
 
-from utils.my_exception import ImpossibleToAnswer
 
 import math
 import random
@@ -30,17 +29,12 @@ Answer = Union[str, float, Vector, Mapping[str, Any], Sequence[str]]
 
 from utils.decorators import with_resolved_attributes
 
-from utils.bin_creation import (
-    create_mc_options_around_gt,
-    uniform_labels,
-    create_mc_object_names_from_dataset
-)
+from utils.bin_creation import create_mc_object_names_from_dataset
 
 from utils.helpers import (
     get_random_timestep_from_list,
     iter_objects,
-    fill_questions,    
-    distance_between,
+    fill_questions,
     resolve_attributes,
     get_camera_at_timestep,
     get_object_state_at_timestep,
@@ -65,27 +59,26 @@ CLIP_LENGTH = get_config()["clip_length"]
 FRAME_INTERLEAVE = get_config()["frame_interleave"]
 MIN_VISIBLE_PIXELS = get_config()["min_pixels_visible"]
 
+
 ## --- Resolver functions -- ##
 @with_resolved_attributes
 def F_VISIBILITY_OBJECT(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
     assert len(attributes) == 0
-    
-     # First we find the pairs of objects visible
+
+    # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
         ["OBJECT"], world_state, min_objects=kwargs["current_world_number_of_objects"]
     )
 
-    timestep = get_random_timestep_from_list(
-        visible_timesteps, question
-    ) 
+    timestep = get_random_timestep_from_list(visible_timesteps, question)
 
     resolved_attributes = resolve_attributes_visible_at_timestep(
         ["OBJECT"], world_state, timestep
     )
 
-    object = resolved_attributes["OBJECT"]['choice']
+    object = resolved_attributes["OBJECT"]["choice"]
 
     presents = [obj["name"] for obj in iter_objects(world_state)]
     all_objects = get_all_objects_names()
@@ -98,34 +91,31 @@ def F_VISIBILITY_OBJECT(
 
     return fill_questions(
         question, labels, correct_idx, world_state, timestep, resolved_attributes
-    )    
+    )
 
 
 @with_resolved_attributes
-def F_VISIBILITY_PERCENTAGE_OBJECT(
+def F_OCCLUSION_PERCENTAGE_OBJECT(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
-) -> int:    
+) -> int:
     assert len(attributes) == 1 and "OBJECT" in attributes
 
     # First we find the pairs of objects visible
-    resolved_attributes = resolve_attributes(
-        ["OBJECT"], world_state
-    )
+    resolved_attributes = resolve_attributes(["OBJECT"], world_state)
 
     all_timesteps = list(world_state["simulation"].keys())
 
     if "multi" in question.get("task_splits", ""):
-        timestep = random.choice(all_timesteps[CLIP_LENGTH*FRAME_INTERLEAVE - FRAME_INTERLEAVE:])
+        timestep = random.choice(
+            all_timesteps[CLIP_LENGTH * FRAME_INTERLEAVE - FRAME_INTERLEAVE :]
+        )
     else:
         timestep = random.choice(all_timesteps)
 
-    object = resolved_attributes["OBJECT"]['choice']
+    object = resolved_attributes["OBJECT"]["choice"]
     visibility_object = get_object_state_at_timestep(
         world_state, object["id"], timestep
     )["fov_visibility"]
-
-    # if not world_state['simulation'][timestep]['objects'][object["id"]]['infov_pixels'] > MIN_VISIBLE_PIXELS:
-    #     visibility_object = 0.0
 
     if visibility_object < 0.25:
         correct_idx = 0
@@ -136,33 +126,39 @@ def F_VISIBILITY_PERCENTAGE_OBJECT(
     else:
         correct_idx = 3
 
-    labels = ["0-25%", "26-50%", "51-75%", "76-100%"]
+    labels = [
+        "100% (Fully Occluded)",
+        "50%-99% (Major Occlusion)",
+        "1%-49% (Minor Occlusion)",
+        "0% (Not Occluded)",
+    ]
 
     return fill_questions(
         question, labels, correct_idx, world_state, timestep, resolved_attributes
     )
 
 
-## --- Camera characteristics resolvers --- ##
-
 @with_resolved_attributes
-def F_VIEWPOINT_CAMERA_ANGLE(world_state: WorldState, question: QuestionPayload, attributes, **kwargs
+def F_VIEWPOINT_CAMERA_ANGLE(
+    world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
     """
     Maps camera pose to one of:
     ["low angle","eye level","high angle","bird's-eye","worm's-eye"]
     """
     assert len(attributes) == 0
-    
+
     resolved_attributes = resolve_attributes([], world_state)
 
     all_timesteps = list(world_state["simulation"].keys())
 
     if "multi" in question.get("task_splits", ""):
-        timestep = random.choice(all_timesteps[CLIP_LENGTH*FRAME_INTERLEAVE - FRAME_INTERLEAVE:])
+        timestep = random.choice(
+            all_timesteps[CLIP_LENGTH * FRAME_INTERLEAVE - FRAME_INTERLEAVE :]
+        )
     else:
         timestep = random.choice(all_timesteps)
-    
+
     cam = get_camera_at_timestep(world_state, timestep)
 
     eye = cam["eye"]
@@ -180,7 +176,8 @@ def F_VIEWPOINT_CAMERA_ANGLE(world_state: WorldState, question: QuestionPayload,
 
 
 @with_resolved_attributes
-def F_FOCAL_LENGTH_CLASS(world_state: WorldState, question: QuestionPayload, attributes, **kwargs
+def F_FOCAL_LENGTH_CLASS(
+    world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
     assert len(attributes) == 0
     """
@@ -193,10 +190,12 @@ def F_FOCAL_LENGTH_CLASS(world_state: WorldState, question: QuestionPayload, att
     all_timesteps = list(world_state["simulation"].keys())
 
     if "multi" in question.get("task_splits", ""):
-        timestep = random.choice(all_timesteps[CLIP_LENGTH*FRAME_INTERLEAVE - FRAME_INTERLEAVE:])
+        timestep = random.choice(
+            all_timesteps[CLIP_LENGTH * FRAME_INTERLEAVE - FRAME_INTERLEAVE :]
+        )
     else:
         timestep = random.choice(all_timesteps)
-    
+
     cam = get_camera_at_timestep(world_state, timestep)
 
     fov = cam["fov"]

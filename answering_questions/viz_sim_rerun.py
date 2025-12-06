@@ -24,14 +24,14 @@ import json
 import os
 from collections import deque
 
-
+import time
 import numpy as np
 import rerun as rr
 import open3d as o3d
 
 from utils.load_pointclouds import load_scene_pointcloud
 
-from scipy.spatial.transform import Rotation as R
+
 
 # ---------------------------- Math helpers ----------------------------
 def euler_to_quat_xyz(rx, ry, rz):
@@ -405,9 +405,7 @@ def log_scene_pointcloud(sim, json_path):
                     os.path.normpath(os.path.join(json_dir, expanded))
                 )
 
-        pointcloud_path = next(
-            (p for p in candidate_paths if os.path.isfile(p)), None
-        )
+        pointcloud_path = next((p for p in candidate_paths if os.path.isfile(p)), None)
         if pointcloud_path and o3d is not None:
             try:
                 pcd = o3d.io.read_point_cloud(pointcloud_path)
@@ -417,14 +415,16 @@ def log_scene_pointcloud(sim, json_path):
                 if not pcd.is_empty():
                     points = np.asarray(pcd.points, dtype=float)
                     colors = (
-                        np.asarray(pcd.colors, dtype=float) if pcd.has_colors() else None
+                        np.asarray(pcd.colors, dtype=float)
+                        if pcd.has_colors()
+                        else None
                     )
 
     if points is None and load_scene_pointcloud is not None:
         scene_id = scene_info.get("scene")
         if isinstance(scene_id, str) and scene_id:
             try:
-                pcd = load_scene_pointcloud(scene_id)['pcd']
+                pcd = load_scene_pointcloud(scene_id)["pcd"]
             except Exception as exc:  # noqa: BLE001
                 print(
                     f"Warning: failed to load point cloud for scene '{scene_id}': {exc}"
@@ -433,7 +433,9 @@ def log_scene_pointcloud(sim, json_path):
                 if not pcd.is_empty():
                     points = np.asarray(pcd.points, dtype=float)
                     colors = (
-                        np.asarray(pcd.colors, dtype=float) if pcd.has_colors() else None
+                        np.asarray(pcd.colors, dtype=float)
+                        if pcd.has_colors()
+                        else None
                     )
 
     if points is None or points.size == 0:

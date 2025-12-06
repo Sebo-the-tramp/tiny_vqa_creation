@@ -67,7 +67,9 @@ def normalize_answer_letter(raw_answer: object) -> str:
     return ""
 
 
-def load_model_answers(paths: Iterable[str]) -> Tuple[Dict[str, Dict[str, str]], Dict[str, List[Tuple[str, str]]]]:
+def load_model_answers(
+    paths: Iterable[str],
+) -> Tuple[Dict[str, Dict[str, str]], Dict[str, List[Tuple[str, str]]]]:
     """
     Load per-model answers from one or more files/directories.
 
@@ -102,7 +104,9 @@ def load_model_answers(paths: Iterable[str]) -> Tuple[Dict[str, Dict[str, str]],
                     continue
                 answer_letter = normalize_answer_letter(item.get("answer", ""))
                 if not answer_letter:
-                    invalid_answers[idx].append((model_name, str(item.get("answer", ""))))
+                    invalid_answers[idx].append(
+                        (model_name, str(item.get("answer", "")))
+                    )
                     continue
                 model_answers.setdefault(idx, {})[model_name] = answer_letter
 
@@ -187,9 +191,11 @@ def display_entry(
                 for letter in sorted(normalized_options)
             ]
 
-    wrapped_question = "\n".join(
-        textwrap.wrap(question_text, width=90)
-    ) if question_text else "No question text available."
+    wrapped_question = (
+        "\n".join(textwrap.wrap(question_text, width=90))
+        if question_text
+        else "No question text available."
+    )
 
     search_roots: List[str] = []
     potential_video_roots: set[str] = set()
@@ -232,11 +238,12 @@ def display_entry(
     option_image_items = []
     if isinstance(option_files_raw, dict):
         normalized_option_files = {
-            str(letter).upper(): str(path)
-            for letter, path in option_files_raw.items()
+            str(letter).upper(): str(path) for letter, path in option_files_raw.items()
         }
-        option_order = [letter for letter, _ in options] if options else sorted(
-            normalized_option_files
+        option_order = (
+            [letter for letter, _ in options]
+            if options
+            else sorted(normalized_option_files)
         )
         seen_letters = set()
         for letter in option_order:
@@ -260,9 +267,7 @@ def display_entry(
             option_text = normalized_options.get(letter_upper, "")
             option_image_items.append((letter_upper, option_text, resolved))
 
-    video_patterns = (
-        "*_fps-25_render.mp4",
-    )
+    video_patterns = ("*_fps-25_render.mp4",)
     discovered_videos: List[str] = []
     for root in sorted(potential_video_roots):
         for pattern in video_patterns:
@@ -444,8 +449,8 @@ def display_entry(
             fontsize=11,
             ha="left",
             va="top",
-                color="green",
-                transform=text_ax.transAxes,
+            color="green",
+            transform=text_ax.transAxes,
         )
 
     cleanup_callbacks: List[Callable[[], None]] = []
@@ -553,7 +558,9 @@ def display_entry(
                 "iterator": frame_iterator,
             }
 
-            def _advance(_frame_index: int, artist=image_artist, state=state, ax=ax) -> tuple:
+            def _advance(
+                _frame_index: int, artist=image_artist, state=state, ax=ax
+            ) -> tuple:
                 iterator = state["iterator"]
                 try:
                     frame = next(iterator)
@@ -599,7 +606,9 @@ def display_entry(
             ax = option_axes[opt_idx]
             ax.axis("off")
             title_color = "green" if letter == correct_letter else "gray"
-            caption = "\n".join(textwrap.wrap(f"{letter}. {opt_text}" if opt_text else letter, width=40))
+            caption = "\n".join(
+                textwrap.wrap(f"{letter}. {opt_text}" if opt_text else letter, width=40)
+            )
             try:
                 image = mpimg.imread(img_path)
                 ax.imshow(image)
@@ -726,10 +735,7 @@ def main() -> None:
     # print(entries)
     if args.categories:
         requested = {category.lower() for category in args.categories}
-        all_entries = entries = [
-            entry
-            for entry in entries
-        ]
+        all_entries = entries = [entry for entry in entries]
         # print(all_entries)
         # print(requested)
         entries = [

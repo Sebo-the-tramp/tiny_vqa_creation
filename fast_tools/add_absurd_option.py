@@ -12,7 +12,7 @@ import argparse
 import json
 import random
 from pathlib import Path
-from typing import Any, Dict, Iterable, List, MutableMapping, Optional
+from typing import Any, Iterable, List, MutableMapping, Optional
 
 
 _LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -171,7 +171,9 @@ def update_entry(entry: MutableMapping[str, Any]) -> None:
         entry["options"] = {label: generate_nonsense()}
 
     new_option = (
-        entry["options"][-1] if isinstance(entry["options"], list) else entry["options"][label]
+        entry["options"][-1]
+        if isinstance(entry["options"], list)
+        else entry["options"][label]
     )
     entry["question"] = append_to_question(entry.get("question"), label, new_option)
 

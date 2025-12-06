@@ -3,10 +3,12 @@
 if [ -d "/data0/sebastian.cavada/datasets/simulations_v3" ]; then
     source "/data0/sebastian.cavada/.telegram_bot.env"
     BASE_PATH="/data0/sebastian.cavada/datasets/simulations_v3/dl3dv"
+    BASE_PATH_CF="/data0/sebastian.cavada/datasets/simulations_v3/dl3dv-counterfact"
     DESTINATION_SIMULATION_PATH="/data0/sebastian.cavada/datasets/physbench/simulations"
 else
     source "/home/it4i-thvu/seb_dev/.telegram_bot.env"
     BASE_PATH="/scratch/project/eu-25-92/composite_physics/dataset/simulation_v3/dl3dv"
+    BASE_PATH_CF="/data0/sebastian.cavada/datasets/simulations_v3/dl3dv-counterfact"
     DESTINATION_SIMULATION_PATH="/scratch/project/eu-25-92/composite_physics/dataset/physbench/simulation_v3"
 fi
 
@@ -14,13 +16,25 @@ cd answering_questions
 
 # This are the runs I need to create
 
-GENERAL_RUN_COUNT=09
+GENERAL_RUN_COUNT=10
 
-# # 10K general # text - no circling
-# python main_parallel.py --simulation_path "${BASE_PATH}/random" "${BASE_PATH}/random-cam-stationary" \
+# python main_parallel_global.py --simulation_path "${BASE_PATH}/random" "${BASE_PATH}/random-cam-stationary" \
 #     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
-#     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_general" \
+#     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_global_plausibility" \
 #     --n_scenes 2000
+
+# 10K general # text - no circling
+# python main_parallel.py --simulation_path "${BASE_PATH}/random/4/" \
+#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
+#     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_test_physics_properties" \
+#     --n_scenes 100
+
+# 1K general # text counterfactual shift
+python main_parallel_counterfactual.py --simulation_path "${BASE_PATH_CF}/shift-x" "${BASE_PATH_CF}/shift-z" \
+    --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
+    --export_format json --run_name "run_${GENERAL_RUN_COUNT}_coutnerfact_shift" \
+    --counterfactual_type "shift" \
+    --n_scenes 100
 
 # # 1K roi circling - text
 # python main_parallel.py --simulation_path "${BASE_PATH}/random" "${BASE_PATH}/random-cam-stationary" \

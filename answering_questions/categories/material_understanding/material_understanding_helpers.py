@@ -99,7 +99,7 @@ Answer = Union[int, float, str]
 #     return acceleration_magnitude
 
 material_taxonomy = {}
-with open("/data0/sebastian.cavada/compositional-physics/tiny_vqa_deterministic/answering_questions/categories/material_understanding/material_taxonomy.json", "r") as f:
+with open("./categories/material_understanding/material_taxonomy.json", "r") as f:
     material_taxonomy = json.load(f)['material_taxonomy']
 
 def get_material_dataset_different_from_target(

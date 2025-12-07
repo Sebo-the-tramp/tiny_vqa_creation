@@ -121,93 +121,93 @@
 
         "F_PHYSICS_PROPERTY_DENSITY_OBJECT": {
             "task_splits": "single+multi",
-            "sub_category": "physics_property",
+            "sub_category": "density",
             "choice": "mcq",
             "question": "What is the average (or effective) density of the <OBJECT>?"
         },
         "F_PHYSICS_PROPERTY_DENSITY_OBJECT_RELATIVE": {
             "task_splits": "single+multi",
-            "sub_category": "physics_property",
+            "sub_category": "density",
             "choice": "mcq",
             "question": "Which object has the highest effective density?"
         },
         
         "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT": {
             "task_splits": "single+multi",
-            "sub_category": "physics_property",
+            "sub_category": "young_modulus",
             "choice": "mcq",
             "question": "What is the Young's modulus of the <OBJECT>?"
         },
         "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR":{
             "task_splits": "single+multi",
-            "sub_category": "physics_property",
+            "sub_category": "young_modulus",
             "choice": "mcq",
             "question": "Which object has a Young's Modulus most similar to that of the <OBJECT>?"
         },
         "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR_NON_TECHNICAL":{
             "task_splits": "single+multi",
-            "sub_category": "physics_property",
+            "sub_category": "young_modulus",
             "choice": "mcq",
             "question": "Which object has a softness most similar to that of the <OBJECT>?"
         },
         "F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST": {
             "task_splits": "single+multi",
-            "sub_category": "physics_property",
+            "sub_category": "young_modulus",
             "choice": "mcq",
             "question": "Which object in the scene exhibits the highest Young's Modulus?"
         },
         "F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST_NON_TECHNICAL": {
             "task_splits": "single+multi",
-            "sub_category": "physics_property",
+            "sub_category": "young_modulus",
             "choice": "mcq",
             "question": "Which object in the scene exhibits the stiffest?"
         },
         "F_PHYSICS_PROPERTY_YOUNG_MODULUS_BEHAVIOR": {
             "task_splits": "single+multi",
-            "sub_category": "physics_property",
+            "sub_category": "young_modulus",
             "choice": "mcq",
             "question": "How would the <OBJECT> deform compared to a standard steel rod?"            
         },
         "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_HIGH_LEVEL": {
             "task_splits": "single+multi",
-            "sub_category": "physics_property",
+            "sub_category": "young_modulus",
             "choice": "mcq",
             "question": "Which attribute best describes the <OBJECT> in terms of deformability?"
         },
 
         "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT": {
             "task_splits": "single+multi",
-            "sub_category": "physics_property",
+            "sub_category": "poisson_ratio",
             "choice": "mcq",
             "question": "What is the Poisson ratio of the <OBJECT>?"
         },
         "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR":{
             "task_splits": "single+multi",
-            "sub_category": "physics_property",
+            "sub_category": "poisson_ratio",
             "choice": "mcq",
             "question": "Which object has a Poisson ratio most similar to that of the <OBJECT>?"
         },
         "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR_NON_TECHNICAL":{
             "task_splits": "single+multi",
-            "sub_category": "physics_property",
+            "sub_category": "poisson_ratio",
             "choice": "mcq",
             "question": "Which object acts most like the <OBJECT> in terms of how it bulges sideways when squeezed?"
         },
         "F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST": {
             "task_splits": "single+multi",
-            "sub_category": "physics_property",
+            "sub_category": "poisson_ratio",
             "choice": "mcq",
             "question": "Which object in the scene exhibits the largest Poisson ratio?"
         },
         "F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST_NON_TECHNICAL": {
             "task_splits": "single+multi",
-            "sub_category": "physics_property",
+            "sub_category": "poisson_ratio",
             "choice": "mcq",
             "question": "Which object bulges out the most when you press on it?"
         },
         "F_PHYSICS_PROPERTY_POISSON_DEFORMATION": {
             "task_splits": "single+multi",
-            "sub_category": "physics_property",
+            "sub_category": "poisson_ratio",
             "choice": "mcq",
             "question": "If the <OBJECT> were compressed vertically, how would its horizontal dimensions change?"
         },
@@ -299,7 +299,8 @@
             "sub_category": "event_ordering",
             "choice": "mcq",
             "question": "What frame is the most likely to have been removed from the scene?"
-        },        
+        },
+                
         "F_CAMERA_MOTION_DIRECTION": {
             "task_splits": "multi",
             "sub_category": "camera_motion",

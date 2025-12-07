@@ -172,10 +172,10 @@ def get_spatial_relationship_camera_view(
 
     # This was for debugging purposes only
     # use fake photo to load and check projection correcteness
-    fake_photo = Image.open(
-        f"/data0/sebastian.cavada/datasets/simulations_v3/dl3dv/random/3/c-1_no-3_d-4_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-9_20251102_063341/render/{str(timestep).zfill(6)}.png"
-    )  # dummy image just to get width and height
-    numpy_image = np.array(fake_photo)
+    # fake_photo = Image.open(
+    #     f"/data0/sebastian.cavada/datasets/simulations_v3/dl3dv/random/3/c-1_no-3_d-4_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-9_20251102_063341/render/{str(timestep).zfill(6)}.png"
+    # )  # dummy image just to get width and height
+    # numpy_image = np.array(fake_photo)
 
     # # add points to the image, red dots for object 1, blue dots for object 2
     # for point in hull1:

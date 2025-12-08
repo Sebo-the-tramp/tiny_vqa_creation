@@ -344,9 +344,17 @@ def F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR(
     for obj in iter_objects(world_state):
         if obj["id"] == object["id"]:
             continue  # skip the same object
+
+        obj_state = world_state["simulation"][timestep]["objects"][obj["id"]]
+
+        is_object_visible = (
+            obj_state["infov_pixels"] > MIN_VISIBLE_PIXELS
+            and obj_state["fov_visibility"] >= VISIBILITY_THRESHOLD
+        )
+
         difference = abs(obj["props"]["yms"] - youngs_modulus)
 
-        if difference < MAX_ALLOWED_DIFFERENCE_YOUNGS_MODULUS:            
+        if difference < MAX_ALLOWED_DIFFERENCE_YOUNGS_MODULUS and is_object_visible:            
             similar_object = obj
             similar_object_count += 1
 
@@ -403,7 +411,15 @@ def F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST(
     MIN_DIFFERENCE_YOUNGS_MODULUS_PERCENTAGE = 0.1  # to avoid selecting objects with very similar modulus
 
     for obj in iter_objects(world_state):
-        if obj["props"]["yms"] > highest_modulus + MIN_DIFFERENCE_YOUNGS_MODULUS_PERCENTAGE * highest_modulus:
+        obj_state = world_state["simulation"][timestep]["objects"][obj["id"]]
+
+        is_object_visible = (
+            obj_state["infov_pixels"] > MIN_VISIBLE_PIXELS
+            and obj_state["fov_visibility"] >= VISIBILITY_THRESHOLD
+        )
+
+        if obj["props"]["yms"] > highest_modulus + MIN_DIFFERENCE_YOUNGS_MODULUS_PERCENTAGE * highest_modulus \
+            and is_object_visible:
             highest_modulus = obj["props"]["yms"]
             highest_modulus_object = obj
             highest_modulus_count += 1
@@ -414,7 +430,7 @@ def F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST(
     if highest_modulus_object is None:
         raise ImpossibleToAnswer("No objects found in the scene.")
 
-    presents = [obj["name"] + str(obj["props"]["yms"]) for obj in iter_objects(world_state)]
+    presents = [obj["name"] for obj in iter_objects(world_state)]
     labels, correct_idx = create_mc_object_names_from_dataset(
         highest_modulus_object["name"],
         presents,
@@ -583,8 +599,17 @@ def F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR(
     for obj in iter_objects(world_state):
         if obj["id"] == object["id"]:
             continue  # skip the same object
+
+        obj_state = world_state["simulation"][timestep]["objects"][obj["id"]]
+
+        is_object_visible = (
+            obj_state["infov_pixels"] > MIN_VISIBLE_PIXELS
+            and obj_state["fov_visibility"] >= VISIBILITY_THRESHOLD
+        )
+        
         difference = abs(obj["props"]["prs"] - poisson_ratio)
-        if difference < MAX_ALLOWED_DIFFERENCE_POISSON_RATIO:
+        
+        if difference < MAX_ALLOWED_DIFFERENCE_POISSON_RATIO and is_object_visible:
             similar_object = obj
             similar_object_count += 1
 
@@ -639,8 +664,16 @@ def F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST(
     highest_poisson_ratio = -float('inf')
     highest_poisson_ratio_count = 0
 
-    for obj in iter_objects(world_state):        
-        if obj["props"]["prs"] >= highest_poisson_ratio:            
+    for obj in iter_objects(world_state): 
+          
+        obj_state = world_state["simulation"][timestep]["objects"][obj["id"]]
+
+        is_object_visible = (
+            obj_state["infov_pixels"] > MIN_VISIBLE_PIXELS
+            and obj_state["fov_visibility"] >= VISIBILITY_THRESHOLD
+        )
+              
+        if obj["props"]["prs"] >= highest_poisson_ratio and is_object_visible:            
             highest_poisson_ratio = obj["props"]["prs"]
             highest_poisson_ratio_object = obj
             highest_poisson_ratio_count += 1
@@ -740,7 +773,16 @@ def F_MATERIAL_IDENTIFICATION_SIMILAR_OBJECT(
     similar_object_count = 0
 
     for obj in iter_objects(world_state):
-        if obj["description"]["material_group"] == material and obj["id"] != object["id"]:            
+        
+        obj_state = world_state["simulation"][timestep]["objects"][obj["id"]]
+
+        is_object_visible = (
+            obj_state["infov_pixels"] > MIN_VISIBLE_PIXELS
+            and obj_state["fov_visibility"] >= VISIBILITY_THRESHOLD
+        )
+
+        if obj["description"]["material_group"] == material and obj["id"] != object["id"] \
+            and is_object_visible:            
             object_similar = obj
             similar_object_count += 1        
     

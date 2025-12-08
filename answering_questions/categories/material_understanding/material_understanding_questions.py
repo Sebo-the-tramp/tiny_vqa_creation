@@ -354,7 +354,8 @@ def F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR(
         raise ImpossibleToAnswer("Too many similar objects in the scene. Ambiguous question.")
 
     if similar_object is None:
-        similar_object = {"name": "None of the objects"}
+        raise ImpossibleToAnswer("No similar object found in the scene.")
+        # similar_object = {"name": "None of the objects"}
     
     presents = [obj["name"] for obj in iter_objects(world_state)]
     labels, correct_idx = create_mc_object_names_from_dataset(
@@ -415,7 +416,7 @@ def F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST(
 
     presents = [obj["name"] + str(obj["props"]["yms"]) for obj in iter_objects(world_state)]
     labels, correct_idx = create_mc_object_names_from_dataset(
-        highest_modulus_object["name"] + str(highest_modulus_object["props"]["yms"]),
+        highest_modulus_object["name"],
         presents,
         get_all_objects_names(),
         num_answers=4,
@@ -459,20 +460,21 @@ def F_PHYSICS_PROPERTY_YOUNG_MODULUS_BEHAVIOR(
     E_steel = 200e9
     r = E / E_steel
 
-    if r > 3:
-        correct_idx = 0   # Much stiffer
-    elif r > 0.3:
-        correct_idx = 1   # Similar stiffness
+    # Revised thresholds for better semantic mapping
+    if r > 1.5:
+        correct_idx = 0   # Stiffer than steel (e.g., Diamond, Tungsten)
+    elif r > 0.5:
+        correct_idx = 1   # Comparable to steel (e.g., Copper, Titanium, Iron)
     elif r > 0.05:
-        correct_idx = 2   # Slightly softer
+        correct_idx = 2   # Softer than steel (e.g., Aluminum, Glass, Concrete)
     else:
-        correct_idx = 3   # Much softer
+        correct_idx = 3   # Much softer than steel (e.g., Plastic, Rubber, Wood)
 
     labels = [
-        "Much stiffer than a steel rod",
-        "Similar stiffness to a steel rod",
-        "Slightly softer than a steel rod",
-        "Much softer than a steel rod"
+        "Much stiffer than a steel",
+        "Similar stiffness to a steel",
+        "Slightly softer than a steel",
+        "Much softer than a steel"
     ]
 
     return fill_questions(
@@ -590,11 +592,12 @@ def F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR(
             raise ImpossibleToAnswer("Too many similar objects in the scene. Ambiguous question.")
         
     if similar_object is None:
-        similar_object = {"name": "None of the objects", "props": {"prs": -1}}
+        raise ImpossibleToAnswer("No similar object found in the scene.")
+        # similar_object = {"name": "None of the objects", "props": {"prs": -1}}
 
-    presents = [obj["name"] + " " + str(obj["props"]["prs"]) for obj in iter_objects(world_state)]
+    presents = [obj["name"] for obj in iter_objects(world_state)]
     labels, correct_idx = create_mc_object_names_from_dataset(
-        similar_object["name"] + " " + str(similar_object["props"]["prs"]),
+        similar_object["name"],
         presents,
         get_all_objects_names(),
         num_answers=4,
@@ -747,8 +750,9 @@ def F_MATERIAL_IDENTIFICATION_SIMILAR_OBJECT(
             continue  # skip the similar object
         present.append(obj["name"])
 
-    if similar_object_count != 1:
-        object_similar = {"name": "None of the objects"}
+    if similar_object_count == 0:
+        raise ImpossibleToAnswer("No similar object found in the scene.")
+        # object_similar = {"name": "None of the objects"}
 
     if similar_object_count > 1:
         raise ImpossibleToAnswer("Too many similar objects in the scene. Ambiguous question.")

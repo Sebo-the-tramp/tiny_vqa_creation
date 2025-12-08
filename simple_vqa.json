@@ -62,12 +62,6 @@
             "choice": "mcq",
             "question": "Considering the geometrical center of <OBJECT>, what is the straight-line distance it has traveled during the sequence?"
         },
-        "F_KINEMATICS_MOVING_OBJECT": {
-            "task_splits": "multi",
-            "sub_category": "kinematics",
-            "choice": "mcq",
-            "question": "Which of the objects moves during the sequence?"
-        },
         "F_KINEMATICS_SYSTEM_STABILITY": {
             "task_splits": "multi",
             "sub_category": "kinematics",

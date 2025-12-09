@@ -57,7 +57,7 @@
             "sub_category": "mass",
             "choice": "mcq",
             "question": "What is the mass of the <OBJECT-CF>?"
-        },        
+        }, 
         "CF_MASS_HEAVIEST_OBJECT": {
             "task_splits": "single+multi",
             "sub_category": "mass",

@@ -193,7 +193,7 @@
             "choice": "mcq",
             "question": "Which object seen in the image bulges out the most when you press on it?"
         },
-        "F_PHYSICS_PROPERTY_POISSON_DEFORMATION": {
+        "F_PHYSICS_PROPERTY_POISSON_HIGH_LEVEL": {
             "task_splits": "single+multi",
             "sub_category": "poisson_ratio",
             "choice": "mcq",
@@ -300,8 +300,10 @@
             "sub_category": "camera_motion",
             "choice": "mcq",
             "question": "How does the camera’s zoom level change across the sequence?"
-        },
-        
+        }
+    },
+    
+    "persistence": {
         "F_PERSISTENCE_OBJECT_PRESENT": {
             "task_splits": "multi",
             "sub_category": "object_persistence",
@@ -326,5 +328,5 @@
             "choice": "mcq",
             "question": "How many objects are present but not visible in the scene?"
         }
-    } 
+    }
 }

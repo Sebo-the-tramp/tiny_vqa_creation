@@ -270,6 +270,8 @@ def F_PHYSICS_PROPERTY_DENSITY_OBJECT_RELATIVE(
     resolved_attributes = resolve_attributes_visible_at_timestep(
         attributes, world_state, timestep
     )
+    if denser_object is None:
+        raise ImpossibleToAnswer("No objects found in the scene.")
 
     presents = [obj["name"] for obj in iter_objects(world_state)]
     labels, correct_idx = create_mc_object_names_from_dataset(
@@ -693,6 +695,7 @@ def F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST(
             highest_poisson_ratio = obj["props"]["prs"]
             highest_poisson_ratio_object = obj
             highest_poisson_ratio_count += 1
+            
     if highest_poisson_ratio_object is None:
         raise ImpossibleToAnswer("No objects found in the scene.")
     
@@ -722,7 +725,7 @@ def F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST_NON_TECHNICAL(
     )
 
 @with_resolved_attributes
-def F_PHYSICS_PROPERTY_POISSON_DEFORMATION(
+def F_PHYSICS_PROPERTY_POISSON_HIGH_LEVEL(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
     

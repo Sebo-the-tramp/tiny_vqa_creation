@@ -10,5 +10,5 @@
     "threshold_difference_percentage": 0.1,
     "min_pixels_visible": 300,
     "max_allowed_difference_youngs_modulus": 10000,
-    "max_allowed_difference_poisson_ratio": 0.05
+    "max_allowed_difference_poisson_ratio": 0.02
 }

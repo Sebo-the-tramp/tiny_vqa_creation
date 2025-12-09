@@ -477,20 +477,20 @@ def F_PHYSICS_PROPERTY_YOUNG_MODULUS_BEHAVIOR(
     r = E / E_steel
 
     # Revised thresholds for better semantic mapping
-    if r > 1.5:
-        correct_idx = 0   # Stiffer than steel (e.g., Diamond, Tungsten)
-    elif r > 0.5:
-        correct_idx = 1   # Comparable to steel (e.g., Copper, Titanium, Iron)
-    elif r > 0.05:
-        correct_idx = 2   # Softer than steel (e.g., Aluminum, Glass, Concrete)
+    if r > 0.3:
+        correct_idx = 0   # Metal/Glass Tier (> 60 GPa)
+    elif r > 0.01:
+        correct_idx = 1   # Structural Tier (Wood, Hard Plastic, Bone) (> 2 GPa)
+    elif r > 0.001:
+        correct_idx = 2   # Flexible Plastic Tier (Soft Polyethylene) (> 200 MPa)
     else:
-        correct_idx = 3   # Much softer than steel (e.g., Plastic, Rubber, Wood)
+        correct_idx = 3   # Soft/Rubbery Tier (< 200 MPa)
 
     labels = [
-        "Much stiffer than a steel",
-        "Similar stiffness to a steel",
-        "Slightly softer than a steel",
-        "Much softer than a steel"
+        "It would behave like metal (Extremely Rigid)",
+        "It would behave like wood or hard plastic (Rigid)",
+        "It would behave like flexible plastic (Bendable)",
+        "It would behave like rubber or foam (Squishy)"
     ]
 
     return fill_questions(
@@ -521,20 +521,36 @@ def F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_HIGH_LEVEL(
 
     E = youngs_modulus  # in Pascals
 
-    if E < 0.5e9:
-        correct_idx = 3   # Highly Deformable
-    elif E < 10e9:
-        correct_idx = 2   # Soft/Compliant
-    elif E < 100e9:
-        correct_idx = 1   # Semi-Rigid
+    # 1. RIGID (The "High" Histogram Bars)
+    # > 100 MPa (10^8)
+    # Captures your Metal/Hard Plastic/Wood objects.
+    if E >= 1e8:  
+        correct_idx = 0 
+
+    # 2. FLEXIBLE (The "Middle" Histogram Bar)
+    # 10 MPa to 100 MPa (10^7 - 10^8)
+    # Captures your Rubber/Tough Leather objects.
+    elif E >= 1e7:
+        correct_idx = 1
+
+    # 3. SOFT (The "Lego Box" Bin)
+    # 100 kPa to 10 MPa (10^5 - 10^7)
+    # This captures the 500k Lego Box.
+    # It distinguishes "Structural Foam" from "Mushy Stuff".
+    elif E >= 1e5: 
+        correct_idx = 2  
+
+    # 4. EXTREMELY SOFT (The "Plush Toy" Bin)
+    # < 100 kPa (< 10^5)
+    # This captures the 60k Plush Toy.
     else:
-        correct_idx = 0   # Rigid
+        correct_idx = 3  
 
     labels = [
-        "Rigid (No visible deformation)",
-        "Semi-Rigid (Slight flex)",
-        "Soft (keeps its shape)",
-        "Highly deformable (loses its shape)"
+        "Rigid (Holds shape perfectly)",
+        "Flexible (Bendable but tough)",
+        "Soft (Deformable like stiff foam)",
+        "Very Soft (No resistance, like a plush toy)"
     ]
 
     return fill_questions(
@@ -729,18 +745,18 @@ def F_PHYSICS_PROPERTY_POISSON_DEFORMATION(
 
     if poisson_ratio < 0.0:
         correct_idx = 0  # Auxetic
-    if poisson_ratio <= 0.35:
-        correct_idx = 1  # Rigid
-    elif poisson_ratio <= 0.45:    
-        correct_idx = 2  # Soft/Compliant
+    if poisson_ratio <= 0.1:
+        correct_idx = 1  # Porous/Cork-like
+    elif poisson_ratio <= 0.4:    
+        correct_idx = 2  # Standard Solid (Metal/Plastic)
     else:
-        correct_idx = 3  # Highly Deformable
+        correct_idx = 3  # Rubber-like/Incompressible
 
     labels = [
-        "It would contract sideways instead of expanding",
-        "It would show almost no sideways change",
-        "It would expand sideways slightly",
-        "It would expand sideways noticeably"
+        "It would contract inwards",                      # Distractor
+        "It would barely change width",                  # < 0.1
+        "It would expand sideways a moderate amount",    # 0.1 - 0.4
+        "It would bulge out significantly",              # > 0.4  
     ]
     
     return fill_questions(

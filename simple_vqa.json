@@ -148,20 +148,14 @@
             "task_splits": "single+multi",
             "sub_category": "young_modulus",
             "choice": "mcq",
-            "question": "Which object seen in the image in the scene exhibits the highest Young's Modulus?"
+            "question": "Which object seen in the image exhibits the highest Young's Modulus?"
         },
         "F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST_NON_TECHNICAL": {
             "task_splits": "single+multi",
             "sub_category": "young_modulus",
             "choice": "mcq",
-            "question": "Which object seen in the image exhibits the stiffest?"
-        },
-        "F_PHYSICS_PROPERTY_YOUNG_MODULUS_BEHAVIOR": {
-            "task_splits": "single+multi",
-            "sub_category": "young_modulus",
-            "choice": "mcq",
-            "question": "How would the <OBJECT> seen in the image deform compared to a standard steel rod?"            
-        },
+            "question": "Which object seen in the image is the stiffest?"
+        }, 
         "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_HIGH_LEVEL": {
             "task_splits": "single+multi",
             "sub_category": "young_modulus",
@@ -203,7 +197,7 @@
             "task_splits": "single+multi",
             "sub_category": "poisson_ratio",
             "choice": "mcq",
-            "question": "If the <OBJECT> seen in the image, were compressed vertically, how would its horizontal dimensions change?"
+            "question": "If the <OBJECT> seen in the image were compressed vertically, how would its horizontal dimensions change?"
         },
 
         "F_MATERIAL_IDENTIFICATION_SIMILAR_OBJECT": {

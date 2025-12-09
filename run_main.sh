@@ -35,7 +35,7 @@ GENERAL_RUN_COUNT=10
 # cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
 # sed -i "s#/data0/sebastian.cavada/datasets/simulations_v3#/scratch/project/eu-25-92/composite_physics/dataset/simulation_v3#g" ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
 
-10K general # text - no circling
+# 10K general # text - no circling
 python main_parallel.py --simulation_path "${BASE_PATH}/random-cam-stationary/" \
     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_general_cam-stationary" \

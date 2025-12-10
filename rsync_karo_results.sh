@@ -16,7 +16,7 @@
 
 # only copy results_general_10K
 
-COUNT_RUN=09
+COUNT_RUN=10
 
 # RUN_NAME="run_${COUNT_RUN}_general"
 # cp ./output/$RUN_NAME/test_${RUN_NAME}_10K.json ./output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
@@ -64,21 +64,21 @@ COUNT_RUN=09
 # sed -i "s#/data0/sebastian.cavada/datasets/simulations_v3#/scratch/project/eu-25-92/composite_physics/dataset/simulation_v3#g" ./output/$RUN_NAME/test_${RUN_NAME}_karo_1K.json
 
 
-# copy results from local to karo
-rsync -avz -e "ssh -i ~/.ssh/id_rsa_karolina" \
-  --include="*run_09_*/***" \
-  --exclude="*" \
-  ./output/ \
-  it4i-thvu@login2.karolina.it4i.cz:/mnt/proj1/eu-25-92/tiny_vqa_creation/output/ \
-
-
-# # # copy results from karo to local
-# rsync -avz --dry-run -e "ssh -i ~/.ssh/id_rsa_karolina" \
-#   --include="*/" \
-#   --include="*run_09_general/**" \
+# # copy results from local to karo
+# rsync -avz -e "ssh -i ~/.ssh/id_rsa_karolina" \
+#   --include="*run_09_*/***" \
 #   --exclude="*" \
-#   it4i-thvu@login3.karolina.it4i.cz:/mnt/proj1/eu-25-92/tiny_vqa_creation/output/ \
-#   ./output/
+#   ./output/ \
+#   it4i-thvu@login2.karolina.it4i.cz:/mnt/proj1/eu-25-92/tiny_vqa_creation/output/ \
+
+
+# copy results from karo to local
+rsync -avz --dry-run -e "ssh -i ~/.ssh/id_rsa_karolina" \
+  --include="*/" \
+  --include="*run_10_general/**" \
+  --exclude="*" \
+  it4i-thvu@login3.karolina.it4i.cz:/mnt/proj1/eu-25-92/tiny_vqa_creation/output/ \
+  ./output/
 
 # https://rank.opencompass.org.cn/leaderboard-multimodal
 

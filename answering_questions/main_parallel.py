@@ -100,6 +100,10 @@ from categories.viewpoint.viewpoint import (
     get_result_by_name_viewpoint,
 )
 
+from categories.persistence.persistence import (
+    get_function_by_name_persistence,
+    get_result_by_name_persistence,
+)
 
 # ----- UTILS FUNCTIONS
 def read_questions(vqa_path):
@@ -122,6 +126,7 @@ resolver_gt = {
     "material_understanding": get_result_by_name_material_understanding,
     "temporal": get_result_by_name_temporal,
     "view_point": get_result_by_name_viewpoint,
+    "persistence": get_result_by_name_persistence,
 }
 
 resolver = {
@@ -130,6 +135,7 @@ resolver = {
     "material_understanding": get_function_by_name_material_understanding,
     "temporal": get_function_by_name_temporal,
     "view_point": get_function_by_name_viewpoint,
+    "persistence": get_function_by_name_persistence,
 }
 
 

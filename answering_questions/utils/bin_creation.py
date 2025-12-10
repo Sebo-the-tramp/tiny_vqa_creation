@@ -128,7 +128,7 @@ def create_mc_options_around_gt(
         # I mean the speed is 0, we should understand that
         gt = round(gt, display_decimals) if display_decimals is not None else gt
 
-        options = [gt, 2.50, 5.00, 10.00]  # some arbitrary distractors
+        options = [gt, 2.50, 5.00, 7.50]  # some arbitrary distractors
         random.shuffle(options)
         correct_idx = options.index(gt)
         return options, correct_idx

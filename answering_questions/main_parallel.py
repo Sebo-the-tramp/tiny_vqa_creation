@@ -168,12 +168,16 @@ def create_vqa(
 
     all_vqa = []
 
-    for category_key, category in questions.items():
+    categories = config.include_categories
+
+    for category_key, category in questions.items():        
+
         # current category dev
-        # if (
-        #     category_key != "temporal"
-        # ):
-        #     continue
+        print(category_key)
+        if categories == [] or (
+            category_key not in categories
+        ):
+            continue
 
         if verbose:
             print("###" * 10, f"Processing category: {category_key}", "###" * 10)
@@ -462,6 +466,15 @@ if __name__ == "__main__":
         type=str,
         default=None,
         help="Type of augmentation to use (roi_circling, masking, scene_context, textual_context, etc).",
+    )
+
+    # include only some categories
+    parser.add_argument(
+        "--include_categories",
+        nargs="+",
+        type=str,
+        default=[],
+        help="List of categories to include (default: all).",
     )
 
     args = parser.parse_args()

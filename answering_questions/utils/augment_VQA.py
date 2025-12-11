@@ -9,6 +9,8 @@ import glob
 from utils.config import get_config
 from utils.geometry import project_obb
 
+from utils.my_exception import ImpossibleToAnswer
+
 
 sampling_rate = get_config()["sampling_rate"]
 time_interval = 1.0 / sampling_rate
@@ -57,27 +59,32 @@ def augment_image_VQA_with_context(
         return file_names
 
     # let's route here based on the flags
-    if augmentation == "roi_circling":
+    if augmentation == "roi_circling_text":
         file_names = augment_roi_circling(
-            question, world_state, resolved_attributes, file_names
+            question, world_state, resolved_attributes, file_names, text=True
         )
-    if augmentation == "contour":
-        file_names = augment_contour(
-            question, world_state, resolved_attributes, file_names
+    if augmentation == "roi_circling_no_text":
+        file_names = augment_roi_circling(
+            question, world_state, resolved_attributes, file_names, text=False
         )
-    if augmentation == "textual_context":
-        file_names = augment_textual_context(
-            question, world_state, resolved_attributes, file_names
-        )
-    if augmentation == "scene_context":
-        file_names = augment_scene_context(
-            question, world_state, resolved_attributes, file_names
-        )
+
+    # if augmentation == "contour":
+    #     file_names = augment_contour(
+    #         question, world_state, resolved_attributes, file_names
+    #     )
+    # if augmentation == "textual_context":
+    #     file_names = augment_textual_context(
+    #         question, world_state, resolved_attributes, file_names
+    #     )
+    # if augmentation == "scene_context":
+    #     file_names = augment_scene_context(
+    #         question, world_state, resolved_attributes, file_names
+    #     )
 
     return file_names
 
 
-def augment_roi_circling(question, world_state, resolved_attributes, file_names):
+def augment_roi_circling(question, world_state, resolved_attributes, file_names, text=True):
     # just check for folder existance
     new_dir = (
         Path(file_names[0]).parent.as_posix().replace("render", "render_roi_circled")
@@ -88,6 +95,9 @@ def augment_roi_circling(question, world_state, resolved_attributes, file_names)
 
     if resolved_attributes == {}:
         return file_names
+
+    if len(resolved_attributes) == 0:
+        raise ImpossibleToAnswer("No resolved attributes for ROI circling. So no need to circle anything, and to ask questions about it")   
 
     for file in file_names:
         original_image = np.array(PIL.Image.open(file))
@@ -143,6 +153,17 @@ def augment_roi_circling(question, world_state, resolved_attributes, file_names)
                     original_image, center, radius * 1.5, idx
                 )
 
+                object_name = value["choice"]["name"]
+                pattern = re.compile(re.escape(object_name), re.IGNORECASE)
+                if text:
+                    # modify the question such that the name of the object is removed and replaced with "the circled object"
+                    new_question = pattern.sub(
+                        f"{object_name} (circled in the image)", question["question"]
+                    )
+                else:
+                    # append after the name of the object that it is circled in the image
+                    new_question = pattern.sub("object circled in red", question["question"])
+
         new_file_name = file.replace("render", "render_roi_circled").replace(
             ".png", f"_{question['_question_key']}.png"
         )
@@ -151,8 +172,6 @@ def augment_roi_circling(question, world_state, resolved_attributes, file_names)
 
         file_names[file_names.index(file)] = new_file_name
     if len(resolved_attributes) > 0:
-        new_question = f"In the image, the region circled in red indicates the area of interest. {question['question']}"
-
         question["question"] = new_question
 
     return file_names

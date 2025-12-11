@@ -1,4 +1,4 @@
-RUN_NAME="run_10_general"
+RUN_NAME="run_10_roi_circling"
 
 # python check_VQA.py ../output/test$RUN_NAME.json ../output/val_answer$RUN_NAME.json --random --limit 500  --question-ids F_CAMERA_MOTION_DIRECTION
 

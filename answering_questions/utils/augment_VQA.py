@@ -108,6 +108,7 @@ def augment_roi_circling(question, world_state, resolved_attributes, file_names,
                 render_name = file.split("/")[-1]
                 instance_image_path = file.replace("render", "instances")
 
+                print(world_state["encoding"])
                 rgb_object_class = world_state["encoding"]["classes"][
                     int(object_id) + 1
                 ]

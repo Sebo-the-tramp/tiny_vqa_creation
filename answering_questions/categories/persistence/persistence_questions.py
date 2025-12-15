@@ -53,8 +53,6 @@ MIN_PIXELS_VISIBLE = get_config()["min_pixels_visible"]
 CLIP_LENGTH = get_config()["clip_length"]
 
 
-
-
 @with_resolved_attributes
 def F_PERSISTENCE_OBJECT_PRESENT(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
@@ -62,7 +60,7 @@ def F_PERSISTENCE_OBJECT_PRESENT(
     
     assert len(attributes) == 0
 
-    candidate_object = None
+    candidate_objects = []
     for object in iter_objects(world_state):
         found_pattern, final_timestep = check_visibility_sequence(
             world_state, object["id"],
@@ -70,21 +68,21 @@ def F_PERSISTENCE_OBJECT_PRESENT(
         )
 
         if found_pattern:
-            answer = object["name"]
-            # if there are 2 objects (unlikely)
-            if candidate_object is not None:
-                raise ImpossibleToAnswer("Multiple objects found with the required persistence pattern.")
-            else:
-                candidate_object = object
-                print("Found object with persistence pattern:", answer)
-                print("At timestep:", final_timestep)
-                break
+            candidate_objects.append(object)
+            print("At timestep:", final_timestep)
 
-    if candidate_object is None:
+    if len(candidate_objects) == 0:
         raise ImpossibleToAnswer("No object found with the required persistence pattern.")
     
+    if len(candidate_objects) > 1:
+        raise ImpossibleToAnswer("Multiple objects found with the required persistence pattern.")
+    
+    if final_timestep is None:
+        print("but whyyy")
+        raise ImpossibleToAnswer("Could not determine the final timestep for the detected pattern.")
+
     labels, correct_idx = create_mc_object_names_from_dataset(
-        candidate_object["name"],
+        candidate_objects[0]["name"],
         [],
         get_all_objects_names(),
         num_answers=4,
@@ -134,15 +132,18 @@ def F_PERSISTENCE_OBJECT_TOTAL_COUNT(
     initial_timestep_index = max(0, final_timestep_index - CLIP_LENGTH)
 
     if final_timestep_index - initial_timestep_index < CLIP_LENGTH:
-        raise ImpossibleToAnswer("Not enough timesteps before visibility drop to answer the question.")
+        raise ImpossibleToAnswer("Not enouh timesteps before visibility drop to answer the question.")
 
     final_timestep = list_indexes[final_timestep_index]
     count_objects_initial = timestep_counts[initial_timestep_index]
 
+    #balanced options around the initial count
+    balanced_bins = [str(i) for i in range(max(0, count_objects_initial - 2), count_objects_initial + 4) if i != count_objects_initial]
+
     labels, correct_idx = create_mc_object_names_from_dataset(
         str(count_objects_initial),
         [],
-        [str(i) for i in range(0, 11)],
+        balanced_bins,
         num_answers=4,
     )
 
@@ -185,10 +186,12 @@ def F_PERSISTENCE_OBJECT_TOTAL_COUNT_HIDDEN(
     count_objects_initial = timestep_counts[initial_timestep_index]
     count_objects_final = timestep_counts[final_timestep_index]
 
+    balanced_bins = [str(i) for i in range(max(0, count_objects_initial - 2), count_objects_initial + 4) if i != count_objects_initial]
+
     labels, correct_idx = create_mc_object_names_from_dataset(
         str(count_objects_initial - count_objects_final),
         [],
-        [str(i) for i in range(0, 11)],
+        balanced_bins,
         num_answers=4,
     )
 
@@ -199,3 +202,13 @@ def F_PERSISTENCE_OBJECT_TOTAL_COUNT_HIDDEN(
     return fill_questions(
         question, labels, correct_idx, world_state, final_timestep, resolved_attributes 
     )
+
+
+@with_resolved_attributes
+def F_PERSISTENCE_OBJET_COLLISION_HIDDEN(
+    world_state: WorldState, question: QuestionPayload, attributes, **kwargs
+) -> Sequence[str]:
+    
+    assert len(attributes) == 0
+    
+    raise ImpossibleToAnswer("Not implemented yet.")

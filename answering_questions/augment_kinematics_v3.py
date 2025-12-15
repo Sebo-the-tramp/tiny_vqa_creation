@@ -47,6 +47,7 @@ def augment_single_simulation(in_path: str, out_path: Optional[str] = None) -> s
 
     sim = data["simulation"]
     times = sorted(sim.keys(), key=lambda s: float(s))
+    print(times)
     last_state: dict[
         str,
         Tuple[

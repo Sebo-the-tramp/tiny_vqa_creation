@@ -308,25 +308,31 @@
             "task_splits": "multi",
             "sub_category": "object_persistence",
             "choice": "mcq",
-            "question": "Which object is present in the scene?"
+            "question": "Which object is present, but not visible, in the last frame?"
         },
         "F_PERSISTENCE_OBJECT_DISAPPEAR": {
             "task_splits": "multi",
             "sub_category": "object_persistence",
             "choice": "mcq",
-            "question": "Which object disappears and does not reappear during the sequence?"
+            "question": "Which object disappears and does not reappear in the last frame?"
         },
         "F_PERSISTENCE_OBJECT_TOTAL_COUNT": {
             "task_splits": "multi",
             "sub_category": "object_persistence",
             "choice": "mcq",
-            "question": "How many objects are in the scene in total, including those currently hidden?"
+            "question": "How many objects are in the last frame in total, including those currently hidden?"
         },
         "F_PERSISTENCE_OBJECT_TOTAL_COUNT_HIDDEN": {
             "task_splits": "multi",
             "sub_category": "object_persistence",
             "choice": "mcq",
-            "question": "How many objects are present but not visible in the scene?"
+            "question": "How many objects are present but not visible in the last frame?"
+        },
+        "F_PERSISTENCE_OBJET_COLLISION_HIDDEN": {
+            "task_splits": "multi",
+            "sub_category": "object_persistence",
+            "choice": "mcq",
+            "question": "Which object collides with another object but is not visible in the last frame?"
         }
     }
 }

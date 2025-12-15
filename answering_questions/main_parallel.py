@@ -170,11 +170,11 @@ def create_vqa(
 
     categories = config.include_categories
 
-    for category_key, category in questions.items():        
+    for category_key, category in questions.items():
 
         # current category dev
         print(category_key)
-        if categories == [] or (
+        if categories != [] and (
             category_key not in categories
         ):
             continue

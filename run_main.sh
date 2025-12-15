@@ -1,28 +1,37 @@
 #!/bin/bash
 
-if [ -d "/data0/sebastian.cavada/datasets/simulations_v3" ]; then
+if [ -d "/data0/sebastian.cavada/datasets/simulations_v4" ]; then
     source "/data0/sebastian.cavada/.telegram_bot.env"
-    BASE_PATH="/data0/sebastian.cavada/datasets/simulations_v3/dl3dv"
-    BASE_PATH_CF="/data0/sebastian.cavada/datasets/simulations_v3/dl3dv-counterfact"
+    BASE_PATH="/data0/sebastian.cavada/datasets/simulations_v4/dl3dv"
+    BASE_PATH_CF="/data0/sebastian.cavada/datasets/simulations_v4/dl3dv-counterfact"
     DESTINATION_SIMULATION_PATH="/data0/sebastian.cavada/datasets/physbench/simulations"
 else
     source "/home/it4i-thvu/seb_dev/.telegram_bot.env"
-    BASE_PATH="/scratch/project/eu-25-92/composite_physics/dataset/simulation_v3/dl3dv"
-    BASE_PATH_CF="/data0/sebastian.cavada/datasets/simulations_v3/dl3dv-counterfact"
-    DESTINATION_SIMULATION_PATH="/scratch/project/eu-25-92/composite_physics/dataset/physbench/simulation_v3"
+    BASE_PATH="/scratch/project/eu-25-92/composite_physics/dataset/simulation_v4/dl3dv"
+    BASE_PATH_CF="/scratch/project/eu-25-92/composite_physics/datasets/simulations_v4/dl3dv-counterfact"
+    DESTINATION_SIMULATION_PATH="/scratch/project/eu-25-92/composite_physics/dataset/physbench/simulation_v4"
 fi
 
 cd answering_questions
 
 # This are the runs I need to create
 
-GENERAL_RUN_COUNT=10
+GENERAL_RUN_COUNT=11
 
 # # 10K general # text - no circling
 # python main_parallel.py --simulation_path "${BASE_PATH}/random/" \
 #     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
-#     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_general" \
+#     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_general_test_persistance" \
+#     --include_categories "persistence" \
 #     --n_scenes 700
+
+####################
+
+# 10K general # text - no circling
+python main_parallel.py --simulation_path "${BASE_PATH}/random/" \
+    --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
+    --export_format json --run_name "run_${GENERAL_RUN_COUNT}_general" \
+    --n_scenes 700
 
 # python ./subsample_questions_percentage.py \
 #     --count 10000 \
@@ -84,23 +93,23 @@ GENERAL_RUN_COUNT=10
 #     --n_scenes 100
 
 
-# # 1K roi circling - text
-python main_parallel.py --simulation_path "${BASE_PATH}/random" \
-    --destination_simulation_path ${DESTINATION_SIMULATION_PATH}_modified_images \
-    --export_format json --run_name "run_${GENERAL_RUN_COUNT}_roi_circling" \
-    --augmentation "roi_circling_text" \
-    --include_categories "material_understanding" \
-    --n_scenes 700
+# 1K roi circling - text
+# python main_parallel.py --simulation_path "${BASE_PATH}/random" \
+#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH}_modified_images \
+#     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_roi_circling" \
+#     --augmentation "roi_circling_text" \
+#     --include_categories "material_understanding" \
+#     --n_scenes 700
 
-python ./subsample_questions_percentage.py \
-    --count 1000 \
-    --input ../output/run_${GENERAL_RUN_COUNT}_roi_circling/test_run_${GENERAL_RUN_COUNT}_roi_circling.json \
-    --output ../output/run_${GENERAL_RUN_COUNT}_roi_circling/test_run_${GENERAL_RUN_COUNT}_roi_circling_10K.json \
-    --percentage-map ./balancing_sub_categories_material_only.json \
-    --seed 42
+# python ./subsample_questions_percentage.py \
+#     --count 1000 \
+#     --input ../output/run_${GENERAL_RUN_COUNT}_roi_circling/test_run_${GENERAL_RUN_COUNT}_roi_circling.json \
+#     --output ../output/run_${GENERAL_RUN_COUNT}_roi_circling/test_run_${GENERAL_RUN_COUNT}_roi_circling_10K.json \
+#     --percentage-map ./balancing_sub_categories_material_only.json \
+#     --seed 42
 
-RUN_NAME="run_${GENERAL_RUN_COUNT}_roi_circling"
-cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
+# RUN_NAME="run_${GENERAL_RUN_COUNT}_roi_circling"
+# cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
 
 
 # python main_parallel.py --simulation_path "${BASE_PATH}/random" \
@@ -109,6 +118,16 @@ cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_
 #     --augmentation "roi_circling_no_text" \
 #     --include_categories "material_understanding" \
 #     --n_scenes 700
+
+# python ./subsample_questions_percentage.py \
+#     --count 1000 \
+#     --input ../output/run_${GENERAL_RUN_COUNT}_roi_circling/test_run_${GENERAL_RUN_COUNT}_roi_circling.json \
+#     --output ../output/run_${GENERAL_RUN_COUNT}_roi_circling/test_run_${GENERAL_RUN_COUNT}_roi_circling_10K.json \
+#     --percentage-map ./balancing_sub_categories_material_only.json \
+#     --seed 42
+
+# RUN_NAME="run_${GENERAL_RUN_COUNT}_roi_circling"
+# cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
 
 # # 1K scene context
 # python main_parallel.py --simulation_path "${BASE_PATH}/random" "${BASE_PATH}/random-cam-stationary" \

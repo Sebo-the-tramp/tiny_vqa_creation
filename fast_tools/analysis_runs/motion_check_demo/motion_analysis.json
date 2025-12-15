@@ -1,0 +1,163 @@
+{
+  "parameters": {
+    "simulation_paths": [
+      "/data0/sebastian.cavada/datasets/simulations_v3/dl3dv/random"
+    ],
+    "output_path": "./analysis_runs",
+    "run_name": "motion_check_demo",
+    "n_scenes": 3,
+    "dt_relative_tolerance": 0.15,
+    "max_logged_dt_intervals": 10,
+    "speed_jump_ratio": 6.0,
+    "speed_drop_ratio": 6.0,
+    "speed_jump_min_delta": 0.8,
+    "min_speed_for_ratio": 0.2,
+    "jerk_threshold": 200.0,
+    "freeze_speed_threshold": 0.02,
+    "freeze_duration": 5,
+    "max_speed_threshold": 80.0,
+    "summary_limit": 50
+  },
+  "num_simulations": 3,
+  "results": [
+    {
+      "simulation_path": "/data0/sebastian.cavada/datasets/simulations_v3/dl3dv/random/1/c-1_no-1_d-4_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-0_20251102_053834/simulation.json",
+      "num_objects": 1,
+      "num_frames": 100,
+      "time_stats": {
+        "expected_dt": 0.04,
+        "median_dt": 0.040000000000000036,
+        "min_dt": 0.03999999999999959,
+        "max_dt": 0.040000000000000036,
+        "bad_interval_count": 0,
+        "max_ratio": 0.0,
+        "issue_score": 0.0,
+        "bad_intervals": []
+      },
+      "objects_with_issues": [
+        {
+          "object_id": "1",
+          "name": "12-pack soda cans in cardboard carton",
+          "num_samples": 100,
+          "num_velocity_samples": 99,
+          "max_speed": 5.830842256549824,
+          "median_speed": 0.10471067124058069,
+          "smoothness": 0.2126813086850982,
+          "issue_score": 0.020202020202020204,
+          "anomalies": [
+            {
+              "type": "freeze",
+              "frame_idx": 88,
+              "time": 3.53,
+              "duration": 30
+            },
+            {
+              "type": "freeze",
+              "frame_idx": 99,
+              "time": 3.97,
+              "duration": 11
+            }
+          ]
+        }
+      ],
+      "flagged": true,
+      "dominant_issue": [
+        "motion_spikes"
+      ]
+    },
+    {
+      "simulation_path": "/data0/sebastian.cavada/datasets/simulations_v3/dl3dv/random/1/c-1_no-1_d-4_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-1_20251102_053834/simulation.json",
+      "num_objects": 1,
+      "num_frames": 100,
+      "time_stats": {
+        "expected_dt": 0.04,
+        "median_dt": 0.040000000000000036,
+        "min_dt": 0.03999999999999959,
+        "max_dt": 0.040000000000000036,
+        "bad_interval_count": 0,
+        "max_ratio": 0.0,
+        "issue_score": 0.0,
+        "bad_intervals": []
+      },
+      "objects_with_issues": [
+        {
+          "object_id": "1",
+          "name": "toy Tyrannosaurus rex figurine",
+          "num_samples": 100,
+          "num_velocity_samples": 99,
+          "max_speed": 5.436645089324219,
+          "median_speed": 0.0,
+          "smoothness": 0.2552256659778443,
+          "issue_score": 0.010101010101010102,
+          "anomalies": [
+            {
+              "type": "freeze",
+              "frame_idx": 99,
+              "time": 3.97,
+              "duration": 77
+            }
+          ]
+        }
+      ],
+      "flagged": true,
+      "dominant_issue": [
+        "motion_spikes"
+      ]
+    },
+    {
+      "simulation_path": "/data0/sebastian.cavada/datasets/simulations_v3/dl3dv/random/1/c-1_no-1_d-4_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-2_20251102_053834/simulation.json",
+      "num_objects": 1,
+      "num_frames": 100,
+      "time_stats": {
+        "expected_dt": 0.04,
+        "median_dt": 0.040000000000000036,
+        "min_dt": 0.03999999999999959,
+        "max_dt": 0.040000000000000036,
+        "bad_interval_count": 0,
+        "max_ratio": 0.0,
+        "issue_score": 0.0,
+        "bad_intervals": []
+      },
+      "objects_with_issues": [
+        {
+          "object_id": "1",
+          "name": "painted dinosaur figurine (toy)",
+          "num_samples": 100,
+          "num_velocity_samples": 99,
+          "max_speed": 5.2416457995934875,
+          "median_speed": 0.00970696284634375,
+          "smoothness": 0.2507003694147387,
+          "issue_score": 0.030303030303030304,
+          "anomalies": [
+            {
+              "type": "speed_jump",
+              "frame_idx": 16,
+              "time": 0.65,
+              "prev_speed": 3.999412922759365,
+              "curr_speed": 0.5517971354009584,
+              "ratio": 7.247976944652405
+            },
+            {
+              "type": "sudden_slowdown",
+              "frame_idx": 16,
+              "time": 0.65,
+              "prev_speed": 3.999412922759365,
+              "curr_speed": 0.5517971354009584,
+              "ratio": 7.247976944652405
+            },
+            {
+              "type": "freeze",
+              "frame_idx": 99,
+              "time": 3.97,
+              "duration": 61
+            }
+          ]
+        }
+      ],
+      "flagged": true,
+      "dominant_issue": [
+        "motion_spikes"
+      ]
+    }
+  ]
+}

@@ -37,7 +37,6 @@ from utils.bin_creation import create_mc_object_names_from_dataset
 import random
 import numpy as np
 
-
 Number = Union[int, float]
 Vector = Tuple[float, float, float]
 WorldState = Mapping[str, Any]
@@ -51,7 +50,7 @@ import itertools
 
 SAMPLING_RATE = get_config()["sampling_rate"]
 RENDER_STEP = 1.0 / SAMPLING_RATE
-FRAME_INTERLEAVE = 4  # custom only for temporal questions (heuristic)
+FRAME_INTERLEAVE = get_config()["frame_interleave"]
 MIN_PIXELS_VISIBLE = get_config()["min_pixels_visible"]
 CLIP_LENGTH = get_config()["clip_length"]
 
@@ -287,8 +286,10 @@ def F_CAMERA_MOTION_DIRECTION(
 ) -> Sequence[str]:
     assert len(attributes) == 0
     n_frames = 8
-
     all_timesteps = len(world_state["simulation"]) // 3
+    if(n_frames * FRAME_INTERLEAVE >= all_timesteps):
+        raise ImpossibleToAnswer("Not enough frames to determine camera motion direction.")
+    
     last_frame_idx = get_random_integer(n_frames * FRAME_INTERLEAVE, all_timesteps)
     first_frame_idx = last_frame_idx - (n_frames * FRAME_INTERLEAVE)
 
@@ -433,6 +434,9 @@ def F_CAMERA_ZOOM_BEHAVIOR(
     n_frames = 8
 
     all_timesteps = len(world_state["simulation"])
+    if(n_frames * FRAME_INTERLEAVE >= all_timesteps):
+        raise ImpossibleToAnswer("Not enough frames to determine camera motion direction.")
+    
     last_frame_idx = get_random_integer(n_frames * FRAME_INTERLEAVE, all_timesteps)  #
     first_frame_idx = last_frame_idx - (n_frames * FRAME_INTERLEAVE)
 

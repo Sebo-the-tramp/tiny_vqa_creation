@@ -66,6 +66,10 @@ def F_TEMPORAL_SEQUENCE_IMAGES(
     total_frames = len(world_state["simulation"]) // 3
     min_frame = 0
     max_frame = total_frames - (n_frames * FRAME_INTERLEAVE) - 1
+
+    if max_frame <= min_frame:
+        raise ImpossibleToAnswer("Not enough frames to sample the sequence with the given interleave.")
+
     start_frame = get_random_integer(min_frame, max_frame)
     end_frame = start_frame + (n_frames * FRAME_INTERLEAVE)
 

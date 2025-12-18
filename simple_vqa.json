@@ -320,7 +320,7 @@
             "task_splits": "multi",
             "sub_category": "object_persistence",
             "choice": "mcq",
-            "question": "How many objects are in the last frame in total, including those currently hidden?"
+            "question": "How many objects are there in the last frame in total, including those currently hidden?"
         },
         "F_PERSISTENCE_OBJECT_TOTAL_COUNT_HIDDEN": {
             "task_splits": "multi",
@@ -328,7 +328,7 @@
             "choice": "mcq",
             "question": "How many objects are present but not visible in the last frame?"
         },
-        "F_PERSISTENCE_OBJET_COLLISION_HIDDEN": {
+        "F_PERSISTENCE_OBJECT_COLLISION_HIDDEN": {
             "task_splits": "multi",
             "sub_category": "object_persistence",
             "choice": "mcq",

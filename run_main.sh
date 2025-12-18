@@ -31,14 +31,14 @@ GENERAL_RUN_COUNT=11
 python main_parallel.py --simulation_path "${BASE_PATH}/random/" \
     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_general" \
-    --n_scenes 700
+    --n_scenes 1400
 
-# python ./subsample_questions_percentage.py \
-#     --count 10000 \
-#     --input ../output/run_${GENERAL_RUN_COUNT}_general/test_run_${GENERAL_RUN_COUNT}_general.json \
-#     --output ../output/run_${GENERAL_RUN_COUNT}_general/test_run_${GENERAL_RUN_COUNT}_general_10K.json \
-#     --percentage-map ./balancing_sub_categories.json \
-#     --seed 42
+python ./subsample_questions_percentage.py \
+    --count 10000 \
+    --input ../output/run_${GENERAL_RUN_COUNT}_general/test_run_${GENERAL_RUN_COUNT}_general.json \
+    --output ../output/run_${GENERAL_RUN_COUNT}_general/test_run_${GENERAL_RUN_COUNT}_general_10K.json \
+    --percentage-map ./balancing_sub_categories.json \
+    --seed 42
 
 # RUN_NAME="run_${GENERAL_RUN_COUNT}_general"
 # cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json

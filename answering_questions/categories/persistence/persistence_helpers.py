@@ -1,3 +1,6 @@
+import numpy as np
+from scipy.signal import convolve2d
+
 from utils.my_exception import ImpossibleToAnswer
 
 ## --- Resolver functions -- ##
@@ -5,21 +8,111 @@ from utils.my_exception import ImpossibleToAnswer
 from typing import (
     Any,
     Mapping,
-    Sequence,
-    Tuple,
-    Union,
+    Sequence
 )
 WorldState = Mapping[str, Any]
 
 from utils.config import get_config
 
+from utils.helpers import iter_objects
+
 SAMPLING_RATE = get_config()["sampling_rate"]
 RENDER_STEP = 1.0 / SAMPLING_RATE
 FRAME_INTERLEAVE = 4  # custom only for temporal questions (heuristic)
-MIN_PIXELS_VISIBLE = get_config()["min_pixels_visible"]
-VISIBILITY_THRESHOLD = 0.05
+# MIN_PIXELS_VISIBLE = get_config()["min_pixels_visible"]
+MIN_PIXELS_VISIBLE = 200
+VISIBILITY_THRESHOLD = 0.01
 CLIP_LENGTH = get_config()["clip_length"]
+HIGH_PIXEL_COUNT_THRESHOLD = 2000  # heuristic for occluded but distinct objects
 
+
+def get_optimal_timestep_interval(world_state: WorldState) -> Sequence[str]:
+    visibility_mask, visibility_percentage_mask, visibility_pixels_mask = get_visibility_mask(world_state)
+    
+    # Aggregate visibility metrics across all objects for each timestep
+    visible_object_count = np.sum(visibility_mask, axis=0)
+    total_visibility_percentage = np.sum(visibility_percentage_mask, axis=0)
+    total_visibility_pixels = np.sum(visibility_pixels_mask, axis=0)
+
+    # Composite score: objects are weighted most heavily, then percentage, then pixels
+    visibility_score = (
+        visible_object_count + 
+        (total_visibility_percentage / 1000) + 
+        (total_visibility_pixels / 10000)
+    )    
+
+    # Find timesteps with maximum object visibility
+    max_object_count = visible_object_count.max()
+    has_max_objects = visible_object_count == max_object_count
+    
+    # Among max-object timesteps, find the one with highest visibility score
+    masked_scores = np.where(has_max_objects, visibility_score, 0)
+    initial_timestep_index = np.argmax(masked_scores)
+    initial_timestep = list(world_state["simulation"].keys())[initial_timestep_index]    
+       
+    # Create masks for further processing
+    before_optimal = has_max_objects.copy()
+    before_optimal[:initial_timestep_index] = True
+
+    # this is to avoid choosing a timestep too far, where things might have changed too much
+    # from the first drop
+    first_drop = np.argmax(~before_optimal)
+    window_space = 10  # frames
+    if (first_drop + window_space) < len(before_optimal):
+        before_optimal[first_drop + window_space:] = True
+
+    without_max_objects = ~before_optimal
+    alternative_scores = np.where(without_max_objects, visibility_score, 0)
+
+    # Find timestep with highest visibility score excluding max-object timesteps
+    final_timestep_index = np.argmax(alternative_scores)
+    final_timestep = list(world_state["simulation"].keys())[final_timestep_index]    
+
+    return initial_timestep_index, initial_timestep, final_timestep_index, final_timestep
+
+def get_visibility_mask(world_state: WorldState) -> Mapping[str, Sequence[int]]:    
+    all_timesteps = list(world_state["simulation"].keys())
+    visibility_mask = np.zeros((len(world_state["objects"]), 
+        len(all_timesteps)), dtype=int)
+
+    visibility_percentage_mask = np.zeros((len(world_state["objects"]), 
+        len(all_timesteps)), dtype=int)
+
+    visibility_pixels_mask = np.zeros((len(world_state["objects"]), 
+        len(all_timesteps)), dtype=int)
+
+    for object in iter_objects(world_state):
+        obj_id = object["id"]
+
+        for t in all_timesteps:
+            obj_states = world_state["simulation"][t]["objects"]
+
+            pixels_visible = obj_states[obj_id]['infov_pixels_visible'] + obj_states[obj_id]['infov_pixels_void']
+            fov_visibility = obj_states[obj_id]['fov_visibility']
+
+            visibility_percentage_mask[int(obj_id)-1, all_timesteps.index(t)] = int(fov_visibility * 100)
+            visibility_pixels_mask[int(obj_id)-1, all_timesteps.index(t)] = pixels_visible
+
+            visible = (
+                # Case 1: Object is mostly unoccluded
+                (fov_visibility >= VISIBILITY_THRESHOLD and pixels_visible >= MIN_PIXELS_VISIBLE)                                
+            )
+            bit = 1 if visible else 0
+            index_timestep = all_timesteps.index(t)
+            visibility_mask[int(obj_id)-1, index_timestep] = bit
+
+    return visibility_mask, visibility_percentage_mask, visibility_pixels_mask
+
+def get_visibility_change(
+    visibility_mask: np.array    
+) -> Sequence[int]:
+    
+    kernel = np.array([[-1, 1]])
+    padded_visibility = np.pad(visibility_mask, ((0, 0), (1, 1)), mode='edge')
+    changes_in_visibility = convolve2d(padded_visibility, kernel, mode='valid')
+    significant_changes = -1 * np.sign(changes_in_visibility) * np.abs(changes_in_visibility)
+
+    return significant_changes
 
 # I think this is the most important one
 def check_visibility_sequence(
@@ -36,9 +129,14 @@ def check_visibility_sequence(
 
     for t in all_timesteps[::FRAME_INTERLEAVE]:
         obj_states = world_state["simulation"][t]["objects"]
+
+        pixels_visible = obj_states[obj_id]['infov_pixels_visible'] + obj_states[obj_id]['infov_pixels_void']
+        fov_visibility = obj_states[obj_id]['fov_visibility']
+
         visible = (
             obj_id in obj_states
-            and obj_states[obj_id]["fov_visibility"] >= VISIBILITY_THRESHOLD
+            and pixels_visible >= MIN_PIXELS_VISIBLE
+            and fov_visibility >= VISIBILITY_THRESHOLD
         )
         bit = 1 if visible else 0
 
@@ -98,8 +196,11 @@ def compute_visibility_counts(world_state, timesteps):
         visible_count = 0
         objects = world_state["simulation"][t]["objects"]
 
-        for obj in objects.values():
-            if obj["fov_visibility"] >= VISIBILITY_THRESHOLD:
+        for _, obj_states in objects.items():
+            pixels_visible = obj_states['infov_pixels_visible'] + obj_states['infov_pixels_void']
+            fov_visibility = obj_states['fov_visibility']
+
+            if pixels_visible >= MIN_PIXELS_VISIBLE and fov_visibility >= VISIBILITY_THRESHOLD:
                 visible_count += 1
 
         counts.append(visible_count)
@@ -109,5 +210,5 @@ def compute_visibility_counts(world_state, timesteps):
 def find_first_visibility_drop(counts):
     for i in range(1, len(counts)):
         if counts[i] < counts[i-1]:       # drop ≥ 1
-            return i                      # index of timestep where drop starts
+            return i               # index of timestep where drop starts
     return None

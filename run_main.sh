@@ -44,6 +44,8 @@ python ./subsample_questions_percentage.py \
 # cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
 # sed -i "s#/data0/sebastian.cavada/datasets/simulations_v3#/scratch/project/eu-25-92/composite_physics/dataset/simulation_v3#g" ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
 
+
+# -------------------------------------------------------------
 # 10K general # text - no circling
 # python main_parallel.py --simulation_path "${BASE_PATH}/yms-variations/" \
 #     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
@@ -60,7 +62,9 @@ python ./subsample_questions_percentage.py \
 # RUN_NAME="run_${GENERAL_RUN_COUNT}_general_yms-variations"
 # cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
 
-# 10K general # text - no circling
+
+# -------------------------------------------------------------
+# 10K general 
 # python main_parallel.py --simulation_path "${BASE_PATH}/random-cam-stationary/" \
 #     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
 #     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_general_cam-stationary" \
@@ -78,13 +82,14 @@ python ./subsample_questions_percentage.py \
 # sed -i "s#/data0/sebastian.cavada/datasets/simulations_v3#/scratch/project/eu-25-92/composite_physics/dataset/simulation_v3#g" ../output/$RUN_NAME/test_${RUN_NAME}_cam-stationary_karo_10K.json
 
 
+# -------------------------------------------------------------
 # rsync -avz -e "ssh -i ~/.ssh/id_rsa_karolina" \
 #   --include="*run_${GENERAL_RUN_COUNT}_*/***" \
 #   --exclude="*" \
 #   ../output/ \
 #   it4i-thvu@login2.karolina.it4i.cz:/mnt/proj1/eu-25-92/tiny_vqa_creation/output/ \
 
-
+# -------------------------------------------------------------
 # 1K general # text counterfactual shift
 # python main_parallel_counterfactual.py --simulation_path "${BASE_PATH_CF}/shift-x" "${BASE_PATH_CF}/shift-z" \
 #     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
@@ -93,6 +98,51 @@ python ./subsample_questions_percentage.py \
 #     --n_scenes 100
 
 
+# -------------------------------------------------------------
+# ABLATION STUDYs
+# -------------------------------------------------------------
+
+
+# -------------------------------------------------------------
+# 1K roi circling - no text
+# python main_parallel.py --simulation_path "${BASE_PATH}/random" \
+#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH}_modified_images \
+#     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_roi_circling" \
+#     --augmentation "roi_circling_no_text" \
+#     --include_categories "material_understanding" \
+#     --n_scenes 700
+
+# python ./subsample_questions_percentage.py \
+#     --count 1000 \
+#     --input ../output/run_${GENERAL_RUN_COUNT}_roi_circling/test_run_${GENERAL_RUN_COUNT}_roi_circling.json \
+#     --output ../output/run_${GENERAL_RUN_COUNT}_roi_circling/test_run_${GENERAL_RUN_COUNT}_roi_circling_10K.json \
+#     --percentage-map ./balancing_sub_categories_material_only.json \
+#     --seed 42
+
+# RUN_NAME="run_${GENERAL_RUN_COUNT}_roi_circling"
+# cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
+
+
+# -------------------------------------------------------------
+# 1K roi circling - layout position - no text 
+# python main_parallel.py --simulation_path "${BASE_PATH}/random" \
+#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH}_modified_images \
+#     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_roi_circling" \
+#     --augmentation "roi_circling_no_text_layout_position" \
+#     --include_categories "material_understanding" \
+#     --n_scenes 700
+
+# python ./subsample_questions_percentage.py \
+#     --count 1000 \
+#     --input ../output/run_${GENERAL_RUN_COUNT}_roi_circling/test_run_${GENERAL_RUN_COUNT}_roi_circling.json \
+#     --output ../output/run_${GENERAL_RUN_COUNT}_roi_circling/test_run_${GENERAL_RUN_COUNT}_roi_circling_10K.json \
+#     --percentage-map ./balancing_sub_categories_material_only.json \
+#     --seed 42
+
+# RUN_NAME="run_${GENERAL_RUN_COUNT}_roi_circling"
+# cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
+
+# -------------------------------------------------------------
 # 1K roi circling - text
 # python main_parallel.py --simulation_path "${BASE_PATH}/random" \
 #     --destination_simulation_path ${DESTINATION_SIMULATION_PATH}_modified_images \
@@ -112,10 +162,12 @@ python ./subsample_questions_percentage.py \
 # cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
 
 
+# -------------------------------------------------------------
+# 1K roi circling - layout position - text
 # python main_parallel.py --simulation_path "${BASE_PATH}/random" \
 #     --destination_simulation_path ${DESTINATION_SIMULATION_PATH}_modified_images \
 #     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_roi_circling" \
-#     --augmentation "roi_circling_no_text" \
+#     --augmentation "roi_circling_text_layout_position" \
 #     --include_categories "material_understanding" \
 #     --n_scenes 700
 
@@ -129,24 +181,9 @@ python ./subsample_questions_percentage.py \
 # RUN_NAME="run_${GENERAL_RUN_COUNT}_roi_circling"
 # cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
 
-# # 1K scene context
-# python main_parallel.py --simulation_path "${BASE_PATH}/random" "${BASE_PATH}/random-cam-stationary" \
-#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
-#     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_scene_context" \
-#     --augmentation "scene_context" \
-#     --n_scenes 2000
+# -------------------------------------------------------------
+# Send Telegram notification when done
 
-# # 1K textual context
-# python main_parallel.py --simulation_path "${BASE_PATH}/random" "${BASE_PATH}/random-cam-stationary" \
-#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
-#     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_textual_context" \
-#     --augmentation "textual_context" \
-#     --n_scenes 2000
-
-# python main_parallel_global.py --simulation_path "${BASE_PATH}/random" "${BASE_PATH}/random-cam-stationary" \
-#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
-#     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_global_plausibility" \
-#     --n_scenes 2000
 
 # curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage" \
 #      -d chat_id="${TELEGRAM_CHAT_ID}" \

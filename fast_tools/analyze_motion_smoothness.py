@@ -150,6 +150,7 @@ def compute_time_stats(
             "max_ratio": 0.0,
             "issue_score": 0.0,
             "bad_intervals": [],
+            "slow_fast_pairs": [],
         }
     deltas: List[float] = []
     for idx in range(len(frames) - 1):
@@ -166,6 +167,7 @@ def compute_time_stats(
             "max_ratio": 0.0,
             "issue_score": 0.0,
             "bad_intervals": [],
+            "slow_fast_pairs": [],
         }
     median_dt = statistics.median(deltas)
     target_dt = expected_dt or median_dt
@@ -173,11 +175,25 @@ def compute_time_stats(
         target_dt = median_dt or 1.0
     bad_intervals = []
     max_ratio = 0.0
+    slow_fast_pairs = []
     for idx, dt in enumerate(deltas):
         ratio = abs(dt - target_dt) / target_dt
         if ratio > rel_tol:
             bad_intervals.append({"interval_index": idx, "dt": dt, "ratio": ratio})
             max_ratio = max(max_ratio, ratio)
+        if idx < len(deltas) - 1:
+            next_dt = deltas[idx + 1]
+            slow_condition = dt > target_dt * (1 + rel_tol)
+            fast_condition = next_dt < target_dt * (1 - rel_tol)
+            if slow_condition and fast_condition:
+                slow_fast_pairs.append(
+                    {
+                        "slow_interval_index": idx,
+                        "slow_dt": dt,
+                        "fast_interval_index": idx + 1,
+                        "fast_dt": next_dt,
+                    }
+                )
     bad_interval_count = len(bad_intervals)
     issue_score = bad_interval_count / len(deltas)
     return {
@@ -189,6 +205,7 @@ def compute_time_stats(
         "max_ratio": max_ratio,
         "issue_score": issue_score,
         "bad_intervals": bad_intervals[:max_logged],
+        "slow_fast_pairs": slow_fast_pairs[:max_logged],
     }
 
 
@@ -270,6 +287,21 @@ def detect_motion_anomalies(
                     "prev_speed": prev_speed,
                     "curr_speed": curr_speed,
                     "ratio": ratio,
+                }
+            )
+
+        if (
+            prev_speed < args.freeze_speed_threshold
+            and curr_speed > args.min_speed_for_ratio
+            and (curr_speed - prev_speed) > args.speed_jump_min_delta
+        ):
+            anomalies.append(
+                {
+                    "type": "stall_to_jump",
+                    "frame_idx": curr["frame_idx"],
+                    "time": curr["time"],
+                    "prev_speed": prev_speed,
+                    "curr_speed": curr_speed,
                 }
             )
 
@@ -455,6 +487,45 @@ def write_reports(
                     )
             handle.write("\n")
 
+    buggy_path = output_dir / "buggy_simulations.txt"
+    with open(buggy_path, "w") as handle:
+        if not flagged:
+            handle.write("No simulations with flagged objects or time anomalies were detected.\n")
+        for entry in flagged:
+            handle.write(f"{entry['simulation_path']}\n")
+            t_stats = entry.get("time_stats", {})
+            if t_stats.get("bad_interval_count"):
+                handle.write(
+                    f"  Time anomalies: {t_stats['bad_interval_count']} intervals deviating (max ratio {t_stats['max_ratio']:.3f})\n"
+                )
+            if t_stats.get("slow_fast_pairs"):
+                handle.write("  Slow-then-fast timestep pairs detected:\n")
+                for pair in t_stats["slow_fast_pairs"]:
+                    handle.write(
+                        f"    slow interval {pair['slow_interval_index']} dt={pair['slow_dt']:.6f} -> fast interval {pair['fast_interval_index']} dt={pair['fast_dt']:.6f}\n"
+                    )
+            for obj in entry.get("objects_with_issues", []):
+                anomalies = obj.get("anomalies", [])
+                handle.write(
+                    f"  Object {obj.get('object_id')} ({obj.get('name')}): {len(anomalies)} anomalies, max_speed={obj.get('max_speed'):.2f} m/s\n"
+                )
+                for issue in anomalies:
+                    extra = ""
+                    if issue["type"] in {"speed_jump", "sudden_slowdown"}:
+                        extra = f" ratio={issue.get('ratio'):.2f}"
+                    elif issue["type"] == "jerk_spike":
+                        extra = f" jerk={issue.get('jerk'):.2f}"
+                    elif issue["type"] == "stall_to_jump":
+                        extra = f" prev={issue.get('prev_speed'):.3f} curr={issue.get('curr_speed'):.3f}"
+                    elif issue["type"] == "freeze":
+                        extra = f" duration={issue.get('duration')}"
+                    elif issue["type"] == "speed_limit":
+                        extra = f" speed={issue.get('speed'):.2f}"
+                    handle.write(
+                        f"    - {issue['type']} @ frame {issue.get('frame_idx')} time {issue.get('time')} {extra}\n"
+                    )
+            handle.write("\n")
+
 
 def main() -> None:
     args = parse_args()
@@ -482,7 +553,7 @@ def main() -> None:
         results.append(analysis)
 
     write_reports(results, output_dir, args)
-    print(f"Analysis stored in {output_dir}")
+    print(f"Analysis stored in {output_dir} (motion_analysis.json/.txt and buggy_simulations.txt)")
     _ = all_vqa  # placeholder to mirror the workflow shown in the instructions
 
 

@@ -32,9 +32,7 @@ from utils.bin_creation import create_mc_object_names_from_dataset
 from categories.persistence.persistence_helpers import (
     get_visibility_mask,
     get_visibility_change,
-    check_visibility_sequence,
-    compute_visibility_counts,
-    find_first_visibility_drop
+    get_optimal_timestep_interval
 )
 
 
@@ -138,24 +136,16 @@ def F_PERSISTENCE_OBJECT_TOTAL_COUNT(
     visibility_mask, _, _ = get_visibility_mask(world_state)
     total_visible_objects = np.sum(visibility_mask, axis=0)
 
-    total_visible_objects_shifted = np.roll(total_visible_objects, 2)
-    total_visible_objects_shifted[:2] = total_visible_objects[:2]
+    initial_timestep_index, initial_timestep, final_timestep_index, final_timestep = get_optimal_timestep_interval(world_state)
 
-    final_timestep_index = np.argmax(total_visible_objects_shifted - total_visible_objects) # return the index of the first drop, even if it's bigger than 1
-
-    if final_timestep_index < FRAME_INTERLEAVE * CLIP_LENGTH:
+    if final_timestep_index - initial_timestep_index < CLIP_LENGTH:
         raise ImpossibleToAnswer("Not enough timesteps before visibility drop to answer the question.")
-
-    initial_timestep_index = final_timestep_index - FRAME_INTERLEAVE * CLIP_LENGTH
 
     final_timestep = list(world_state["simulation"].keys())[final_timestep_index]
     initial_timestep = list(world_state["simulation"].keys())[initial_timestep_index]
 
-    # the number of objects visible just before the drop --> the algorithm
-    # is designed to detect drops in visibility, so we take the count before the drop
-    # cause if there were 3,3,3,3,3,2,2,2,1 we would want to answer 3
-
-    count_objects_initial = total_visible_objects[final_timestep_index - 1]
+    # this is not the initial count, but the count at the timestep before disappearing        
+    count_objects_initial = total_visible_objects[initial_timestep_index]
 
     #balanced options around the initial count    
     start = max(0, count_objects_initial - 2)
@@ -185,26 +175,21 @@ def F_PERSISTENCE_OBJECT_TOTAL_COUNT_HIDDEN(
     
     """How many objects are present but not visible in the last frame?"""
 
-    assert len(attributes) == 0    
+    assert len(attributes) == 0
 
     visibility_mask, _, _ = get_visibility_mask(world_state)
     total_visible_objects = np.sum(visibility_mask, axis=0)
 
-    total_visible_objects_shifted = np.roll(total_visible_objects, 2)
-    total_visible_objects_shifted[:2] = total_visible_objects[:2]
+    initial_timestep_index, initial_timestep, final_timestep_index, final_timestep = get_optimal_timestep_interval(world_state)
 
-    final_timestep_index = np.argmax(total_visible_objects_shifted - total_visible_objects) # return the index of the first drop, even if it's bigger than 1
-
-    if final_timestep_index < FRAME_INTERLEAVE * CLIP_LENGTH:
+    if final_timestep_index < CLIP_LENGTH:
         raise ImpossibleToAnswer("Not enough timesteps before visibility drop to answer the question.")
-
-    initial_timestep_index = final_timestep_index - FRAME_INTERLEAVE * CLIP_LENGTH
 
     final_timestep = list(world_state["simulation"].keys())[final_timestep_index]
     initial_timestep = list(world_state["simulation"].keys())[initial_timestep_index]
 
     # this is not the initial count, but the count at the timestep before disappearing
-    count_objects_initial = total_visible_objects[final_timestep_index - 1]
+    count_objects_initial = total_visible_objects[initial_timestep_index]
     count_objects_final = total_visible_objects[final_timestep_index]
 
     hidden = count_objects_initial - count_objects_final

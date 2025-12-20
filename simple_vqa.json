@@ -308,7 +308,7 @@
             "task_splits": "multi",
             "sub_category": "object_persistence",
             "choice": "mcq",
-            "question": "Which object is present, but not visible, in the last frame?"
+            "question": "Which object is seen during the frames, but not visible in the last frame?"
         },
         "F_PERSISTENCE_OBJECT_DISAPPEAR": {
             "task_splits": "multi",
@@ -316,11 +316,12 @@
             "choice": "mcq",
             "question": "Which object disappears and does not reappear in the last frame?"
         },
+
         "F_PERSISTENCE_OBJECT_TOTAL_COUNT": {
             "task_splits": "multi",
             "sub_category": "object_persistence",
             "choice": "mcq",
-            "question": "How many objects are there in the last frame in total, including those currently hidden?"
+            "question": "How many objects are there in the last frame in total, including those currently hidden and/or out of frame?"
         },
         "F_PERSISTENCE_OBJECT_TOTAL_COUNT_HIDDEN": {
             "task_splits": "multi",

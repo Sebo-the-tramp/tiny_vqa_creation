@@ -3,12 +3,12 @@
     "clip_length": 8,
     "movement_tolerance": 0.05,
     "rotation_tolerance": 5.0,
-    "visibility_threshold": 0.7,
+    "visibility_threshold": 0.9,
     "world_up_axis": "Z",
-    "frame_interleave": 2,
+    "frame_interleave": 4,
     "slope_bins": 4,
     "threshold_difference_percentage": 0.1,
-    "min_pixels_visible": 300,
+    "min_pixels_visible": 150,
     "max_allowed_difference_youngs_modulus": 10000,
     "max_allowed_difference_poisson_ratio": 0.02
 }

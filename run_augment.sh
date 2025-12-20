@@ -8,7 +8,7 @@ fi
 if [ -d "/data0/sebastian.cavada/datasets/simulations_v3" ]; then
     echo "Directory exists. I AM on CavadaLAB"
     cd ./answering_questions
-    python augment_kinematics_v3.py /data0/sebastian.cavada/datasets/simulations_v3 --max-workers 36
+    python augment_kinematics_v3.py /data0/sebastian.cavada/datasets/simulations_v4 --max-workers 36
 fi
 
 # folder dl3dv-counterfact
@@ -21,5 +21,5 @@ fi
 if [ -d "/data0/sebastian.cavada/datasets/simulations_v3" ]; then
     echo "Directory exists. I AM on CavadaLAB"
     cd ./answering_questions
-    python augment_kinematics_v3.py /data0/sebastian.cavada/datasets/simulations_v3/dl3dv-counterfact --max-workers 36
+    python augment_kinematics_v3.py /data0/sebastian.cavada/datasets/simulations_v4/dl3dv-counterfact --max-workers 36
 fi

@@ -63,7 +63,7 @@ def _process_one(sim_file, args):
         # Keep the pool running even if one simulation fails
         # if VERBOSE:
         print("Worker error on", simulation_id_path)
-        # print(e.with_traceback())
+        print(e.with_traceback())
 
 
 from utils.saving_utils import (
@@ -228,33 +228,39 @@ def create_vqa(
                         )
                         file_names_to_augment.append(new_image_path)
 
-                file_names = augment_image_VQA_with_context(
-                    question,
-                    world_state,
-                    resolved_attributes,
-                    file_names_to_augment.copy(),
-                    augmentation=config.augmentation,
-                )
+                try:
+                    file_names = augment_image_VQA_with_context(
+                        question,
+                        world_state,
+                        resolved_attributes,
+                        file_names_to_augment.copy(),
+                        augmentation=config.augmentation,
+                    )
+               
 
-                all_vqa.append(
-                    {
-                        "scene": simulation_steps.get("scene", {}).get(
-                            "scene", "unknown_scene"
-                        ),
-                        "simulation_id": simulation_id,
-                        "question": question,
-                        "category": category_key,
-                        "sub_category": question_payload["sub_category"],
-                        "question_key": question_key,
-                        "image_paths": file_names,
-                        "labels": labels,
-                        "answer_index": correct_idx,
-                        "mode": "image-only"
-                        if question["task_splits"] == "single"
-                        else "general",
-                        "choice": question["choice"],
-                    }
-                )
+                    all_vqa.append(
+                        {
+                            "scene": simulation_steps.get("scene", {}).get(
+                                "scene", "unknown_scene"
+                            ),
+                            "simulation_id": simulation_id,
+                            "question": question,
+                            "category": category_key,
+                            "sub_category": question_payload["sub_category"],
+                            "question_key": question_key,
+                            "image_paths": file_names,
+                            "labels": labels,
+                            "answer_index": correct_idx,
+                            "mode": "image-only"
+                            if question["task_splits"] == "single"
+                            else "general",
+                            "choice": question["choice"],
+                        }
+                    )
+                    
+                except ImpossibleToAnswer:
+                    not_implemented += 1
+                    continue
 
                 if verbose:
                     print(f"  Question: {question}")

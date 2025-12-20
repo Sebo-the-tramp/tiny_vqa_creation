@@ -20,8 +20,8 @@ SAMPLING_RATE = get_config()["sampling_rate"]
 RENDER_STEP = 1.0 / SAMPLING_RATE
 FRAME_INTERLEAVE = 4  # custom only for temporal questions (heuristic)
 # MIN_PIXELS_VISIBLE = get_config()["min_pixels_visible"]
-MIN_PIXELS_VISIBLE = 200
-VISIBILITY_THRESHOLD = 0.01
+MIN_PIXELS_VISIBLE = 300
+VISIBILITY_THRESHOLD = 0.3
 CLIP_LENGTH = get_config()["clip_length"]
 HIGH_PIXEL_COUNT_THRESHOLD = 2000  # heuristic for occluded but distinct objects
 
@@ -55,7 +55,7 @@ def get_optimal_timestep_interval(world_state: WorldState) -> Sequence[str]:
     before_optimal[:initial_timestep_index] = True
 
     # this is to avoid choosing a timestep too far, where things might have changed too much
-    # from the first drop
+    # from
     first_drop = np.argmax(~before_optimal)
     window_space = 10  # frames
     if (first_drop + window_space) < len(before_optimal):
@@ -66,8 +66,27 @@ def get_optimal_timestep_interval(world_state: WorldState) -> Sequence[str]:
 
     # Find timestep with highest visibility score excluding max-object timesteps
     final_timestep_index = np.argmax(alternative_scores)
-    final_timestep = list(world_state["simulation"].keys())[final_timestep_index]    
+    final_timestep = list(world_state["simulation"].keys())[final_timestep_index]
 
+    previous_phase = initial_timestep_index % CLIP_LENGTH
+    next_phase = (CLIP_LENGTH - previous_phase) if previous_phase != 0 else initial_timestep_index
+
+    previous_phase_index = initial_timestep_index - previous_phase
+    next_phase_index = initial_timestep_index + next_phase
+
+    if previous_phase_index < 0:
+        previous_phase_index = None
+    if next_phase_index >= len(masked_scores):
+        next_phase_index = None
+
+    if previous_phase_index is not None and next_phase_index is not None:        
+        if masked_scores[previous_phase_index] > masked_scores[next_phase_index] and masked_scores[next_phase_index] > 0:
+            initial_timestep_index = previous_phase_index
+        elif masked_scores[previous_phase_index] < masked_scores[next_phase_index] and masked_scores[previous_phase_index] > 0:
+            initial_timestep_index = next_phase_index
+        else:
+            pass  # keep original    
+  
     return initial_timestep_index, initial_timestep, final_timestep_index, final_timestep
 
 def get_visibility_mask(world_state: WorldState) -> Mapping[str, Sequence[int]]:    
@@ -95,7 +114,7 @@ def get_visibility_mask(world_state: WorldState) -> Mapping[str, Sequence[int]]:
 
             visible = (
                 # Case 1: Object is mostly unoccluded
-                (fov_visibility >= VISIBILITY_THRESHOLD and pixels_visible >= MIN_PIXELS_VISIBLE)                                
+                (fov_visibility >= VISIBILITY_THRESHOLD or pixels_visible >= MIN_PIXELS_VISIBLE)                                
             )
             bit = 1 if visible else 0
             index_timestep = all_timesteps.index(t)

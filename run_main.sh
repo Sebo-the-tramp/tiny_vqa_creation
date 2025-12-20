@@ -123,63 +123,63 @@ RUN_NAME="run_${GENERAL_RUN_COUNT}_roi_circling"
 cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
 
 
-# -------------------------------------------------------------
-# 1K roi circling - layout position - no text 
-python main_parallel.py --simulation_path "${BASE_PATH}/random" \
-    --destination_simulation_path ${DESTINATION_SIMULATION_PATH}_modified_images \
-    --export_format json --run_name "run_${GENERAL_RUN_COUNT}_roi_circling" \
-    --augmentation "roi_circling_no_text_layout_position" \
-    --include_categories "material_understanding" \
-    --n_scenes 700
+# # -------------------------------------------------------------
+# # 1K roi circling - layout position - no text 
+# python main_parallel.py --simulation_path "${BASE_PATH}/random" \
+#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH}_modified_images \
+#     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_roi_circling" \
+#     --augmentation "roi_circling_no_text_layout_position" \
+#     --include_categories "material_understanding" \
+#     --n_scenes 700
 
-python ./subsample_questions_percentage.py \
-    --count 1000 \
-    --input ../output/run_${GENERAL_RUN_COUNT}_roi_circling/test_run_${GENERAL_RUN_COUNT}_roi_circling.json \
-    --output ../output/run_${GENERAL_RUN_COUNT}_roi_circling/test_run_${GENERAL_RUN_COUNT}_roi_circling_10K.json \
-    --percentage-map ./balancing_sub_categories_material_only.json \
-    --seed 42
+# python ./subsample_questions_percentage.py \
+#     --count 1000 \
+#     --input ../output/run_${GENERAL_RUN_COUNT}_roi_circling/test_run_${GENERAL_RUN_COUNT}_roi_circling.json \
+#     --output ../output/run_${GENERAL_RUN_COUNT}_roi_circling/test_run_${GENERAL_RUN_COUNT}_roi_circling_10K.json \
+#     --percentage-map ./balancing_sub_categories_material_only.json \
+#     --seed 42
 
-RUN_NAME="run_${GENERAL_RUN_COUNT}_roi_circling"
-cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
+# RUN_NAME="run_${GENERAL_RUN_COUNT}_roi_circling"
+# cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
 
-# -------------------------------------------------------------
-# 1K roi circling - text
-python main_parallel.py --simulation_path "${BASE_PATH}/random" \
-    --destination_simulation_path ${DESTINATION_SIMULATION_PATH}_modified_images \
-    --export_format json --run_name "run_${GENERAL_RUN_COUNT}_roi_circling" \
-    --augmentation "roi_circling_text" \
-    --include_categories "material_understanding" \
-    --n_scenes 700
+# # -------------------------------------------------------------
+# # 1K roi circling - text
+# python main_parallel.py --simulation_path "${BASE_PATH}/random" \
+#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH}_modified_images \
+#     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_roi_circling" \
+#     --augmentation "roi_circling_text" \
+#     --include_categories "material_understanding" \
+#     --n_scenes 700
 
-python ./subsample_questions_percentage.py \
-    --count 1000 \
-    --input ../output/run_${GENERAL_RUN_COUNT}_roi_circling/test_run_${GENERAL_RUN_COUNT}_roi_circling.json \
-    --output ../output/run_${GENERAL_RUN_COUNT}_roi_circling/test_run_${GENERAL_RUN_COUNT}_roi_circling_10K.json \
-    --percentage-map ./balancing_sub_categories_material_only.json \
-    --seed 42
+# python ./subsample_questions_percentage.py \
+#     --count 1000 \
+#     --input ../output/run_${GENERAL_RUN_COUNT}_roi_circling/test_run_${GENERAL_RUN_COUNT}_roi_circling.json \
+#     --output ../output/run_${GENERAL_RUN_COUNT}_roi_circling/test_run_${GENERAL_RUN_COUNT}_roi_circling_10K.json \
+#     --percentage-map ./balancing_sub_categories_material_only.json \
+#     --seed 42
 
-RUN_NAME="run_${GENERAL_RUN_COUNT}_roi_circling"
-cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
+# RUN_NAME="run_${GENERAL_RUN_COUNT}_roi_circling"
+# cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
 
 
-# -------------------------------------------------------------
-# 1K roi circling - layout position - text
-python main_parallel.py --simulation_path "${BASE_PATH}/random" \
-    --destination_simulation_path ${DESTINATION_SIMULATION_PATH}_modified_images \
-    --export_format json --run_name "run_${GENERAL_RUN_COUNT}_roi_circling" \
-    --augmentation "roi_circling_text_layout_position" \
-    --include_categories "material_understanding" \
-    --n_scenes 700
+# # -------------------------------------------------------------
+# # 1K roi circling - layout position - text
+# python main_parallel.py --simulation_path "${BASE_PATH}/random" \
+#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH}_modified_images \
+#     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_roi_circling" \
+#     --augmentation "roi_circling_text_layout_position" \
+#     --include_categories "material_understanding" \
+#     --n_scenes 700
 
-python ./subsample_questions_percentage.py \
-    --count 1000 \
-    --input ../output/run_${GENERAL_RUN_COUNT}_roi_circling/test_run_${GENERAL_RUN_COUNT}_roi_circling.json \
-    --output ../output/run_${GENERAL_RUN_COUNT}_roi_circling/test_run_${GENERAL_RUN_COUNT}_roi_circling_10K.json \
-    --percentage-map ./balancing_sub_categories_material_only.json \
-    --seed 42
+# python ./subsample_questions_percentage.py \
+#     --count 1000 \
+#     --input ../output/run_${GENERAL_RUN_COUNT}_roi_circling/test_run_${GENERAL_RUN_COUNT}_roi_circling.json \
+#     --output ../output/run_${GENERAL_RUN_COUNT}_roi_circling/test_run_${GENERAL_RUN_COUNT}_roi_circling_10K.json \
+#     --percentage-map ./balancing_sub_categories_material_only.json \
+#     --seed 42
 
-RUN_NAME="run_${GENERAL_RUN_COUNT}_roi_circling"
-cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
+# RUN_NAME="run_${GENERAL_RUN_COUNT}_roi_circling"
+# cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
 
 
 # -------------------------------------------------------------

@@ -385,12 +385,19 @@ def extract_attributes(question: Mapping[str, Any]) -> Mapping[str, Any]:
 def is_object_visible_at_timestep(
     object_id: str, timestep: str, world_state: Mapping[str, Any]
 ) -> bool:
-    """Check if an object is visible at a specific timestep."""
-    obj_state = get_object_state_at_timestep(world_state, object_id, timestep)
-    infov_pixels = obj_state["infov_pixels"]
-    fov_visibility = obj_state["fov_visibility"]
+    """Check if an object is visible at a specific timestep."""        
 
-    return infov_pixels > MIN_VISIBLE_PIXELS and fov_visibility > VISIBILITY_THRESHOLD
+    obj_states = world_state["simulation"][timestep]["objects"]
+
+    pixels_visible = obj_states[object_id]['infov_pixels_visible'] + obj_states[object_id]['infov_pixels_void']
+    fov_visibility = obj_states[object_id]['fov_visibility']
+    
+    visible = (
+        # Case 1: Object is mostly unoccluded
+        (fov_visibility >= VISIBILITY_THRESHOLD or pixels_visible >= MIN_VISIBLE_PIXELS)                                
+    )
+
+    return visible
 
 
 def minimum_n_visible_objects(world_state, n_objects, min_pixels):

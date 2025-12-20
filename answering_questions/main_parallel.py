@@ -63,7 +63,7 @@ def _process_one(sim_file, args):
         # Keep the pool running even if one simulation fails
         # if VERBOSE:
         print("Worker error on", simulation_id_path)
-        print(e.with_traceback())
+        # print(e.with_traceback())
 
 
 from utils.saving_utils import (

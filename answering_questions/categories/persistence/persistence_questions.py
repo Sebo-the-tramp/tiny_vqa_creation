@@ -8,6 +8,8 @@ and fall back to sensible defaults when information is missing.
 
 from __future__ import annotations
 
+import numpy as np
+
 from utils.decorators import with_resolved_attributes
 from utils.all_objects import get_all_objects_names
 
@@ -21,14 +23,15 @@ from typing import (
     Union,
 )
 
-from utils.helpers import (
-    iter_objects,
+from utils.helpers import (    
     fill_questions,
     resolve_attributes_visible_at_timestep
 )
 
 from utils.bin_creation import create_mc_object_names_from_dataset
 from categories.persistence.persistence_helpers import (
+    get_visibility_mask,
+    get_visibility_change,
     check_visibility_sequence,
     compute_visibility_counts,
     find_first_visibility_drop
@@ -44,7 +47,6 @@ Answer = Union[str, float, Vector, Mapping[str, Any], Sequence[str]]
 ## --- Resolver functions -- ##
 
 from utils.config import get_config
-import itertools
 
 SAMPLING_RATE = get_config()["sampling_rate"]
 RENDER_STEP = 1.0 / SAMPLING_RATE
@@ -58,31 +60,48 @@ def F_PERSISTENCE_OBJECT_PRESENT(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> Sequence[str]:
     
+    """Which object is seen during the frames, but not visible in the last frame?"""
+    
     assert len(attributes) == 0
 
-    candidate_objects = []
-    for object in iter_objects(world_state):
-        found_pattern, final_timestep = check_visibility_sequence(
-            world_state, object["id"],
-            list(world_state["simulation"].keys())
-        )
+    visibility_mask, _, _ = get_visibility_mask(world_state)        
 
-        if found_pattern:
-            candidate_objects.append(object)
-            print("At timestep:", final_timestep)
+    changes_in_visibility = get_visibility_change(visibility_mask)
+    changes_across_time = np.abs(changes_in_visibility).sum(axis=1)
 
-    if len(candidate_objects) == 0:
-        raise ImpossibleToAnswer("No object found with the required persistence pattern.")
+    object_name = ""
+    final_timestep = None
+
+    if sum(changes_across_time >= 1) > 1:
+        raise ImpossibleToAnswer("Multiple significant changes detected.")
     
-    if len(candidate_objects) > 1:
-        raise ImpossibleToAnswer("Multiple objects found with the required persistence pattern.")
+    elif sum(changes_across_time >= 1) == 0:
+        raise ImpossibleToAnswer("No significant changes detected.")
     
-    if final_timestep is None:
-        print("but whyyy")
-        raise ImpossibleToAnswer("Could not determine the final timestep for the detected pattern.")
+    else:
+        object_index = np.where(changes_across_time >= 1)[0][0]
+        object_name = world_state["objects"][str(object_index + 1)]["name"]
+
+        obj_changes = changes_in_visibility[object_index]
+
+        disappearance_indices = np.where(obj_changes == -1)[0]
+
+        if len(disappearance_indices) == 0:
+             # The object moved (sum > 0), but no -1 found. 
+             # It must have only appeared (value 1).
+             raise ImpossibleToAnswer(f"Object '{object_name}' appeared but never disappeared.")
+        
+        first_disappearance_idx = disappearance_indices[0]
+
+        final_timestep = list(world_state["simulation"].keys())[first_disappearance_idx]
+
+    if final_timestep is None or object_name == "" or first_disappearance_idx < FRAME_INTERLEAVE*CLIP_LENGTH:
+        raise ImpossibleToAnswer("Could not determine the disappeared object or final timestep.")
+
+    initial_timestep = list(world_state["simulation"].keys())[first_disappearance_idx - FRAME_INTERLEAVE*CLIP_LENGTH]
 
     labels, correct_idx = create_mc_object_names_from_dataset(
-        candidate_objects[0]["name"],
+        object_name,
         [],
         get_all_objects_names(),
         num_answers=4,
@@ -93,10 +112,10 @@ def F_PERSISTENCE_OBJECT_PRESENT(
     )
 
     return fill_questions(
-        question, labels, correct_idx, world_state, final_timestep, resolved_attributes
+        question, labels, correct_idx, world_state, final_timestep, resolved_attributes, initial_timestep=initial_timestep
     )
 
-
+# this is also okay
 @with_resolved_attributes
 def F_PERSISTENCE_OBJECT_DISAPPEAR(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
@@ -105,7 +124,6 @@ def F_PERSISTENCE_OBJECT_DISAPPEAR(
     return F_PERSISTENCE_OBJECT_PRESENT(
         world_state, question, kwargs["destination_simulation_id_path"]
     )
-# this has to be really thought throughly cause as it is it can not be factually answered
 
 
 @with_resolved_attributes
@@ -113,32 +131,36 @@ def F_PERSISTENCE_OBJECT_TOTAL_COUNT(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> Sequence[str]:
 
+    """How many objects are there in the last frame in total, including those currently hidden and/or out of frame?"""
+
     assert len(attributes) == 0
 
-    list_indexes = list(world_state["simulation"].keys())[::FRAME_INTERLEAVE] 
+    visibility_mask, _, _ = get_visibility_mask(world_state)
+    total_visible_objects = np.sum(visibility_mask, axis=0)
 
-    # I need to start from timestep 4*FRAME_INTERLEAVE to have enough margin if the second frame is dropping a number of visibility
-    timestep_counts = compute_visibility_counts(
-        world_state, list_indexes[4:-4]
-    )
+    total_visible_objects_shifted = np.roll(total_visible_objects, 2)
+    total_visible_objects_shifted[:2] = total_visible_objects[:2]
 
-    timestep_of_hidden = find_first_visibility_drop(timestep_counts)
+    final_timestep_index = np.argmax(total_visible_objects_shifted - total_visible_objects) # return the index of the first drop, even if it's bigger than 1
 
-    if timestep_of_hidden is None:
-        raise ImpossibleToAnswer("No visibility drop detected in the simulation.")
+    if final_timestep_index < FRAME_INTERLEAVE * CLIP_LENGTH:
+        raise ImpossibleToAnswer("Not enough timesteps before visibility drop to answer the question.")
 
-    # checking the final timestep after the drop
-    final_timestep_index = min(timestep_of_hidden + 4, len(list_indexes) - 1)
-    initial_timestep_index = max(0, final_timestep_index - CLIP_LENGTH)
+    initial_timestep_index = final_timestep_index - FRAME_INTERLEAVE * CLIP_LENGTH
 
-    if final_timestep_index - initial_timestep_index < CLIP_LENGTH:
-        raise ImpossibleToAnswer("Not enouh timesteps before visibility drop to answer the question.")
+    final_timestep = list(world_state["simulation"].keys())[final_timestep_index]
+    initial_timestep = list(world_state["simulation"].keys())[initial_timestep_index]
 
-    final_timestep = list_indexes[final_timestep_index]
-    count_objects_initial = timestep_counts[initial_timestep_index]
+    # the number of objects visible just before the drop --> the algorithm
+    # is designed to detect drops in visibility, so we take the count before the drop
+    # cause if there were 3,3,3,3,3,2,2,2,1 we would want to answer 3
 
-    #balanced options around the initial count
-    balanced_bins = [str(i) for i in range(max(0, count_objects_initial - 2), count_objects_initial + 4) if i != count_objects_initial]
+    count_objects_initial = total_visible_objects[final_timestep_index - 1]
+
+    #balanced options around the initial count    
+    start = max(0, count_objects_initial - 2)
+    shift = abs(count_objects_initial-2) if count_objects_initial < 2 else 0
+    balanced_bins = [str(i) for i in range(start, count_objects_initial + 2 + shift) if i != count_objects_initial]
 
     labels, correct_idx = create_mc_object_names_from_dataset(
         str(count_objects_initial),
@@ -152,7 +174,7 @@ def F_PERSISTENCE_OBJECT_TOTAL_COUNT(
     )
 
     return fill_questions(
-        question, labels, correct_idx, world_state, final_timestep, resolved_attributes 
+        question, labels, correct_idx, world_state, final_timestep, resolved_attributes, initial_timestep=initial_timestep
     )
 
 
@@ -160,36 +182,40 @@ def F_PERSISTENCE_OBJECT_TOTAL_COUNT(
 def F_PERSISTENCE_OBJECT_TOTAL_COUNT_HIDDEN(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> Sequence[str]:
+    
+    """How many objects are present but not visible in the last frame?"""
 
-    assert len(attributes) == 0
+    assert len(attributes) == 0    
 
-    list_indexes = list(world_state["simulation"].keys())[::FRAME_INTERLEAVE] 
+    visibility_mask, _, _ = get_visibility_mask(world_state)
+    total_visible_objects = np.sum(visibility_mask, axis=0)
 
-    # I need to start from timestep 4*FRAME_INTERLEAVE to have enough margin if the second frame is dropping a number of visibility
-    timestep_counts = compute_visibility_counts(
-        world_state, list_indexes[4:-4]
-    )
+    total_visible_objects_shifted = np.roll(total_visible_objects, 2)
+    total_visible_objects_shifted[:2] = total_visible_objects[:2]
 
-    timestep_of_hidden = find_first_visibility_drop(timestep_counts)
+    final_timestep_index = np.argmax(total_visible_objects_shifted - total_visible_objects) # return the index of the first drop, even if it's bigger than 1
 
-    if timestep_of_hidden is None:
-        raise ImpossibleToAnswer("No visibility drop detected in the simulation.")
-
-    # checking the final timestep after the drop
-    final_timestep_index = min(timestep_of_hidden + 4, len(timestep_counts) - 1)
-    initial_timestep_index = max(0, final_timestep_index - CLIP_LENGTH)
-
-    if final_timestep_index - initial_timestep_index < CLIP_LENGTH:
+    if final_timestep_index < FRAME_INTERLEAVE * CLIP_LENGTH:
         raise ImpossibleToAnswer("Not enough timesteps before visibility drop to answer the question.")
 
-    final_timestep = list_indexes[final_timestep_index]
-    count_objects_initial = timestep_counts[initial_timestep_index]
-    count_objects_final = timestep_counts[final_timestep_index]
+    initial_timestep_index = final_timestep_index - FRAME_INTERLEAVE * CLIP_LENGTH
 
-    balanced_bins = [str(i) for i in range(max(0, count_objects_initial - 2), count_objects_initial + 4) if i != count_objects_initial]
+    final_timestep = list(world_state["simulation"].keys())[final_timestep_index]
+    initial_timestep = list(world_state["simulation"].keys())[initial_timestep_index]
+
+    # this is not the initial count, but the count at the timestep before disappearing
+    count_objects_initial = total_visible_objects[final_timestep_index - 1]
+    count_objects_final = total_visible_objects[final_timestep_index]
+
+    hidden = count_objects_initial - count_objects_final
+
+    #balanced options around the initial count
+    start = max(0, hidden - 2)
+    shift = abs(hidden-2) if hidden < 2 else 0
+    balanced_bins = [str(i) for i in range(start, hidden + 2 + shift) if i != hidden]
 
     labels, correct_idx = create_mc_object_names_from_dataset(
-        str(count_objects_initial - count_objects_final),
+        str(hidden),
         [],
         balanced_bins,
         num_answers=4,
@@ -200,12 +226,13 @@ def F_PERSISTENCE_OBJECT_TOTAL_COUNT_HIDDEN(
     )
 
     return fill_questions(
-        question, labels, correct_idx, world_state, final_timestep, resolved_attributes 
+        question, labels, correct_idx, world_state, final_timestep, resolved_attributes, initial_timestep=initial_timestep
     )
 
 
+# I don't know about this one actually
 @with_resolved_attributes
-def F_PERSISTENCE_OBJET_COLLISION_HIDDEN(
+def F_PERSISTENCE_OBJECT_COLLISION_HIDDEN(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> Sequence[str]:
     

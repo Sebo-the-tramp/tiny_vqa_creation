@@ -182,7 +182,7 @@ def F_PERSISTENCE_OBJECT_TOTAL_COUNT_HIDDEN(
 
     initial_timestep_index, initial_timestep, final_timestep_index, final_timestep = get_optimal_timestep_interval(world_state)
 
-    if final_timestep_index < CLIP_LENGTH:
+    if final_timestep_index - initial_timestep_index < CLIP_LENGTH:
         raise ImpossibleToAnswer("Not enough timesteps before visibility drop to answer the question.")
 
     final_timestep = list(world_state["simulation"].keys())[final_timestep_index]

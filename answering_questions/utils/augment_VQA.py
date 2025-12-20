@@ -98,6 +98,8 @@ def augment_roi_circling(question, world_state, resolved_attributes, file_names,
     if len(resolved_attributes) == 0:
         raise ImpossibleToAnswer("No resolved attributes for ROI circling. So no need to circle anything, and to ask questions about it")   
 
+    new_question = None
+
     for file in file_names:
         original_image = np.array(PIL.Image.open(file))
 
@@ -184,6 +186,10 @@ def augment_roi_circling(question, world_state, resolved_attributes, file_names,
         original_image.save(new_file_name)
 
         file_names[file_names.index(file)] = new_file_name
+
+    if new_question is None:
+        raise ImpossibleToAnswer("No modifications done to the question in ROI circling augmentation.")        
+
     if len(resolved_attributes) > 0:
         question["question"] = new_question
 

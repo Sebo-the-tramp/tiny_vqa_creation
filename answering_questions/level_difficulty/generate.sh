@@ -14,4 +14,6 @@ fi
 
 python generate_levels_questions.py \
   --input "$INPUT_PATH" \
-  --output "$OUTPUT_PATH"
+  --output "$OUTPUT_PATH" \
+  --max-questions 1000
+

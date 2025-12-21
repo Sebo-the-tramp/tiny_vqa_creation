@@ -50,9 +50,11 @@ def expand_questions(
     entries: Iterable[dict],
     templates: Dict[str, Dict[str, str]],
     keep_original: bool,
+    max_questions: int | None,
 ) -> List[dict]:
     expanded: List[dict] = []
     missing_templates = 0
+    generated_questions = 0
     for entry in entries:
         question_id = entry.get("question_id")
         template = templates.get(question_id)
@@ -61,6 +63,11 @@ def expand_questions(
                 expanded.append(entry)
             missing_templates += 1
             continue
+
+        if max_questions is not None and generated_questions >= max_questions:
+            continue
+
+        generated_questions += 1
 
         if keep_original:
             expanded.append(entry)
@@ -82,6 +89,8 @@ def expand_questions(
             f"Skipped {missing_templates} questions without templates "
             f"(use --keep-original to retain them)."
         )
+    if max_questions is not None:
+        print(f"Generated leveled variants for {generated_questions} questions.")
     return expanded
 
 
@@ -113,6 +122,12 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Keep the original entries alongside the leveled versions.",
     )
+    parser.add_argument(
+        "--max-questions",
+        type=int,
+        default=None,
+        help="Limit the number of questions expanded (each produces up to 5 entries).",
+    )
     return parser.parse_args()
 
 
@@ -128,7 +143,9 @@ def main() -> None:
         raise ValueError(f"{input_path} does not contain a JSON array.")
 
     templates = load_questions(questions_path)
-    expanded_entries = expand_questions(entries, templates, args.keep_original)
+    expanded_entries = expand_questions(
+        entries, templates, args.keep_original, args.max_questions
+    )
 
     output_path = compute_output_path(input_path, args.output)
     output_path.parent.mkdir(parents=True, exist_ok=True)

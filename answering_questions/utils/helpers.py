@@ -244,14 +244,14 @@ def fill_questions_cf(
         )
         # check if spawning is present in the modified world state
         world_state_modified_spawning = world_state_modified.get("config", {}).get("scene", {}).get("spawning", {})
-
+        
         if world_state_modified_spawning == {}:
             diff = "gravity"  # default
         else:
             if 'metricscale' in world_state_modified_spawning.get('transform_per_object', {}).get('0', {}):
                 diff = "2xsmaller"
             else:
-                diff = "shift"
+                diff = "shift"        
 
         if diff == "shift":        
             counterfact = compute_counterfactual_string(
@@ -259,7 +259,7 @@ def fill_questions_cf(
             )        
         elif diff == "2xsmaller":
             counterfact = "How would the answer change if the object is scaled down to half of its original size."
-        elif diff == "low-gravity":
+        elif diff == "gravity":
             counterfact = "How would the answer change if the gravity is reduced to 10% of its original value."
 
         fill_template_cf(q_copy, resolved_attributes, counterfact)

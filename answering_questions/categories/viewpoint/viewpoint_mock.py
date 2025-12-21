@@ -31,6 +31,8 @@ from utils.decorators import with_resolved_attributes
 
 from utils.bin_creation import create_mc_object_names_from_dataset
 
+from utils.my_exception import ImpossibleToAnswer
+
 from utils.helpers import (
     get_random_timestep_from_list,
     iter_objects,
@@ -105,6 +107,9 @@ def F_OCCLUSION_PERCENTAGE_OBJECT(
 
     all_timesteps = list(world_state["simulation"].keys())
 
+    if len(all_timesteps) <= CLIP_LENGTH * FRAME_INTERLEAVE - FRAME_INTERLEAVE:
+        raise ImpossibleToAnswer("Not enough timesteps in the simulation.")
+
     if "multi" in question.get("task_splits", ""):
         timestep = random.choice(
             all_timesteps[CLIP_LENGTH * FRAME_INTERLEAVE - FRAME_INTERLEAVE :]
@@ -152,6 +157,9 @@ def F_VIEWPOINT_CAMERA_ANGLE(
 
     all_timesteps = list(world_state["simulation"].keys())
 
+    if len(all_timesteps) <= CLIP_LENGTH * FRAME_INTERLEAVE - FRAME_INTERLEAVE:
+        raise ImpossibleToAnswer("Not enough timesteps in the simulation.")
+
     if "multi" in question.get("task_splits", ""):
         timestep = random.choice(
             all_timesteps[CLIP_LENGTH * FRAME_INTERLEAVE - FRAME_INTERLEAVE :]
@@ -188,6 +196,9 @@ def F_FOCAL_LENGTH_CLASS(
     resolved_attributes = resolve_attributes([], world_state)
 
     all_timesteps = list(world_state["simulation"].keys())
+
+    if len(all_timesteps) <= CLIP_LENGTH * FRAME_INTERLEAVE - FRAME_INTERLEAVE:
+        raise ImpossibleToAnswer("Not enough timesteps in the simulation.")
 
     if "multi" in question.get("task_splits", ""):
         timestep = random.choice(

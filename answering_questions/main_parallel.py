@@ -62,13 +62,12 @@ def _process_one(sim_file, args):
     except Exception as e:
         # Keep the pool running even if one simulation fails
         # if VERBOSE:
-        print("Worker error on", simulation_id_path)
+        print("\033[91mWorker error on", simulation_id_path, "->", repr(e), "\033[0m")
         print(e.with_traceback())
 
 
 from utils.saving_utils import (
-    save_questions_answers_json,
-    save_questions_answers_tsv,
+    save_questions_answers_json    
 )
 from utils.my_exception import ImpossibleToAnswer
 from utils import seed_utils
@@ -237,7 +236,6 @@ def create_vqa(
                         augmentation=config.augmentation,
                     )
                
-
                     all_vqa.append(
                         {
                             "scene": simulation_steps.get("scene", {}).get(
@@ -328,6 +326,26 @@ def main(args):
     simulation_roots = args.simulation_paths
     list_simulations = []
 
+    excluded_simulations = set()
+    excluded_count = 0
+    if getattr(args, "exclude_simulations_file", None):
+        exclude_path = os.path.expanduser(args.exclude_simulations_file)
+        try:
+            with open(exclude_path, "r") as f:
+                for line in f:
+                    path = line.strip()
+                    if not path or path.startswith("#"):
+                        continue
+                    normalized = os.path.normpath(os.path.abspath(path))
+                    excluded_simulations.add(normalized)
+            print(
+                f"Loaded {len(excluded_simulations)} simulations to skip from {exclude_path}"
+            )
+        except FileNotFoundError:
+            print(
+                f"Exclude file {exclude_path} not found. Continuing without exclusions."
+            )
+
     for simulation_root in simulation_roots:
         pattern = os.path.join(simulation_root, "**", "simulation.json")
 
@@ -335,6 +353,12 @@ def main(args):
 
         print("Searching for simulation files with pattern:", pattern)
         for sim_file in glob.glob(pattern, recursive=True):
+            normalized_sim_path = os.path.normpath(os.path.abspath(sim_file)).replace("/simulation.json", "")                                    
+            if normalized_sim_path in excluded_simulations:
+                excluded_count += 1
+                if args.verbose:
+                    print("Skipping excluded simulation:", sim_file)
+                continue
             list_simulations.append(sim_file)
 
     list_simulations.sort(key=natural_key)
@@ -344,6 +368,8 @@ def main(args):
         print("No simulation files found.")
         return
 
+    if excluded_count:
+        print(f"Skipped {excluded_count} simulations listed in exclude file.")
     print("Found", len(list_simulations), "simulation files.")
     ctx = get_context("spawn")
     with ProcessPoolExecutor(
@@ -396,6 +422,12 @@ if __name__ == "__main__":
         type=str,        
         default="/data0/sebastian.cavada/datasets/simulations_v3/dl3dv/random",
         help="Path to the simulation file containing the scenes.",
+    )
+    parser.add_argument(
+        "--exclude_simulations_file",
+        type=str,
+        default=None,
+        help="Optional path to a txt file listing simulation.json paths to skip.",
     )
     parser.add_argument(
         "--destination_simulation_path",

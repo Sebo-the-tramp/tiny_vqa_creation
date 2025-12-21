@@ -79,7 +79,7 @@ def _process_one(sim_file, args):
     except Exception as e:
         # Keep the pool running even if one simulation fails
         # if VERBOSE:
-        print("Worker error on", simulation_id_path, "->", repr(e))
+        print("\033[91mWorker error on", simulation_id_path, "->", repr(e), "\033[0m")
         print(e.with_traceback())
 
 

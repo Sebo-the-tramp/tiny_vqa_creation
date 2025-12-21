@@ -556,13 +556,14 @@ def resolve_attributes(
     attributes: List[Mapping[str, Any]], world_state: Mapping[str, Any]
 ) -> Mapping[str, Any]:
     attribute_resolved = {}
+    copy_of_world_state = deepcopy(world_state)
 
     for attribute in attributes:
         attribute_resolved[attribute] = {}
         attribute_category = attribute.split("_")[
             0
         ]  # Get the part before any underscore
-        result = resolver[attribute_category](world_state)
+        result = resolver[attribute_category](copy_of_world_state)
 
         attribute_resolved[attribute]["choice"] = result
         attribute_resolved[attribute]["category"] = attribute_category

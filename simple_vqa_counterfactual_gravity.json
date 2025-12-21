@@ -16,7 +16,7 @@
             "task_splits": "single+multi",
             "sub_category": "layout",
             "choice": "mcq",
-            "question": "From the camera’s perspective, where is the <OBJECT_1> relative to the <OBJECT_2>?"
+            "question": "From the camera’s perspective, where is the <OBJECT-CF> relative to the <OBJECT_2>?"
         }
     },
     "mechanics": {

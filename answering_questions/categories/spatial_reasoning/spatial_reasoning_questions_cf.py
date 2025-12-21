@@ -160,6 +160,41 @@ def CF_CLOSEST_OBJECT_CAMERA(
 
 
 @with_resolved_attributes_cf
+def CF_SIZE_OBJECT(
+    world_state_og: WorldState, world_state_mod: WorldState, question: QuestionPayload, attributes, **kwargs
+) -> int:
+    assert len(attributes) == 1 and "OBJECT-CF" in attributes
+
+    # First we find the pairs of objects visible
+    visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
+        attributes, world_state_mod, min_objects=kwargs["current_world_number_of_objects"]
+    )
+
+    timestep = get_random_timestep_from_list(visible_timesteps, question)
+
+    resolved_attributes = resolve_attributes_visible_at_timestep(
+        attributes, world_state_mod, timestep
+    )
+
+    object_id = resolved_attributes["OBJECT-CF"]["choice"]["id"]
+
+    volume_object_cubic_meters = world_state_mod["objects"][object_id]["volume"]
+    volume_object_cubic_centimeters = volume_object_cubic_meters * 1e6
+
+    options, correct_idx = create_mc_options_around_gt(
+        volume_object_cubic_centimeters,
+        num_answers=4,
+        display_decimals=2,
+    )
+    labels = uniform_labels(options, integer=False, decimals=2)
+    labels = [str(label) + " cubic centimeters" for label in labels]
+
+    return fill_questions_cf(
+        question, labels, correct_idx, world_state_og, world_state_mod, timestep, resolved_attributes
+    )
+
+
+@with_resolved_attributes_cf
 def CF_SIZE_OBJECT_BIGGER(
     world_state_og: WorldState, world_state_mod: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> str:

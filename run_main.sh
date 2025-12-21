@@ -96,27 +96,27 @@ GENERAL_RUN_COUNT=11
 
 # -------------------------------------------------------------
 # 1K general # text counterfactual shift
-python main_parallel_counterfactual.py --simulation_path "${BASE_PATH_CF}/shift-x" "${BASE_PATH_CF}/shift-z" \
-    --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
-    --export_format json --run_name "run_${GENERAL_RUN_COUNT}_counterfactual_shift" \
-    --counterfactual_type "shift" \
-    --n_scenes 1000
+# python main_parallel_counterfactual.py --simulation_path "${BASE_PATH_CF}/shift-x" "${BASE_PATH_CF}/shift-z" \
+#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
+#     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_counterfactual_shift" \
+#     --counterfactual_type "shift" \
+#     --n_scenes 1000
     
 # -------------------------------------------------------------
 # 1K general # text counterfactual gravity
-python main_parallel_counterfactual.py --simulation_path "${BASE_PATH_CF}/low-gravity" \
-    --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
-    --export_format json --run_name "run_${GENERAL_RUN_COUNT}_counterfactual_gravity" \
-    --counterfactual_type "gravity" \
-    --n_scenes 1000
+# python main_parallel_counterfactual.py --simulation_path "${BASE_PATH_CF}/low-gravity" \
+#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
+#     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_counterfactual_gravity" \
+#     --counterfactual_type "gravity" \
+#     --n_scenes 1000
 
 # # -------------------------------------------------------------
 # # 1K general # text counterfactual gravity
-python main_parallel_counterfactual.py --simulation_path "${BASE_PATH_CF}/2xsmaller" \
-    --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
-    --export_format json --run_name "run_${GENERAL_RUN_COUNT}_counterfactual_smaller" \
-    --counterfactual_type "volume" \
-    --n_scenes 1000
+# python main_parallel_counterfactual.py --simulation_path "${BASE_PATH_CF}/2xsmaller" \
+#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
+#     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_counterfactual_smaller" \
+#     --counterfactual_type "volume" \
+#     --n_scenes 1000
 
 # -------------------------------------------------------------
 # ABLATION STUDYs
@@ -125,6 +125,9 @@ python main_parallel_counterfactual.py --simulation_path "${BASE_PATH_CF}/2xsmal
 
 # -------------------------------------------------------------
 # 1K roi circling - no text
+
+RUN_NAME="run_${GENERAL_RUN_COUNT}_roi_circling_no_text"
+
 # python main_parallel.py --simulation_path "${BASE_PATH}/random" \
 #     --destination_simulation_path ${DESTINATION_SIMULATION_PATH}_modified_images \
 #     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_roi_circling_no_text" \
@@ -132,75 +135,79 @@ python main_parallel_counterfactual.py --simulation_path "${BASE_PATH_CF}/2xsmal
 #     --include_categories "material_understanding" \
 #     --n_scenes 700
 
-# # python ./subsample_questions_percentage.py \
-# #     --count 1000 \
-# #     --input ../output/run_${GENERAL_RUN_COUNT}_roi_circling_no_text/test_run_${GENERAL_RUN_COUNT}_roi_circling_no_text.json \
-# #     --output ../output/run_${GENERAL_RUN_COUNT}_roi_circling_no_text/test_run_${GENERAL_RUN_COUNT}_roi_circling_no_text_10K.json \
-# #     --percentage-map ./balancing_sub_categories_material_only.json \
-# #     --seed 42
+python ./subsample_questions_percentage.py \
+    --count 1000 \
+    --input ../output/${RUN_NAME}/test_${RUN_NAME}.json \
+    --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
+    --percentage-map ./balancing_sub_categories_material_only.json \
+    --seed 42
 
-# # RUN_NAME="run_${GENERAL_RUN_COUNT}_roi_circling_no_text"
-# # cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
-
+cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
 
 # # -------------------------------------------------------------
 # # 1K roi circling - layout position - no text 
+
+RUN_NAME="run_${GENERAL_RUN_COUNT}_roi_circling_no_text_layout_position"
+
 # python main_parallel.py --simulation_path "${BASE_PATH}/random" \
 #     --destination_simulation_path ${DESTINATION_SIMULATION_PATH}_modified_images \
-#     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_roi_circling_no_text_layout_position" \
+#     --export_format json --run_name "${RUN_NAME}" \
 #     --augmentation "roi_circling_no_text_layout_position" \
 #     --include_categories "material_understanding" \
 #     --n_scenes 700
 
-# # python ./subsample_questions_percentage.py \
-# #     --count 1000 \
-# #     --input ../output/run_${GENERAL_RUN_COUNT}_roi_circling_no_text_layout_position/test_run_${GENERAL_RUN_COUNT}_roi_circling_no_text_layout_position.json \
-# #     --output ../output/run_${GENERAL_RUN_COUNT}_roi_circling_no_text_layout_position/test_run_${GENERAL_RUN_COUNT}_roi_circling_no_text_layout_position_10K.json \
-# #     --percentage-map ./balancing_sub_categories_material_only.json \
-# #     --seed 42
+python ./subsample_questions_percentage.py \
+    --count 1000 \
+    --input ../output/${RUN_NAME}/test_${RUN_NAME}.json \
+    --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
+    --percentage-map ./balancing_sub_categories_material_only.json \
+    --seed 42
 
-# # RUN_NAME="run_${GENERAL_RUN_COUNT}_roi_circling_no_text_layout_position"
-# # cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
+cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
 
 
 # # -------------------------------------------------------------
 # # 1K roi circling - text
+
+RUN_NAME="run_${GENERAL_RUN_COUNT}_roi_circling_text"
+
 # python main_parallel.py --simulation_path "${BASE_PATH}/random" \
 #     --destination_simulation_path ${DESTINATION_SIMULATION_PATH}_modified_images \
-#     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_roi_circling_text" \
+#     --export_format json --run_name "${RUN_NAME}" \
 #     --augmentation "roi_circling_text" \
 #     --include_categories "material_understanding" \
 #     --n_scenes 700
 
-# # python ./subsample_questions_percentage.py \
-# #     --count 1000 \
-# #     --input ../output/run_${GENERAL_RUN_COUNT}_roi_circling_text/test_run_${GENERAL_RUN_COUNT}_roi_circling_text.json \
-# #     --output ../output/run_${GENERAL_RUN_COUNT}_roi_circling_text/test_run_${GENERAL_RUN_COUNT}_roi_circling_text_10K.json \
-# #     --percentage-map ./balancing_sub_categories_material_only.json \
-# #     --seed 42
+python ./subsample_questions_percentage.py \
+    --count 1000 \
+    --input ../output/${RUN_NAME}/test_${RUN_NAME}.json \
+    --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
+    --percentage-map ./balancing_sub_categories_material_only.json \
+    --seed 42
 
-# # RUN_NAME="run_${GENERAL_RUN_COUNT}_roi_circling_text"
-# # cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
+cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
 
 
 # # -------------------------------------------------------------
 # # 1K roi circling - layout position - text
-python main_parallel.py --simulation_path "${BASE_PATH}/random" \
-    --destination_simulation_path ${DESTINATION_SIMULATION_PATH}_modified_images \
-    --export_format json --run_name "run_${GENERAL_RUN_COUNT}_roi_circling_text_layout_position" \
-    --augmentation "roi_circling_text_layout_position" \
-    --include_categories "material_understanding" \
-    --n_scenes 700
 
-# python ./subsample_questions_percentage.py \
-#     --count 1000 \
-#     --input ../output/run_${GENERAL_RUN_COUNT}_roi_circling_text_layout_position/test_run_${GENERAL_RUN_COUNT}_roi_circling_text_layout_position.json \
-#     --output ../output/run_${GENERAL_RUN_COUNT}_roi_circling_text_layout_position/test_run_${GENERAL_RUN_COUNT}_roi_circling_text_layout_position_10K.json \
-#     --percentage-map ./balancing_sub_categories_material_only.json \
-#     --seed 42
+RUN_NAME="run_${GENERAL_RUN_COUNT}_roi_circling_text_layout_position"
 
-# RUN_NAME="run_${GENERAL_RUN_COUNT}_roi_circling_text_layout_position"
-# cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
+# python main_parallel.py --simulation_path "${BASE_PATH}/random" \
+#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH}_modified_images \
+#     --export_format json --run_name "${RUN_NAME}" \
+#     --augmentation "roi_circling_text_layout_position" \
+#     --include_categories "material_understanding" \
+#     --n_scenes 700
+
+python ./subsample_questions_percentage.py \
+    --count 1000 \
+    --input ../output/${RUN_NAME}/test_${RUN_NAME}.json \
+    --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
+    --percentage-map ./balancing_sub_categories_material_only.json \
+    --seed 42
+
+cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
 
 
 # -------------------------------------------------------------

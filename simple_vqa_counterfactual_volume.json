@@ -1,6 +1,6 @@
 {   
     "spatial_reasoning": {
-        "F_SIZE_OBJECT": {
+        "CF_SIZE_OBJECT": {
             "task_splits": "single+multi",
             "sub_category": "size",
             "choice": "mcq",

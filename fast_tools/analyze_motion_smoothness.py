@@ -552,8 +552,10 @@ def main() -> None:
             }
         results.append(analysis)
 
+    flagged_count = sum(1 for entry in results if entry.get("flagged"))
     write_reports(results, output_dir, args)
     print(f"Analysis stored in {output_dir} (motion_analysis.json/.txt and buggy_simulations.txt)")
+    print(f"Total affected simulations: {flagged_count}")
     _ = all_vqa  # placeholder to mirror the workflow shown in the instructions
 
 

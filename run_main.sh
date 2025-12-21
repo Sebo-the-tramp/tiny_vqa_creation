@@ -47,7 +47,7 @@ python ./subsample_questions_percentage.py \
 
 
 # -------------------------------------------------------------
-# 10K general # text - no circling
+# 10K general - yms variations 
 # python main_parallel.py --simulation_path "${BASE_PATH}/yms-variations/" \
 #     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
 #     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_general_yms-variations" \

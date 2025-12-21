@@ -3,8 +3,8 @@
     "size": 0.05,
     "layout": 0.02,
 
-    "kinematics": 0.05,
-    "collision": 0.05,
+    "kinematics": 0.075,
+    "collision": 0.075,
 
     "mass": 0.1,
     "density": 0.1,
@@ -17,5 +17,5 @@
 
     "camera_motion": 0.02,
     "event_ordering": 0.05,
-    "object_persistence": 0.05
+    "object_persistence": 0.1
 }

@@ -219,7 +219,7 @@ image_path="/scratch/project/eu-25-92/composite_physics/dataset/simulation_v4/dl
 
 mkdir -p ../output/${RUN_NAME}
 cp ../output/${RUN_NAME_PREVIOUS}/test_${RUN_NAME_PREVIOUS}_10K.json ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json
-sed -E "s|\"[^\"]+\.png\"|\"${image_path}\"|g" ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json
+sed -E -i "s|\"[^\"]+\.png\"|\"${image_path}\"|g" ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json
 
 # -------------------------------------------------------------
 # Send Telegram notification when done

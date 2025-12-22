@@ -47,22 +47,22 @@ GENERAL_RUN_COUNT=11
 
 
 # -------------------------------------------------------------
-# 10K general - yms variations 
-RUN_NAME="run_${GENERAL_RUN_COUNT}_general_yms-variations"
+# # 10K general - yms variations 
+# RUN_NAME="run_${GENERAL_RUN_COUNT}_general_yms-variations"
 
-# python main_parallel.py --simulation_path "${BASE_PATH}/yms-variations/" \
-#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
-#     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_general_yms-variations" \
-#     --n_scenes 700
+# # python main_parallel.py --simulation_path "${BASE_PATH}/yms-variations/" \
+# #     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
+# #     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_general_yms-variations" \
+# #     --n_scenes 700
 
-python ./subsample_questions_percentage.py \
-    --count 10000 \
-    --input ../output/${RUN_NAME}/test_${RUN_NAME}.json \
-    --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
-    --percentage-map ./balancing_sub_categories.json \
-    --seed 42
+# python ./subsample_questions_percentage.py \
+#     --count 10000 \
+#     --input ../output/${RUN_NAME}/test_${RUN_NAME}.json \
+#     --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
+#     --percentage-map ./balancing_sub_categories.json \
+#     --seed 42
 
-cp ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json ../output/${RUN_NAME}/test_${RUN_NAME}_karo_10K.json
+# cp ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json ../output/${RUN_NAME}/test_${RUN_NAME}_karo_10K.json
 
 
 # -------------------------------------------------------------
@@ -209,6 +209,16 @@ cp ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json ../output/${RUN_NAME}/test_${
 
 # cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
 
+# # # -------------------------------------------------------------
+# # # 1K roi circling - layout position - text
+
+RUN_NAME_PREVIOUS="run_${GENERAL_RUN_COUNT}_roi_circling_no_text"
+RUN_NAME="run_${GENERAL_RUN_COUNT}_black"
+
+image_path="/scratch/project/eu-25-92/composite_physics/dataset/simulation_v4/dl3dv/common/black.png"
+
+cp ../output/${RUN_NAME_PREVIOUS}/test_${RUN_NAME_PREVIOUS}_10K.json ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json
+sed -E "s|\"[^\"]+\.png\"|\"${image_path}\"|g" ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json
 
 # -------------------------------------------------------------
 # Send Telegram notification when done

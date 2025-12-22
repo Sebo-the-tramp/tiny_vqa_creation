@@ -57,12 +57,12 @@ RUN_NAME="run_${GENERAL_RUN_COUNT}_general_yms-variations"
 
 python ./subsample_questions_percentage.py \
     --count 10000 \
-    --input ../output/run_${GENERAL_RUN_COUNT}_general/test_${RUN_NAME}.json \
-    --output ../output/run_${GENERAL_RUN_COUNT}_general/test_${RUN_NAME}_10K.json \
+    --input ../output/${RUN_NAME}/test_${RUN_NAME}.json \
+    --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
     --percentage-map ./balancing_sub_categories.json \
     --seed 42
 
-cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
+cp ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json ../output/${RUN_NAME}/test_${RUN_NAME}_karo_10K.json
 
 
 # -------------------------------------------------------------

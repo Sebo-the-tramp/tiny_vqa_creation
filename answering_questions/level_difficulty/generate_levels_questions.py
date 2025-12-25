@@ -78,10 +78,7 @@ def expand_questions(
                 continue
             new_entry = copy.deepcopy(entry)
             new_entry["question"] = level_question
-            new_entry["question_id"] = f"{question_id}_level_{level_key}"
-            idx_value = new_entry.get("idx")
-            if isinstance(idx_value, str):
-                new_entry["idx"] = f"{idx_value}_level_{level_key}"
+            new_entry["question_id"] = f"{question_id}_level_{level_key}"            
             new_entry["difficulty_level"] = level_key
             expanded.append(new_entry)
     if missing_templates:

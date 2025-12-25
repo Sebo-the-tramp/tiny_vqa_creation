@@ -7,14 +7,14 @@ if [ -d "/scratch/project/eu-25-92/composite_physics/dataset/simulation_v4" ]; t
     echo "Directory exists. I AM on KARO"
     BASE_INPUT_PATH="/mnt/proj1/eu-25-92/tiny_vqa_creation/output"
     INPUT_PATH="${BASE_INPUT_PATH}/run_11_general/${INPUT_FILE}_10K.json"
-    OUTPUT_PATH="${BASE_INPUT_PATH}/run_11_general_levels/${INPUT_FILE}_levels_5K.json"
+    OUTPUT_PATH="${BASE_INPUT_PATH}/run_11_general_levels/${INPUT_FILE}_levels_karo_5K.json"
 fi
 
 if [ -d "/data0/sebastian.cavada/datasets/simulations_v4" ]; then
     echo "Directory exists. I AM on CavadaLAB"
     BASE_INPUT_PATH="/data0/sebastian.cavada/compositional-physics/tiny_vqa_deterministic/output/run_11_general/"
     INPUT_PATH="${BASE_INPUT_PATH}/run_11_general/${INPUT_FILE}_10K.json"
-    OUTPUT_PATH="${BASE_INPUT_PATH}/run_11_general_levels/${INPUT_FILE}_levels_5K.json"
+    OUTPUT_PATH="${BASE_INPUT_PATH}/run_11_general_levels/${INPUT_FILE}_levels_karo_5K.json"
 fi
 
 python generate_levels_questions.py \

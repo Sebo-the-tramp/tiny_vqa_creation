@@ -12,7 +12,7 @@ fi
 
 if [ -d "/data0/sebastian.cavada/datasets/simulations_v4" ]; then
     echo "Directory exists. I AM on CavadaLAB"
-    BASE_INPUT_PATH="/data0/sebastian.cavada/compositional-physics/tiny_vqa_deterministic/output/run_11_general/"
+    BASE_INPUT_PATH="/data0/sebastian.cavada/compositional-physics/tiny_vqa_deterministic/output"
     INPUT_PATH="${BASE_INPUT_PATH}/run_11_general/${INPUT_FILE}_10K.json"
     OUTPUT_PATH="${BASE_INPUT_PATH}/run_11_general_levels/${INPUT_FILE}_levels_karo_5K.json"
 fi

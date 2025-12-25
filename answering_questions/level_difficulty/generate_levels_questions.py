@@ -72,12 +72,14 @@ def expand_questions(
         if keep_original:
             expanded.append(entry)
 
+        og_question = template.get("og")
+
         for level_key in LEVEL_KEYS:
             level_question = template.get(level_key)
             if not level_question:
                 continue
             new_entry = copy.deepcopy(entry)
-            new_entry["question"] = level_question
+            new_entry["question"] = new_entry["question"].replace(og_question, level_question)
             new_entry["question_id"] = f"{question_id}_level_{level_key}"            
             new_entry["difficulty_level"] = level_key
             expanded.append(new_entry)

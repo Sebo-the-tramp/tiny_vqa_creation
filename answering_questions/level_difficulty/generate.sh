@@ -22,5 +22,5 @@ python generate_levels_questions.py \
   --output "$OUTPUT_PATH" \
   --max-questions 1000
 
-cp "${BASE_INPUT_PATH}${INPUT_FILE}_val_answer.json" \
-   "${BASE_INPUT_PATH}${INPUT_FILE}_levels_val_answer.json"
+cp "${BASE_INPUT_PATH}val_answer_run_11_general.json" \
+   "${BASE_INPUT_PATH}val_answer_run_11_general_levels.json"

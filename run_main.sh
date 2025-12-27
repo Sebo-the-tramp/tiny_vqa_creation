@@ -8,7 +8,7 @@ if [ -d "/data0/sebastian.cavada/datasets/simulations_v4" ]; then
 else
     source "/home/it4i-thvu/seb_dev/.telegram_bot.env"
     BASE_PATH="/scratch/project/eu-25-92/composite_physics/dataset/simulation_v4/dl3dv"
-    BASE_PATH_CF="/scratch/project/eu-25-92/composite_physics/datasets/simulations_v3/dl3dv-counterfact"
+    BASE_PATH_CF="/scratch/project/eu-25-92/composite_physics/datasets/simulations_v4/dl3dv-counterfact"
     DESTINATION_SIMULATION_PATH="/scratch/project/eu-25-92/composite_physics/dataset/physbench/simulation_v4"
 fi
 
@@ -96,28 +96,28 @@ GENERAL_RUN_COUNT=11
 # -------------------------------------------------------------
 
 # -------------------------------------------------------------
-# 1K general # text counterfactual shift
-# python main_parallel_counterfactual.py --simulation_path "${BASE_PATH_CF}/shift-x" "${BASE_PATH_CF}/shift-z" \
-#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
-#     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_counterfactual_shift" \
-#     --counterfactual_type "shift" \
-#     --n_scenes 1000
+1K general # text counterfactual shift
+python main_parallel_counterfactual.py --simulation_path "${BASE_PATH_CF}/shift-x" "${BASE_PATH_CF}/shift-z" \
+    --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
+    --export_format json --run_name "run_${GENERAL_RUN_COUNT}_counterfactual_shift" \
+    --counterfactual_type "shift" \
+    --n_scenes 1000
     
-# # -------------------------------------------------------------
-# # 1K general # text counterfactual gravity
-# python main_parallel_counterfactual.py --simulation_path "${BASE_PATH_CF}/low-gravity" \
-#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
-#     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_counterfactual_gravity" \
-#     --counterfactual_type "gravity" \
-#     --n_scenes 1000
+# -------------------------------------------------------------
+# 1K general # text counterfactual gravity
+python main_parallel_counterfactual.py --simulation_path "${BASE_PATH_CF}/low-gravity" \
+    --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
+    --export_format json --run_name "run_${GENERAL_RUN_COUNT}_counterfactual_gravity" \
+    --counterfactual_type "gravity" \
+    --n_scenes 1000
 
-# # -------------------------------------------------------------
-# # 1K general # text counterfactual gravity
-# python main_parallel_counterfactual.py --simulation_path "${BASE_PATH_CF}/2xsmaller" \
-#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
-#     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_counterfactual_smaller" \
-#     --counterfactual_type "volume" \
-#     --n_scenes 1000
+# -------------------------------------------------------------
+# 1K general # text counterfactual gravity
+python main_parallel_counterfactual.py --simulation_path "${BASE_PATH_CF}/2xsmaller" \
+    --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
+    --export_format json --run_name "run_${GENERAL_RUN_COUNT}_counterfactual_smaller" \
+    --counterfactual_type "volume" \
+    --n_scenes 1000
 
 # -------------------------------------------------------------
 # ABLATION STUDYs
@@ -212,14 +212,14 @@ GENERAL_RUN_COUNT=11
 # # # -------------------------------------------------------------
 # # # 1K roi circling - layout position - text
 
-RUN_NAME_PREVIOUS="run_${GENERAL_RUN_COUNT}_roi_circling_no_text"
-RUN_NAME="run_${GENERAL_RUN_COUNT}_black"
+# RUN_NAME_PREVIOUS="run_${GENERAL_RUN_COUNT}_roi_circling_no_text"
+# RUN_NAME="run_${GENERAL_RUN_COUNT}_black"
 
-image_path="/scratch/project/eu-25-92/composite_physics/dataset/simulation_v4/dl3dv/common/black.png"
+# image_path="/scratch/project/eu-25-92/composite_physics/dataset/simulation_v4/dl3dv/common/black.png"
 
-mkdir -p ../output/${RUN_NAME}
-cp ../output/${RUN_NAME_PREVIOUS}/test_${RUN_NAME_PREVIOUS}_10K.json ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json
-sed -E -i "s|\"[^\"]+\.png\"|\"${image_path}\"|g" ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json
+# mkdir -p ../output/${RUN_NAME}
+# cp ../output/${RUN_NAME_PREVIOUS}/test_${RUN_NAME_PREVIOUS}_10K.json ../output/${RUN_NAME}/test_${RUN_NAME}_1K.json
+# sed -E -i "s|\"[^\"]+\.png\"|\"${image_path}\"|g" ../output/${RUN_NAME}/test_${RUN_NAME}_1K.json
 
 # -------------------------------------------------------------
 # Send Telegram notification when done

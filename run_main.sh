@@ -8,7 +8,7 @@ if [ -d "/data0/sebastian.cavada/datasets/simulations_v4" ]; then
 else
     source "/home/it4i-thvu/seb_dev/.telegram_bot.env"
     BASE_PATH="/scratch/project/eu-25-92/composite_physics/dataset/simulation_v4/dl3dv"
-    BASE_PATH_CF="/scratch/project/eu-25-92/composite_physics/dataset/simulations_v4/dl3dv-counterfact"
+    BASE_PATH_CF="/scratch/project/eu-25-92/composite_physics/dataset/simulation_v4/dl3dv-counterfact"
     DESTINATION_SIMULATION_PATH="/scratch/project/eu-25-92/composite_physics/dataset/physbench/simulation_v4"
 fi
 

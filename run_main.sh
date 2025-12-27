@@ -8,7 +8,7 @@ if [ -d "/data0/sebastian.cavada/datasets/simulations_v4" ]; then
 else
     source "/home/it4i-thvu/seb_dev/.telegram_bot.env"
     BASE_PATH="/scratch/project/eu-25-92/composite_physics/dataset/simulation_v4/dl3dv"
-    BASE_PATH_CF="/scratch/project/eu-25-92/composite_physics/datasets/simulations_v4/dl3dv-counterfact"
+    BASE_PATH_CF="/scratch/project/eu-25-92/composite_physics/dataset/simulations_v4/dl3dv-counterfact"
     DESTINATION_SIMULATION_PATH="/scratch/project/eu-25-92/composite_physics/dataset/physbench/simulation_v4"
 fi
 
@@ -96,7 +96,7 @@ GENERAL_RUN_COUNT=11
 # -------------------------------------------------------------
 
 # -------------------------------------------------------------
-1K general # text counterfactual shift
+# 1K general # text counterfactual shift
 python main_parallel_counterfactual.py --simulation_path "${BASE_PATH_CF}/shift-x" "${BASE_PATH_CF}/shift-z" \
     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_counterfactual_shift" \

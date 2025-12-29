@@ -31,7 +31,7 @@ python main_parallel.py --simulation_path "${BASE_PATH}/random/" \
     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_general" \
     --n_scenes 2200 \
-    --exclude_simulations_file "./answering_questions/problematic_paths.txt"
+    --exclude_simulations_file "problematic_paths.txt"
 
 python ./subsample_questions_percentage.py \
     --count 10000 \

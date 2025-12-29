@@ -4,9 +4,9 @@ Utility for generating leveled variants of TinyVQA questions.
 
 Given a question file inside one of the run folders in ../output it looks for
 question ids that exist in questions.json (located next to this script) and, for
-each of those ids, emits five new copies of the question targeted at different
-reading levels. The new entries reuse the original metadata but replace
-`question` and `question_id`.
+each of those ids, emits leveled copies of the question targeted at a baseline
+and five different reading levels. The new entries reuse the original metadata
+but replace `question` and `question_id`.
 """
 
 from __future__ import annotations
@@ -18,7 +18,8 @@ from pathlib import Path
 from typing import Dict, Iterable, List
 
 # The levels are ordered to keep the output deterministic.
-LEVEL_KEYS = ["child", "teen", "undegrad", "graduate", "expert"]
+BASELINE_LEVEL = "baseline"
+LEVEL_KEYS = [BASELINE_LEVEL, "child", "teen", "undegrad", "graduate", "expert"]
 
 
 def load_questions(path: Path) -> Dict[str, Dict[str, str]]:
@@ -75,7 +76,10 @@ def expand_questions(
         og_question = template.get("og")
 
         for level_key in LEVEL_KEYS:
-            level_question = template.get(level_key)
+            if level_key == BASELINE_LEVEL:
+                level_question = og_question
+            else:
+                level_question = template.get(level_key)
             if not level_question:
                 continue
             new_entry = copy.deepcopy(entry)

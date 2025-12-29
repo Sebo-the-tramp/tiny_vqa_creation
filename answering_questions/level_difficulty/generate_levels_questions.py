@@ -80,7 +80,9 @@ def expand_questions(
                 continue
             new_entry = copy.deepcopy(entry)
             new_entry["question"] = new_entry["question"].replace(og_question, level_question)
-            new_entry["question_id"] = f"{question_id}_level_{level_key}"            
+            new_entry["question_id"] = f"{question_id}_level_{level_key}"
+            if "idx" in new_entry and new_entry["idx"] is not None:
+                new_entry["idx"] = f"{new_entry['idx']}_level_{level_key}"
             new_entry["difficulty_level"] = level_key
             expanded.append(new_entry)
     if missing_templates:

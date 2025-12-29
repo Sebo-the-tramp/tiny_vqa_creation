@@ -233,7 +233,7 @@
             "question": "Which of these objects is visible in the image/frame?"
         },
         "F_OCCLUSION_PERCENTAGE_OBJECT": {
-            "task_splits": "single+multi",            
+            "task_splits": "single+multi",
             "sub_category": "visibility",
             "choice": "mcq",            
             "question": "How much of the <OBJECT> is occluded in the image/frame?"

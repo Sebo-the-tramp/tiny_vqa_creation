@@ -154,11 +154,11 @@ def augment_roi_circling(question, world_state, resolved_attributes, file_names,
                             world_state, object_id, int(render_name.replace(".png", ""))
                         )
                         new_question = pattern.sub(
-                            f"{object_name} (circled in red in the image, located at the {zone_to_focus})", question["question"]
+                            f"{object_name} (circled in red and located at the {zone_to_focus})", question["question"]
                         )
                     else:
                         new_question = pattern.sub(
-                            f"{object_name} (circled in red the image)", question["question"]
+                            f"{object_name} (circled in red)", question["question"]
                         )
                 else:
                     if layout_position:

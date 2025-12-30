@@ -215,11 +215,12 @@ GENERAL_RUN_COUNT=11
 
 RUN_NAME="run_${GENERAL_RUN_COUNT}_ablation_baseline"
 
-# python main_parallel.py --simulation_path "${BASE_PATH}/random" \
-#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH}_modified_images \
-#     --export_format json --run_name "${RUN_NAME}" \
-#     --include_categories "material_understanding" \
-#     --n_scenes 700
+python main_parallel.py --simulation_path "${BASE_PATH}/random" \
+    --destination_simulation_path ${DESTINATION_SIMULATION_PATH}_modified_images \
+    --export_format json --run_name "${RUN_NAME}" \
+    --include_categories "material_understanding" \
+    --augmentation "ablation" \
+    --n_scenes 700
 
 python ./subsample_questions_percentage.py \
     --count 1000 \

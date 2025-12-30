@@ -73,6 +73,12 @@ def augment_image_VQA_with_context(
             question, world_state, resolved_attributes, file_names, text=False, layout_position=True
         )
 
+    # this is just to add same pathwas but with NO AUGMENTATIONs
+    if augmentation == "ablation":
+        file_names = augment_ablation(
+            question, world_state, resolved_attributes, file_names, text=False, layout_position=False
+        )
+
     # other augmentations
     if augmentation == "grounding_physics":
         file_names = augment_scene_context(
@@ -186,6 +192,102 @@ def augment_roi_circling(question, world_state, resolved_attributes, file_names,
 
     if len(resolved_attributes) > 0:
         question["question"] = new_question
+
+    return file_names
+
+
+def augment_ablation(question, world_state, resolved_attributes, file_names, text=True, layout_position=False):
+    # just check for folder existance
+    new_dir = (
+        Path(file_names[0]).parent.as_posix().replace("render", "render_roi_circled")
+    )
+
+    if os.path.exists(new_dir) is False:
+        os.makedirs(new_dir, exist_ok=True)
+
+    if resolved_attributes == {}:
+        return file_names
+
+    if len(resolved_attributes) == 0:
+        raise ImpossibleToAnswer("No resolved attributes for ROI circling. So no need to circle anything, and to ask questions about it")    
+
+    for file in file_names:
+        original_image = np.array(PIL.Image.open(file))
+
+        for idx, (resolved_attr, value) in enumerate(resolved_attributes.items()):
+            if "OBJECT" in resolved_attr:
+                object_id = value["choice"]["id"]
+                render_name = file.split("/")[-1]
+                instance_image_path = file.replace("render", "instances")
+
+                # print(world_state["encoding"])
+                # rgb_object_class = world_state["encoding"]["semantic_classes"][
+                rgb_object_class = world_state["encoding"]["classes"][
+                    int(object_id) + 1
+                ]
+
+                visible_object_mask = (
+                    np.array(PIL.Image.open(instance_image_path).convert("RGB"))
+                    == rgb_object_class
+                )
+                visible_object_mask = np.all(visible_object_mask, axis=-1)
+
+                kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
+                eroded = cv2.erode(
+                    visible_object_mask.astype(np.uint8), kernel, iterations=1
+                )
+                inner_border_mask = visible_object_mask & ~eroded
+
+                # Create a binary mask where the object is located
+                binary_mask = inner_border_mask > 0
+
+                contours, _ = cv2.findContours(
+                    binary_mask.astype(np.uint8),
+                    cv2.RETR_EXTERNAL,
+                    cv2.CHAIN_APPROX_SIMPLE,
+                )
+
+                if len(contours) == 0:
+                    raise ImpossibleToAnswer("No visible object found.")
+
+                pts = np.vstack([c.reshape(-1, 2) for c in contours]).astype(np.float32)
+                center, radius = cv2.minEnclosingCircle(pts)
+
+                # Draw the bounding box on the image
+                original_image = draw_roi_circle(
+                    original_image, center, radius * 1.5, idx
+                )
+
+                object_name = value["choice"]["name"]
+                pattern = re.compile(re.escape(object_name), re.IGNORECASE)
+                if text:
+                    # modify the question such that the name of the object is removed and replaced with "the circled object"
+                    if layout_position:
+                        zone_to_focus = get_object_zone(
+                            world_state, object_id, int(render_name.replace(".png", ""))
+                        )
+                        new_question = pattern.sub(
+                            f"{object_name} (circled in red and located at the {zone_to_focus})", question["question"]
+                        )
+                    else:
+                        new_question = pattern.sub(
+                            f"{object_name} (circled in red)", question["question"]
+                        )
+                else:
+                    if layout_position:
+                        # append after the name of the object that it is circled in the image
+                        zone_to_focus = get_object_zone(
+                            world_state, object_id, int(render_name.replace(".png", ""))
+                        )
+                        new_question = pattern.sub(
+                            f"object circled in red (located at the {zone_to_focus})", question["question"]
+                        )
+                    else:
+                        # append after the name of the object that it is circled in the image
+                        new_question = pattern.sub("object circled in red", question["question"])        
+
+    # if new_question is None:
+    #     raise ImpossibleToAnswer("No modifications done to the question in ROI circling augmentation.")    
 
     return file_names
 

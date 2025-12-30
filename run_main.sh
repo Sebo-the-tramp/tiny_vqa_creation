@@ -213,7 +213,7 @@ GENERAL_RUN_COUNT=11
 # # -------------------------------------------------------------
 # # 1K roi circling - BASELINE
 
-# RUN_NAME="run_${GENERAL_RUN_COUNT}_ablation_baseline"
+RUN_NAME="run_${GENERAL_RUN_COUNT}_ablation_baseline"
 
 # python main_parallel.py --simulation_path "${BASE_PATH}/random" \
 #     --destination_simulation_path ${DESTINATION_SIMULATION_PATH}_modified_images \

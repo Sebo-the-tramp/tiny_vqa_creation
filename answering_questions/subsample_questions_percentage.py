@@ -7,11 +7,14 @@ import argparse
 import json
 import math
 import random
+import re
 from collections import defaultdict
 from pathlib import Path
 from typing import Any, DefaultDict, Dict, List, Mapping, Sequence, Tuple
 
 from subsample_questions_balanced import MISSING_TOKEN, load_questions, make_balance_groups
+
+NUM_OBJECTS_PATTERN = re.compile(r"_no-(\d+)")
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
@@ -67,7 +70,18 @@ def parse_args() -> argparse.Namespace:
         metavar="FIELD",
         help=(
             "Fields used to define balance groups (default: sub_category). Use '-' to skip grouping "
-            "and apply a single percentage to the entire dataset."
+            "and apply a single percentage to the entire dataset. When 'num_objects' is listed here "
+            "it will be inferred from the simulation_id path."
+        ),
+    )
+    parser.add_argument(
+        "--objects-per-count",
+        type=int,
+        default=None,
+        metavar="COUNT",
+        help=(
+            "If provided, enforce that exactly COUNT questions are kept for each num_objects value. "
+            "Requires enough questions per object count and may fail if idx grouping prevents an exact fit."
         ),
     )
     group = parser.add_mutually_exclusive_group()
@@ -315,6 +329,50 @@ def allocate_from_percentages(
     return sampled, raw_targets
 
 
+def _derive_num_objects(simulation_id: Any, idx: Any) -> int:
+    if not isinstance(simulation_id, str) or not simulation_id:
+        raise SystemExit(
+            f"Cannot derive 'num_objects' for record idx '{idx}': missing simulation_id field."
+        )
+    match = NUM_OBJECTS_PATTERN.search(simulation_id)
+    if not match:
+        raise SystemExit(
+            f"Cannot derive 'num_objects' for record idx '{idx}': simulation_id does not contain '_no-<count>'."
+        )
+    value = int(match.group(1))
+    if value <= 0:
+        raise SystemExit(
+            f"Derived 'num_objects' for record idx '{idx}' is invalid (value: {value})."
+        )
+    return value
+
+
+def _resolve_num_objects(record: dict[str, Any]) -> int:
+    num_objects = record.get("num_objects")
+    if num_objects in {None, ""}:
+        num_objects = _derive_num_objects(record.get("simulation_id"), record.get("idx"))
+    try:
+        return int(num_objects)
+    except (TypeError, ValueError) as exc:
+        raise SystemExit(
+            f"Unable to determine 'num_objects' for record idx '{record.get('idx')}': {exc}"
+        ) from exc
+
+
+def ensure_derived_balance_fields(
+    questions: List[dict[str, Any]], balance_fields: Sequence[str]
+) -> None:
+    if not balance_fields or balance_fields == ["-"]:
+        return
+    needs_num_objects = "num_objects" in balance_fields
+    if not needs_num_objects:
+        return
+    for record in questions:
+        if record.get("num_objects") not in {None, ""}:
+            continue
+        record["num_objects"] = _derive_num_objects(record.get("simulation_id"), record.get("idx"))
+
+
 def enforce_idx_grouping(
     sampled: List[dict[str, Any]],
     idx_lookup: Dict[str, List[dict[str, Any]]],
@@ -379,11 +437,105 @@ def enforce_idx_grouping(
     return flattened
 
 
+def _select_idx_groups_for_quota(
+    groups: Sequence[Tuple[str, List[dict[str, Any]]]],
+    target: int,
+    rng: random.Random,
+) -> List[Tuple[str, List[dict[str, Any]]]]:
+    if target <= 0:
+        return []
+    ordered = list(groups)
+    rng.shuffle(ordered)
+    prev_sum = [-1] * (target + 1)
+    choice = [-1] * (target + 1)
+    prev_sum[0] = 0
+
+    for idx, (_, records) in enumerate(ordered):
+        size = len(records)
+        if size > target:
+            continue
+        for total in range(target, size - 1, -1):
+            if prev_sum[total] != -1 or prev_sum[total - size] == -1:
+                continue
+            prev_sum[total] = total - size
+            choice[total] = idx
+
+    if prev_sum[target] == -1:
+        return []
+
+    selected: List[Tuple[str, List[dict[str, Any]]]] = []
+    remaining = target
+    used: set[int] = set()
+    while remaining > 0:
+        idx = choice[remaining]
+        if idx == -1 or idx in used:
+            return []
+        used.add(idx)
+        selected.append(ordered[idx])
+        remaining = prev_sum[remaining]
+        if remaining == -1:
+            return []
+    return selected
+
+
+def enforce_object_quota(
+    sampled: List[dict[str, Any]],
+    target_per_count: int,
+    rng: random.Random,
+    respect_idx_groups: bool,
+) -> List[dict[str, Any]]:
+    if target_per_count <= 0:
+        raise SystemExit("--objects-per-count must be a positive integer when provided.")
+    if not sampled:
+        return []
+
+    if respect_idx_groups:
+        idx_groups = group_by_index_suffix(sampled)
+        grouped_by_objects: DefaultDict[int, List[Tuple[str, List[dict[str, Any]]]]] = defaultdict(list)
+        for idx_key, group in idx_groups.items():
+            grouped_by_objects[_resolve_num_objects(group[0])].append((idx_key, group))
+
+        trimmed: List[dict[str, Any]] = []
+        for num_objects, groups in grouped_by_objects.items():
+            available = sum(len(records) for _, records in groups)
+            if available < target_per_count:
+                raise SystemExit(
+                    f"Cannot enforce {target_per_count} questions for num_objects={num_objects}: "
+                    f"only {available} available while preserving idx grouping."
+                )
+            selected = _select_idx_groups_for_quota(groups, target_per_count, rng)
+            if not selected:
+                raise SystemExit(
+                    f"Unable to allocate exactly {target_per_count} questions for num_objects={num_objects} "
+                    "while preserving idx grouping. Consider --no-group-by-idx or a different target."
+                )
+            for _, records in selected:
+                trimmed.extend(records)
+        rng.shuffle(trimmed)
+        return trimmed
+
+    buckets: DefaultDict[int, List[dict[str, Any]]] = defaultdict(list)
+    for record in sampled:
+        buckets[_resolve_num_objects(record)].append(record)
+
+    trimmed: List[dict[str, Any]] = []
+    for num_objects, records in buckets.items():
+        if len(records) < target_per_count:
+            raise SystemExit(
+                f"Cannot enforce {target_per_count} questions for num_objects={num_objects}: "
+                f"only {len(records)} available."
+            )
+        trimmed.extend(rng.sample(records, target_per_count))
+    rng.shuffle(trimmed)
+    return trimmed
+
+
 def main() -> None:
     args = parse_args()
     questions = load_questions(args.input)
     if args.mode is not None:
         questions = [record for record in questions if record.get("mode") == args.mode]
+    ensure_derived_balance_fields(questions, args.balance_on)
 
     percentages = load_percentage_map(args.percentage_map)
     default_percentage = (
@@ -414,6 +566,14 @@ def main() -> None:
             targets,
         )
 
+    if args.objects_per_count is not None:
+        sampled = enforce_object_quota(
+            sampled,
+            args.objects_per_count,
+            rng,
+            args.group_by_idx,
+        )
+
     args.output.parent.mkdir(parents=True, exist_ok=True)
     with args.output.open("w", encoding="utf-8") as handle:
         json.dump(sampled, handle, indent=4)
@@ -425,6 +585,15 @@ def main() -> None:
     )
     for key, group in grouped_sample.items():
         print(f"  {format_group_key(key)}: {len(group)}")
+
+    object_counts: DefaultDict[int, int] = defaultdict(int)
+    for record in sampled:
+        object_counts[_resolve_num_objects(record)] += 1
+
+    if object_counts:
+        print("Counts per object total:")
+        for count in sorted(object_counts):
+            print(f"  {count}: {object_counts[count]}")
 
 
 if __name__ == "__main__":

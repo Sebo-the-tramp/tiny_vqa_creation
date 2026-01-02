@@ -167,7 +167,10 @@ def create_vqa(
 
     all_vqa = []
 
-    categories = config.include_categories
+    categories = getattr(config, "include_categories", [])
+    excluded_question_ids = set(
+        getattr(config, "exclude_question_ids", []) or []
+    )
 
     for category_key, category in questions.items():
 
@@ -186,6 +189,10 @@ def create_vqa(
         total_correct_answers = 0
         not_implemented = 0
         for question_key, question_data in category.items():
+            if excluded_question_ids and question_key in excluded_question_ids:
+                if verbose:
+                    print(f"Skipping excluded question: {question_key}")
+                continue
             question_payload = deepcopy(question_data)
             question_payload["_question_key"] = question_key
             question_payload["_simulation_id"] = simulation_id
@@ -513,6 +520,13 @@ if __name__ == "__main__":
         type=str,
         default=[],
         help="List of categories to include (default: all).",
+    )
+    parser.add_argument(
+        "--exclude_question_ids",
+        nargs="+",
+        type=str,
+        default=[],
+        help="List of question IDs to skip entirely when creating the VQA.",
     )
 
     args = parser.parse_args()

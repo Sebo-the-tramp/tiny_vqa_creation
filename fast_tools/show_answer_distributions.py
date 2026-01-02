@@ -6,8 +6,8 @@ from pathlib import Path
 # CONFIG
 # -----------------------------
 # Point these to your files
-run_count = "10"
-run_id = "general"
+run_count = "11"
+run_id = "black"
 RUN_NAME = f"_run_{run_count}_{run_id}"
 PATH = f"/data0/sebastian.cavada/compositional-physics/tiny_vqa_deterministic/output/run_{run_count}_{run_id}/"
 ANSWERS_PATH = f"{PATH}test{RUN_NAME}_10K.json"

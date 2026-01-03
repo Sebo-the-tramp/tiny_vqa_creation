@@ -66,7 +66,7 @@ python ./subsample_questions_yms_variations.py \
     --subcategory-map ./balancing_sub_categories.json \
     --total 10000 \
 
-# cp ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json ../output/${RUN_NAME}/test_${RUN_NAME}_karo_10K.json
+cp ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json ../output/${RUN_NAME}/test_${RUN_NAME}_karo_10K.json
 
 
 # -------------------------------------------------------------

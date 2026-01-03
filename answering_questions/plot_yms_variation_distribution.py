@@ -7,7 +7,7 @@ import argparse
 import csv
 import json
 import re
-from collections import Counter, defaultdict
+from collections import Counter
 from pathlib import Path
 from typing import Iterable, Tuple
 
@@ -33,6 +33,11 @@ def parse_args() -> argparse.Namespace:
         type=Path,
         default=Path("plots/yms_variation_distribution"),
         help="Directory where the figures and CSVs will be written.",
+    )
+    parser.add_argument(
+        "--save-images",
+        action="store_true",
+        help="Save bar plots to the output directory.",
     )
     return parser.parse_args()
 
@@ -99,18 +104,16 @@ def write_variation_yms_sub_csv(counter: Counter, output_path: Path) -> None:
     print(f"Wrote {output_path}")
 
 
-def write_balance_summary(
-    balance_rows: Iterable[Tuple[str, str, int, int, float]],
-    output_path: Path,
-) -> None:
-    with output_path.open("w", newline="") as f:
-        writer = csv.writer(f)
-        writer.writerow(
-            ("yms_category", "sub_category", "min_count", "max_count", "max_min_ratio")
-        )
-        for row in balance_rows:
-            writer.writerow(row)
-    print(f"Wrote {output_path}")
+def render_count_bar(counts: Counter, width: int = 30) -> str:
+    if not counts:
+        return ""
+    max_count = max(counts.values())
+    lines = []
+    for label, count in counts.most_common():
+        bar_len = int(round((count / max_count) * width)) if max_count else 0
+        bar = "#" * bar_len
+        lines.append(f"{label:>8} | {bar:<{width}} {count}")
+    return "\n".join(lines)
 
 
 def main() -> None:
@@ -141,18 +144,10 @@ def main() -> None:
     if missing_variation:
         print(f"Missing variation metadata for {missing_variation} samples.")
 
-    args.output_dir.mkdir(parents=True, exist_ok=True)
+    print("Variation counts:")
+    print(render_count_bar(variation_counts))
 
-    plot_bar(
-        variation_counts.most_common(),
-        args.output_dir / "variation_counts.png",
-        "YMS variation counts",
-    )
-    plot_bar(
-        yms_counts.most_common(),
-        args.output_dir / "yms_category_counts.png",
-        "YMS category counts",
-    )
+    args.output_dir.mkdir(parents=True, exist_ok=True)
 
     write_counter_csv(
         variation_counts, args.output_dir / "variation_counts.csv", ("variation", "count")
@@ -168,30 +163,16 @@ def main() -> None:
         args.output_dir / "variation_by_yms_sub_category.csv",
     )
 
-    variations = sorted(variation_counts.keys())
-    balance_rows = []
-    balance_by_pair = defaultdict(dict)
-    for (variation, yms_category, sub_category), count in variation_yms_sub_counts.items():
-        balance_by_pair[(yms_category, sub_category)][variation] = count
-
-    for (yms_category, sub_category), per_variation in balance_by_pair.items():
-        counts = [per_variation.get(v, 0) for v in variations]
-        min_count = min(counts) if counts else 0
-        max_count = max(counts) if counts else 0
-        ratio = (max_count / min_count) if min_count else float("inf")
-        balance_rows.append((yms_category, sub_category, min_count, max_count, ratio))
-
-    balance_rows.sort(key=lambda row: (row[0], row[1]))
-    write_balance_summary(
-        balance_rows, args.output_dir / "balance_summary.csv"
-    )
-
-    print("Balance summary (per yms_category + sub_category):")
-    for yms_category, sub_category, min_count, max_count, ratio in balance_rows[:20]:
-        ratio_label = f"{ratio:.2f}" if ratio != float("inf") else "inf"
-        print(
-            f"  yms {yms_category} / {sub_category}: min {min_count}, "
-            f"max {max_count}, ratio {ratio_label}"
+    if args.save_images:
+        plot_bar(
+            variation_counts.most_common(),
+            args.output_dir / "variation_counts.png",
+            "YMS variation counts",
+        )
+        plot_bar(
+            yms_counts.most_common(),
+            args.output_dir / "yms_category_counts.png",
+            "YMS category counts",
         )
 
 

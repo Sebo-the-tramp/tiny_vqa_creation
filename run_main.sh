@@ -41,7 +41,7 @@ GENERAL_RUN_COUNT=13
 #     --seed 42
 
 python ./subsample_questions_numbers.py \
-    --input ../output/run_12_general/test_run_12_general.json \
+    --input ../output/run_11_general/test_run_11_general.json \
     --output ../output/run_${GENERAL_RUN_COUNT}_general/test_run_${GENERAL_RUN_COUNT}_general_10K.json \
     --count 15000 \
     --seed 42

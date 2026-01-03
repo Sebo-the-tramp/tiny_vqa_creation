@@ -16,7 +16,7 @@ cd answering_questions
 
 # This are the runs I need to create
 
-GENERAL_RUN_COUNT=12
+GENERAL_RUN_COUNT=13
 
 # # 10K general # text - no circling
 # python main_parallel.py --simulation_path "${BASE_PATH}/random/" \

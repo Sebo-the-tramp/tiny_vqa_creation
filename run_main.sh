@@ -61,12 +61,12 @@ RUN_NAME="run_${GENERAL_RUN_COUNT}_general_yms-variations"
 #     --n_scenes 2000
 
 python ./subsample_questions_yms_variations.py \
-    --total 10000 \
     --input ../output/run_12_general_yms-variations/test_run_12_general_yms-variations.json \
     --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
-    --subcategory-map ./balancing_sub_categories.json \    
+    --subcategory-map ./balancing_sub_categories.json \
+    --total 10000 \
 
-cp ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json ../output/${RUN_NAME}/test_${RUN_NAME}_karo_10K.json
+# cp ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json ../output/${RUN_NAME}/test_${RUN_NAME}_karo_10K.json
 
 
 # -------------------------------------------------------------

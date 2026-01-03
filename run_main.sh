@@ -16,7 +16,7 @@ cd answering_questions
 
 # This are the runs I need to create
 
-GENERAL_RUN_COUNT=12
+GENERAL_RUN_COUNT=13
 
 # # 10K general # text - no circling
 # python main_parallel.py --simulation_path "${BASE_PATH}/random/" \
@@ -41,7 +41,7 @@ GENERAL_RUN_COUNT=12
 #     --seed 42
 
 python ./subsample_questions_numbers.py \
-    --input ../output/run_${GENERAL_RUN_COUNT}_general/test_run_${GENERAL_RUN_COUNT}_general.json \
+    --input ../output/run_12_general/test_run_12_general.json \
     --output ../output/run_${GENERAL_RUN_COUNT}_general/test_run_${GENERAL_RUN_COUNT}_general_10K.json \
     --count 15000 \
     --seed 42

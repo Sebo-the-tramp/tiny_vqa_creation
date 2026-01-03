@@ -10,7 +10,12 @@ import re
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional
 
-from subsample_questions_balanced import allocate_evenly, load_questions
+from subsample_questions_balanced import allocate_evenly, load_questions, make_balance_groups
+from subsample_questions import (
+    allocate_from_percentages,
+    load_percentage_map,
+    normalise_percentage,
+)
 
 
 VARIATIONS = ("stiff", "medium", "soft")
@@ -21,7 +26,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description=(
             "Create a balanced subsample across yms-variations (stiff/medium/soft) "
-            "from a VQA-style JSON file."
+            "from a VQA-style JSON file, optionally balancing sub_categories."
         )
     )
     parser.add_argument(
@@ -47,6 +52,29 @@ def parse_args() -> argparse.Namespace:
         type=int,
         default=None,
         help="Random seed for reproducibility.",
+    )
+    parser.add_argument(
+        "--subcategory-map",
+        type=str,
+        default="balancing_sub_categories.json",
+        help=(
+            "JSON mapping of sub_category to percentage targets (default: "
+            "balancing_sub_categories.json). Use --no-subcategory-balance to disable."
+        ),
+    )
+    parser.add_argument(
+        "--subcategory-default-percentage",
+        type=float,
+        default=None,
+        help=(
+            "Fallback percentage (0-1 or 0-100) for sub_category entries not in the map. "
+            "If omitted, missing sub_categories raise an error."
+        ),
+    )
+    parser.add_argument(
+        "--no-subcategory-balance",
+        action="store_true",
+        help="Disable sub_category balancing; only balance across yms-variations.",
     )
     parser.add_argument(
         "--drop-missing",
@@ -136,10 +164,42 @@ def main() -> None:
     rng = random.Random(args.seed)
     allocations = allocate_evenly(grouped, args.total, rng)
 
+    use_subcategory_balance = not args.no_subcategory_balance
+    percentages: Dict[str, float] = {}
+    default_percentage: float | None = None
+    if use_subcategory_balance:
+        subcategory_map = args.subcategory_map
+        map_path = Path(subcategory_map)
+        if not map_path.exists() and subcategory_map == "balancing_sub_categories.json":
+            fallback = Path(__file__).resolve().parent / subcategory_map
+            if fallback.exists():
+                subcategory_map = str(fallback)
+        percentages = load_percentage_map(subcategory_map)
+        default_percentage = (
+            None
+            if args.subcategory_default_percentage is None
+            else normalise_percentage(
+                args.subcategory_default_percentage,
+                context="--subcategory-default-percentage",
+            )
+        )
+
     sampled: List[dict[str, Any]] = []
     for variation, records in grouped.items():
         count = allocations.get(variation, 0)
-        if count:
+        if not count:
+            continue
+        if use_subcategory_balance:
+            grouped_sub = make_balance_groups(records, ["sub_category"])
+            sampled_sub, _, _ = allocate_from_percentages(
+                grouped=grouped_sub,
+                percentages=percentages,
+                default_percentage=default_percentage,
+                rng=rng,
+                max_total=count,
+            )
+            sampled.extend(sampled_sub)
+        else:
             sampled.extend(rng.sample(records, count))
 
     rng.shuffle(sampled)

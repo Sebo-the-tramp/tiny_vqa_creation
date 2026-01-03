@@ -40,6 +40,12 @@ GENERAL_RUN_COUNT=12
 #     --percentage-map ./balancing_sub_categories.json \
 #     --seed 42
 
+python ./subsample_questions_numbers.py \
+    --input ../output/run_${GENERAL_RUN_COUNT}_general/test_run_${GENERAL_RUN_COUNT}_general.json \
+    --output ../output/run_${GENERAL_RUN_COUNT}_general/test_run_${GENERAL_RUN_COUNT}_general_10K.json \
+    --count 15000 \
+    --seed 42
+
 # RUN_NAME="run_${GENERAL_RUN_COUNT}_general"
 # cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
 # sed -i "s#/data0/sebastian.cavada/datasets/simulations_v3#/scratch/project/eu-25-92/composite_physics/dataset/simulation_v3#g" ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
@@ -125,137 +131,137 @@ GENERAL_RUN_COUNT=12
 # -------------------------------------------------------------
 # 1K roi circling - no text
 
-RUN_NAME="run_${GENERAL_RUN_COUNT}_roi_circling_no_text"
+# RUN_NAME="run_${GENERAL_RUN_COUNT}_roi_circling_no_text"
 
-python main_parallel.py --simulation_path "${BASE_PATH}/random" \
-    --destination_simulation_path ${DESTINATION_SIMULATION_PATH}_modified_images \
-    --export_format json --run_name "run_${GENERAL_RUN_COUNT}_roi_circling_no_text" \
-    --augmentation "roi_circling_no_text" \
-    --include_categories "material_understanding" \
-    --exclude_question_ids "F_MASS_HEAVIEST_OBJECT" "F_MASS_LIGHTEST_OBJECT" "F_PHYSICS_PROPERTY_DENSITY_OBJECT_RELATIVE" \
-    "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR" "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR_NON_TECHNICAL" \
-    "F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST" "F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST_NON_TECHNICAL" "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR" \
-    "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR_NON_TECHNICAL" "F_MATERIAL_IDENTIFICATION_SIMILAR_OBJECT" \
-    "F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST" "F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST_NON_TECHNICAL" \
-    --n_scenes 700
+# python main_parallel.py --simulation_path "${BASE_PATH}/random" \
+#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH}_modified_images \
+#     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_roi_circling_no_text" \
+#     --augmentation "roi_circling_no_text" \
+#     --include_categories "material_understanding" \
+#     --exclude_question_ids "F_MASS_HEAVIEST_OBJECT" "F_MASS_LIGHTEST_OBJECT" "F_PHYSICS_PROPERTY_DENSITY_OBJECT_RELATIVE" \
+#     "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR" "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR_NON_TECHNICAL" \
+#     "F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST" "F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST_NON_TECHNICAL" "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR" \
+#     "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR_NON_TECHNICAL" "F_MATERIAL_IDENTIFICATION_SIMILAR_OBJECT" \
+#     "F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST" "F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST_NON_TECHNICAL" \
+#     --n_scenes 700
 
-python ./subsample_questions_percentage.py \
-    --count 1000 \
-    --input ../output/${RUN_NAME}/test_${RUN_NAME}.json \
-    --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
-    --percentage-map ./balancing_sub_categories_material_only.json \
-    --seed 42
+# python ./subsample_questions_percentage.py \
+#     --count 1000 \
+#     --input ../output/${RUN_NAME}/test_${RUN_NAME}.json \
+#     --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
+#     --percentage-map ./balancing_sub_categories_material_only.json \
+#     --seed 42
 
-cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
-
-
-# # # -------------------------------------------------------------
-# # # 1K roi circling - layout position - no text 
-
-RUN_NAME="run_${GENERAL_RUN_COUNT}_roi_circling_no_text_layout_position"
-
-python main_parallel.py --simulation_path "${BASE_PATH}/random" \
-    --destination_simulation_path ${DESTINATION_SIMULATION_PATH}_modified_images \
-    --export_format json --run_name "${RUN_NAME}" \
-    --augmentation "roi_circling_no_text_layout_position" \
-    --include_categories "material_understanding" \
-    --exclude_question_ids "F_MASS_HEAVIEST_OBJECT" "F_MASS_LIGHTEST_OBJECT" "F_PHYSICS_PROPERTY_DENSITY_OBJECT_RELATIVE" \
-    "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR" "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR_NON_TECHNICAL" \
-    "F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST" "F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST_NON_TECHNICAL" "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR" \
-    "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR_NON_TECHNICAL" "F_MATERIAL_IDENTIFICATION_SIMILAR_OBJECT" \
-    "F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST" "F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST_NON_TECHNICAL" \
-    --n_scenes 700
-
-python ./subsample_questions_percentage.py \
-    --count 1000 \
-    --input ../output/${RUN_NAME}/test_${RUN_NAME}.json \
-    --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
-    --percentage-map ./balancing_sub_categories_material_only.json \
-    --seed 42
-
-cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
+# cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
 
 
-# # -------------------------------------------------------------
-# # 1K roi circling - text
+# # # # -------------------------------------------------------------
+# # # # 1K roi circling - layout position - no text 
 
-RUN_NAME="run_${GENERAL_RUN_COUNT}_roi_circling_text"
+# RUN_NAME="run_${GENERAL_RUN_COUNT}_roi_circling_no_text_layout_position"
 
-python main_parallel.py --simulation_path "${BASE_PATH}/random" \
-    --destination_simulation_path ${DESTINATION_SIMULATION_PATH}_modified_images \
-    --export_format json --run_name "${RUN_NAME}" \
-    --augmentation "roi_circling_text" \
-    --include_categories "material_understanding" \
-    --exclude_question_ids "F_MASS_HEAVIEST_OBJECT" "F_MASS_LIGHTEST_OBJECT" "F_PHYSICS_PROPERTY_DENSITY_OBJECT_RELATIVE" \
-    "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR" "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR_NON_TECHNICAL" \
-    "F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST" "F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST_NON_TECHNICAL" "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR" \
-    "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR_NON_TECHNICAL" "F_MATERIAL_IDENTIFICATION_SIMILAR_OBJECT" \
-    "F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST" "F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST_NON_TECHNICAL" \
-    --n_scenes 700
+# python main_parallel.py --simulation_path "${BASE_PATH}/random" \
+#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH}_modified_images \
+#     --export_format json --run_name "${RUN_NAME}" \
+#     --augmentation "roi_circling_no_text_layout_position" \
+#     --include_categories "material_understanding" \
+#     --exclude_question_ids "F_MASS_HEAVIEST_OBJECT" "F_MASS_LIGHTEST_OBJECT" "F_PHYSICS_PROPERTY_DENSITY_OBJECT_RELATIVE" \
+#     "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR" "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR_NON_TECHNICAL" \
+#     "F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST" "F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST_NON_TECHNICAL" "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR" \
+#     "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR_NON_TECHNICAL" "F_MATERIAL_IDENTIFICATION_SIMILAR_OBJECT" \
+#     "F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST" "F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST_NON_TECHNICAL" \
+#     --n_scenes 700
 
-python ./subsample_questions_percentage.py \
-    --count 1000 \
-    --input ../output/${RUN_NAME}/test_${RUN_NAME}.json \
-    --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
-    --percentage-map ./balancing_sub_categories_material_only.json \
-    --seed 42
+# python ./subsample_questions_percentage.py \
+#     --count 1000 \
+#     --input ../output/${RUN_NAME}/test_${RUN_NAME}.json \
+#     --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
+#     --percentage-map ./balancing_sub_categories_material_only.json \
+#     --seed 42
 
-cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
+# cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
 
 
 # # # -------------------------------------------------------------
-# # # 1K roi circling - layout position - text
+# # # 1K roi circling - text
 
-RUN_NAME="run_${GENERAL_RUN_COUNT}_roi_circling_text_layout_position"
+# RUN_NAME="run_${GENERAL_RUN_COUNT}_roi_circling_text"
 
-python main_parallel.py --simulation_path "${BASE_PATH}/random" \
-    --destination_simulation_path ${DESTINATION_SIMULATION_PATH}_modified_images \
-    --export_format json --run_name "${RUN_NAME}" \
-    --augmentation "roi_circling_text_layout_position" \
-    --include_categories "material_understanding" \
-    --exclude_question_ids "F_MASS_HEAVIEST_OBJECT" "F_MASS_LIGHTEST_OBJECT" "F_PHYSICS_PROPERTY_DENSITY_OBJECT_RELATIVE" \
-    "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR" "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR_NON_TECHNICAL" \
-    "F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST" "F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST_NON_TECHNICAL" "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR" \
-    "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR_NON_TECHNICAL" "F_MATERIAL_IDENTIFICATION_SIMILAR_OBJECT" \
-    "F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST" "F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST_NON_TECHNICAL" \
-    --n_scenes 700
+# python main_parallel.py --simulation_path "${BASE_PATH}/random" \
+#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH}_modified_images \
+#     --export_format json --run_name "${RUN_NAME}" \
+#     --augmentation "roi_circling_text" \
+#     --include_categories "material_understanding" \
+#     --exclude_question_ids "F_MASS_HEAVIEST_OBJECT" "F_MASS_LIGHTEST_OBJECT" "F_PHYSICS_PROPERTY_DENSITY_OBJECT_RELATIVE" \
+#     "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR" "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR_NON_TECHNICAL" \
+#     "F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST" "F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST_NON_TECHNICAL" "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR" \
+#     "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR_NON_TECHNICAL" "F_MATERIAL_IDENTIFICATION_SIMILAR_OBJECT" \
+#     "F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST" "F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST_NON_TECHNICAL" \
+#     --n_scenes 700
 
-python ./subsample_questions_percentage.py \
-    --count 1000 \
-    --input ../output/${RUN_NAME}/test_${RUN_NAME}.json \
-    --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
-    --percentage-map ./balancing_sub_categories_material_only.json \
-    --seed 42
+# python ./subsample_questions_percentage.py \
+#     --count 1000 \
+#     --input ../output/${RUN_NAME}/test_${RUN_NAME}.json \
+#     --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
+#     --percentage-map ./balancing_sub_categories_material_only.json \
+#     --seed 42
 
-cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
+# cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
+
+
+# # # # -------------------------------------------------------------
+# # # # 1K roi circling - layout position - text
+
+# RUN_NAME="run_${GENERAL_RUN_COUNT}_roi_circling_text_layout_position"
+
+# python main_parallel.py --simulation_path "${BASE_PATH}/random" \
+#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH}_modified_images \
+#     --export_format json --run_name "${RUN_NAME}" \
+#     --augmentation "roi_circling_text_layout_position" \
+#     --include_categories "material_understanding" \
+#     --exclude_question_ids "F_MASS_HEAVIEST_OBJECT" "F_MASS_LIGHTEST_OBJECT" "F_PHYSICS_PROPERTY_DENSITY_OBJECT_RELATIVE" \
+#     "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR" "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR_NON_TECHNICAL" \
+#     "F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST" "F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST_NON_TECHNICAL" "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR" \
+#     "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR_NON_TECHNICAL" "F_MATERIAL_IDENTIFICATION_SIMILAR_OBJECT" \
+#     "F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST" "F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST_NON_TECHNICAL" \
+#     --n_scenes 700
+
+# python ./subsample_questions_percentage.py \
+#     --count 1000 \
+#     --input ../output/${RUN_NAME}/test_${RUN_NAME}.json \
+#     --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
+#     --percentage-map ./balancing_sub_categories_material_only.json \
+#     --seed 42
+
+# cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
 
 
 
-# # -------------------------------------------------------------
-# # 1K roi circling - BASELINE
+# # # -------------------------------------------------------------
+# # # 1K roi circling - BASELINE
 
-RUN_NAME="run_${GENERAL_RUN_COUNT}_ablation_baseline"
+# RUN_NAME="run_${GENERAL_RUN_COUNT}_ablation_baseline"
 
-python main_parallel.py --simulation_path "${BASE_PATH}/random" \
-    --destination_simulation_path ${DESTINATION_SIMULATION_PATH}_modified_images \
-    --export_format json --run_name "${RUN_NAME}" \
-    --include_categories "material_understanding" \
-    --augmentation "ablation" \
-    --exclude_question_ids "F_MASS_HEAVIEST_OBJECT" "F_MASS_LIGHTEST_OBJECT" "F_PHYSICS_PROPERTY_DENSITY_OBJECT_RELATIVE" \
-    "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR" "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR_NON_TECHNICAL" \
-    "F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST" "F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST_NON_TECHNICAL" "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR" \
-    "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR_NON_TECHNICAL" "F_MATERIAL_IDENTIFICATION_SIMILAR_OBJECT" \
-    "F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST" "F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST_NON_TECHNICAL" \
-    --n_scenes 700
+# python main_parallel.py --simulation_path "${BASE_PATH}/random" \
+#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH}_modified_images \
+#     --export_format json --run_name "${RUN_NAME}" \
+#     --include_categories "material_understanding" \
+#     --augmentation "ablation" \
+#     --exclude_question_ids "F_MASS_HEAVIEST_OBJECT" "F_MASS_LIGHTEST_OBJECT" "F_PHYSICS_PROPERTY_DENSITY_OBJECT_RELATIVE" \
+#     "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR" "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR_NON_TECHNICAL" \
+#     "F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST" "F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST_NON_TECHNICAL" "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR" \
+#     "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR_NON_TECHNICAL" "F_MATERIAL_IDENTIFICATION_SIMILAR_OBJECT" \
+#     "F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST" "F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST_NON_TECHNICAL" \
+#     --n_scenes 700
 
-python ./subsample_questions_percentage.py \
-    --count 1000 \
-    --input ../output/${RUN_NAME}/test_${RUN_NAME}.json \
-    --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
-    --percentage-map ./balancing_sub_categories_material_only.json \
-    --seed 42
+# python ./subsample_questions_percentage.py \
+#     --count 1000 \
+#     --input ../output/${RUN_NAME}/test_${RUN_NAME}.json \
+#     --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
+#     --percentage-map ./balancing_sub_categories_material_only.json \
+#     --seed 42
 
-cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
+# cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
 
 
 

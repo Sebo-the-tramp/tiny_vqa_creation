@@ -67,17 +67,35 @@ def merge_gt(answers, gt):
     for model in answers:
         for answer in model["results"]:            
             qid = answer["idx"]
-            if gt[qid]['idx'] == qid:
-                answer["gt"] = gt[qid]['answer']                
+            # print("answer", answer["idx"])
+            # print("gt", gt[qid])
+            qid_splits = qid.split("_")
+            if(len(qid_splits) > 2):
+                qid_gt = "_".join(qid_splits[:2])
+                # print("qid_gt", qid_gt)
+                # print("gt[qid_gt]['idx'] == qid:", gt[qid_gt]['idx'])
+                if gt[qid_gt]['idx'] == qid_gt:
+                    answer["gt"] = gt[qid_gt]['answer']                
+                else:
+                    print("NON SIAMO QUI VEROOOOO")
+                    answer["gt"] = None
+
             else:
-                answer["gt"] = None
+                qid = "_".join(qid_splits[:2])
+                if gt[qid]['idx'] == qid:
+                    answer["gt"] = gt[qid]['answer']                
+                else:
+                    answer["gt"] = None
+
+    # print(answers[0])
     return answers
 
 # same thing here
 def merge_test(answers, test):
     for model in answers:
-        for answer in model["results"]:
+        for answer in model["results"]:            
             qid = answer["idx"]
+
             if test[qid]['idx'] == qid:
                 answer["question"] = test[qid]['question']
                 answer["question_id"] = test[qid]['question_id']
@@ -231,6 +249,10 @@ def merge_sim_metadata(answers_vlm, mapping_fct=None):
             else:
                 # print("Cache miss for simulation:", simulation_id)
                 sim_path = os.path.join(ROOT_DIR_SIMULATIONS, simulation_path)
+                # print(f"Loading simulation metadata from: {sim_path}")
+                if "scratch" in sim_path:
+                    sim_path = sim_path.replace("/scratch/project/eu-25-92/composite_physics/dataset/simulation_v4", "/data0/sebastian.cavada/datasets/simulations_v4")
+
                 if os.path.exists(sim_path):
                     # print(f"Loading simulation metadata from: {sim_path}")
                     with open(sim_path, 'r') as f:

@@ -1,5 +1,6 @@
 *.pyc
 
+tmp/
 data/
 
 .DS_Store/

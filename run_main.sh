@@ -3,7 +3,7 @@
 if [ -d "/data0/sebastian.cavada/datasets/simulations_v4" ]; then
     source "/data0/sebastian.cavada/.telegram_bot.env"
     BASE_PATH="/data0/sebastian.cavada/datasets/simulations_v4/dl3dv"
-    BASE_PATH_CF="/data0/sebastian.cavada/datasets/simulations_v3/dl3dv-counterfact"
+    BASE_PATH_CF="/data0/sebastian.cavada/datasets/simulations_v4/dl3dv-counterfact"
     DESTINATION_SIMULATION_PATH="/data0/sebastian.cavada/datasets/physbench/simulations"
 else
     source "/home/it4i-thvu/seb_dev/.telegram_bot.env"
@@ -16,7 +16,7 @@ cd answering_questions
 
 # This are the runs I need to create
 
-GENERAL_RUN_COUNT=13
+GENERAL_RUN_COUNT=12
 
 # # 10K general # text - no circling
 # python main_parallel.py --simulation_path "${BASE_PATH}/random/" \
@@ -40,11 +40,11 @@ GENERAL_RUN_COUNT=13
 #     --percentage-map ./balancing_sub_categories.json \
 #     --seed 42
 
-python ./subsample_questions_numbers.py \
-    --input ../output/run_11_general/test_run_11_general.json \
-    --output ../output/run_${GENERAL_RUN_COUNT}_general/test_run_${GENERAL_RUN_COUNT}_general_10K.json \
-    --count 15000 \
-    --seed 42
+# python ./subsample_questions_numbers.py \
+#     --input ../output/run_11_general/test_run_11_general.json \
+#     --output ../output/run_${GENERAL_RUN_COUNT}_general/test_run_${GENERAL_RUN_COUNT}_general_10K.json \
+#     --count 15000 \
+#     --seed 42
 
 # RUN_NAME="run_${GENERAL_RUN_COUNT}_general"
 # cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
@@ -53,21 +53,21 @@ python ./subsample_questions_numbers.py \
 
 # -------------------------------------------------------------
 # # 10K general - yms variations 
-# RUN_NAME="run_${GENERAL_RUN_COUNT}_general_yms-variations"
+RUN_NAME="run_${GENERAL_RUN_COUNT}_general_yms-variations"
 
-# # python main_parallel.py --simulation_path "${BASE_PATH}/yms-variations/" \
-# #     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
-# #     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_general_yms-variations" \
-# #     --n_scenes 700
+python main_parallel.py --simulation_path "${BASE_PATH}/yms-variations/" \
+    --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
+    --export_format json --run_name "run_${GENERAL_RUN_COUNT}_general_yms-variations" \
+    --n_scenes 2000
 
-# python ./subsample_questions_percentage.py \
-#     --count 10000 \
-#     --input ../output/${RUN_NAME}/test_${RUN_NAME}.json \
-#     --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
-#     --percentage-map ./balancing_sub_categories.json \
-#     --seed 42
+python ./subsample_questions_percentage.py \
+    --count 10000 \
+    --input ../output/${RUN_NAME}/test_${RUN_NAME}.json \
+    --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
+    --percentage-map ./balancing_sub_categories.json \
+    --seed 42
 
-# cp ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json ../output/${RUN_NAME}/test_${RUN_NAME}_karo_10K.json
+cp ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json ../output/${RUN_NAME}/test_${RUN_NAME}_karo_10K.json
 
 
 # -------------------------------------------------------------
@@ -108,7 +108,7 @@ python ./subsample_questions_numbers.py \
 #     --counterfactual_type "shift" \
 #     --n_scenes 1000
     
-# # -------------------------------------------------------------
+# # # -------------------------------------------------------------
 # # 1K general # text counterfactual gravity
 # python main_parallel_counterfactual.py --simulation_path "${BASE_PATH_CF}/low-gravity" \
 #     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \

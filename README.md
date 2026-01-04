@@ -208,6 +208,29 @@ Useful tools:
 - `fast_tools/check_VQA_with_answers.py`: checks consistency with answers.
 - `fast_tools/check_simulations_correctness.py`: sanity checks for sim data.
 
+Clean Commits (Formatting / Lint)
+---------------------------------
+Ruff is recommended for quick formatting and linting before a commit.
+
+```bash
+uv pip install ruff
+ruff format answering_questions fast_tools
+ruff check answering_questions fast_tools
+```
+
+If you want pre-commit hooks:
+
+```bash
+uv pip install pre-commit
+pre-commit install
+```
+
+Then add a `.pre-commit-config.yaml` and run:
+
+```bash
+pre-commit run --all-files
+```
+
 VSCode `launch.json` (example)
 ------------------------------
 Create `.vscode/launch.json`:
@@ -285,3 +308,4 @@ Common Issues and Fixes
 Status / Notes
 --------------
 - Some refactoring is needed; I will do it in those days.
+- PRs are welcome, and optimization is much needed.

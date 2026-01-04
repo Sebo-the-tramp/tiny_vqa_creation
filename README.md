@@ -53,21 +53,21 @@ Notes:
 - Counterfactual runs expect `dl3dv-counterfact/<variant>/...` folders and map them
   back to the original `dl3dv` seed folder.
 
-Install / Setup
----------------
+Install / Setup (uv)
+--------------------
 Python 3.11 is required (`pyproject.toml`).
 
-1) Create a virtual environment:
+1) Create the virtual environment and install dependencies with uv:
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate
+uv venv .venv
+uv pip install -e .
 ```
 
-2) Install dependencies:
+2) Activate the environment (optional if you always use `uv run`):
 
 ```bash
-pip install -e .
+source .venv/bin/activate
 ```
 
 3) Additional dependencies used in code (not listed in `pyproject.toml` yet):
@@ -75,10 +75,10 @@ pip install -e .
 - `numpy`
 - `matplotlib` (used in `fast_tools/check_VQA.py`)
 
-You can install them with:
+You can install them with uv:
 
 ```bash
-pip install opencv-python numpy matplotlib
+uv pip install opencv-python numpy matplotlib
 ```
 
 4) Verify config defaults:

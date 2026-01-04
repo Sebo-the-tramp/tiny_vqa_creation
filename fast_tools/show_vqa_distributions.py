@@ -5,6 +5,7 @@ import pandas as pd
 
 SIMPLE_VQA_PATH = Path("simple_vqa.json")
 
+
 def load_simple_vqa(path):
     path = Path(path)
     data = json.loads(path.read_text())

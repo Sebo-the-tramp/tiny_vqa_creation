@@ -10,7 +10,11 @@ import re
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional
 
-from subsample_questions_balanced import allocate_evenly, load_questions, make_balance_groups
+from subsample_questions_balanced import (
+    allocate_evenly,
+    load_questions,
+    make_balance_groups,
+)
 from subsample_questions import (
     allocate_from_percentages,
     load_percentage_map,
@@ -124,7 +128,9 @@ def group_by_variation(
     records: Iterable[dict[str, Any]],
     drop_missing: bool,
 ) -> Dict[str, List[dict[str, Any]]]:
-    grouped: Dict[str, List[dict[str, Any]]] = {variation: [] for variation in VARIATIONS}
+    grouped: Dict[str, List[dict[str, Any]]] = {
+        variation: [] for variation in VARIATIONS
+    }
     missing = 0
 
     for record in records:

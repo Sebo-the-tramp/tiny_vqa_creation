@@ -104,7 +104,7 @@ def resolve_num_objects(record: dict[str, Any]) -> int:
 
 
 def group_by_sub_category(
-    questions: Iterable[dict[str, Any]]
+    questions: Iterable[dict[str, Any]],
 ) -> DefaultDict[str, List[dict[str, Any]]]:
     grouped: DefaultDict[str, List[dict[str, Any]]] = defaultdict(list)
     for record in questions:
@@ -116,7 +116,7 @@ def group_by_sub_category(
 
 
 def group_by_num_objects(
-    records: Iterable[dict[str, Any]]
+    records: Iterable[dict[str, Any]],
 ) -> DefaultDict[int, List[dict[str, Any]]]:
     grouped: DefaultDict[int, List[dict[str, Any]]] = defaultdict(list)
     for record in records:
@@ -166,7 +166,9 @@ def allocate_evenly(
     while remainder > 0:
         candidates = [key for key in keys if allocations[key] < maxima[key]]
         if not candidates:
-            raise AllocationError("Ran out of capacity while distributing the remainder.")
+            raise AllocationError(
+                "Ran out of capacity while distributing the remainder."
+            )
         rng.shuffle(candidates)
         candidates.sort(
             key=lambda key: (
@@ -191,7 +193,9 @@ def sample_within_sub_category(
     buckets = group_by_num_objects(records)
     cap_value: int | None = None
     if pair_target > 0:
-        capped_capacity = sum(min(len(group), pair_target) for group in buckets.values())
+        capped_capacity = sum(
+            min(len(group), pair_target) for group in buckets.values()
+        )
         if capped_capacity >= required:
             cap_value = pair_target
         else:
@@ -242,7 +246,9 @@ def stratified_sample(
         if required <= 0:
             continue
         try:
-            chosen = sample_within_sub_category(sub_category, records, required, pair_target, rng)
+            chosen = sample_within_sub_category(
+                sub_category, records, required, pair_target, rng
+            )
         except AllocationError as exc:
             raise SystemExit(
                 f"Unable to cover all object-count buckets for sub_category '{sub_category}': {exc}"

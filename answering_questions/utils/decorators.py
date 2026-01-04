@@ -80,9 +80,17 @@ def with_resolved_attributes(func):
 
 
 def with_resolved_attributes_cf(func):
-    def wrapper(world_state_og, world_state_modified, question, destination_simulation_id_path, *args, **kwargs):
+    def wrapper(
+        world_state_og,
+        world_state_modified,
+        answer_list_original_data_cf,
+        question,
+        destination_simulation_id_path,
+        *args,
+        **kwargs,
+    ):
         attributes = extract_attributes(question)
-        current_world_number_of_objects = len(world_state_modified["objects"])        
+        current_world_number_of_objects = len(world_state_modified["objects"])
 
         # Useful attributes without need of recomputation every time in each function
         list_timesteps = list(world_state_modified["simulation"].keys())
@@ -107,7 +115,24 @@ def with_resolved_attributes_cf(func):
                     object["model"]
                 ]
 
+        # adaptor part to original names format -> also for original even though st should be just for original
+        for obj_id, object in world_state_og["objects"].items():
+            object["id"] = obj_id
+            object["name"] = gso_mapping[object["model"]]["name"]
+            if object["description"].get("material_group", None) is None:
+                object["description"]["material_group"] = material_patch[
+                    object["model"]
+                ]
+
         # Pass them along so the wrapped function can use them
-        return func(world_state_og, world_state_modified, question, attributes["attributes"], *args, **kwargs)
+        return func(
+            world_state_og,
+            world_state_modified,
+            answer_list_original_data_cf,
+            question,
+            attributes["attributes"],
+            *args,
+            **kwargs,
+        )
 
     return wrapper

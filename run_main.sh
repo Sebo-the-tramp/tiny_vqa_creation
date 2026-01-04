@@ -101,11 +101,11 @@ GENERAL_RUN_COUNT=13
 
 # -------------------------------------------------------------
 # 1K general # text counterfactual shift
-# python main_parallel_counterfactual.py --simulation_path "${BASE_PATH_CF}/shift-x" "${BASE_PATH_CF}/shift-z" \
-#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
-#     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_counterfactual_shift" \
-#     --counterfactual_type "shift" \
-#     --n_scenes 1000
+python main_parallel_counterfactual.py --simulation_path "${BASE_PATH_CF}/shift-x" "${BASE_PATH_CF}/shift-z" \
+    --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
+    --export_format json --run_name "run_${GENERAL_RUN_COUNT}_counterfactual_shift" \
+    --counterfactual_type "shift" \
+    --n_scenes 1000
     
 # # # -------------------------------------------------------------
 # # 1K general # text counterfactual gravity
@@ -116,12 +116,12 @@ GENERAL_RUN_COUNT=13
 #     --n_scenes 1000
 
 # # -------------------------------------------------------------
-# 1K general # text counterfactual gravity
-python main_parallel_counterfactual.py --simulation_path "${BASE_PATH_CF}/2xsmaller" \
-    --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
-    --export_format json --run_name "run_${GENERAL_RUN_COUNT}_counterfactual_smaller" \
-    --counterfactual_type "volume" \
-    --n_scenes 1000
+# 1K general # text counterfactual volume
+# python main_parallel_counterfactual.py --simulation_path "${BASE_PATH_CF}/2xsmaller" \
+#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
+#     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_counterfactual_smaller" \
+#     --counterfactual_type "volume" \
+#     --n_scenes 1000
 
 # -------------------------------------------------------------
 # ABLATION STUDYs

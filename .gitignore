@@ -3,6 +3,8 @@
 tmp/
 data/
 
+newtphys.github.io/
+
 .DS_Store/
 .venv
 .vscode

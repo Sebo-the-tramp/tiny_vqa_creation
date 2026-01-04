@@ -7,6 +7,7 @@ from typing import Any, Mapping, Optional, Tuple, Union, List
 
 from shapely.geometry import Polygon
 
+from utils.config import get_config
 from utils.helpers import as_vector
 from utils.my_exception import ImpossibleToAnswer
 from utils.geometry import (
@@ -19,10 +20,6 @@ Number = Union[int, float]
 WorldState = Mapping[str, Any]
 QuestionPayload = Mapping[str, Any]
 Answer = Union[int, float, str]
-
-
-from utils.config import get_config
-from PIL import Image
 
 
 AXIS_TO_NUM = {"X": 0, "Y": 1, "Z": 2}

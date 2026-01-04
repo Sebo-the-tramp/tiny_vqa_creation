@@ -1,5 +1,4 @@
-# This module provides access to various force-related functions, both real and mock versions.
-# It's an abstraction layer to easily switch between real and mock implementations based on the context.
+# This module provides access to various force-related functions.
 
 # temporal_router.py
 from importlib import import_module
@@ -14,13 +13,12 @@ Resolver = Callable[[WorldState, QuestionPayload], Answer]
 
 
 @lru_cache
-def _load_impl_module(mock: bool):
-    modname = ".temporal_questions" if mock else ".temporal_real"
-    return import_module(modname, package=__package__)
+def _load_impl_module():
+    return import_module(".temporal_questions", package=__package__)
 
 
-def get_function_by_name_temporal(name: str, mock: bool = False) -> Resolver:
-    mod = _load_impl_module(mock)
+def get_function_by_name_temporal(name: str) -> Resolver:
+    mod = _load_impl_module()
     try:
         fn = getattr(mod, name)
     except AttributeError:
@@ -33,25 +31,3 @@ def get_function_by_name_temporal(name: str, mock: bool = False) -> Resolver:
     if not callable(fn):
         raise TypeError(f"Attribute '{name}' in {mod.__name__} is not callable.")
     return fn
-
-
-@lru_cache
-def _load_gt_module(mock: bool):
-    modname = ".temporal_questions_results"
-    return import_module(modname, package=__package__)
-
-
-def get_result_by_name_temporal(name: str, mock: bool = False) -> Any:
-    mod = _load_gt_module(mock)
-    try:
-        fn = getattr(mod, name)
-    except AttributeError:
-        # Nice error with suggestions
-        candidates = [n for n in dir(mod) if n.startswith("F_")]
-        raise ValueError(
-            f"Function '{name}' not found in {mod.__name__}. "
-            f"Available: {', '.join(sorted(candidates))}"
-        )
-    if not callable(fn):
-        raise TypeError(f"Attribute '{name}' in {mod.__name__} is not callable.")
-    return fn()  # Call the function to get the result

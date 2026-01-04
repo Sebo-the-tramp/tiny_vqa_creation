@@ -8,6 +8,8 @@ and fall back to sensible defaults when information is missing.
 
 from __future__ import annotations
 
+import random
+
 from utils.decorators import with_resolved_attributes_cf
 
 from typing import (
@@ -18,14 +20,9 @@ from typing import (
     Union,
 )
 
-import random
-
 from utils.my_exception import ImpossibleToAnswer
-
 from utils.all_objects import get_all_objects_names
-
-from utils.load_pointclouds import load_scene_pointcloud
-
+from utils.config import get_config
 from utils.helpers import (
     iter_objects,
     fill_questions_cf,
@@ -34,16 +31,13 @@ from utils.helpers import (
     resolve_attributes_visible_at_timestep,
     get_visible_timesteps_for_attributes_min_objects,
 )
-
 from .spatial_reasoning_helpers import (
     get_position,
     get_closest_object,
     get_position_camera,
-    get_min_distance_pointcloud_to_obb,
     get_spatial_relationship_camera_view,
     get_all_relational_positional_adjectives,
 )
-
 from utils.bin_creation import (
     create_mc_options_around_gt,
     create_mc_object_names_from_dataset,
@@ -57,8 +51,6 @@ QuestionPayload = Mapping[str, Any]
 Answer = Union[str, float, Vector, Mapping[str, Any], Sequence[str]]
 
 
-from utils.config import get_config
-
 VISIBILITY_THRESHOLD = get_config()["visibility_threshold"]
 FRAME_INTERLEAVE = get_config()["frame_interleave"]
 CLIP_LENGTH = get_config()["clip_length"]
@@ -70,10 +62,13 @@ MIN_VISIBLE_PIXELS = get_config()["min_pixels_visible"]
 # - Distances are Euclidean distances between object centers unless specified otherwise
 # - The valid timesteps are those where all the  objects are visible above VISIBILITY_THRESHOLD
 
-
 @with_resolved_attributes_cf
 def CF_CLOSEST_OBJECT_OBJECT(
-    world_state_og: WorldState, world_state_mod: WorldState, question: QuestionPayload, attributes, **kwargs
+    world_state_og: WorldState,
+    world_state_mod: WorldState,
+    question: QuestionPayload,
+    attributes,
+    **kwargs,
 ) -> int:
     assert len(attributes) == 1 and "OBJECT-CF" in attributes
 
@@ -84,7 +79,9 @@ def CF_CLOSEST_OBJECT_OBJECT(
 
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        attributes, world_state_mod, min_objects=kwargs["current_world_number_of_objects"]
+        attributes,
+        world_state_mod,
+        min_objects=kwargs["current_world_number_of_objects"],
     )
 
     timestep = get_random_timestep_from_list(visible_timesteps, question)
@@ -111,13 +108,23 @@ def CF_CLOSEST_OBJECT_OBJECT(
     labels = [str(label) for label in labels]
 
     return fill_questions_cf(
-        question, labels, correct_idx, world_state_og, world_state_mod, timestep, resolved_attributes
+        question,
+        labels,
+        correct_idx,
+        world_state_og,
+        world_state_mod,
+        timestep,
+        resolved_attributes,
     )
 
 
 @with_resolved_attributes_cf
 def CF_CLOSEST_OBJECT_CAMERA(
-    world_state_og: WorldState, world_state_mod: WorldState, question: QuestionPayload, attributes, **kwargs
+    world_state_og: WorldState,
+    world_state_mod: WorldState,
+    question: QuestionPayload,
+    attributes,
+    **kwargs,
 ) -> int:
     if kwargs["current_world_number_of_objects"] < 2:
         raise ImpossibleToAnswer(
@@ -126,7 +133,9 @@ def CF_CLOSEST_OBJECT_CAMERA(
 
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        attributes, world_state_mod, min_objects=kwargs["current_world_number_of_objects"]
+        attributes,
+        world_state_mod,
+        min_objects=kwargs["current_world_number_of_objects"],
     )
 
     timestep = get_random_timestep_from_list(visible_timesteps, question)
@@ -155,19 +164,31 @@ def CF_CLOSEST_OBJECT_CAMERA(
     )
 
     return fill_questions_cf(
-        question, labels, correct_idx, world_state_og, world_state_mod, timestep, resolved_attributes
+        question,
+        labels,
+        correct_idx,
+        world_state_og,
+        world_state_mod,
+        timestep,
+        resolved_attributes,
     )
 
 
 @with_resolved_attributes_cf
 def CF_SIZE_OBJECT(
-    world_state_og: WorldState, world_state_mod: WorldState, question: QuestionPayload, attributes, **kwargs
+    world_state_og: WorldState,
+    world_state_mod: WorldState,
+    question: QuestionPayload,
+    attributes,
+    **kwargs,
 ) -> int:
     assert len(attributes) == 1 and "OBJECT-CF" in attributes
 
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        attributes, world_state_mod, min_objects=kwargs["current_world_number_of_objects"]
+        attributes,
+        world_state_mod,
+        min_objects=kwargs["current_world_number_of_objects"],
     )
 
     timestep = get_random_timestep_from_list(visible_timesteps, question)
@@ -190,13 +211,23 @@ def CF_SIZE_OBJECT(
     labels = [str(label) + " cubic centimeters" for label in labels]
 
     return fill_questions_cf(
-        question, labels, correct_idx, world_state_og, world_state_mod, timestep, resolved_attributes
+        question,
+        labels,
+        correct_idx,
+        world_state_og,
+        world_state_mod,
+        timestep,
+        resolved_attributes,
     )
 
 
 @with_resolved_attributes_cf
 def CF_SIZE_OBJECT_BIGGER(
-    world_state_og: WorldState, world_state_mod: WorldState, question: QuestionPayload, attributes, **kwargs
+    world_state_og: WorldState,
+    world_state_mod: WorldState,
+    question: QuestionPayload,
+    attributes,
+    **kwargs,
 ) -> str:
     assert len(attributes) == 0
 
@@ -207,7 +238,9 @@ def CF_SIZE_OBJECT_BIGGER(
 
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        ["OBJECT_CF"], world_state_mod, min_objects=kwargs["current_world_number_of_objects"]
+        ["OBJECT_CF"],
+        world_state_mod,
+        min_objects=kwargs["current_world_number_of_objects"],
     )
 
     timestep = get_random_timestep_from_list(visible_timesteps, question)
@@ -222,7 +255,9 @@ def CF_SIZE_OBJECT_BIGGER(
     for obj in iter_objects(world_state_mod):
         volume = obj.get("volume", 0.0)
         visible_at_timestep = (
-            world_state_mod["simulation"][timestep]["objects"][obj["id"]]["infov_pixels"]
+            world_state_mod["simulation"][timestep]["objects"][obj["id"]][
+                "infov_pixels"
+            ]
             > MIN_VISIBLE_PIXELS
             and world_state_mod["simulation"][timestep]["objects"][obj["id"]][
                 "fov_visibility"
@@ -240,13 +275,23 @@ def CF_SIZE_OBJECT_BIGGER(
     )
 
     return fill_questions_cf(
-        question, labels, correct_idx, world_state_og, world_state_mod, timestep, resolved_attributes
+        question,
+        labels,
+        correct_idx,
+        world_state_og,
+        world_state_mod,
+        timestep,
+        resolved_attributes,
     )
 
 
 @with_resolved_attributes_cf
 def CF_LAYOUT_POSITION_OBJECT_OBJECT(
-    world_state_og: WorldState, world_state_mod: WorldState, question: QuestionPayload, attributes, **kwargs
+    world_state_og: WorldState,
+    world_state_mod: WorldState,
+    question: QuestionPayload,
+    attributes,
+    **kwargs,
 ) -> str:
     assert (
         len(attributes) == 2 and "OBJECT-CF" in attributes and "OBJECT_2" in attributes
@@ -298,5 +343,11 @@ def CF_LAYOUT_POSITION_OBJECT_OBJECT(
     )
 
     return fill_questions_cf(
-        question, labels, correct_idx, world_state_og, world_state_mod, timestep, resolved_attributes
+        question,
+        labels,
+        correct_idx,
+        world_state_og,
+        world_state_mod,
+        timestep,
+        resolved_attributes,
     )

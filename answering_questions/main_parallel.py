@@ -7,26 +7,54 @@ import argparse
 import multiprocessing
 from multiprocessing import get_context
 from concurrent.futures import ProcessPoolExecutor
+from copy import deepcopy
+
 from utils.config import set_config
 from utils.augment_VQA import augment_image_VQA_with_context
+from utils.saving_utils import save_questions_answers_json
+from utils.my_exception import ImpossibleToAnswer
+from utils import seed_utils
 
-from copy import deepcopy
+# Import categories - alphabetically
+
+from categories.spatial_reasoning.spatial_reasoning import (
+    get_function_by_name_spatial_reasoning,
+)
+
+from categories.mechanics.mechanics import (
+    get_function_by_name_mechanics,
+)
+
+from categories.material_understanding.material_understanding import (
+    get_function_by_name_material_understanding,
+)
+
+from categories.temporal.temporal import (
+    get_function_by_name_temporal,
+)
+
+from categories.viewpoint.viewpoint import (
+    get_function_by_name_viewpoint,
+)
+
+from categories.persistence.persistence import (
+    get_function_by_name_persistence,
+)
+
 
 # Globals initialized in worker processes
 QUESTIONS = None
 DEST_ROOT = None
-ARG_MOCK = None
 VERBOSE = None
 
 
-def _init_worker(vqa_path, dest_root, arg_mock, verbose, base_seed):
+def _init_worker(vqa_path, dest_root, verbose, base_seed):
     """Runs once per worker process."""
     import os
 
-    global QUESTIONS, DEST_ROOT, ARG_MOCK, VERBOSE
+    global QUESTIONS, DEST_ROOT, VERBOSE
     QUESTIONS = read_questions(os.path.join(vqa_path, "simple_vqa.json"))
     DEST_ROOT = dest_root
-    ARG_MOCK = arg_mock
     VERBOSE = verbose
     seed_utils.seed_everything(base_seed)
     try:
@@ -55,7 +83,6 @@ def _process_one(sim_file, args):
             simulation_steps,
             sim_file,
             destination_simulation_id_path,
-            ARG_MOCK,
             verbose=VERBOSE,
             config=args,
         )
@@ -65,44 +92,6 @@ def _process_one(sim_file, args):
         print("\033[91mWorker error on", simulation_id_path, "->", repr(e), "\033[0m")
         print(e.with_traceback())
 
-
-from utils.saving_utils import (
-    save_questions_answers_json    
-)
-from utils.my_exception import ImpossibleToAnswer
-from utils import seed_utils
-
-# Import categories - alphabetically
-
-from categories.spatial_reasoning.spatial_reasoning import (
-    get_function_by_name_spatial_reasoning,
-    get_result_by_name_spatial_reasoning,
-)
-
-from categories.mechanics.mechanics import (
-    get_function_by_name_mechanics,
-    get_result_by_name_mechanics,
-)
-
-from categories.material_understanding.material_understanding import (
-    get_function_by_name_material_understanding,
-    get_result_by_name_material_understanding,
-)
-
-from categories.temporal.temporal import (
-    get_function_by_name_temporal,
-    get_result_by_name_temporal,
-)
-
-from categories.viewpoint.viewpoint import (
-    get_function_by_name_viewpoint,
-    get_result_by_name_viewpoint,
-)
-
-from categories.persistence.persistence import (
-    get_function_by_name_persistence,
-    get_result_by_name_persistence,
-)
 
 # ----- UTILS FUNCTIONS
 def read_questions(vqa_path):
@@ -119,15 +108,6 @@ def read_simulation(simulation_path):
 
 # ----- FUNCTION TO GET ANSWER FROM SIMULTAION
 
-resolver_gt = {
-    "spatial_reasoning": get_result_by_name_spatial_reasoning,
-    "mechanics": get_result_by_name_mechanics,
-    "material_understanding": get_result_by_name_material_understanding,
-    "temporal": get_result_by_name_temporal,
-    "view_point": get_result_by_name_viewpoint,
-    "persistence": get_result_by_name_persistence,
-}
-
 resolver = {
     "spatial_reasoning": get_function_by_name_spatial_reasoning,
     "mechanics": get_function_by_name_mechanics,
@@ -138,12 +118,8 @@ resolver = {
 }
 
 
-def get_answer(question_key, question_category, mock=False):
-    return resolver[question_category](question_key, mock=mock)
-
-
-def get_gt(question_key, question_category, mock=False):
-    return resolver_gt[question_category](question_key, mock=mock)
+def get_answer(question_key, question_category):
+    return resolver[question_category](question_key)
 
 
 def natural_key(s):
@@ -156,38 +132,29 @@ def create_vqa(
     simulation_steps,
     simulation_id,
     destination_simulation_id_path,
-    arg_mock,
     verbose=False,
     config=None,
 ):
     seed_utils.reseed_for_context(simulation_id)
-    total_correct_per_category = {}
 
     print("Starting VQA creation...")
 
     all_vqa = []
 
     categories = getattr(config, "include_categories", [])
-    excluded_question_ids = set(
-        getattr(config, "exclude_question_ids", []) or []
-    )
+    excluded_question_ids = set(getattr(config, "exclude_question_ids", []) or [])
 
     for category_key, category in questions.items():
-
         # current category dev
         print(category_key)
-        if categories != [] and (
-            category_key not in categories
-        ):
+        if categories != [] and (category_key not in categories):
             continue
 
         if verbose:
             print("###" * 10, f"Processing category: {category_key}", "###" * 10)
             print(f"questions: \n{category}")
             print("###" * 20)
-        total_questions_in_category = len(category)
-        total_correct_answers = 0
-        not_implemented = 0
+
         for question_key, question_data in category.items():
             if excluded_question_ids and question_key in excluded_question_ids:
                 if verbose:
@@ -197,16 +164,13 @@ def create_vqa(
             question_payload["_question_key"] = question_key
             question_payload["_simulation_id"] = simulation_id
 
-            fn_to_answer_question = get_answer(
-                question_key, category_key, mock=arg_mock
-            )
+            fn_to_answer_question = get_answer(question_key, category_key)
 
             try:
                 answer_list = fn_to_answer_question(
                     simulation_steps, question_payload, destination_simulation_id_path
                 )
             except ImpossibleToAnswer:
-                not_implemented += 1
                 continue
 
             for (
@@ -242,7 +206,7 @@ def create_vqa(
                         file_names_to_augment.copy(),
                         augmentation=config.augmentation,
                     )
-               
+
                     all_vqa.append(
                         {
                             "scene": simulation_steps.get("scene", {}).get(
@@ -262,9 +226,8 @@ def create_vqa(
                             "choice": question["choice"],
                         }
                     )
-                    
+
                 except ImpossibleToAnswer:
-                    not_implemented += 1
                     continue
 
                 if verbose:
@@ -273,45 +236,8 @@ def create_vqa(
                     print(f"  Correct Index: {correct_idx}")
                     print(f"  Images Indexes: {imgs_idx}")
 
-                # maybe it goes faster
-                # gt = get_gt(question_key, category_key, mock=arg_mock)
-                # if verbose:
-                #     print(
-                #         f"  Answer from function: {labels[correct_idx]}\n  Should match GT: {gt}"
-                #     )
-
-                # # Just for development, the rng function given more or less functions will break the integration test
-                # if str(labels[correct_idx]) != str(gt) and verbose:
-                #     print(
-                #         "\033[93m  WARNING: Answer does not match Ground Truth!\033[0m"
-                #     )
-                #     # exit(1)
-                # else:
-                if str(labels[correct_idx]) == "not_implemented":
-                    not_implemented += 1
-                else:
-                    total_correct_answers += 1
-
                 if verbose:
                     print("===" * 20)
-
-        total_correct_per_category[category_key] = (
-            total_correct_answers,
-            not_implemented,
-            total_questions_in_category,
-        )        
-
-    if verbose:
-        print("Summary of correct answers per category:")
-    for category, (
-        correct,
-        not_implemented,
-        total,
-    ) in total_correct_per_category.items():
-        if verbose:
-            print(
-                f"Category '{category}': {correct}/{total - not_implemented} correct answers, {not_implemented} not implemented"
-            )
 
     return all_vqa
 
@@ -360,7 +286,9 @@ def main(args):
 
         print("Searching for simulation files with pattern:", pattern)
         for sim_file in glob.glob(pattern, recursive=True):
-            normalized_sim_path = os.path.normpath(os.path.abspath(sim_file)).replace("/simulation.json", "")                                    
+            normalized_sim_path = os.path.normpath(os.path.abspath(sim_file)).replace(
+                "/simulation.json", ""
+            )
             if normalized_sim_path in excluded_simulations:
                 excluded_count += 1
                 if args.verbose:
@@ -385,7 +313,6 @@ def main(args):
         initargs=(
             args.vqa_path,
             args.destination_simulation_path,
-            args.mock,
             args.verbose,
             args.seed,
         ),
@@ -393,7 +320,9 @@ def main(args):
     ) as ex:
         max_simulations = min(number_simulations, len(list_simulations))
         print(f"Processing {max_simulations} simulations...")
-        for sim_vqa in ex.map(_process_one, list_simulations[:max_simulations], [args]*max_simulations): # limit to 100s for now
+        for sim_vqa in ex.map(
+            _process_one, list_simulations[:max_simulations], [args] * max_simulations
+        ):  # limit to 100s for now
             all_vqa.extend(sim_vqa)
 
     print(f"Saved {len(all_vqa)} questions and answers.")
@@ -426,7 +355,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--simulation_paths",
         nargs="+",
-        type=str,        
+        type=str,
         default="/data0/sebastian.cavada/datasets/simulations_v3/dl3dv/random",
         help="Path to the simulation file containing the scenes.",
     )
@@ -439,7 +368,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--destination_simulation_path",
         type=str,
-        default="/data0/sebastian.cavada/simulations/dl3dv",        
+        default="/data0/sebastian.cavada/simulations/dl3dv",
         help="Path where the simulation files are stored (on same or different computer).",
     )
     parser.add_argument(
@@ -459,12 +388,6 @@ if __name__ == "__main__":
         choices=["base64", "path"],
         default="base64",
         help="Select whether exported questions reference images via base64 or filesystem paths (TSV always uses paths).",
-    )
-    parser.add_argument(
-        "--mock",
-        action="store_true",
-        default=True,
-        help="Use mock implementations for testing.",
     )
     parser.add_argument(
         "--verbose",

@@ -14,6 +14,7 @@ import warnings
 from collections import defaultdict
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Tuple
+from answering_questions.utils import seed_utils
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
@@ -23,21 +24,35 @@ os.environ.setdefault("CUDA_VISIBLE_DEVICES", "")
 
 warnings.filterwarnings("ignore", message="CUDA initialization:", category=UserWarning)
 
-from answering_questions.utils import seed_utils
-
-
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Detect temporal slowdowns in simulation.json files.")
+    parser = argparse.ArgumentParser(
+        description="Detect temporal slowdowns in simulation.json files."
+    )
     parser.add_argument(
         "--simulation-paths",
         nargs="+",
         required=True,
         help="Root folders that contain simulation runs.",
     )
-    parser.add_argument("--output-path", default="./analysis_outputs", help="Directory where reports are written.")
-    parser.add_argument("--run-name", default="motion_smoothness", help="Sub-folder used inside the output path.")
-    parser.add_argument("--n-scenes", type=int, default=0, help="Optional limit for the number of simulations to scan.")
-    parser.add_argument("--seed", type=int, default=0, help="Seed used to make the run deterministic.")
+    parser.add_argument(
+        "--output-path",
+        default="./analysis_outputs",
+        help="Directory where reports are written.",
+    )
+    parser.add_argument(
+        "--run-name",
+        default="motion_smoothness",
+        help="Sub-folder used inside the output path.",
+    )
+    parser.add_argument(
+        "--n-scenes",
+        type=int,
+        default=0,
+        help="Optional limit for the number of simulations to scan.",
+    )
+    parser.add_argument(
+        "--seed", type=int, default=0, help="Seed used to make the run deterministic."
+    )
     parser.add_argument(
         "--dt-relative-tolerance",
         type=float,
@@ -108,7 +123,10 @@ def parse_args() -> argparse.Namespace:
 
 
 def natural_key(value: str) -> List[Any]:
-    return [int(chunk) if chunk.isdigit() else chunk.lower() for chunk in re.split(r"(\d+)", value)]
+    return [
+        int(chunk) if chunk.isdigit() else chunk.lower()
+        for chunk in re.split(r"(\d+)", value)
+    ]
 
 
 def collect_simulation_files(simulation_roots: Iterable[str]) -> List[str]:
@@ -122,7 +140,9 @@ def collect_simulation_files(simulation_roots: Iterable[str]) -> List[str]:
     return list_simulations
 
 
-def extract_frames(simulation_blob: Dict[str, Any]) -> List[Tuple[float, Dict[str, Any]]]:
+def extract_frames(
+    simulation_blob: Dict[str, Any],
+) -> List[Tuple[float, Dict[str, Any]]]:
     frames: List[Tuple[float, Dict[str, Any]]] = []
     for ts_str, frame in simulation_blob.items():
         try:
@@ -209,7 +229,9 @@ def compute_time_stats(
     }
 
 
-def build_tracks(frames: List[Tuple[float, Dict[str, Any]]]) -> Dict[str, List[Dict[str, Any]]]:
+def build_tracks(
+    frames: List[Tuple[float, Dict[str, Any]]],
+) -> Dict[str, List[Dict[str, Any]]]:
     tracks: Dict[str, List[Dict[str, Any]]] = defaultdict(list)
     for time_val, frame in frames:
         objects = frame.get("objects", {})
@@ -238,10 +260,7 @@ def collect_velocity_samples(track: List[Dict[str, Any]]) -> List[Dict[str, Any]
         dt = curr["time"] - prev["time"]
         if dt <= 0:
             continue
-        disp = [
-            curr["center"][axis] - prev["center"][axis]
-            for axis in range(3)
-        ]
+        disp = [curr["center"][axis] - prev["center"][axis] for axis in range(3)]
         distance = vector_length(disp)
         speed = distance / dt
         velocities.append(
@@ -307,7 +326,8 @@ def detect_motion_anomalies(
 
         if (
             prev_speed > args.min_speed_for_ratio
-            and curr_speed < max(args.freeze_speed_threshold, prev_speed / args.speed_drop_ratio)
+            and curr_speed
+            < max(args.freeze_speed_threshold, prev_speed / args.speed_drop_ratio)
             and (prev_speed - curr_speed) > args.speed_jump_min_delta
         ):
             anomalies.append(
@@ -416,16 +436,16 @@ def analyze_simulation(sim_path: str, args: argparse.Namespace) -> Dict[str, Any
     with open(sim_path, "r") as handle:
         payload = json.load(handle)
     frames = extract_frames(payload.get("simulation", {}))
-    expected_dt = (
-        payload.get("config", {})
-        .get("render", {})
-        .get("renderstep")
+    expected_dt = payload.get("config", {}).get("render", {}).get("renderstep")
+    time_stats = compute_time_stats(
+        frames, expected_dt, args.dt_relative_tolerance, args.max_logged_dt_intervals
     )
-    time_stats = compute_time_stats(frames, expected_dt, args.dt_relative_tolerance, args.max_logged_dt_intervals)
     tracks = build_tracks(frames)
     object_summaries = analyze_object_tracks(tracks, payload.get("objects", {}), args)
 
-    objects_with_issues = [entry for entry in object_summaries if entry.get("anomalies")]
+    objects_with_issues = [
+        entry for entry in object_summaries if entry.get("anomalies")
+    ]
     dominant_issue = []
     if time_stats["bad_interval_count"] > 0:
         dominant_issue.append("time_jitter")
@@ -452,9 +472,7 @@ def write_reports(
     report_path = output_dir / "motion_analysis.json"
     report_payload = {
         "parameters": {
-            key: value
-            for key, value in vars(args).items()
-            if key not in {"seed"}
+            key: value for key, value in vars(args).items() if key not in {"seed"}
         },
         "num_simulations": len(results),
         "results": results,
@@ -490,7 +508,9 @@ def write_reports(
     buggy_path = output_dir / "buggy_simulations.txt"
     with open(buggy_path, "w") as handle:
         if not flagged:
-            handle.write("No simulations with flagged objects or time anomalies were detected.\n")
+            handle.write(
+                "No simulations with flagged objects or time anomalies were detected.\n"
+            )
         for entry in flagged:
             handle.write(f"{entry['simulation_path']}\n")
             t_stats = entry.get("time_stats", {})
@@ -554,7 +574,9 @@ def main() -> None:
 
     flagged_count = sum(1 for entry in results if entry.get("flagged"))
     write_reports(results, output_dir, args)
-    print(f"Analysis stored in {output_dir} (motion_analysis.json/.txt and buggy_simulations.txt)")
+    print(
+        f"Analysis stored in {output_dir} (motion_analysis.json/.txt and buggy_simulations.txt)"
+    )
     print(f"Total affected simulations: {flagged_count}")
     _ = all_vqa  # placeholder to mirror the workflow shown in the instructions
 

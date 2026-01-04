@@ -236,7 +236,7 @@ def merge_sim_metadata(answers_vlm, mapping_fct=None):
         model = answers_vlm[m_i]
         for a_i in range(len(model["results"])):
             answer = model["results"][a_i]
-            pbar.set_description(f"answer: {a_i}/{len(model["results"])}")
+            pbar.set_description(f"answer: {a_i}/{len(model['results'])}")
             simulation_path = answer["simulation_id"]
             if mapping_fct is not None:
                 simulation_path = mapping_fct(simulation_path)
@@ -271,11 +271,9 @@ def merge_sim_metadata(answers_vlm, mapping_fct=None):
     
 
 def get_object_yms_from_simulation(sim_metadata, question):
-    # print("Question received:", question)
+
     parts = question.split("\n")
-    images = parts[0]
     question_text = parts[1]
-    answers = parts[2:]
 
     matches = pattern.findall(question_text)
     count = len(matches)

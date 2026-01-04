@@ -51,6 +51,7 @@ from categories.viewpoint.viewpoint_helpers import (
     classify_camera_angle_index,
     horizontal_fov_rad,
     classify_focal_length_index,
+    get_number_of_visible_objects,
 )
 
 from utils.all_objects import get_all_objects_names
@@ -89,6 +90,49 @@ def F_VISIBILITY_OBJECT(
 
     labels, correct_idx = create_mc_object_names_from_dataset(
         object["name"], all_objects_minus_present, [], num_answers=4
+    )
+
+    return fill_questions(
+        question, labels, correct_idx, world_state, timestep, resolved_attributes
+    )
+
+
+@with_resolved_attributes
+def F_VISIBILITY_OBJECT_COUNT(
+    world_state: WorldState, question: QuestionPayload, attributes, **kwargs
+) -> int:
+    assert len(attributes) == 0
+
+    # First we find the pairs of objects visible
+    visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
+        ["OBJECT"],
+        world_state,
+        min_objects=1,  # cause we don't really care for this question I guess
+    )
+
+    timestep = get_random_timestep_from_list(visible_timesteps, question)
+    timestep_index = world_state["simulation"][timestep]["frame_idx"]
+
+    total_visible_objects = get_number_of_visible_objects(world_state, timestep_index)
+
+    # balanced options around the initial count
+    start = max(0, total_visible_objects - 2)
+    shift = abs(total_visible_objects - 2) if total_visible_objects < 2 else 0
+    balanced_bins = [
+        str(i)
+        for i in range(start, total_visible_objects + 2 + shift)
+        if i != total_visible_objects
+    ]
+
+    labels, correct_idx = create_mc_object_names_from_dataset(
+        str(total_visible_objects),
+        [],
+        balanced_bins,
+        num_answers=4,
+    )
+
+    resolved_attributes = resolve_attributes_visible_at_timestep(
+        ["OBJECT"], world_state, timestep
     )
 
     return fill_questions(

@@ -20,10 +20,9 @@ from typing import (
 
 import random
 
-from utils.my_exception import ImpossibleToAnswer
-
+from utils.config import get_config
 from utils.all_objects import get_all_objects_names
-
+from utils.my_exception import ImpossibleToAnswer
 from utils.load_pointclouds import load_scene_pointcloud
 
 from utils.helpers import (
@@ -34,7 +33,6 @@ from utils.helpers import (
     resolve_attributes_visible_at_timestep,
     get_visible_timesteps_for_attributes_min_objects,
 )
-
 from .spatial_reasoning_helpers import (
     get_position,
     get_closest_object,
@@ -43,7 +41,6 @@ from .spatial_reasoning_helpers import (
     get_spatial_relationship_camera_view,
     get_all_relational_positional_adjectives,
 )
-
 from utils.bin_creation import (
     create_mc_options_around_gt,
     create_mc_object_names_from_dataset,
@@ -56,9 +53,6 @@ WorldState = Mapping[str, Any]
 QuestionPayload = Mapping[str, Any]
 Answer = Union[str, float, Vector, Mapping[str, Any], Sequence[str]]
 
-
-from utils.config import get_config
-
 VISIBILITY_THRESHOLD = get_config()["visibility_threshold"]
 FRAME_INTERLEAVE = get_config()["frame_interleave"]
 CLIP_LENGTH = get_config()["clip_length"]
@@ -69,6 +63,7 @@ MIN_VISIBLE_PIXELS = get_config()["min_pixels_visible"]
 # - All object positions are given by their OBB center
 # - Distances are Euclidean distances between object centers unless specified otherwise
 # - The valid timesteps are those where all the  objects are visible above VISIBILITY_THRESHOLD
+
 
 @with_resolved_attributes
 def F_DISTANCE_OBJECT_OBJECT(

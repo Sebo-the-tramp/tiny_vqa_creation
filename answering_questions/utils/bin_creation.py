@@ -178,6 +178,7 @@ def create_mc_options_around_gt(
 
     return options, correct_idx
 
+
 # logarithmic spacing version for young modulus
 # https://www.researchgate.net/figure/Material-property-chart-plotting-Youngs-modulus-E-against-density-r-The-heavy-envelopes_fig3_311498694
 def create_mc_options_around_gt_log(
@@ -261,6 +262,7 @@ def create_mc_options_around_gt_poisson_ratio(
     correct_idx = options.index(gt)
 
     return options, correct_idx
+
 
 # ---------- uniform display labels (UI layer) ----------
 def uniform_labels(

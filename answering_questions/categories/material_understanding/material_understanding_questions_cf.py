@@ -19,7 +19,7 @@ from typing import (
 
 from utils.my_exception import ImpossibleToAnswer
 
-from utils.all_objects import get_all_objects_names, get_all_materials
+from utils.all_objects import get_all_objects_names
 
 from utils.helpers import (
     fill_questions_cf,
@@ -33,13 +33,10 @@ from utils.config import get_config
 
 from utils.bin_creation import (
     create_mc_options_around_gt,
-    create_mc_options_around_gt_log,
-    create_mc_options_around_gt_poisson_ratio,
     uniform_labels,
     create_mc_object_names_from_dataset,
 )
 
-from .material_understanding_helpers import get_material_dataset_different_from_target
 
 Number = Union[int, float]
 Vector = Tuple[float, float, float]
@@ -52,21 +49,31 @@ MOVEMENT_TOLERANCE = get_config()["movement_tolerance"]
 VISIBILITY_THRESHOLD = get_config()["visibility_threshold"]
 THRESHOLD_DIFFERENCE_PERCENTAGE = get_config()["threshold_difference_percentage"]
 MIN_VISIBLE_PIXELS = get_config()["min_pixels_visible"]
-MAX_ALLOWED_DIFFERENCE_YOUNGS_MODULUS = get_config()["max_allowed_difference_youngs_modulus"]
-MAX_ALLOWED_DIFFERENCE_POISSON_RATIO = get_config()["max_allowed_difference_poisson_ratio"]
+MAX_ALLOWED_DIFFERENCE_YOUNGS_MODULUS = get_config()[
+    "max_allowed_difference_youngs_modulus"
+]
+MAX_ALLOWED_DIFFERENCE_POISSON_RATIO = get_config()[
+    "max_allowed_difference_poisson_ratio"
+]
 
 ## --- Resolver functions -- ##
 
 
 @with_resolved_attributes_cf
 def CF_MASS_OBJECT(
-    world_state_og: WorldState, world_state_mod: WorldState, question: QuestionPayload, attributes, **kwargs
+    world_state_og: WorldState,
+    world_state_mod: WorldState,
+    question: QuestionPayload,
+    attributes,
+    **kwargs,
 ) -> int:
     assert len(attributes) == 1 and "OBJECT-CF" in attributes
 
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        attributes, world_state_mod, min_objects=kwargs["current_world_number_of_objects"]
+        attributes,
+        world_state_mod,
+        min_objects=kwargs["current_world_number_of_objects"],
     )
 
     timestep = get_random_timestep_from_list(visible_timesteps, question)
@@ -86,13 +93,23 @@ def CF_MASS_OBJECT(
     labels = [str(label) + " kgs" for label in labels]
 
     return fill_questions_cf(
-        question, labels, correct_idx, world_state_og, world_state_mod, timestep, resolved_attributes
+        question,
+        labels,
+        correct_idx,
+        world_state_og,
+        world_state_mod,
+        timestep,
+        resolved_attributes,
     )
 
 
 @with_resolved_attributes_cf
 def CF_MASS_HEAVIEST_OBJECT(
-    world_state_og: WorldState, world_state_mod: WorldState, question: QuestionPayload, attributes, **kwargs
+    world_state_og: WorldState,
+    world_state_mod: WorldState,
+    question: QuestionPayload,
+    attributes,
+    **kwargs,
 ) -> int:
     assert len(attributes) == 0
 
@@ -101,7 +118,9 @@ def CF_MASS_HEAVIEST_OBJECT(
 
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        ["OBJECT-CF"], world_state_mod, min_objects=kwargs["current_world_number_of_objects"]
+        ["OBJECT-CF"],
+        world_state_mod,
+        min_objects=kwargs["current_world_number_of_objects"],
     )
 
     timestep = get_random_timestep_from_list(visible_timesteps, question)
@@ -146,13 +165,23 @@ def CF_MASS_HEAVIEST_OBJECT(
     )
 
     return fill_questions_cf(
-        question, labels, correct_idx, world_state_og, world_state_mod, timestep, resolved_attributes
+        question,
+        labels,
+        correct_idx,
+        world_state_og,
+        world_state_mod,
+        timestep,
+        resolved_attributes,
     )
 
 
 @with_resolved_attributes_cf
 def CF_MASS_LIGHTEST_OBJECT(
-    world_state_og: WorldState, world_state_mod: WorldState, question: QuestionPayload, attributes, **kwargs
+    world_state_og: WorldState,
+    world_state_mod: WorldState,
+    question: QuestionPayload,
+    attributes,
+    **kwargs,
 ) -> int:
     assert len(attributes) == 0
 
@@ -206,5 +235,11 @@ def CF_MASS_LIGHTEST_OBJECT(
     )
 
     return fill_questions_cf(
-        question, labels, correct_idx, world_state_og, world_state_mod, timestep, resolved_attributes
+        question,
+        labels,
+        correct_idx,
+        world_state_og,
+        world_state_mod,
+        timestep,
+        resolved_attributes,
     )

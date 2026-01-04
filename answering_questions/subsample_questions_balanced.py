@@ -12,6 +12,7 @@ from typing import Any, DefaultDict, Dict, Iterable, List, Sequence, Tuple
 
 MISSING_TOKEN = "<MISSING>"
 
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Stratified subsampling of questions from a JSON file."
@@ -69,7 +70,9 @@ def load_questions(path: Path) -> List[dict[str, Any]]:
         raise SystemExit(f"Failed to parse JSON from '{path}': {exc}") from exc
 
     if not isinstance(data, list):
-        raise SystemExit(f"Expected a list of questions in '{path}', found {type(data).__name__}.")
+        raise SystemExit(
+            f"Expected a list of questions in '{path}', found {type(data).__name__}."
+        )
 
     return data
 
@@ -77,6 +80,7 @@ def load_questions(path: Path) -> List[dict[str, Any]]:
 # ----------------------------
 # Stratified sampling helpers
 # ----------------------------
+
 
 def make_balance_groups(
     questions: Iterable[dict[str, Any]], fields: Sequence[str]
@@ -91,7 +95,9 @@ def make_balance_groups(
         key_components: List[Any] = []
         for field in fields:
             if field not in record:
-                raise SystemExit(f"Cannot balance on '{field}' because it is missing from a record.")
+                raise SystemExit(
+                    f"Cannot balance on '{field}' because it is missing from a record."
+                )
             value = record[field]
             key_components.append(MISSING_TOKEN if value in {None, ""} else value)
         grouped[tuple(key_components)].append(record)
@@ -133,7 +139,10 @@ def allocate_evenly(
             raise SystemExit("Ran out of capacity while allocating stratified samples.")
         rng.shuffle(candidates)
         candidates.sort(
-            key=lambda key: (ideal - allocations[key], capacities[key] - allocations[key]),
+            key=lambda key: (
+                ideal - allocations[key],
+                capacities[key] - allocations[key],
+            ),
             reverse=True,
         )
         chosen = candidates[0]

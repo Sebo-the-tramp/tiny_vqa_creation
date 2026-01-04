@@ -19,36 +19,33 @@ from typing import (
 )
 
 import copy
+import numpy as np
+
 from copy import deepcopy
 from utils.config import get_config
 from utils.all_objects import get_gso_mapping
 
 from utils.my_exception import ImpossibleToAnswer
 
-# just for test
-from PIL import Image
-import numpy as np
+from utils.frames_selection import (
+    sample_frames_at_timesteps,
+    sample_frames_before_timestep,
+)
+
+from utils.geometry import world_to_camera_view
 
 Number = Union[int, float]
 WorldState = Mapping[str, Any]
 QuestionPayload = Mapping[str, Any]
 Answer = Union[int, float, str]
 
-from utils.frames_selection import (
-    sample_frames_at_timesteps,
-    sample_frames_before_timestep,
-)
-
-from utils.geometry import (    
-    project_points,
-    world_to_camera_view
-)
 
 SAMPLING_RATE = get_config()["sampling_rate"]
 VISIBILITY_THRESHOLD = get_config()["visibility_threshold"]
 FRAME_INTERLEAVE = get_config()["frame_interleave"]
 CLIP_LENGTH = get_config()["clip_length"]
 MIN_VISIBLE_PIXELS = get_config()["min_pixels_visible"]
+MIN_PIXELS_VISIBLE = 300
 
 SAMPLING_RATE = get_config()["sampling_rate"]
 RENDER_STEP = 1.0 / SAMPLING_RATE
@@ -60,7 +57,13 @@ FRAME_STRIDE = int(
 
 
 def fill_questions(
-    question, labels, correct_idx, world_state, timestep, resolved_attributes, initial_timestep=None
+    question,
+    labels,
+    correct_idx,
+    world_state,
+    timestep,
+    resolved_attributes,
+    initial_timestep=None,
 ) -> List:
     questions = []
     # 1) Keep the correct label before shuffling
@@ -99,7 +102,9 @@ def fill_questions(
             if initial_timestep is not None:
                 initial_ts_float = float(initial_timestep)
                 ts_float = float(timestep)
-                effective_frame_interleave = int((ts_float - initial_ts_float) * SAMPLING_RATE // (CLIP_LENGTH - 1))
+                effective_frame_interleave = int(
+                    (ts_float - initial_ts_float) * SAMPLING_RATE // (CLIP_LENGTH - 1)
+                )
             else:
                 effective_frame_interleave = FRAME_INTERLEAVE
             frames = sample_frames_before_timestep(
@@ -131,13 +136,15 @@ def fill_questions(
 def compute_counterfactual_string(
     question, resolved_attributes, world_state_og, world_state_modified, timestep
 ):
-    timestep = "0000.010"  # for test only
-    transform_per_object = world_state_modified["config"]["scene"]["spawning"]["transform_per_object"]
+    # timestep = "0000.010"  # for test only
+    transform_per_object = world_state_modified["config"]["scene"]["spawning"][
+        "transform_per_object"
+    ]
 
-    object_id = list(transform_per_object.keys())[0]  # only one object changed
-    object_pos_shift = transform_per_object[object_id]["pos_shift"]
+    object_id = list(transform_per_object.keys())[0]  # only one object changed    
 
     real_object_id = str(int(object_id) + 1)
+    object_name = world_state_modified["objects"][real_object_id]["name"]
     object_pos_og = get_position(world_state_og, real_object_id, timestep)
     object_pos_mod = get_position(world_state_modified, real_object_id, timestep)
 
@@ -162,23 +169,33 @@ def compute_counterfactual_string(
     vertical_movement = "down" if dy < 0 else "up"
     depth_movement = "closer to the camera" if dz < 0 else "further from the camera"
 
-    # print("Position in World Space OG:", center_og)
-    # print("Position in World Space MOD:", center_mod)
+    parts = []
 
-    counterfact_phrase = f"Assume the <OBJECT-CF> is moved"
     if abs(dx) >= 0.1:
-        counterfact_phrase += f" {abs(round_sig(dx, 2))} meters to the {horizontal_movement}"
-    if abs(dy) >= 0.1 and abs(dx) >= 0.1:
-        counterfact_phrase += f", {abs(round_sig(dy, 2))} meters {vertical_movement},"
-    if abs(dy) >= 0.1 and abs(dx) <= 0.1:
-        counterfact_phrase += f" and {abs(round_sig(dy, 2))} meters {vertical_movement},"
+        parts.append(f"{abs(round_sig(dx, 2))} meters to the {horizontal_movement}")
+
+    if abs(dy) >= 0.1:
+        parts.append(f"{abs(round_sig(dy, 2))} meters {vertical_movement}")
+
     if abs(dz) >= 0.1:
-        counterfact_phrase += f" and {abs(round_sig(dz, 2))} meters {depth_movement}."
-    counterfact_phrase += " Under this new condition, "
+        parts.append(f"{abs(round_sig(dz, 2))} meters {depth_movement}")
+
+    def english_join(items):
+        if len(items) == 1:
+            return items[0]
+        if len(items) == 2:
+            return " and ".join(items)
+        return ", ".join(items[:-1]) + ", and " + items[-1]
+
+    counterfact_phrase = f"Assume the {object_name} is moved"
+    if parts:
+        counterfact_phrase += " " + english_join(parts)
+    counterfact_phrase += ". Under this new condition, "
+
     print(counterfact_phrase)
 
     # print("Check pitagora:")
-    # print("Distance in camera view:", math.sqrt(dx**2 + dy**2 + dz**2))     
+    # print("Distance in camera view:", math.sqrt(dx**2 + dy**2 + dz**2))
     # print(f"The above should be {d}")
 
     # # check the image and see the 2 center
@@ -194,26 +211,33 @@ def compute_counterfactual_string(
     # project_center_og_uv, z1 = project_points(np.array([center_og]), camera_position)
     # project_center_mod_uv, z2 = project_points(np.array([center_mod]), camera_position)
 
-    # # add points to the image, red dots for object 1, blue dots for object 2    
+    # # add points to the image, red dots for object 1, blue dots for object 2
     # u1, v1 = int(project_center_og_uv[0][0]), int(project_center_og_uv[0][1])
     # if 0 <= u1 < numpy_image.shape[1] and 0 <= v1 < numpy_image.shape[0]:
     #     for i in range(-1, 2):
     #         for j in range(-1, 2):
     #             if 0 <= v1+i < numpy_image.shape[0] and 0 <= u1+j < numpy_image.shape[1]:
     #                 numpy_image[v1+i, u1+j] = [255, 0, 0]  # red dot
-    
+
     # u2, v2 = int(project_center_mod_uv[0][0]), int(project_center_mod_uv[0][1])
     # if 0 <= u2 < numpy_image.shape[1] and 0 <= v2 < numpy_image.shape[0]:
     #     for i in range(-1, 2):
     #         for j in range(-1, 2):
     #             if 0 <= v2+i < numpy_image.shape[0] and 0 <= u2+j < numpy_image.shape[1]:
     #                 numpy_image[v2+i, u2+j] = [0, 0, 255]  # blue dot
-    
+
     return counterfact_phrase
 
 
 def fill_questions_cf(
-    question, labels, correct_idx, world_state_og, world_state_modified, timestep, resolved_attributes, initial_timestep=None
+    question,
+    labels,
+    correct_idx,
+    world_state_og,
+    world_state_modified,
+    timestep,
+    resolved_attributes,
+    initial_timestep=None,
 ) -> List:
     questions = []
     # 1) Keep the correct label before shuffling
@@ -243,20 +267,28 @@ def fill_questions_cf(
             split  # keep type consistent with your downstream expectations
         )
         # check if spawning is present in the modified world state
-        world_state_modified_spawning = world_state_modified.get("config", {}).get("scene", {}).get("spawning", {})
-        
+        world_state_modified_spawning = (
+            world_state_modified.get("config", {}).get("scene", {}).get("spawning", {})
+        )
+
         if world_state_modified_spawning == {}:
             diff = "gravity"  # default
         else:
-            if 'metricscale' in world_state_modified_spawning.get('transform_per_object', {}).get('0', {}):
+            if "metricscale" in world_state_modified_spawning.get(
+                "transform_per_object", {}
+            ).get("0", {}):
                 diff = "2xsmaller"
             else:
-                diff = "shift"        
+                diff = "shift"
 
-        if diff == "shift":        
+        if diff == "shift":
             counterfact = compute_counterfactual_string(
-                question, resolved_attributes, world_state_og, world_state_modified, timestep
-            )        
+                question,
+                resolved_attributes,
+                world_state_og,
+                world_state_modified,
+                timestep,
+            )
         elif diff == "2xsmaller":
             counterfact = "How would the answer change if the object is scaled down to half of its original size."
         elif diff == "gravity":
@@ -270,7 +302,9 @@ def fill_questions_cf(
             if initial_timestep is not None:
                 initial_ts_float = float(initial_timestep)
                 ts_float = float(timestep)
-                effective_frame_interleave = int((ts_float - initial_ts_float) * SAMPLING_RATE // (CLIP_LENGTH - 1))
+                effective_frame_interleave = int(
+                    (ts_float - initial_ts_float) * SAMPLING_RATE // (CLIP_LENGTH - 1)
+                )
             else:
                 effective_frame_interleave = FRAME_INTERLEAVE
             frames = sample_frames_before_timestep(
@@ -297,6 +331,7 @@ def fill_questions_cf(
         questions.append(build_item("multi"))
 
     return questions
+
 
 # ---------------------------------------------------------------------------
 # Helper utilities
@@ -391,16 +426,19 @@ def extract_attributes(question: Mapping[str, Any]) -> Mapping[str, Any]:
 def is_object_visible_at_timestep(
     object_id: str, timestep: str, world_state: Mapping[str, Any]
 ) -> bool:
-    """Check if an object is visible at a specific timestep."""        
+    """Check if an object is visible at a specific timestep."""
 
     obj_states = world_state["simulation"][timestep]["objects"]
 
-    pixels_visible = obj_states[object_id]['infov_pixels_visible'] + obj_states[object_id]['infov_pixels_void']
-    fov_visibility = obj_states[object_id]['fov_visibility']
-    
+    pixels_visible = (
+        obj_states[object_id]["infov_pixels_visible"]
+        + obj_states[object_id]["infov_pixels_void"]
+    )
+    fov_visibility = obj_states[object_id]["fov_visibility"]
+
     visible = (
         # Case 1: Object is mostly unoccluded
-        (fov_visibility >= VISIBILITY_THRESHOLD or pixels_visible >= MIN_VISIBLE_PIXELS)                                
+        fov_visibility >= VISIBILITY_THRESHOLD or pixels_visible >= MIN_VISIBLE_PIXELS
     )
 
     return visible
@@ -460,7 +498,9 @@ def get_list_model_of_duplicate_objects(
     return duplicate_models
 
 
-def get_position(world_state: Mapping[str, Any], object_id: str, timestep: str) -> Optional[Mapping[str, Any]]:
+def get_position(
+    world_state: Mapping[str, Any], object_id: str, timestep: str
+) -> Optional[Mapping[str, Any]]:
     """Retrieve the position of an object at a specific timestep."""
     obj_state = get_object_state_at_timestep(world_state, object_id, timestep)
     if not obj_state:
@@ -486,11 +526,19 @@ def get_visible_timesteps_for_attributes_min_objects(
             if not obj_id:
                 continue
             obj_state = get_object_state_at_timestep(world_state, obj_id, timestep)
-            if (
-                obj_state
-                and obj_state["fov_visibility"] > VISIBILITY_THRESHOLD
-                and obj_state["infov_pixels"] >= MIN_VISIBLE_PIXELS
-            ):
+
+            pixels_visible = (
+                obj_state["infov_pixels_visible"] + obj_state["infov_pixels_void"]
+            )
+            fov_visibility = obj_state["fov_visibility"]
+
+            visible = (
+                # Case 1: Object is mostly unoccluded
+                fov_visibility >= VISIBILITY_THRESHOLD
+                or pixels_visible >= MIN_PIXELS_VISIBLE
+            )
+
+            if visible:
                 visible_objects_id.append(obj_id)
 
         # we shall check that also is not the same object name to remove for
@@ -519,6 +567,7 @@ def get_visible_timesteps_for_attributes_min_objects(
             "No timesteps found where the required objects are visible."
         )
     return visible_timesteps
+
 
 def get_continuous_subsequences_min_length(
     timesteps: List[str], min_length: int
@@ -616,13 +665,13 @@ def fill_template(
             question["question"] = question["question"].replace(
                 f"<{attribute}>", mapped_name
             )
-            # resolved_attributes[attribute]["choice"]["model"],        
+            # resolved_attributes[attribute]["choice"]["model"],
         else:
             question["question"] = question["question"].replace(
                 f"<{attribute}>",
                 str(resolved_attributes[attribute]["choice"])
                 + resolve_units(attribute),
-            )        
+            )
 
     # check if there is a single frame or multi frame task
     if question["task_splits"] == "multi":
@@ -633,12 +682,16 @@ def fill_template(
 
 
 def fill_template_cf(
-    question: Mapping[str, Any], resolved_attributes: Mapping[str, Any],
-    counterfact: str
+    question: Mapping[str, Any],
+    resolved_attributes: Mapping[str, Any],
+    counterfact: str,
 ) -> None:
-    
     # Adding counterfactual at the end of the question
-    question["question"] = counterfact + question["question"][0].lower() + question["question"][1:] if question["question"] else counterfact
+    question["question"] = (
+        counterfact + question["question"][0].lower() + question["question"][1:]
+        if question["question"]
+        else counterfact
+    )
 
     for attribute in resolved_attributes:
         if "OBJECT-CATEGORY" in attribute:
@@ -653,7 +706,7 @@ def fill_template_cf(
             # mapped_name = resolved_attributes[attribute]["choice"]["name"] OLD way
             question["question"] = question["question"].replace(
                 f"<{attribute}>", mapped_name
-            )     
+            )
         elif "OBJECT" in attribute:
             mapped_name = gso_mapping[
                 resolved_attributes[attribute]["choice"]["model"]
@@ -667,7 +720,7 @@ def fill_template_cf(
                 f"<{attribute}>",
                 str(resolved_attributes[attribute]["choice"])
                 + resolve_units(attribute),
-            )        
+            )
 
     # check if there is a single frame or multi frame task
     if question["task_splits"] == "multi":
@@ -675,8 +728,6 @@ def fill_template_cf(
             "Consider all frames, but answer only based on the last frame. "
             + question["question"]
         )
-
-    
 
 
 def get_camera(world_state: Mapping[str, Any]) -> Mapping[str, Any]:
@@ -752,17 +803,17 @@ def get_random_object_and_remove(
 
     return object_chosen
 
+
 def get_first_object_and_remove(
     world_state: Mapping[str, Any],
     OBJECT_CATEGORY: Optional[str] = None,
     visible_at_timestep: str = None,
 ) -> Mapping[str, Any]:
-    
     objects = world_state["objects"]
     if visible_at_timestep is not None:
         visible_objects = []
         visible_objects_ids = []
-        obj_id = '1'
+        obj_id = "1"
         object = objects[obj_id]
         obj_state = get_object_state_at_timestep(
             world_state, obj_id, visible_at_timestep
@@ -1145,48 +1196,6 @@ def as_lower(value: Any) -> Optional[str]:
         if candidate:
             return candidate.casefold()
     return None
-
-
-# ---------------------------------------------------------------------------
-# Extended helpers used by mock resolvers
-# ---------------------------------------------------------------------------
-
-
-def resolve_object_by_name(
-    world_state: Mapping[str, Any], object_name: str
-) -> Mapping[str, Any]:
-    """Resolve an object using any of its textual identifiers."""
-    if not object_name:
-        raise KeyError("Object identifier cannot be empty.")
-
-    target = as_lower(object_name)
-    if not target:
-        raise KeyError(f"Unable to normalise identifier '{object_name}'.")
-
-    for obj in iter_objects(world_state):
-        for key in ("name", "id", "label", "type"):
-            value = obj.get(key)
-            if isinstance(value, str) and as_lower(value) == target:
-                return obj
-
-    raise ValueError(f"Object '{object_name}' not found in the provided world state.")
-
-
-def resolve_object_from_question(
-    world_state: Mapping[str, Any],
-    question: Mapping[str, Any],
-    *keys: str,
-) -> Mapping[str, Any]:
-    """Resolve an object using explicit keys from the question payload."""
-    for key in keys:
-        value = question.get(key)
-        if isinstance(value, str) and value.strip():
-            try:
-                return resolve_object_by_name(world_state, value)
-            except ValueError:
-                continue
-
-    return resolve_single_object(world_state, question)
 
 
 def ensure_vector_size(

@@ -19,6 +19,9 @@ from typing import (
 
 import math
 import random
+import numpy as np
+
+from categories.persistence.persistence_helpers import get_visibility_mask
 
 Number = Union[int, float]
 Vector = Tuple[float, float, float]
@@ -118,7 +121,7 @@ def classify_camera_angle_index(pitch_deg):
         "worm's-eye (>=60 degrees)",
     ]
     # Ensure the correct label is included, then add 3 random others
-    other_labels = [l for l in labels if l != label]
+    other_labels = [lbl for lbl in labels if lbl != label]
     random.shuffle(other_labels)
     labels = [label] + other_labels[:3]
     random.shuffle(labels)
@@ -153,3 +156,14 @@ def classify_focal_length_index(hfov_deg):
     ]
     idx = labels.index(label)
     return labels, idx
+
+
+def get_number_of_visible_objects(world_state: WorldState, timestep: int) -> int:
+    """
+    Count the number of visible objects in the world state at a specific timestep.
+    """
+    visibility_mask, _, _ = get_visibility_mask(world_state)
+    total_visible_objects = np.sum(visibility_mask, axis=0)
+    return (
+        total_visible_objects[timestep] if timestep < len(total_visible_objects) else 0
+    )

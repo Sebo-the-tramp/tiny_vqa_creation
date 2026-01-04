@@ -1,5 +1,5 @@
-# This module provides access to various force-related functions, both real and mock versions.
-# It's an abstraction layer to easily switch between real and mock implementations based on the context.
+# This module provides access to various force-related functions.
+# It's an abstraction layer to easily switch between factual and counterfactual implementations.
 
 # spatial_router.py
 from importlib import import_module
@@ -14,47 +14,20 @@ Resolver = Callable[[WorldState, QuestionPayload], Answer]
 
 
 @lru_cache
-def _load_impl_module(mock: bool):
+def _load_impl_module(counterfactual: bool):
     modname = (
-        ".material_understanding_questions" if mock else ".material_understanding_real"
+        ".material_understanding_questions_cf"
+        if counterfactual
+        else ".material_understanding_questions"
     )
     return import_module(modname, package=__package__)
 
 
-def get_function_by_name_material_understanding(
-    name: str, mock: bool = False
-) -> Resolver:
-    mod = _load_impl_module(mock)
+def _get_callable_by_name(mod, name: str, prefix: str):
     try:
         fn = getattr(mod, name)
     except AttributeError:
-        # Nice error with suggestions
-        candidates = [n for n in dir(mod) if n.startswith("F_")]
-        raise ValueError(
-            f"Function '{name}' not found in {mod.__name__}. "
-            f"Available: {', '.join(sorted(candidates))}"
-        )
-    if not callable(fn):
-        raise TypeError(f"Attribute '{name}' in {mod.__name__} is not callable.")
-    return fn
-
-@lru_cache
-def _load_impl_module_cf(mock: bool):
-    modname = (
-        ".material_understanding_questions_cf" if mock else ".material_understanding_real"
-    )
-    return import_module(modname, package=__package__)
-
-
-def get_function_by_name_material_understanding_cf(
-    name: str, mock: bool = False
-) -> Resolver:
-    mod = _load_impl_module_cf(mock)
-    try:
-        fn = getattr(mod, name)
-    except AttributeError:
-        # Nice error with suggestions
-        candidates = [n for n in dir(mod) if n.startswith("CF_")]
+        candidates = [n for n in dir(mod) if n.startswith(prefix)]
         raise ValueError(
             f"Function '{name}' not found in {mod.__name__}. "
             f"Available: {', '.join(sorted(candidates))}"
@@ -64,44 +37,19 @@ def get_function_by_name_material_understanding_cf(
     return fn
 
 
-@lru_cache
-def _load_gt_module(mock: bool):
-    modname = ".material_understanding_questions_results"
-    return import_module(modname, package=__package__)
+def _get_function_by_name_material_understanding(
+    name: str, counterfactual: bool
+) -> Resolver:
+    mod = _load_impl_module(counterfactual)
+    prefix = "CF_" if counterfactual else "F_"
+    return _get_callable_by_name(mod, name, prefix)
 
 
-def get_result_by_name_material_understanding(name: str, mock: bool = False) -> Any:
-    mod = _load_gt_module(mock)
-    try:
-        fn = getattr(mod, name)
-    except AttributeError:
-        # Nice error with suggestions
-        candidates = [n for n in dir(mod) if n.startswith("F_")]
-        raise ValueError(
-            f"Function '{name}' not found in {mod.__name__}. "
-            f"Available: {', '.join(sorted(candidates))}"
-        )
-    if not callable(fn):
-        raise TypeError(f"Attribute '{name}' in {mod.__name__} is not callable.")
-    return fn()  # Call the function to get the result
-
-@lru_cache
-def _load_gt_module_cf(mock: bool):
-    modname = ".material_understanding_questions_results_cf"
-    return import_module(modname, package=__package__)
+def _is_counterfactual_name(name: str) -> bool:
+    return name.startswith("CF_")
 
 
-def get_result_by_name_material_understanding_cf(name: str, mock: bool = False) -> Any:
-    mod = _load_gt_module_cf(mock)
-    try:
-        fn = getattr(mod, name)
-    except AttributeError:
-        # Nice error with suggestions
-        candidates = [n for n in dir(mod) if n.startswith("CF_")]
-        raise ValueError(
-            f"Function '{name}' not found in {mod.__name__}. "
-            f"Available: {', '.join(sorted(candidates))}"
-        )
-    if not callable(fn):
-        raise TypeError(f"Attribute '{name}' in {mod.__name__} is not callable.")
-    return fn()  # Call the function to get the result
+def get_function_by_name_material_understanding(name: str) -> Resolver:
+    return _get_function_by_name_material_understanding(
+        name, counterfactual=_is_counterfactual_name(name)
+    )

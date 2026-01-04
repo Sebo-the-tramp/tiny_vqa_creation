@@ -52,17 +52,19 @@
         }
     },
     "view_point": {
-        "F_VISIBILITY_OBJECT": {
+        "CF_VISIBILITY_OBJECT_COUNT": {
             "task_splits": "single+multi",
             "sub_category": "visibility",
             "choice": "mcq",
-            "question": "Which of these objects is visible in the image/frame?"
-        },
-        "F_OCCLUSION_PERCENTAGE_OBJECT": {
-            "task_splits": "single+multi",
-            "sub_category": "visibility",
+            "question": "How many objects are visible in the image/frame?"
+        }
+    },
+    "persistence":{
+        "CF_PERSISTENCE_OBJECT_TOTAL_COUNT_HIDDEN": {
+            "task_splits": "multi",
+            "sub_category": "object_persistence",
             "choice": "mcq",
-            "question": "How much of the <OBJECT> is occluded in the image/frame?"
+            "question": "How many objects are present but not visible in the last frame?"
         }
     }
 }

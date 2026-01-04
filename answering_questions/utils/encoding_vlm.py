@@ -110,7 +110,8 @@ def read_ok(img_path):
         im = Image.open(img_path)
         assert im.size[0] > 0 and im.size[1] > 0
         return True
-    except:
+    except Exception as e:
+        print(f"Error reading image {img_path}: {e}")
         return False
 
 

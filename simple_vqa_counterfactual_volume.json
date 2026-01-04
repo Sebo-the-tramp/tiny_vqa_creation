@@ -71,13 +71,15 @@
             "question": "Which single object has the least mass?"
         }
     },
-    "persistence":{
-        "CF_PERSISTENCE_OBJECT_TOTAL_COUNT": {
-            "task_splits": "multi",
-            "sub_category": "object_persistence",
+    "view_point":{
+        "CF_VISIBILITY_OBJECT_COUNT": {
+            "task_splits": "single+multi",
+            "sub_category": "visibility",
             "choice": "mcq",
-            "question": "How many objects are there in the last frame in total, including those currently hidden and/or out of frame?"
-        },
+            "question": "How many objects are visible in the image/frame?"
+        }
+    },
+    "persistence":{        
         "CF_PERSISTENCE_OBJECT_TOTAL_COUNT_HIDDEN": {
             "task_splits": "multi",
             "sub_category": "object_persistence",

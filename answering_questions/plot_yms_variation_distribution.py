@@ -77,7 +77,9 @@ def plot_bar(counts: Iterable[Tuple[str, int]], output_path: Path, title: str) -
     print(f"Wrote {output_path}")
 
 
-def write_counter_csv(counter: Counter, output_path: Path, header: Tuple[str, str]) -> None:
+def write_counter_csv(
+    counter: Counter, output_path: Path, header: Tuple[str, str]
+) -> None:
     with output_path.open("w", newline="") as f:
         writer = csv.writer(f)
         writer.writerow((*header,))
@@ -138,9 +140,7 @@ def main() -> None:
         variation_yms_sub_counts[(variation, yms_category, sub_category)] += 1
 
     total = sum(variation_counts.values())
-    print(
-        f"Loaded {len(entries)} samples; parsed {total} with YMS variation metadata."
-    )
+    print(f"Loaded {len(entries)} samples; parsed {total} with YMS variation metadata.")
     if missing_variation:
         print(f"Missing variation metadata for {missing_variation} samples.")
 
@@ -150,10 +150,14 @@ def main() -> None:
     args.output_dir.mkdir(parents=True, exist_ok=True)
 
     write_counter_csv(
-        variation_counts, args.output_dir / "variation_counts.csv", ("variation", "count")
+        variation_counts,
+        args.output_dir / "variation_counts.csv",
+        ("variation", "count"),
     )
     write_counter_csv(
-        yms_counts, args.output_dir / "yms_category_counts.csv", ("yms_category", "count")
+        yms_counts,
+        args.output_dir / "yms_category_counts.csv",
+        ("yms_category", "count"),
     )
     write_variation_yms_csv(
         variation_yms_counts, args.output_dir / "variation_by_yms_category.csv"

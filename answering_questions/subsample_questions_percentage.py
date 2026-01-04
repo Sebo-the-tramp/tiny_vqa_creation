@@ -12,9 +12,14 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Any, DefaultDict, Dict, List, Mapping, Sequence, Tuple
 
-from subsample_questions_balanced import MISSING_TOKEN, load_questions, make_balance_groups
+from subsample_questions_balanced import (
+    MISSING_TOKEN,
+    load_questions,
+    make_balance_groups,
+)
 
 NUM_OBJECTS_PATTERN = re.compile(r"_no-(\d+)")
+
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
@@ -42,7 +47,7 @@ def parse_args() -> argparse.Namespace:
         metavar="JSON",
         help=(
             "Mapping from balance keys to percentages. Provide either an inline JSON string "
-            "(e.g., '{\"distance\": 0.4, \"occlusion\": 0.6}') or a path to a JSON file."
+            '(e.g., \'{"distance": 0.4, "occlusion": 0.6}\') or a path to a JSON file.'
         ),
     )
     parser.add_argument(
@@ -142,7 +147,9 @@ def load_percentage_map(raw: str) -> Dict[str, float]:
             raise SystemExit(
                 f"Percentage for '{key}' must be numeric, received {type(value).__name__}."
             )
-        parsed[str(key)] = normalise_percentage(float(value), context=f"map entry '{key}'")
+        parsed[str(key)] = normalise_percentage(
+            float(value), context=f"map entry '{key}'"
+        )
 
     if not parsed:
         raise SystemExit("Percentage map is empty; nothing to subsample toward.")
@@ -167,7 +174,9 @@ def format_group_key(key: Tuple[Any, ...]) -> str:
     return "|".join(str(part) for part in key)
 
 
-def extract_balance_key(record: dict[str, Any], fields: Sequence[str]) -> Tuple[Any, ...]:
+def extract_balance_key(
+    record: dict[str, Any], fields: Sequence[str]
+) -> Tuple[Any, ...]:
     if not fields or fields == ["-"]:
         return ()
     components: List[Any] = []
@@ -190,7 +199,9 @@ def normalise_index(value: Any) -> str:
     return str(value)
 
 
-def group_by_index_suffix(questions: Sequence[dict[str, Any]]) -> Dict[str, List[dict[str, Any]]]:
+def group_by_index_suffix(
+    questions: Sequence[dict[str, Any]],
+) -> Dict[str, List[dict[str, Any]]]:
     grouped: Dict[str, List[dict[str, Any]]] = defaultdict(list)
     for record in questions:
         raw_idx = record.get("idx")
@@ -308,7 +319,9 @@ def allocate_from_percentages(
             rng.shuffle(order)
             order.sort(key=lambda key: fractions[key], reverse=True)
             for key in order:
-                while remaining and takes[key] < len(grouped[key]) and fractions[key] > 0:
+                while (
+                    remaining and takes[key] < len(grouped[key]) and fractions[key] > 0
+                ):
                     takes[key] += 1
                     remaining -= 1
             if remaining:
@@ -350,7 +363,9 @@ def _derive_num_objects(simulation_id: Any, idx: Any) -> int:
 def _resolve_num_objects(record: dict[str, Any]) -> int:
     num_objects = record.get("num_objects")
     if num_objects in {None, ""}:
-        num_objects = _derive_num_objects(record.get("simulation_id"), record.get("idx"))
+        num_objects = _derive_num_objects(
+            record.get("simulation_id"), record.get("idx")
+        )
     try:
         return int(num_objects)
     except (TypeError, ValueError) as exc:
@@ -370,7 +385,9 @@ def ensure_derived_balance_fields(
     for record in questions:
         if record.get("num_objects") not in {None, ""}:
             continue
-        record["num_objects"] = _derive_num_objects(record.get("simulation_id"), record.get("idx"))
+        record["num_objects"] = _derive_num_objects(
+            record.get("simulation_id"), record.get("idx")
+        )
 
 
 def enforce_idx_grouping(
@@ -390,7 +407,9 @@ def enforce_idx_grouping(
     for record in sampled:
         raw_idx = record.get("idx")
         if raw_idx is None:
-            raise SystemExit("Cannot group by idx because a sampled record is missing 'idx'.")
+            raise SystemExit(
+                "Cannot group by idx because a sampled record is missing 'idx'."
+            )
         key = normalise_index(raw_idx)
         if key not in idx_lookup:
             raise SystemExit(
@@ -418,7 +437,9 @@ def enforce_idx_grouping(
     while excess > 0 and kept:
         candidates = []
         for idx_key, group, balance_key in kept:
-            over = max(actual_counts[balance_key] - balance_targets.get(balance_key, 0.0), 0.0)
+            over = max(
+                actual_counts[balance_key] - balance_targets.get(balance_key, 0.0), 0.0
+            )
             candidates.append((over, len(group), rng.random(), idx_key))
 
         candidates.sort(key=lambda item: (item[0], item[1], item[2]), reverse=True)
@@ -485,13 +506,17 @@ def enforce_object_quota(
     respect_idx_groups: bool,
 ) -> List[dict[str, Any]]:
     if target_per_count <= 0:
-        raise SystemExit("--objects-per-count must be a positive integer when provided.")
+        raise SystemExit(
+            "--objects-per-count must be a positive integer when provided."
+        )
     if not sampled:
         return []
 
     if respect_idx_groups:
         idx_groups = group_by_index_suffix(sampled)
-        grouped_by_objects: DefaultDict[int, List[Tuple[str, List[dict[str, Any]]]]] = defaultdict(list)
+        grouped_by_objects: DefaultDict[int, List[Tuple[str, List[dict[str, Any]]]]] = (
+            defaultdict(list)
+        )
         for idx_key, group in idx_groups.items():
             grouped_by_objects[_resolve_num_objects(group[0])].append((idx_key, group))
 
@@ -541,7 +566,9 @@ def main() -> None:
     default_percentage = (
         None
         if args.default_percentage is None
-        else normalise_percentage(args.default_percentage, context="--default-percentage")
+        else normalise_percentage(
+            args.default_percentage, context="--default-percentage"
+        )
     )
 
     rng = random.Random(args.seed)

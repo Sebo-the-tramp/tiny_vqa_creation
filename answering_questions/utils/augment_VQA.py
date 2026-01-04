@@ -20,63 +20,88 @@ scene_description_cache = {}
 with open(scene_description_path, "r") as f:
     scene_description_cache = json.load(f)
 
-def get_counterfactual_image_paths(file_names):
 
+def get_counterfactual_image_paths(file_names):
     patterns = ["shift-x", "shift-z", "low-gravity", "2xsmaller"]
-    pattern_re = re.compile(
-        r"/(" + "|".join(map(re.escape, patterns)) + r")(?=/|$)"
-    )
+    pattern_re = re.compile(r"/(" + "|".join(map(re.escape, patterns)) + r")(?=/|$)")
 
     counterfactual_image_paths = []
 
     for file in file_names:
         new_file_name = pattern_re.sub("", file).replace("//", "/")
         simulation_id_path_og = new_file_name.replace("dl3dv-counterfact", "dl3dv")
-         
+
         # I need to check the folder that contains the original simulation
         base_dir = simulation_id_path_og.split("seed-")[0]
         seed = simulation_id_path_og.split("seed-")[1].split("_")[0]
 
         matches = glob.glob(base_dir + "seed-" + seed + "_*")
         if len(matches) == 0:
-            raise FileNotFoundError(f"Original simulation folder not found for {simulation_id_path_og}")
-        
+            raise FileNotFoundError(
+                f"Original simulation folder not found for {simulation_id_path_og}"
+            )
+
         file_name = simulation_id_path_og.split("/")[-1]
         counterfactual_image_paths.append(matches[0] + "/render/" + file_name)
 
     return counterfactual_image_paths
-    
+
     # Implement logic to get counterfactual image paths based on the question
+
 
 def augment_image_VQA_with_context(
     question, world_state, resolved_attributes, file_names, augmentation=None
 ):
-
     if augmentation is None:
         return file_names
 
     # let's route here based on the flags
     if augmentation == "roi_circling_text":
         file_names = augment_roi_circling(
-            question, world_state, resolved_attributes, file_names, text=True, layout_position=False
+            question,
+            world_state,
+            resolved_attributes,
+            file_names,
+            text=True,
+            layout_position=False,
         )
     if augmentation == "roi_circling_no_text":
         file_names = augment_roi_circling(
-            question, world_state, resolved_attributes, file_names, text=False, layout_position=False
+            question,
+            world_state,
+            resolved_attributes,
+            file_names,
+            text=False,
+            layout_position=False,
         )
     if augmentation == "roi_circling_text_layout_position":
         file_names = augment_roi_circling(
-            question, world_state, resolved_attributes, file_names, text=True, layout_position=True
+            question,
+            world_state,
+            resolved_attributes,
+            file_names,
+            text=True,
+            layout_position=True,
         )
     if augmentation == "roi_circling_no_text_layout_position":
         file_names = augment_roi_circling(
-            question, world_state, resolved_attributes, file_names, text=False, layout_position=True
+            question,
+            world_state,
+            resolved_attributes,
+            file_names,
+            text=False,
+            layout_position=True,
         )
 
     # this is just to add same pathwas but with NO AUGMENTATIONs
     if augmentation == "ablation":
         file_names = augment_ablation(
-            question, world_state, resolved_attributes, file_names, text=False, layout_position=False
+            question,
+            world_state,
+            resolved_attributes,
+            file_names,
+            text=False,
+            layout_position=False,
         )
 
     # other augmentations
@@ -85,11 +110,17 @@ def augment_image_VQA_with_context(
             question, world_state, resolved_attributes, file_names
         )
 
-
     return file_names
 
 
-def augment_roi_circling(question, world_state, resolved_attributes, file_names, text=True, layout_position=False):
+def augment_roi_circling(
+    question,
+    world_state,
+    resolved_attributes,
+    file_names,
+    text=True,
+    layout_position=False,
+):
     # just check for folder existance
     new_dir = (
         Path(file_names[0]).parent.as_posix().replace("render", "render_roi_circled")
@@ -102,7 +133,9 @@ def augment_roi_circling(question, world_state, resolved_attributes, file_names,
         return file_names
 
     if len(resolved_attributes) == 0:
-        raise ImpossibleToAnswer("No resolved attributes for ROI circling. So no need to circle anything, and to ask questions about it")    
+        raise ImpossibleToAnswer(
+            "No resolved attributes for ROI circling. So no need to circle anything, and to ask questions about it"
+        )
 
     for file in file_names:
         original_image = np.array(PIL.Image.open(file))
@@ -160,7 +193,8 @@ def augment_roi_circling(question, world_state, resolved_attributes, file_names,
                             world_state, object_id, int(render_name.replace(".png", ""))
                         )
                         new_question = pattern.sub(
-                            f"{object_name} (circled in red and located at the {zone_to_focus})", question["question"]
+                            f"{object_name} (circled in red and located at the {zone_to_focus})",
+                            question["question"],
                         )
                     else:
                         new_question = pattern.sub(
@@ -173,11 +207,14 @@ def augment_roi_circling(question, world_state, resolved_attributes, file_names,
                             world_state, object_id, int(render_name.replace(".png", ""))
                         )
                         new_question = pattern.sub(
-                            f"object circled in red (located at the {zone_to_focus})", question["question"]
+                            f"object circled in red (located at the {zone_to_focus})",
+                            question["question"],
                         )
                     else:
                         # append after the name of the object that it is circled in the image
-                        new_question = pattern.sub("object circled in red", question["question"])
+                        new_question = pattern.sub(
+                            "object circled in red", question["question"]
+                        )
 
         new_file_name = file.replace("render", "render_roi_circled").replace(
             ".png", f"_{question['_question_key']}.png"
@@ -188,7 +225,7 @@ def augment_roi_circling(question, world_state, resolved_attributes, file_names,
         file_names[file_names.index(file)] = new_file_name
 
     # if new_question is None:
-    #     raise ImpossibleToAnswer("No modifications done to the question in ROI circling augmentation.")        
+    #     raise ImpossibleToAnswer("No modifications done to the question in ROI circling augmentation.")
 
     if len(resolved_attributes) > 0:
         question["question"] = new_question
@@ -196,7 +233,14 @@ def augment_roi_circling(question, world_state, resolved_attributes, file_names,
     return file_names
 
 
-def augment_ablation(question, world_state, resolved_attributes, file_names, text=True, layout_position=False):
+def augment_ablation(
+    question,
+    world_state,
+    resolved_attributes,
+    file_names,
+    text=True,
+    layout_position=False,
+):
     # just check for folder existance
     new_dir = (
         Path(file_names[0]).parent.as_posix().replace("render", "render_roi_circled")
@@ -209,15 +253,16 @@ def augment_ablation(question, world_state, resolved_attributes, file_names, tex
         return file_names
 
     if len(resolved_attributes) == 0:
-        raise ImpossibleToAnswer("No resolved attributes for ROI circling. So no need to circle anything, and to ask questions about it")    
+        raise ImpossibleToAnswer(
+            "No resolved attributes for ROI circling. So no need to circle anything, and to ask questions about it"
+        )
 
     for file in file_names:
         original_image = np.array(PIL.Image.open(file))
 
         for idx, (resolved_attr, value) in enumerate(resolved_attributes.items()):
             if "OBJECT" in resolved_attr:
-                object_id = value["choice"]["id"]
-                render_name = file.split("/")[-1]
+                object_id = value["choice"]["id"]                
                 instance_image_path = file.replace("render", "instances")
 
                 # print(world_state["encoding"])
@@ -258,42 +303,10 @@ def augment_ablation(question, world_state, resolved_attributes, file_names, tex
                     original_image, center, radius * 1.5, idx
                 )
 
-                object_name = value["choice"]["name"]
-                pattern = re.compile(re.escape(object_name), re.IGNORECASE)
-                if text:
-                    # modify the question such that the name of the object is removed and replaced with "the circled object"
-                    if layout_position:
-                        zone_to_focus = get_object_zone(
-                            world_state, object_id, int(render_name.replace(".png", ""))
-                        )
-                        new_question = pattern.sub(
-                            f"{object_name} (circled in red and located at the {zone_to_focus})", question["question"]
-                        )
-                    else:
-                        new_question = pattern.sub(
-                            f"{object_name} (circled in red)", question["question"]
-                        )
-                else:
-                    if layout_position:
-                        # append after the name of the object that it is circled in the image
-                        zone_to_focus = get_object_zone(
-                            world_state, object_id, int(render_name.replace(".png", ""))
-                        )
-                        new_question = pattern.sub(
-                            f"object circled in red (located at the {zone_to_focus})", question["question"]
-                        )
-                    else:
-                        # append after the name of the object that it is circled in the image
-                        new_question = pattern.sub("object circled in red", question["question"])        
-
-    # if new_question is None:
-    #     raise ImpossibleToAnswer("No modifications done to the question in ROI circling augmentation.")    
-
     return file_names
 
 
 def draw_roi_circle(original_image, center, radius=10, idx=0):
-
     cx, cy = map(int, center)
     cv2.circle(original_image, (cx, cy), int(radius), (255, 0, 0), 5, cv2.LINE_AA)
 
@@ -314,7 +327,6 @@ def augment_scene_context(question, world_state, resolved_attributes, file_names
 
 
 def get_object_zone(world_state, object_id, timestep_index):
-
     timestep = list(world_state["simulation"].keys())[timestep_index]
 
     possible_zones = [
@@ -331,9 +343,7 @@ def get_object_zone(world_state, object_id, timestep_index):
     img_width, img_height = 1000, 562  # assuming fixed image size for now
     zone_to_focus = ""
 
-    object_at_timestep = world_state["simulation"][timestep]["objects"][
-            object_id
-        ]
+    object_at_timestep = world_state["simulation"][timestep]["objects"][object_id]
 
     obb = object_at_timestep["obb"]
     cam = world_state["simulation"][str(timestep)]["camera"]
@@ -345,12 +355,7 @@ def get_object_zone(world_state, object_id, timestep_index):
 
     # this should not happen but it does edge cases, where the object is slightly visible
     # so we just put centerx and centery a the border
-    if (
-        center_x < 0
-        or center_x > img_width
-        or center_y < 0
-        or center_y > img_height
-    ):
+    if center_x < 0 or center_x > img_width or center_y < 0 or center_y > img_height:
         center_x = min(max(center_x, 0), img_width - (10))
         center_y = min(max(center_y, 0), img_height - (10))
 
@@ -366,12 +371,8 @@ def get_object_zone(world_state, object_id, timestep_index):
     try:
         zone_to_focus = possible_zones[zone_index]
     except IndexError:
-        print(
-            f"IndexError: zone_index {zone_index} out of range for possible_zones."
-        )
-        print(
-            f"center_x: {center_x}, center_y: {center_y}, row: {row}, col: {col}"
-        )
+        print(f"IndexError: zone_index {zone_index} out of range for possible_zones.")
+        print(f"center_x: {center_x}, center_y: {center_y}, row: {row}, col: {col}")
         raise IndexError
 
     return zone_to_focus

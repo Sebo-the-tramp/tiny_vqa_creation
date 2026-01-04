@@ -735,9 +735,7 @@ def main() -> None:
     # print(entries)
     if args.categories:
         requested = {category.lower() for category in args.categories}
-        all_entries = entries = [entry for entry in entries]
-        # print(all_entries)
-        # print(requested)
+        
         entries = [
             entry
             for entry in entries

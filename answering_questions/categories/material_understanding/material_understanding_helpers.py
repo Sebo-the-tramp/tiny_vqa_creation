@@ -93,19 +93,19 @@ Answer = Union[int, float, str]
 #     acceleration_magnitude = (
 #         current_timestep_involved_object_velocity[0] ** 2
 #         + current_timestep_involved_object_velocity[1] ** 2
-#         + current_timestep_involved_object_velocity[2] ** 2   
+#         + current_timestep_involved_object_velocity[2] ** 2
 #     ) ** 0.5
 
 #     return acceleration_magnitude
 
 material_taxonomy = {}
 with open("./categories/material_understanding/material_taxonomy.json", "r") as f:
-    material_taxonomy = json.load(f)['material_taxonomy']
+    material_taxonomy = json.load(f)["material_taxonomy"]
+
 
 def get_material_dataset_different_from_target(
     target_material: str, target_level: int = 2
 ) -> str:
-
     confounders_level_1 = set()
     confounders_level_2 = set()
     confounders_level_3 = set()
@@ -118,18 +118,18 @@ def get_material_dataset_different_from_target(
     for material_level1 in material_taxonomy:
         for material_level2 in material_level1["level_2_categories"]:
             for material in material_level2["level_3_items"]:
-                if material['role'] == 'CONFOUNDER':
-                    confounders_level_1.add(material_level1['level_1_name'].lower())
-                    confounders_level_2.add(material_level2['level_2_name'].lower())
-                    confounders_level_3.add(material['name'].lower())
-                elif material['name'] == target_material:                    
-                    target_material_level_1 = material_level1['level_1_name'].lower()
-                    target_material_level_2 = material_level2['level_2_name'].lower()
-                    target_material_level_3 = material['name'].lower()
+                if material["role"] == "CONFOUNDER":
+                    confounders_level_1.add(material_level1["level_1_name"].lower())
+                    confounders_level_2.add(material_level2["level_2_name"].lower())
+                    confounders_level_3.add(material["name"].lower())
+                elif material["name"] == target_material:
+                    target_material_level_1 = material_level1["level_1_name"].lower()
+                    target_material_level_2 = material_level2["level_2_name"].lower()
+                    target_material_level_3 = material["name"].lower()
 
     confounders_level_3.discard(target_material)
     confounders_level_2.discard(target_material_level_2)
-    confounders_level_1.discard(target_material_level_1)    
+    confounders_level_1.discard(target_material_level_1)
 
     # returning confounders based on target level
     if target_level == 1:

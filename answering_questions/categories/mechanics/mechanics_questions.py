@@ -41,7 +41,7 @@ from utils.frames_selection import (
 )
 
 from .mechanics_helpers import (
-    get_speed,    
+    get_speed,
     get_acceleration,
     get_position,
     get_rotation,
@@ -317,9 +317,13 @@ def F_KINEMATICS_MOVING_OBJECT(
     )
 
     if is_moving:
-        correct_idx = labels.index(resolved_attributes["OBJECT"]["choice"]["name"].lower())
+        correct_idx = labels.index(
+            resolved_attributes["OBJECT"]["choice"]["name"].lower()
+        )
     else:
-        correct_idx = labels.index("no object") # this version is correct because is lowercase
+        correct_idx = labels.index(
+            "no object"
+        )  # this version is correct because is lowercase
 
     return fill_questions(
         question, labels, correct_idx, world_state, timestep, resolved_attributes
@@ -330,7 +334,6 @@ def F_KINEMATICS_MOVING_OBJECT(
 def F_KINEMATICS_SYSTEM_STABILITY(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
-    
     """
     Stable: The system has stopped. (False)
     Unstable: The system is currently moving. (True)
@@ -354,10 +357,12 @@ def F_KINEMATICS_SYSTEM_STABILITY(
     is_unstable = random.choice([True, False])
 
     # basically if the system is unstable, just give a random timestep beside the final ones
-    # with the assumption that the frame n+1 will always be stable    
-    if(is_unstable):
+    # with the assumption that the frame n+1 will always be stable
+    if is_unstable:
         # removing the last 3 frames to avoid picking a stable frame
-        timestep = get_random_timestep_from_list(visible_timesteps[:-(CLIP_LENGTH * FRAME_INTERLEAVE)], question)
+        timestep = get_random_timestep_from_list(
+            visible_timesteps[: -(CLIP_LENGTH * FRAME_INTERLEAVE)], question
+        )
     else:
         # we want to pick the first of the series for which the last frame is the actual last.
         timestep = visible_timesteps[-(CLIP_LENGTH * FRAME_INTERLEAVE)]
@@ -370,7 +375,7 @@ def F_KINEMATICS_SYSTEM_STABILITY(
         "Stable: The system has stopped",
         "Unstable: The system is currently moving",
         "Cyclic: The system has returned to its exact starting position",
-        "Invisible: The objects have moved out of the frame entirely"
+        "Invisible: The objects have moved out of the frame entirely",
     ]
 
     correct_idx = 1 if is_unstable else 0
@@ -379,7 +384,6 @@ def F_KINEMATICS_SYSTEM_STABILITY(
     return fill_questions(
         question, labels, correct_idx, world_state, timestep, resolved_attributes
     )
-
 
 
 @with_resolved_attributes

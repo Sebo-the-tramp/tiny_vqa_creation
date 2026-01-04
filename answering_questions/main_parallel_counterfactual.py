@@ -8,26 +8,53 @@ import multiprocessing
 from multiprocessing import get_context
 from concurrent.futures import ProcessPoolExecutor
 from utils.config import set_config
-from utils.augment_VQA import get_counterfactual_image_paths 
+from utils.augment_VQA import get_counterfactual_image_paths
 
 from copy import deepcopy
+
+from utils.saving_utils import (
+    save_questions_answers_json,
+)
+from utils.my_exception import ImpossibleToAnswer
+from utils import seed_utils
+
+# Import categories - alphabetically
+from categories.spatial_reasoning.spatial_reasoning import (
+    get_function_by_name_spatial_reasoning,
+)
+
+from categories.mechanics.mechanics import (
+    get_function_by_name_mechanics,
+)
+
+from categories.material_understanding.material_understanding import (
+    get_function_by_name_material_understanding,
+)
+
+from categories.persistence.persistence import (
+    get_function_by_name_persistence,
+)
+
+from categories.viewpoint.viewpoint import (
+    get_function_by_name_viewpoint,
+)
+
 
 # Globals initialized in worker processes
 QUESTIONS = None
 DEST_ROOT = None
-ARG_MOCK = None
 VERBOSE = None
 
-def _init_worker(vqa_path, dest_root, arg_mock, verbose, base_seed, counterfactual_type):
+
+def _init_worker(vqa_path, dest_root, verbose, base_seed, counterfactual_type):
     """Runs once per worker process."""
     import os
 
-    global QUESTIONS, DEST_ROOT, ARG_MOCK, VERBOSE
+    global QUESTIONS, DEST_ROOT, VERBOSE
     counterfactual_type = counterfactual_type.lower()
     counterfactual_file = f"simple_vqa_counterfactual_{counterfactual_type}.json"
     QUESTIONS = read_questions(os.path.join(vqa_path, counterfactual_file))
     DEST_ROOT = dest_root
-    ARG_MOCK = arg_mock
     VERBOSE = verbose
     seed_utils.seed_everything(base_seed)
     try:
@@ -52,14 +79,18 @@ def _process_one(sim_file, args):
             os.path.join(simulation_id_path, "simulation_kinematics.json")
         )
 
-        simulation_id_path_og = re.sub(r"/dl3dv-counterfact/[^/]+/", "/dl3dv/", simulation_id_path)
+        simulation_id_path_og = re.sub(
+            r"/dl3dv-counterfact/[^/]+/", "/dl3dv/", simulation_id_path
+        )
         # I need to check the folder that contains the original simulation
         base_dir = simulation_id_path_og.split("seed-")[0]
         seed = simulation_id_path_og.split("seed-")[1].split("_")[0]
 
         matches = glob.glob(base_dir + "seed-" + seed + "_*")
         if len(matches) == 0:
-            raise FileNotFoundError(f"Original simulation folder not found for {simulation_id_path_og}")
+            raise FileNotFoundError(
+                f"Original simulation folder not found for {simulation_id_path_og}"
+            )
         simulation_id_path_og = matches[0]
 
         simulation_steps_og = read_simulation(
@@ -72,7 +103,6 @@ def _process_one(sim_file, args):
             simulation_steps_modified,
             sim_file,
             destination_simulation_id_path,
-            ARG_MOCK,
             verbose=VERBOSE,
             config=args,
         )
@@ -82,34 +112,6 @@ def _process_one(sim_file, args):
         print("\033[91mWorker error on", simulation_id_path, "->", repr(e), "\033[0m")
         print(e.with_traceback())
 
-
-from utils.saving_utils import (
-    save_questions_answers_json,
-)
-from utils.my_exception import ImpossibleToAnswer
-from utils import seed_utils
-
-# Import categories - alphabetically
-
-from categories.spatial_reasoning.spatial_reasoning import (
-    get_function_by_name_spatial_reasoning_cf,
-    get_result_by_name_spatial_reasoning_cf,
-)
-
-from categories.mechanics.mechanics import (
-    get_function_by_name_mechanics_cf,
-    get_result_by_name_mechanics_cf,
-)
-
-from categories.material_understanding.material_understanding import (
-    get_function_by_name_material_understanding_cf,
-    get_result_by_name_material_understanding_cf,
-)
-
-from categories.persistence.persistence import (
-    get_function_by_name_persistence_cf,
-    get_result_by_name_persistence_cf,
-)
 
 # ----- UTILS FUNCTIONS
 def read_questions(vqa_path):
@@ -124,28 +126,18 @@ def read_simulation(simulation_path):
     return simulation_steps
 
 
-# ----- FUNCTION TO GET ANSWER FROM SIMULTAION
-
-resolver_gt = {
-    "spatial_reasoning": get_result_by_name_spatial_reasoning_cf,
-    "mechanics": get_result_by_name_mechanics_cf,
-    "material_understanding": get_result_by_name_material_understanding_cf,
-    "persistence": get_result_by_name_persistence_cf,
-}
-
+# ----- FUNCTION TO GET ANSWER FROM SIMULATION
 resolver = {
-    "spatial_reasoning": get_function_by_name_spatial_reasoning_cf,
-    "mechanics": get_function_by_name_mechanics_cf,
-    "material_understanding": get_function_by_name_material_understanding_cf,
-    "persistence": get_function_by_name_persistence_cf,
+    "spatial_reasoning": get_function_by_name_spatial_reasoning,
+    "mechanics": get_function_by_name_mechanics,
+    "material_understanding": get_function_by_name_material_understanding,
+    "persistence": get_function_by_name_persistence,
+    "view_point": get_function_by_name_viewpoint,
 }
 
-def get_answer(question_key, question_category, mock=False):
-    return resolver[question_category](question_key, mock=mock)
 
-
-def get_gt(question_key, question_category, mock=False):
-    return resolver_gt[question_category](question_key, mock=mock)
+def get_answer(question_key, question_category):
+    return resolver[question_category](question_key)
 
 
 def natural_key(s):
@@ -159,12 +151,11 @@ def create_vqa(
     simulation_steps_modified,
     simulation_id,
     destination_simulation_id_path,
-    arg_mock,
     verbose=False,
     config=None,
 ):
-    seed_utils.reseed_for_context(simulation_id)
-    total_correct_per_category = {}
+    seed_utils.reseed_for_context(simulation_id)    
+    impossible_to_answer = 0
 
     print("Starting VQA creation...")
 
@@ -172,58 +163,78 @@ def create_vqa(
 
     for category_key, category in questions.items():
         # current category dev
-        # if (
-        #     # category_key != "material_understanding"
-        #     category_key != "spatial_reasoning"
-        # ):
-        #     continue
+        if (
+            # category_key != "material_understanding"
+            category_key != "persistence"
+            # category_key != "view_point"
+        ):
+            continue
 
         if verbose:
             print("###" * 10, f"Processing category: {category_key}", "###" * 10)
             print(f"questions: \n{category}")
             print("###" * 20)
-        total_questions_in_category = len(category)
-        total_correct_answers = 0
-        not_implemented = 0
+
         for question_key, question_data in category.items():
             question_payload = deepcopy(question_data)
             question_payload["_question_key"] = question_key
             question_payload["_simulation_id"] = simulation_id
 
-            fn_to_answer_question_cf = get_answer(
-                question_key, category_key, mock=arg_mock
+            fn_to_answer_question_modified_data_factual = get_answer(
+                # we remove the first C -> to get the factual version
+                question_key[1:],
+                category_key,
             )
 
             try:
-                answer_list_cf = fn_to_answer_question_cf(
-                    simulation_steps_og, simulation_steps_modified, question_payload, destination_simulation_id_path
+                # we call the factual to get the real data
+                answer_list_modified_data_factual = (
+                    fn_to_answer_question_modified_data_factual(
+                        simulation_steps_modified,
+                        question_payload,
+                        destination_simulation_id_path,
+                    )
                 )
             except ImpossibleToAnswer:
-                not_implemented += 1
+                impossible_to_answer += 1
                 continue
 
             # check answer factual
-            fn_to_check_answer_factual = get_answer(
-                question_key, category_key, mock=arg_mock
-            )
+            fn_to_check_answer_original_data_cf = get_answer(question_key, category_key)
 
             try:
-                answer_list_factual = fn_to_check_answer_factual(
-                    simulation_steps_og, simulation_steps_modified, question_payload, destination_simulation_id_path
+                answer_list_original_data_cf = fn_to_check_answer_original_data_cf(
+                    simulation_steps_og,
+                    simulation_steps_modified,
+                    answer_list_modified_data_factual,
+                    question_payload,
+                    destination_simulation_id_path,
                 )
             except ImpossibleToAnswer:
-                not_implemented += 1
+                impossible_to_answer += 1
                 continue
-            
+
             # checking that the counterfactual answer is different from the factual one
             # so we have an interesting question
-            correct_answer_counterfactual = answer_list_cf[0][1][answer_list_cf[0][2]]
-            correct_answer_factual = answer_list_factual[0][1][answer_list_factual[0][2]]
+            correct_answer_counterfactual = answer_list_modified_data_factual[0][1][
+                answer_list_modified_data_factual[0][2]
+            ]
+            correct_answer_factual = answer_list_original_data_cf[0][1][
+                answer_list_original_data_cf[0][2]
+            ]
 
-            if(str(correct_answer_counterfactual) == str(correct_answer_factual)):
-                print("WARNING: Counterfactual answer matches factual answer!")
+            if str(correct_answer_counterfactual) == str(correct_answer_factual):
                 print("NOT INTERESTING AT ALL!")
                 continue
+            else:
+                print("INTERESTING!")
+
+            # we need to change the question from factual to counterfactual
+            for question_factual, question_counterfactual in zip(
+                answer_list_modified_data_factual, answer_list_original_data_cf
+            ):
+                str_question = question_counterfactual[0]["question"]
+                question_factual[0]["question"] = str_question
 
             for (
                 question,
@@ -232,7 +243,7 @@ def create_vqa(
                 imgs_idx,
                 world_state,
                 resolved_attributes,
-            ) in answer_list_cf:
+            ) in answer_list_modified_data_factual:
                 # changing from image_paths to image_paths
                 file_names_to_augment = [
                     destination_simulation_id_path + f"render/{int(frame_idx):06d}.png"
@@ -242,7 +253,7 @@ def create_vqa(
                 # regex to check if in the label we have an image
                 pattern = re.compile(r"^\d{6}$")
 
-                for idx_img, label in enumerate(labels):
+                for _, label in enumerate(labels):
                     if pattern.match(label):
                         # do a smart replacement
                         new_image_path = (
@@ -254,18 +265,9 @@ def create_vqa(
                     file_names_to_augment.copy()
                 )
 
-                # This should only be for the factual questions I think but we can bring it back
-                # file_names = augment_image_VQA_with_context(
-                #     question,
-                #     world_state,
-                #     resolved_attributes,
-                #     file_names_to_augment.copy(),
-                #     augmentation=config.augmentation,
-                # )
-
                 all_vqa.append(
                     {
-                        "scene": simulation_steps_modified['scene'].get(
+                        "scene": simulation_steps_modified["scene"].get(
                             "scene", "unknown_scene"
                         ),
                         "simulation_id": simulation_id,
@@ -276,9 +278,11 @@ def create_vqa(
                         "image_paths": file_names,
                         "labels": labels,
                         "answer_index": correct_idx,
-                        "mode": "image-only"
-                        if question["task_splits"] == "single"
-                        else "general",
+                        "mode": (
+                            "image-only"
+                            if question["task_splits"] == "single"
+                            else "general"
+                        ),
                         "choice": question["choice"],
                     }
                 )
@@ -288,44 +292,6 @@ def create_vqa(
                     print(f"  Labels: {labels}")
                     print(f"  Correct Index: {correct_idx}")
                     print(f"  Images Indexes: {imgs_idx}")
-
-                gt = get_gt(question_key, category_key, mock=arg_mock)
-                if verbose:
-                    print(
-                        f"  Answer from function: {labels[correct_idx]}\n  Should match GT: {gt}"
-                    )
-
-                # Just for development, the rng function given more or less functions will break the integration test
-                if str(labels[correct_idx]) != str(gt) and verbose:
-                    print(
-                        "\033[93m  WARNING: Answer does not match Ground Truth!\033[0m"
-                    )
-                    # exit(1)
-                else:
-                    if str(labels[correct_idx]) == "not_implemented":
-                        not_implemented += 1
-                    else:
-                        total_correct_answers += 1
-                if verbose:
-                    print("===" * 20)
-
-        total_correct_per_category[category_key] = (
-            total_correct_answers,
-            not_implemented,
-            total_questions_in_category,
-        )        
-
-    if verbose:
-        print("Summary of correct answers per category:")
-    for category, (
-        correct,
-        not_implemented,
-        total,
-    ) in total_correct_per_category.items():
-        if verbose:
-            print(
-                f"Category '{category}': {correct}/{total - not_implemented} correct answers, {not_implemented} not implemented"
-            )
 
     return all_vqa
 
@@ -371,7 +337,6 @@ def main(args):
         initargs=(
             args.vqa_path,
             args.destination_simulation_path,
-            args.mock,
             args.verbose,
             args.seed,
             args.counterfactual_type,
@@ -380,10 +345,11 @@ def main(args):
     ) as ex:
         max_simulations = min(number_simulations, len(list_simulations))
         print(f"Processing {max_simulations} simulations...")
-        for sim_vqa in ex.map(_process_one, list_simulations[:max_simulations], [args]*max_simulations): # limit to 100s for now
+        for sim_vqa in ex.map(
+            _process_one, list_simulations[:max_simulations], [args] * max_simulations
+        ):  # limit to 100s for now
             all_vqa.extend(sim_vqa)
 
-    
     print(f"Saved {len(all_vqa)} questions and answers.")
 
     if args.export_format in ["json"]:
@@ -414,14 +380,14 @@ if __name__ == "__main__":
     parser.add_argument(
         "--simulation_paths",
         nargs="+",
-        type=str,        
+        type=str,
         default="/data0/sebastian.cavada/datasets/simulations_v3/dl3dv",
         help="Path to the simulation file containing the scenes.",
     )
     parser.add_argument(
         "--destination_simulation_path",
         type=str,
-        default="/data0/sebastian.cavada/simulations/dl3dv",        
+        default="/data0/sebastian.cavada/simulations/dl3dv",
         help="Path where the simulation files are stored (on same or different computer).",
     )
     parser.add_argument(
@@ -441,12 +407,6 @@ if __name__ == "__main__":
         choices=["base64", "path"],
         default="base64",
         help="Select whether exported questions reference images via base64 or filesystem paths (TSV always uses paths).",
-    )
-    parser.add_argument(
-        "--mock",
-        action="store_true",
-        default=True,
-        help="Use mock implementations for testing.",
     )
     parser.add_argument(
         "--verbose",

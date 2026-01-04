@@ -72,12 +72,12 @@ resolver = {
 }
 
 
-def get_answer(question_key, question_category, mock=False):
-    return resolver[question_category](question_key, mock=mock)
+def get_answer(question_key, question_category):
+    return resolver[question_category](question_key)
 
 
-def get_gt(question_key, question_category, mock=False):
-    return resolver_gt[question_category](question_key, mock=mock)
+def get_gt(question_key, question_category):
+    return resolver_gt[question_category](question_key)
 
 
 def natural_key(s):
@@ -90,7 +90,6 @@ def create_vqa(
     simulation_steps,
     simulation_id,
     destination_simulation_id_path,
-    arg_mock,
     verbose=False,
 ):
     seed_utils.reseed_for_context(simulation_id)
@@ -119,9 +118,7 @@ def create_vqa(
             question_payload["_question_key"] = question_key
             question_payload["_simulation_id"] = simulation_id
 
-            fn_to_answer_question = get_answer(
-                question_key, category_key, mock=arg_mock
-            )
+            fn_to_answer_question = get_answer(question_key, category_key)
 
             try:
                 # answer_list = question, labels, correct_idx, imgs_idx
@@ -171,7 +168,7 @@ def create_vqa(
                     print(f"  Correct Index: {correct_idx}")
                     print(f"  Images Indexes: {imgs_idx}")
 
-                gt = get_gt(question_key, category_key, mock=arg_mock)
+                gt = get_gt(question_key, category_key)
                 if verbose:
                     print(
                         f"  Answer from function: {labels[correct_idx]}\n  Should match GT: {gt}"
@@ -261,7 +258,6 @@ def main(args):
                 simulation_steps,
                 simulation_id,
                 destination_simulation_id_path,
-                args.mock,
                 verbose=args.verbose,
             )
             all_vqa.extend(simulation_vqa)
@@ -343,12 +339,6 @@ if __name__ == "__main__":
         choices=["base64", "path"],
         default="base64",
         help="Select whether exported questions reference images via base64 or filesystem paths (TSV always uses paths).",
-    )
-    parser.add_argument(
-        "--mock",
-        action="store_true",
-        default=True,
-        help="Use mock implementations for testing.",
     )
     parser.add_argument(
         "--verbose",

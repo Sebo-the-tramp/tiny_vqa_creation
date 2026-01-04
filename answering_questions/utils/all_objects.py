@@ -13,10 +13,10 @@ with open("./utils/json/gso_mapping.json", "r") as f:
 
 
 def get_gso_mapping():
-
     # adding an immediate fix:
     gso_mapping["Rexy_Glove_Heavy_Duty_Large"] = {
-        "name": "Rexy Glove Heavy Duty Large",}
+        "name": "Rexy Glove Heavy Duty Large",
+    }
     gso_mapping["Avengers_Gamma_Green_Smash_Fists"] = {
         "name": "Avengers Gamma Green Smash Fists",
     }

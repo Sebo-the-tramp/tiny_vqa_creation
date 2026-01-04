@@ -84,7 +84,8 @@ def project_points(Xw, cam):
     uv = uv[:, :2] / z[:, None]
     return uv, z
 
-def world_to_camera_view(Xw, cam): 
+
+def world_to_camera_view(Xw, cam):
     R, t = get_RT(cam)
     Xc = (R @ Xw.T + t[:, None]).T
     return Xc

@@ -50,5 +50,41 @@
             "choice": "mcq",
             "question": "Which object would be the <OBJECT-CF> colliding with in the frame?"
         }
-    }   
+    },
+    "material_understanding": {
+         "CF_MASS_OBJECT": {
+            "task_splits": "single+multi",
+            "sub_category": "mass",
+            "choice": "mcq",
+            "question": "What is the mass of the <OBJECT-CF>?"
+        }, 
+        "CF_MASS_HEAVIEST_OBJECT": {
+            "task_splits": "single+multi",
+            "sub_category": "mass",
+            "choice": "mcq",
+            "question": "Which single object has the greatest mass?"
+        },
+        "CF_MASS_LIGHTEST_OBJECT": {
+            "task_splits": "single+multi",
+            "sub_category": "mass",
+            "choice": "mcq",
+            "question": "Which single object has the least mass?"
+        }
+    },
+    "view_point": {
+        "CF_VISIBILITY_OBJECT_COUNT": {
+            "task_splits": "single+multi",
+            "sub_category": "visibility",
+            "choice": "mcq",
+            "question": "How many objects are visible in the image/frame?"
+        }
+    },
+    "persistence":{
+        "CF_PERSISTENCE_OBJECT_TOTAL_COUNT_HIDDEN": {
+            "task_splits": "multi",
+            "sub_category": "object_persistence",
+            "choice": "mcq",
+            "question": "How many objects are present but not visible in the last frame?"
+        }
+    }
 }

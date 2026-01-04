@@ -32,7 +32,6 @@ import open3d as o3d
 from utils.load_pointclouds import load_scene_pointcloud
 
 
-
 # ---------------------------- Math helpers ----------------------------
 def euler_to_quat_xyz(rx, ry, rz):
     """Return quaternion [x,y,z,w] from intrinsic XYZ Euler angles (radians)."""

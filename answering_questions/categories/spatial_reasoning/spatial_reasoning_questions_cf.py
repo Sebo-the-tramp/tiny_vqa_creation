@@ -207,7 +207,7 @@ def CF_SIZE_OBJECT_BIGGER(
 
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        ["OBJECT"], world_state_mod, min_objects=kwargs["current_world_number_of_objects"]
+        ["OBJECT_CF"], world_state_mod, min_objects=kwargs["current_world_number_of_objects"]
     )
 
     timestep = get_random_timestep_from_list(visible_timesteps, question)

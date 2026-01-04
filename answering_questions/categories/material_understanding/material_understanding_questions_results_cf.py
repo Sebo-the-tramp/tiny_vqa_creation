@@ -8,4 +8,3 @@ def CF_MASS_HEAVIEST_OBJECT() -> str:
 
 def CF_MASS_LIGHTEST_OBJECT() -> str:
     return "Distance between object and camera question result"
-

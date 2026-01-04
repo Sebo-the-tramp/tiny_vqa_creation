@@ -106,6 +106,11 @@ from categories.material_understanding.material_understanding import (
     get_result_by_name_material_understanding_cf,
 )
 
+from categories.persistence.persistence import (
+    get_function_by_name_persistence_cf,
+    get_result_by_name_persistence_cf,
+)
+
 # ----- UTILS FUNCTIONS
 def read_questions(vqa_path):
     with open(vqa_path, "r") as f:
@@ -125,12 +130,14 @@ resolver_gt = {
     "spatial_reasoning": get_result_by_name_spatial_reasoning_cf,
     "mechanics": get_result_by_name_mechanics_cf,
     "material_understanding": get_result_by_name_material_understanding_cf,
+    "persistence": get_result_by_name_persistence_cf,
 }
 
 resolver = {
     "spatial_reasoning": get_function_by_name_spatial_reasoning_cf,
     "mechanics": get_function_by_name_mechanics_cf,
     "material_understanding": get_function_by_name_material_understanding_cf,
+    "persistence": get_function_by_name_persistence_cf,
 }
 
 def get_answer(question_key, question_category, mock=False):
@@ -165,11 +172,11 @@ def create_vqa(
 
     for category_key, category in questions.items():
         # current category dev
-        if (
-            # category_key != "material_understanding"
-            category_key != "spatial_reasoning"
-        ):
-            continue
+        # if (
+        #     # category_key != "material_understanding"
+        #     category_key != "spatial_reasoning"
+        # ):
+        #     continue
 
         if verbose:
             print("###" * 10, f"Processing category: {category_key}", "###" * 10)

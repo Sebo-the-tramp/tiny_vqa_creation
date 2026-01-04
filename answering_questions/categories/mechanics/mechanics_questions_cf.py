@@ -8,7 +8,7 @@ and fall back to sensible defaults when information is missing.
 
 from __future__ import annotations
 
-from utils.decorators import with_resolved_attributes
+from utils.decorators import with_resolved_attributes_cf
 
 from typing import (
     Any,
@@ -25,7 +25,7 @@ from utils.my_exception import ImpossibleToAnswer
 from utils.all_objects import get_all_objects_names
 
 from utils.helpers import (
-    fill_questions,
+    fill_questions_cf,
     iter_objects,
     distance_between,
     resolve_attributes_visible_at_timestep,
@@ -70,9 +70,9 @@ ROTATION_TOLERANCE = get_config()["rotation_tolerance"]
 ## --- Resolver functions -- ##
 
 
-@with_resolved_attributes
+@with_resolved_attributes_cf
 def CF_KINEMATICS_SPEED_OBJECT(
-    world_state: WorldState, question: QuestionPayload, attributes, **kwargs
+     world_state_og: WorldState, world_state_mod: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
     """Return the velocity of the object referenced in the question."""
 
@@ -80,32 +80,32 @@ def CF_KINEMATICS_SPEED_OBJECT(
 
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        attributes, world_state, min_objects=kwargs["current_world_number_of_objects"]
+        attributes, world_state_mod, min_objects=kwargs["current_world_number_of_objects"]
     )
 
     timestep = get_random_timestep_from_list(visible_timesteps, question)
 
     resolved_attributes = resolve_attributes_visible_at_timestep(
-        attributes, world_state, timestep
+        attributes, world_state_mod, timestep
     )
 
     object_id = resolved_attributes["OBJECT-CF"]["choice"]["id"]
 
-    velocity_object_at_timestep = get_speed(object_id, timestep, world_state)
+    velocity_object_at_timestep = get_speed(object_id, timestep, world_state_mod)
 
     labels, correct_idx = create_mc_options_around_gt(
         velocity_object_at_timestep, num_answers=4
     )
     labels = [f"{label} m/s" for label in labels]
 
-    return fill_questions(
-        question, labels, correct_idx, world_state, timestep, resolved_attributes
+    return fill_questions_cf(
+        question, labels, correct_idx, world_state_og, world_state_mod, timestep, resolved_attributes
     )
 
 
-@with_resolved_attributes
-def F_KINEMATICS_ACCEL_OBJECT(
-    world_state: WorldState, question: QuestionPayload, attributes, **kwargs
+@with_resolved_attributes_cf
+def CF_KINEMATICS_ACCEL_OBJECT(
+     world_state_og: WorldState, world_state_mod: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
     """Return the velocity of the object referenced in the question."""
 
@@ -113,39 +113,39 @@ def F_KINEMATICS_ACCEL_OBJECT(
 
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        attributes, world_state, min_objects=kwargs["current_world_number_of_objects"]
+        attributes, world_state_mod, min_objects=kwargs["current_world_number_of_objects"]
     )
     # if we are in a multi-image setting, we need to ensure there are enough frames
     timestep = get_random_timestep_from_list(visible_timesteps, question)
 
     resolved_attributes = resolve_attributes_visible_at_timestep(
-        attributes, world_state, timestep
+        attributes, world_state_mod, timestep
     )
 
     object_id = resolved_attributes["OBJECT-CF"]["choice"]["id"]
 
-    acceleration_object = get_acceleration(object_id, timestep, world_state)
+    acceleration_object = get_acceleration(object_id, timestep, world_state_mod)
 
     labels, correct_idx = create_mc_options_around_gt(
         acceleration_object, num_answers=4, display_decimals=2, lo=-100.0, hi=100.0
     )
     labels = [f"{label} m/s^2" for label in labels]
 
-    return fill_questions(
-        question, labels, correct_idx, world_state, timestep, resolved_attributes
+    return fill_questions_cf(
+        question, labels, correct_idx, world_state_og, world_state_mod, timestep, resolved_attributes
     )
 
 
-@with_resolved_attributes
-def F_KINEMATICS_DISTANCE_TRAVELED_INTERVAL(
-    world_state: WorldState, question: QuestionPayload, attributes, **kwargs
+@with_resolved_attributes_cf
+def CF_KINEMATICS_DISTANCE_TRAVELED_INTERVAL(
+     world_state_og: WorldState, world_state_mod: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
     """Count objects of a specific type that moved more than a given metric distance."""
     assert len(attributes) == 1 and "OBJECT-CF" in attributes
 
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        attributes, world_state, min_objects=kwargs["current_world_number_of_objects"]
+        attributes, world_state_mod, min_objects=kwargs["current_world_number_of_objects"]
     )
 
     continuous_subsequences = get_continuous_subsequences_min_length(
@@ -161,15 +161,15 @@ def F_KINEMATICS_DISTANCE_TRAVELED_INTERVAL(
     ]
 
     resolved_attributes = resolve_attributes_visible_at_timestep(
-        attributes, world_state, timestep_start
+        attributes, world_state_mod, timestep_start
     )
 
     object_id = resolved_attributes["OBJECT-CF"]["choice"]["id"]
 
     position_obj_state_timestep_start = get_position(
-        world_state, object_id, timestep_start
+        world_state_mod, object_id, timestep_start
     )
-    position_obj_state_timestep_end = get_position(world_state, object_id, timestep_end)
+    position_obj_state_timestep_end = get_position(world_state_mod, object_id, timestep_end)
     distance = distance_between(
         position_obj_state_timestep_start, position_obj_state_timestep_end
     )
@@ -180,13 +180,13 @@ def F_KINEMATICS_DISTANCE_TRAVELED_INTERVAL(
     labels = uniform_labels(options, integer=False, decimals=1)
     labels = [f"{opt} meters" for opt in labels]
 
-    return fill_questions(
-        question, labels, correct_idx, world_state, timestep_end, resolved_attributes
+    return fill_questions_cf(
+        question, labels, correct_idx, world_state_og, world_state_mod, timestep_end, resolved_attributes
     )
 
-@with_resolved_attributes
-def F_KINEMATICS_SYSTEM_STABILITY(
-    world_state: WorldState, question: QuestionPayload, attributes, **kwargs
+@with_resolved_attributes_cf
+def CF_KINEMATICS_SYSTEM_STABILITY(
+     world_state_og: WorldState, world_state_mod: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
     
     """
@@ -200,7 +200,7 @@ def F_KINEMATICS_SYSTEM_STABILITY(
 
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        attributes, world_state, min_objects=kwargs["current_world_number_of_objects"]
+        attributes, world_state_mod, min_objects=kwargs["current_world_number_of_objects"]
     )
 
     continuous_subsequences = get_continuous_subsequences_min_length(
@@ -221,7 +221,7 @@ def F_KINEMATICS_SYSTEM_STABILITY(
         timestep = visible_timesteps[-(CLIP_LENGTH * FRAME_INTERLEAVE)]
 
     resolved_attributes = resolve_attributes_visible_at_timestep(
-        ["OBJECT-CF"], world_state, timestep
+        ["OBJECT-CF"], world_state_mod, timestep
     )
 
     options = [
@@ -234,22 +234,22 @@ def F_KINEMATICS_SYSTEM_STABILITY(
     correct_idx = 1 if is_unstable else 0
     labels = options
 
-    return fill_questions(
-        question, labels, correct_idx, world_state, timestep, resolved_attributes
+    return fill_questions_cf(
+        question, labels, correct_idx, world_state_og, world_state_mod, timestep, resolved_attributes
     )
 
 
 ## --- COLLISION RESOLVERS --- ##
 
-@with_resolved_attributes
-def F_COLLISIONS_OBJ_OBJ_FIRST(
-    world_state: WorldState, question: QuestionPayload, attributes, **kwargs
+@with_resolved_attributes_cf
+def CF_COLLISIONS_OBJ_OBJ_FIRST(
+     world_state_og: WorldState, world_state_mod: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
     assert len(attributes) == 1 and "OBJECT-CF" in attributes
 
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        attributes, world_state, min_objects=kwargs["current_world_number_of_objects"]
+        attributes, world_state_mod, min_objects=kwargs["current_world_number_of_objects"]
     )
 
     continuous_subsequences = get_continuous_subsequences_min_length(
@@ -259,14 +259,14 @@ def F_COLLISIONS_OBJ_OBJ_FIRST(
     visible_timesteps = random.choice(continuous_subsequences)[(CLIP_LENGTH - 1) :]
 
     resolved_attributes = resolve_attributes_visible_at_timestep(
-        attributes, world_state, visible_timesteps[0]
+        attributes, world_state_mod, visible_timesteps[0]
     )
 
     object = resolved_attributes["OBJECT-CF"]["choice"]
 
     first_collided_object = None
     for timestep in visible_timesteps:
-        value = world_state["simulation"][str(timestep)]
+        value = world_state_mod["simulation"][str(timestep)]
         collisions_at_sim_step = value["collisions"]
         for collision in collisions_at_sim_step:
             obj_a = collision[0]
@@ -275,15 +275,15 @@ def F_COLLISIONS_OBJ_OBJ_FIRST(
                 continue  # we are just colliding with the ground
             if obj_a == object["id"] or obj_b == object["id"]:
                 if obj_a == object["id"]:
-                    first_collided_object = world_state[["objects"]][str(obj_b)]
+                    first_collided_object = world_state_mod[["objects"]][str(obj_b)]
                 else:
-                    first_collided_object = world_state[["objects"]][str(obj_b)]
+                    first_collided_object = world_state_mod[["objects"]][str(obj_b)]
                 break
 
     DATASET = get_all_objects_names()
     present = [
         obj["name"]
-        for obj in list(iter_objects(world_state))
+        for obj in list(iter_objects(world_state_mod))
         if obj["id"] != object["id"]
     ]
 
@@ -294,20 +294,20 @@ def F_COLLISIONS_OBJ_OBJ_FIRST(
     else:
         labels, idx = create_mc_object_names_from_dataset("No Object", present, DATASET)
 
-    return fill_questions(
-        question, labels, idx, world_state, visible_timesteps[0], resolved_attributes
+    return fill_questions_cf(
+        question, labels, idx, world_state_og, world_state_mod, visible_timesteps[0], resolved_attributes
     )
 
 
-@with_resolved_attributes
-def F_COLLISION_OBJECT_OBJECT_FRAME_SINGLE(
-    world_state: WorldState, question: QuestionPayload, attributes, **kwargs
+@with_resolved_attributes_cf
+def CF_COLLISION_OBJECT_OBJECT_FRAME_SINGLE(
+     world_state_og: WorldState, world_state_mod: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
     assert len(attributes) == 1 and "OBJECT-CF" in attributes
 
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        attributes, world_state, min_objects=kwargs["current_world_number_of_objects"]
+        attributes, world_state_mod, min_objects=kwargs["current_world_number_of_objects"]
     )
 
     choice_collision = 1  # forcing to NOT look for a collision
@@ -317,7 +317,7 @@ def F_COLLISION_OBJECT_OBJECT_FRAME_SINGLE(
 
     # I just want to catch a collision here
     for timestep in visible_timesteps:
-        step_state = world_state["simulation"][str(timestep)]
+        step_state = world_state_mod["simulation"][str(timestep)]
         collisions_at_sim_step = step_state["collisions"]
 
         collisions_at_sim_step_ground = [
@@ -338,9 +338,9 @@ def F_COLLISION_OBJECT_OBJECT_FRAME_SINGLE(
             obj_b = collision[1]
             if obj_a != 0 and obj_b != 0:
                 if is_object_visible_at_timestep(
-                    str(obj_b), str(timestep), world_state
+                    str(obj_b), str(timestep), world_state_mod
                 ) and is_object_visible_at_timestep(
-                    str(obj_a), str(timestep), world_state
+                    str(obj_a), str(timestep), world_state_mod
                 ):
                     collisions_at_sim_visible_object.append(collision)
 
@@ -362,13 +362,13 @@ def F_COLLISION_OBJECT_OBJECT_FRAME_SINGLE(
     'initial_condition': {...}, 'scale': 1.2468836307525635, 'obb_size': None, 'id': '2', 'name': 'Olive_Kids_Game_On_Pack_n_Snack'}, 'category': 'OBJECT'}
     """
     # technically the resolved object should be the one colliding
-    collider_object = world_state["objects"][str(collision_object_b_id)]
-    colliding_object = world_state["objects"][str(collision_object_a_id)]
+    collider_object = world_state_mod["objects"][str(collision_object_b_id)]
+    colliding_object = world_state_mod["objects"][str(collision_object_a_id)]
     resolved_attributes = {"OBJECT": {"choice": collider_object, "category": "OBJECT"}}
 
     present = [
         obj["name"]
-        for obj in list(iter_objects(world_state))
+        for obj in list(iter_objects(world_state_mod))
         if obj["id"] != collider_object["id"]
     ]
 
@@ -376,11 +376,12 @@ def F_COLLISION_OBJECT_OBJECT_FRAME_SINGLE(
         colliding_object["name"], present, get_all_objects_names()
     )
 
-    return fill_questions(
+    return fill_questions_cf(
         question,
         labels,
         correct_idx,
-        world_state,
+        world_state_og,
+        world_state_mod,
         collision_timestep,
         resolved_attributes,
     )

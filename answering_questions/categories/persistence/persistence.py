@@ -34,6 +34,27 @@ def get_function_by_name_persistence(name: str, mock: bool = False) -> Resolver:
         raise TypeError(f"Attribute '{name}' in {mod.__name__} is not callable.")
     return fn
 
+@lru_cache
+def _load_impl_module_cf(mock: bool):
+    modname = ".persistence_questions_cf" if mock else ".persistence_real"
+    return import_module(modname, package=__package__)
+
+
+def get_function_by_name_persistence_cf(name: str, mock: bool = False) -> Resolver:
+    mod = _load_impl_module_cf(mock)
+    try:
+        fn = getattr(mod, name)
+    except AttributeError:
+        # Nice error with suggestions
+        candidates = [n for n in dir(mod) if n.startswith("CF_")]
+        raise ValueError(
+            f"Function '{name}' not found in {mod.__name__}. "
+            f"Available: {', '.join(sorted(candidates))}"
+        )
+    if not callable(fn):
+        raise TypeError(f"Attribute '{name}' in {mod.__name__} is not callable.")
+    return fn
+
 
 @lru_cache
 def _load_gt_module(mock: bool):
@@ -48,6 +69,28 @@ def get_result_by_name_persistence(name: str, mock: bool = False) -> Any:
     except AttributeError:
         # Nice error with suggestions
         candidates = [n for n in dir(mod) if n.startswith("F_")]
+        raise ValueError(
+            f"Function '{name}' not found in {mod.__name__}. "
+            f"Available: {', '.join(sorted(candidates))}"
+        )
+    if not callable(fn):
+        raise TypeError(f"Attribute '{name}' in {mod.__name__} is not callable.")
+    return fn()  # Call the function to get the result
+
+
+@lru_cache
+def _load_gt_module_cf(mock: bool):
+    modname = ".persistence_questions_results_cf"
+    return import_module(modname, package=__package__)
+
+
+def get_result_by_name_persistence_cf(name: str, mock: bool = False) -> Any:
+    mod = _load_gt_module_cf(mock)
+    try:
+        fn = getattr(mod, name)
+    except AttributeError:
+        # Nice error with suggestions
+        candidates = [n for n in dir(mod) if n.startswith("CF_")]
         raise ValueError(
             f"Function '{name}' not found in {mod.__name__}. "
             f"Available: {', '.join(sorted(candidates))}"

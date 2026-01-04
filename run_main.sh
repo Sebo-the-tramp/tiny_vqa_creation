@@ -53,20 +53,20 @@ GENERAL_RUN_COUNT=13
 
 # -------------------------------------------------------------
 # # 10K general - yms variations 
-RUN_NAME="run_${GENERAL_RUN_COUNT}_general_yms-variations"
+# RUN_NAME="run_${GENERAL_RUN_COUNT}_general_yms-variations"
 
 # python main_parallel.py --simulation_path "${BASE_PATH}/yms-variations/" \
 #     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
 #     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_general_yms-variations" \
 #     --n_scenes 2000
 
-python ./subsample_questions_yms_variations.py \
-    --input ../output/run_12_general_yms-variations/test_run_12_general_yms-variations.json \
-    --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
-    --subcategory-map ./balancing_sub_categories.json \
-    --total 10000 \
+# python ./subsample_questions_yms_variations.py \
+#     --input ../output/run_12_general_yms-variations/test_run_12_general_yms-variations.json \
+#     --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
+#     --subcategory-map ./balancing_sub_categories.json \
+#     --total 10000 \
 
-cp ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json ../output/${RUN_NAME}/test_${RUN_NAME}_karo_10K.json
+# cp ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json ../output/${RUN_NAME}/test_${RUN_NAME}_karo_10K.json
 
 
 # -------------------------------------------------------------
@@ -116,12 +116,12 @@ cp ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json ../output/${RUN_NAME}/test_${
 #     --n_scenes 1000
 
 # # -------------------------------------------------------------
-# # 1K general # text counterfactual gravity
-# python main_parallel_counterfactual.py --simulation_path "${BASE_PATH_CF}/2xsmaller" \
-#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
-#     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_counterfactual_smaller" \
-#     --counterfactual_type "volume" \
-#     --n_scenes 1000
+# 1K general # text counterfactual gravity
+python main_parallel_counterfactual.py --simulation_path "${BASE_PATH_CF}/2xsmaller" \
+    --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
+    --export_format json --run_name "run_${GENERAL_RUN_COUNT}_counterfactual_smaller" \
+    --counterfactual_type "volume" \
+    --n_scenes 1000
 
 # -------------------------------------------------------------
 # ABLATION STUDYs

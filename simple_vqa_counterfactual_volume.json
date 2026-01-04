@@ -32,7 +32,7 @@
             "choice": "mcq",
             "question": "Considering the geometrical center of <OBJECT-CF>, what would be the straight-line distance it has traveled during the sequence?"
         },
-        "F_KINEMATICS_SYSTEM_STABILITY": {
+        "CF_KINEMATICS_SYSTEM_STABILITY": {
             "task_splits": "multi",
             "sub_category": "kinematics",
             "choice": "mcq",
@@ -71,12 +71,18 @@
             "question": "Which single object has the least mass?"
         }
     },
-    "temporal": {
-        "F_TEMPORAL_PREDICTION_NEXT_IMAGE_GRANULARITY_1": {
+    "persistence":{
+        "CF_PERSISTENCE_OBJECT_TOTAL_COUNT": {
             "task_splits": "multi",
-            "sub_category": "event_ordering",
-            "choice": "mcq", 
-            "question": "Which frame is most likely to occur after the last frame in the sequence?"
+            "sub_category": "object_persistence",
+            "choice": "mcq",
+            "question": "How many objects are there in the last frame in total, including those currently hidden and/or out of frame?"
+        },
+        "CF_PERSISTENCE_OBJECT_TOTAL_COUNT_HIDDEN": {
+            "task_splits": "multi",
+            "sub_category": "object_persistence",
+            "choice": "mcq",
+            "question": "How many objects are present but not visible in the last frame?"
         }
     }
 }

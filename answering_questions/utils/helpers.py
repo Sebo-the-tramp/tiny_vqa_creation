@@ -213,7 +213,7 @@ def compute_counterfactual_string(
 
 
 def fill_questions_cf(
-    question, labels, correct_idx, world_state_og, world_state_modified, timestep, resolved_attributes
+    question, labels, correct_idx, world_state_og, world_state_modified, timestep, resolved_attributes, initial_timestep=None
 ) -> List:
     questions = []
     # 1) Keep the correct label before shuffling
@@ -267,11 +267,17 @@ def fill_questions_cf(
         if split == "single":
             frames = sample_frames_at_timesteps(world_state_modified, [timestep])
         else:  # "multi"
+            if initial_timestep is not None:
+                initial_ts_float = float(initial_timestep)
+                ts_float = float(timestep)
+                effective_frame_interleave = int((ts_float - initial_ts_float) * SAMPLING_RATE // (CLIP_LENGTH - 1))
+            else:
+                effective_frame_interleave = FRAME_INTERLEAVE
             frames = sample_frames_before_timestep(
                 world_state_modified,
                 timestep,
                 num_frames=CLIP_LENGTH,
-                frame_interleave=FRAME_INTERLEAVE,
+                frame_interleave=effective_frame_interleave,
             )
 
         # Pass a fresh copy of the shuffled labels for each item

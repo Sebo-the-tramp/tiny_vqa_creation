@@ -305,6 +305,30 @@ Common Issues and Fixes
 - Counterfactual mapping fails: verify `dl3dv-counterfact` and `dl3dv` have matching
   seed naming and folder structure.
 
+Contributing / Adding New VQA
+-----------------------------
+Contributions are welcome. If you want to add a new VQA type:
+
+1) Add or update templates:
+   - Extend `simple_vqa.json` or create a new `simple_vqa_*.json`.
+   - Ensure each question has a unique `question_key`, plus `sub_category`.
+
+2) Implement the logic:
+   - Add a handler in the appropriate category module under
+     `answering_questions/categories/`.
+   - If it's a new category, add a new module and wire it into the resolver maps in
+     `answering_questions/main_parallel.py` (and
+     `answering_questions/main_parallel_counterfactual.py` if needed).
+
+3) Connect to the resolver:
+   - Add a mapping in `get_function_by_name_<category>` and, if needed, the
+     `get_result_by_name_<category>` counterpart.
+
+4) Validate locally:
+   - Run a small job with `--n_scenes 5` and `--include_categories` for the new
+     category.
+   - Use `fast_tools/check_VQA.py` to visualize questions and image paths.
+
 Status / Notes
 --------------
 - Some refactoring is needed; I will do it in those days.

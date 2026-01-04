@@ -17,20 +17,13 @@ from typing import (
     Union,
 )
 
-
 import math
 import random
 
-Number = Union[int, float]
-Vector = Tuple[float, float, float]
-WorldState = Mapping[str, Any]
-QuestionPayload = Mapping[str, Any]
-Answer = Union[str, float, Vector, Mapping[str, Any], Sequence[str]]
-
+from utils.config import get_config
+from utils.all_objects import get_all_objects_names
 from utils.decorators import with_resolved_attributes
-
 from utils.bin_creation import create_mc_object_names_from_dataset
-
 from utils.my_exception import ImpossibleToAnswer
 
 from utils.helpers import (
@@ -54,9 +47,11 @@ from categories.viewpoint.viewpoint_helpers import (
     get_number_of_visible_objects,
 )
 
-from utils.all_objects import get_all_objects_names
-
-from utils.config import get_config
+Number = Union[int, float]
+Vector = Tuple[float, float, float]
+WorldState = Mapping[str, Any]
+QuestionPayload = Mapping[str, Any]
+Answer = Union[str, float, Vector, Mapping[str, Any], Sequence[str]]
 
 CLIP_LENGTH = get_config()["clip_length"]
 FRAME_INTERLEAVE = get_config()["frame_interleave"]

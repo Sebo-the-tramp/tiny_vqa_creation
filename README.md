@@ -225,7 +225,7 @@ uv pip install pre-commit
 pre-commit install
 ```
 
-Then add a `.pre-commit-config.yaml` and run:
+Then run:
 
 ```bash
 pre-commit run --all-files

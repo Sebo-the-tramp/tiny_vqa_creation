@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# codex resume 019b8e96-5e52-74c2-826d-482eb2baca4c -> tqdm and everything
+
 if [ -d "/data0/sebastian.cavada/datasets/simulations_v4" ]; then
     source "/data0/sebastian.cavada/.telegram_bot.env"
     BASE_PATH="/data0/sebastian.cavada/datasets/simulations_v4/dl3dv"
@@ -27,12 +29,12 @@ GENERAL_RUN_COUNT=13
 
 ####################
 
-python main_parallel.py --simulation_path "${BASE_PATH}/random/" \
-    --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
-    --run_name "run_${GENERAL_RUN_COUNT}_general" \
-    --n_scenes 200 \
-    --timeit \
-    --exclude_simulations_file "problematic_paths.txt"
+# python main_parallel.py --simulation_path "${BASE_PATH}/random/" \
+#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
+#     --run_name "run_${GENERAL_RUN_COUNT}_general" \
+#     --n_scenes 2000 \
+#     --timeit \
+#     --exclude_simulations_file "problematic_paths.txt"
 
 # python ./subsample_questions_percentage.py \
 #     --count 10000 \
@@ -102,12 +104,12 @@ python main_parallel.py --simulation_path "${BASE_PATH}/random/" \
 
 # -------------------------------------------------------------
 # 1K general # text counterfactual shift
-# python main_parallel_counterfactual.py --simulation_path "${BASE_PATH_CF}/shift-x" "${BASE_PATH_CF}/shift-z" \
-#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
-#     --run_name "run_${GENERAL_RUN_COUNT}_counterfactual_shift" \
-#     --counterfactual_type "shift" \
-#     --timeit \
-#     --n_scenes 1500
+python main_parallel_counterfactual.py --simulation_path "${BASE_PATH_CF}/shift-x" "${BASE_PATH_CF}/shift-z" \
+    --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
+    --run_name "run_${GENERAL_RUN_COUNT}_counterfactual_shift" \
+    --counterfactual_type "shift" \
+    --timeit \
+    --n_scenes 1500
     
 # # # -------------------------------------------------------------
 # # 1K general # text counterfactual gravity

@@ -3,6 +3,18 @@ import torch
 from fused_ssim import fused_ssim
 
 from utils.my_exception import ImpossibleToAnswer
+from utils.config import get_config
+
+
+def _select_by_temporal_distance(confounding_images, target_index):
+
+    if type(target_index) is not int:
+        target_index = int(target_index)
+
+    ranked = sorted(
+        confounding_images, key=lambda idx: abs(int(idx) - target_index), reverse=True
+    )
+    return ranked[:3]
 
 
 def calculate_most_dissimilar_confounding_images(
@@ -10,6 +22,12 @@ def calculate_most_dissimilar_confounding_images(
 ):
     if len(confounding_images) <= 3:
         raise ImpossibleToAnswer("Not enough confounding images")
+
+    strategy = kwargs.get("confounding_strategy")
+    if strategy is None:
+        strategy = get_config().get("temporal_confounding_strategy", "ssim_gpu")
+    if strategy == "temporal_distance":
+        return _select_by_temporal_distance(confounding_images, next_image)
 
     # similar to difficulty in identifying the missing image
     # quite slow can we parallelize this?

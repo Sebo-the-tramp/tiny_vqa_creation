@@ -46,6 +46,7 @@ FRAME_INTERLEAVE = get_config()["frame_interleave"]
 CLIP_LENGTH = get_config()["clip_length"]
 MIN_VISIBLE_PIXELS = get_config()["min_pixels_visible"]
 MIN_PIXELS_VISIBLE = 300
+TIMESTART = get_config()["timestart"]
 
 SAMPLING_RATE = get_config()["sampling_rate"]
 RENDER_STEP = 1.0 / SAMPLING_RATE
@@ -141,7 +142,7 @@ def compute_counterfactual_string(
         "transform_per_object"
     ]
 
-    object_id = list(transform_per_object.keys())[0]  # only one object changed    
+    object_id = list(transform_per_object.keys())[0]  # only one object changed
 
     real_object_id = str(int(object_id) + 1)
     object_name = world_state_modified["objects"][real_object_id]["name"]
@@ -362,6 +363,10 @@ units = {
     "SPEED": "meters/second",
     "ACCELERATION": "meters/second^2",
 }
+
+
+def get_timestep_from_idx(idx: int) -> str:
+    return f"{TIMESTART + float(idx) * RENDER_STEP:08.3f}"
 
 
 def resolve_units(measurement: str) -> str:

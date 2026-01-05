@@ -67,6 +67,7 @@ FRAME_INTERLEAVE = get_config()["frame_interleave"]
 MOVEMENT_TOLERANCE = get_config()["movement_tolerance"]
 ROTATION_TOLERANCE = get_config()["rotation_tolerance"]
 
+
 ## --- Resolver functions -- ##
 
 
@@ -101,82 +102,6 @@ def F_KINEMATICS_SPEED_OBJECT(
     return fill_questions(
         question, labels, correct_idx, world_state, timestep, resolved_attributes
     )
-
-
-# @with_resolved_attributes
-# def F_KINEMATICS_FASTEST_OBJECT(
-#     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
-# ) -> int:
-#     """Return the velocity of the object referenced in the question."""
-
-#     assert len(attributes) == 0
-
-#     # First we find the pairs of objects visible
-#     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-#         ["OBJECT"], world_state, min_objects=kwargs['current_world_number_of_objects']
-#     )
-#     # if we are in a multi-image setting, we need to ensure there are enough frames
-#     timestep = get_random_timestep_from_list(
-#         visible_timesteps, question
-#     )
-
-#     resolved_attributes = resolve_attributes_visible_at_timestep(
-#         attributes, world_state, timestep
-#     )
-
-#     highest_speed = -1.0
-#     fastest_object = None
-#     for object in iter_objects(world_state):
-#         object_id = object["id"]
-#         speed = get_speed(object_id, timestep, world_state)
-#         if speed > highest_speed:
-#             highest_speed = speed
-#             fastest_object = object
-
-#     present = [obj["name"] for obj in list(iter_objects(world_state)) if obj["id"] != object["id"]]
-
-#     labels, correct_idx = create_mc_object_names_from_dataset(
-#             fastest_object["name"], present, get_all_objects_names()
-#         )
-
-#     return fill_questions(
-#         question, labels, correct_idx, world_state, timestep, resolved_attributes
-#     )
-
-# @with_resolved_attributes
-# def F_KINEMATICS_FASTEST_OBJECT_SPEED(
-#     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
-# ) -> int:
-#     """Return the velocity of the object referenced in the question."""
-
-#     assert len(attributes) == 0
-
-#     # First we find the pairs of objects visible
-#     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-#         ["OBJECT"], world_state, min_objects=kwargs['current_world_number_of_objects']
-#     )
-#     # if we are in a multi-image setting, we need to ensure there are enough frames
-#     timestep = get_random_timestep_from_list(
-#         visible_timesteps, question
-#     )
-
-#     resolved_attributes = resolve_attributes_visible_at_timestep(
-#         attributes, world_state, timestep
-#     )
-
-#     highest_speed = -1.0
-#     for object in iter_objects(world_state):
-#         object_id = object["id"]
-#         speed = get_speed(object_id, timestep, world_state)
-#         if speed > highest_speed:
-#             highest_speed = speed
-
-#     labels, correct_idx = create_mc_options_around_gt(highest_speed, num_answers=4)
-#     labels = [f"{label} m/s" for label in labels]
-
-#     return fill_questions(
-#         question, labels, correct_idx, world_state, timestep, resolved_attributes
-#     )
 
 
 @with_resolved_attributes
@@ -450,6 +375,7 @@ def F_COLLISIONS_OBJ_OBJ_FIRST(
         attributes, world_state, min_objects=kwargs["current_world_number_of_objects"]
     )
 
+    # cause here we do not keep into account FRAME_INTERLEAVE THAT WILL BE CRUCIAL FOR LATER...
     continuous_subsequences = get_continuous_subsequences_min_length(
         visible_timesteps, min_length=CLIP_LENGTH
     )
@@ -473,9 +399,9 @@ def F_COLLISIONS_OBJ_OBJ_FIRST(
                 continue  # we are just colliding with the ground
             if obj_a == object["id"] or obj_b == object["id"]:
                 if obj_a == object["id"]:
-                    first_collided_object = world_state[["objects"]][str(obj_b)]
+                    first_collided_object = world_state["objects"][str(obj_b)]
                 else:
-                    first_collided_object = world_state[["objects"]][str(obj_b)]
+                    first_collided_object = world_state["objects"][str(obj_a)]
                 break
 
     DATASET = get_all_objects_names()
@@ -486,14 +412,22 @@ def F_COLLISIONS_OBJ_OBJ_FIRST(
     ]
 
     if first_collided_object is not None:
-        labels, idx = create_mc_object_names_from_dataset(
+        labels, correct_idx = create_mc_object_names_from_dataset(
             first_collided_object["name"], present, DATASET
         )
     else:
-        labels, idx = create_mc_object_names_from_dataset("No Object", present, DATASET)
+        labels, correct_idx = create_mc_object_names_from_dataset(
+            "No Object", present, DATASET
+        )
 
     return fill_questions(
-        question, labels, idx, world_state, visible_timesteps[0], resolved_attributes
+        question,
+        labels,
+        correct_idx,
+        world_state,
+        visible_timesteps[-1],
+        resolved_attributes,
+        visible_timesteps[0],
     )
 
 
@@ -508,7 +442,8 @@ def F_COLLISION_OBJECT_OBJECT_FRAME_SINGLE(
         attributes, world_state, min_objects=kwargs["current_world_number_of_objects"]
     )
 
-    choice_collision = 1  # forcing to NOT look for a collision
+    choice_collision = random.choice([0, 1])  # 0 for no, 1 for yes
+    # choice_collision = 0  # forcing to look for a collision
 
     collision_timestep = None
     non_collision_timestep = []

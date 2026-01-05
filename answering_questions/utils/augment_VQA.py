@@ -262,7 +262,7 @@ def augment_ablation(
 
         for idx, (resolved_attr, value) in enumerate(resolved_attributes.items()):
             if "OBJECT" in resolved_attr:
-                object_id = value["choice"]["id"]                
+                object_id = value["choice"]["id"]
                 instance_image_path = file.replace("render", "instances")
 
                 # print(world_state["encoding"])

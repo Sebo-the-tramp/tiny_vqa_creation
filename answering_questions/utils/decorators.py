@@ -42,14 +42,6 @@ def with_resolved_attributes(func):
         attributes = extract_attributes(question)
         current_world_number_of_objects = len(world_state["objects"])
 
-        # this removes any question where all the objects are not visible or less than some threshold
-        # along the whole scene!
-        # if not minimum_n_visible_objects(
-        #     world_state, n_objects=1, min_pixels=MIN_PIXELS_VISIBLE
-        # ):
-        #     print("Not enough objects with minimum pixels visible")
-        #     raise ImpossibleToAnswer("Not enough objects with minimum pixels visible")
-
         # Useful attributes without need of recomputation every time in each function
         list_timesteps = list(world_state["simulation"].keys())
         timestep_start = list_timesteps[0]

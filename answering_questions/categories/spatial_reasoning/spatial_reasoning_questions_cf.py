@@ -62,6 +62,7 @@ MIN_VISIBLE_PIXELS = get_config()["min_pixels_visible"]
 # - Distances are Euclidean distances between object centers unless specified otherwise
 # - The valid timesteps are those where all the  objects are visible above VISIBILITY_THRESHOLD
 
+
 @with_resolved_attributes_cf
 def CF_CLOSEST_OBJECT_OBJECT(
     world_state_og: WorldState,

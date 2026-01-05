@@ -39,12 +39,13 @@ from utils.config import get_config
 },
 """
 
+
 def save_questions_answers_json(
     all_vqa,
     output_path,
     run_name="",
 ):
-    os.makedirs(output_path, exist_ok=True)    
+    os.makedirs(output_path, exist_ok=True)
     normalized_questions = []
     answers = []
 
@@ -62,12 +63,11 @@ def save_questions_answers_json(
         question_idx = f"{counter}_{mode[0]}"
 
         question_record, answer_record = normalize_question_json(
-            entry,
-            idx=question_idx
+            entry, idx=question_idx
         )
 
         normalized_questions.append(question_record)
-        answers.append(answer_record)    
+        answers.append(answer_record)
 
     config = get_config()
     config_path = os.path.join(
@@ -88,16 +88,13 @@ def save_questions_answers_json(
     return questions_path, answers_path
 
 
-def normalize_question_json(
-    vqa_entry,
-    idx    
-):
+def normalize_question_json(vqa_entry, idx):
     question_payload = vqa_entry.get("question", {})
     question_text = question_payload.get("question", "").strip()
     labels = vqa_entry.get("labels", [])
     answer_index = vqa_entry.get("answer_index")
     image_paths = vqa_entry.get("image_paths", []) or []
-    letters = list(string.ascii_uppercase)    
+    letters = list(string.ascii_uppercase)
 
     # regex to check if in the label we have an image
     pattern = re.compile(r"^\d{6}$")
@@ -128,7 +125,7 @@ def normalize_question_json(
         option_lines.append(f"{letter}. {label}")
 
     if option_lines:
-        formatted_question = f"{formatted_question}\n" + "\n".join(option_lines)        
+        formatted_question = f"{formatted_question}\n" + "\n".join(option_lines)
 
     answer_letter = None
     if answer_index is not None and 0 <= answer_index < len(option_letters):
@@ -153,7 +150,7 @@ def normalize_question_json(
     answer_record = {
         "idx": idx,
         "answer": answer_letter,
-        "task_type": "factual",        
+        "task_type": "factual",
         "mode": question_record["mode"],
         "choice_type": question_payload["choice"],
     }

@@ -28,7 +28,7 @@ def uniformly_sample_frames(world_state):
     return imgs_idx
 
 
-def sample_frames_at_timesteps(world_state, timesteps):    
+def sample_frames_at_timesteps(world_state, timesteps):
     imgs_idx = []
     for t in timesteps:
         idx = str(world_state["simulation"][t]["frame_idx"]).zfill(6)

@@ -125,8 +125,8 @@ def classify_camera_angle_index(pitch_deg):
     random.shuffle(other_labels)
     labels = [label] + other_labels[:3]
     random.shuffle(labels)
-    idx = labels.index(label)
-    return labels, idx
+    correct_idx = labels.index(label)
+    return labels, correct_idx
 
 
 def classify_focal_length_index(hfov_deg):
@@ -154,8 +154,8 @@ def classify_focal_length_index(hfov_deg):
         "normal (20-60)",
         "telephoto (<20)",
     ]
-    idx = labels.index(label)
-    return labels, idx
+    correct_idx = labels.index(label)
+    return labels, correct_idx
 
 
 def get_number_of_visible_objects(world_state: WorldState, timestep: int) -> int:

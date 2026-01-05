@@ -3,6 +3,8 @@ import re
 import json
 import glob
 import argparse
+import time
+import resource
 
 import multiprocessing
 from multiprocessing import get_context
@@ -49,6 +51,8 @@ ANSI_RED = "\033[91m"
 ANSI_ORANGE = "\033[38;5;208m"
 ANSI_GREEN = "\033[92m"
 ANSI_GREY = "\033[90m"
+ANSI_BLUE = "\033[94m"
+ANSI_PURPLE = "\033[95m"
 ANSI_RESET = "\033[0m"
 
 
@@ -196,7 +200,13 @@ def create_vqa(
                     "impossible": 0,
                     "errors": 0,
                     "non_interesting": 0,
+                    "attempted": 0,
+                    "time_sum": 0.0,
+                    "time_count": 0,
                 }
+
+            question_start = time.perf_counter() if getattr(config, "timeit", False) else None
+            attempted_in_question = 0
 
             fn_to_answer_question_modified_data_factual = get_answer(
                 # we remove the first C -> to get the factual version
@@ -215,9 +225,30 @@ def create_vqa(
             except ImpossibleToAnswer:
                 impossible_to_answer += 1
                 stats[stats_key]["impossible"] += 1
+                attempted_in_question += 1
+                if question_start is not None:
+                    elapsed = time.perf_counter() - question_start
+                    stats[stats_key]["time_sum"] += elapsed
+                    stats[stats_key]["time_count"] += attempted_in_question
+                stats[stats_key]["attempted"] += attempted_in_question
                 continue
             except Exception:
                 stats[stats_key]["errors"] += 1
+                attempted_in_question += 1
+                if question_start is not None:
+                    elapsed = time.perf_counter() - question_start
+                    stats[stats_key]["time_sum"] += elapsed
+                    stats[stats_key]["time_count"] += attempted_in_question
+                stats[stats_key]["attempted"] += attempted_in_question
+                continue
+            if not answer_list_modified_data_factual:
+                stats[stats_key]["errors"] += 1
+                attempted_in_question += 1
+                if question_start is not None:
+                    elapsed = time.perf_counter() - question_start
+                    stats[stats_key]["time_sum"] += elapsed
+                    stats[stats_key]["time_count"] += attempted_in_question
+                stats[stats_key]["attempted"] += attempted_in_question
                 continue
 
             fn_to_check_answer_original_data_cf = get_answer(question_key, category_key)
@@ -233,9 +264,30 @@ def create_vqa(
             except ImpossibleToAnswer:
                 impossible_to_answer += 1
                 stats[stats_key]["impossible"] += 1
+                attempted_in_question += 1
+                if question_start is not None:
+                    elapsed = time.perf_counter() - question_start
+                    stats[stats_key]["time_sum"] += elapsed
+                    stats[stats_key]["time_count"] += attempted_in_question
+                stats[stats_key]["attempted"] += attempted_in_question
                 continue
             except Exception:
                 stats[stats_key]["errors"] += 1
+                attempted_in_question += 1
+                if question_start is not None:
+                    elapsed = time.perf_counter() - question_start
+                    stats[stats_key]["time_sum"] += elapsed
+                    stats[stats_key]["time_count"] += attempted_in_question
+                stats[stats_key]["attempted"] += attempted_in_question
+                continue
+            if not answer_list_original_data_cf:
+                stats[stats_key]["errors"] += 1
+                attempted_in_question += 1
+                if question_start is not None:
+                    elapsed = time.perf_counter() - question_start
+                    stats[stats_key]["time_sum"] += elapsed
+                    stats[stats_key]["time_count"] += attempted_in_question
+                stats[stats_key]["attempted"] += attempted_in_question
                 continue
 
             # checking that the counterfactual answer is different from the factual one
@@ -249,7 +301,15 @@ def create_vqa(
 
             if str(correct_answer_counterfactual) == str(correct_answer_factual):
                 print("NOT INTERESTING AT ALL!")
-                stats[stats_key]["non_interesting"] += 1
+                stats[stats_key]["non_interesting"] += len(
+                    answer_list_modified_data_factual
+                )
+                attempted_in_question += len(answer_list_modified_data_factual)
+                if question_start is not None and attempted_in_question > 0:
+                    elapsed = time.perf_counter() - question_start
+                    stats[stats_key]["time_sum"] += elapsed
+                    stats[stats_key]["time_count"] += attempted_in_question
+                stats[stats_key]["attempted"] += attempted_in_question
                 continue
             else:
                 print("INTERESTING!")
@@ -318,6 +378,13 @@ def create_vqa(
                     print(f"  Correct Index: {correct_idx}")
                     print(f"  Images Indexes: {imgs_idx}")
                 stats[stats_key]["created"] += 1
+                attempted_in_question += 1
+
+            if question_start is not None and attempted_in_question > 0:
+                elapsed = time.perf_counter() - question_start
+                stats[stats_key]["time_sum"] += elapsed
+                stats[stats_key]["time_count"] += attempted_in_question
+            stats[stats_key]["attempted"] += attempted_in_question
 
     return all_vqa, stats
 
@@ -330,9 +397,15 @@ def _merge_stats(target, incoming):
                 "impossible": 0,
                 "errors": 0,
                 "non_interesting": 0,
+                "attempted": 0,
+                "time_sum": 0.0,
+                "time_count": 0,
             }
         for field in ("created", "impossible", "errors", "non_interesting"):
             target[stats_key][field] += data.get(field, 0)
+        target[stats_key]["attempted"] += data.get("attempted", 0)
+        target[stats_key]["time_sum"] += data.get("time_sum", 0.0)
+        target[stats_key]["time_count"] += data.get("time_count", 0)
 
 
 def _stacked_progress_bar(data, width=32):
@@ -360,21 +433,34 @@ def _stacked_progress_bar(data, width=32):
     )
 
 
-def _print_summary(stats):
+def _colorize_time(avg_ms, padded_text):
+    if avg_ms is None:
+        return padded_text
+    color = ANSI_RED if avg_ms > 10.0 else ANSI_GREEN
+    return f"{color}{padded_text}{ANSI_RESET}"
+
+
+def _print_summary(stats, show_time):
     if not stats:
         print("No summary stats available.")
         return
     rows = []
+    unique_question_ids = set()
     max_key_len = 0
     max_sub_len = 0
     max_c_len = 0
     max_i_len = 0
     max_e_len = 0
     max_n_len = 0
+    max_a_len = 0
+    max_t_len = 0
     total_created = 0
     total_impossible = 0
     total_errors = 0
     total_non_interesting = 0
+    total_attempted = 0
+    total_time_sum = 0.0
+    total_time_count = 0
     for (question_key, sub_category, category_key), data in sorted(
         stats.items(), key=lambda item: (item[0][2], item[0][0], item[0][1])
     ):
@@ -389,18 +475,34 @@ def _print_summary(stats):
         max_i_len = max(max_i_len, len(str(data["impossible"])))
         max_e_len = max(max_e_len, len(str(data["errors"])))
         max_n_len = max(max_n_len, len(str(data["non_interesting"])))
+        max_a_len = max(max_a_len, len(str(data["attempted"])))
+        if show_time:
+            avg_ms = (
+                (data["time_sum"] / data["time_count"]) * 1000
+                if data["time_count"] > 0
+                else None
+            )
+            avg_str = f"{avg_ms:.3f}ms" if avg_ms is not None else "-"
+            max_t_len = max(max_t_len, len(avg_str))
         total_created += data["created"]
         total_impossible += data["impossible"]
         total_errors += data["errors"]
         total_non_interesting += data["non_interesting"]
+        total_attempted += data["attempted"]
+        total_time_sum += data["time_sum"]
+        total_time_count += data["time_count"]
         rows.append((category_key, display_key, sub_category, data))
+        unique_question_ids.add(display_key)
     print("\nSummary by question_id and sub-category:")
     legend = (
         f"{ANSI_GREEN}C=created{ANSI_RESET}, "
         f"{ANSI_ORANGE}I=impossible{ANSI_RESET}, "
         f"{ANSI_RED}E=errors{ANSI_RESET}, "
-        f"{ANSI_GREY}N=non-interesting{ANSI_RESET}"
+        f"{ANSI_GREY}N=non-interesting{ANSI_RESET}, "
+        f"{ANSI_PURPLE}A=attempted{ANSI_RESET}"
     )
+    if show_time:
+        legend += ", T=avg_ms"
     print(f"Legend:\t{legend}")
     current_category = None
     for category_key, display_key, sub_category, data in rows:
@@ -414,13 +516,23 @@ def _print_summary(stats):
         i_val = str(data["impossible"]).rjust(max_i_len)
         e_val = str(data["errors"]).rjust(max_e_len)
         n_val = str(data["non_interesting"]).rjust(max_n_len)
+        a_val = str(data["attempted"]).rjust(max_a_len)
+        avg_ms = (
+            (data["time_sum"] / data["time_count"]) * 1000
+            if show_time and data["time_count"] > 0
+            else None
+        )
+        t_val = f"{avg_ms:.3f}ms".rjust(max_t_len) if show_time else ""
         line = (
             f"{bar}\t{key_field}\t{sub_field}\t"
             f"{ANSI_GREEN}C={c_val}{ANSI_RESET}\t"
             f"{ANSI_ORANGE}I={i_val}{ANSI_RESET}\t"
             f"{ANSI_RED}E={e_val}{ANSI_RESET}\t"
-            f"{ANSI_GREY}N={n_val}{ANSI_RESET}"
+            f"{ANSI_GREY}N={n_val}{ANSI_RESET}\t"
+            f"{ANSI_PURPLE}A={a_val}{ANSI_RESET}"
         )
+        if show_time:
+            line += f"\tT={_colorize_time(avg_ms, t_val)}"
         print(line)
     print("-" * 12)
     total_data = {
@@ -436,13 +548,24 @@ def _print_summary(stats):
     total_i = str(total_impossible).rjust(max_i_len)
     total_e = str(total_errors).rjust(max_e_len)
     total_n = str(total_non_interesting).rjust(max_n_len)
-    print(
+    total_a = str(total_attempted).rjust(max_a_len)
+    total_avg = (
+        (total_time_sum / total_time_count) * 1000 if total_time_count > 0 else None
+    )
+    total_t = f"{total_avg:.3f}ms".rjust(max_t_len) if show_time else ""
+    total_unique = str(len(unique_question_ids))
+    total_line = (
         f"{total_bar}\t{total_key}\t{total_sub}\t"
         f"{ANSI_GREEN}C={total_c}{ANSI_RESET}\t"
         f"{ANSI_ORANGE}I={total_i}{ANSI_RESET}\t"
         f"{ANSI_RED}E={total_e}{ANSI_RESET}\t"
-        f"{ANSI_GREY}N={total_n}{ANSI_RESET}"
+        f"{ANSI_GREY}N={total_n}{ANSI_RESET}\t"
+        f"{ANSI_PURPLE}A={total_a}{ANSI_RESET}\t"
+        f"{ANSI_GREY}Q={total_unique}{ANSI_RESET}"
     )
+    if show_time:
+        total_line += f"\tT={_colorize_time(total_avg, total_t)}"
+    print(total_line)
 
 
 def main(args):
@@ -455,6 +578,8 @@ def main(args):
 
     # then seeding everything
     seed_utils.seed_everything(args.seed)
+    run_start_wall = time.perf_counter()
+    run_start_cpu = time.process_time()
 
     # ready to go
     all_vqa = []
@@ -512,7 +637,14 @@ def main(args):
 
     print("VQA creation completed.")
     print("LIST OF SIMULATIONS PROCESSED:", len(list_simulations))
-    _print_summary(all_stats)
+    _print_summary(all_stats, args.timeit)
+    run_wall = time.perf_counter() - run_start_wall
+    run_cpu = time.process_time() - run_start_cpu
+    max_rss_kb = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+    print(
+        f"RUN SUMMARY:\tquestions={len(all_vqa)}\twall={run_wall:.2f}s\t"
+        f"cpu={run_cpu:.2f}s\trss={max_rss_kb}KB"
+    )
 
 
 if __name__ == "__main__":
@@ -593,6 +725,11 @@ if __name__ == "__main__":
         choices=["gravity", "shift", "volume"],
         default="shift",
         help="Select which counterfactual JSON template (gravity, shift, volume) is loaded.",
+    )
+    parser.add_argument(
+        "--timeit",
+        action="store_true",
+        help="Measure per-question execution time and report averages in the summary.",
     )
 
     args = parser.parse_args()

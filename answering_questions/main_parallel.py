@@ -5,6 +5,7 @@ import glob
 import argparse
 import time
 import resource
+from tqdm import tqdm
 
 import multiprocessing
 from multiprocessing import get_context
@@ -84,7 +85,6 @@ def _process_one(sim_file, args):
             return [], {}
         simulation_id_path = sim_file.replace("simulation.json", "")
         destination_simulation_id_path = os.path.join(DEST_ROOT, simulation_id_path)
-        print("Processing simulation:", sim_file)
         simulation_steps = read_simulation(
             os.path.join(simulation_id_path, "simulation_kinematics.json")
         )
@@ -148,8 +148,6 @@ def create_vqa(
 ):
     seed_utils.reseed_for_context(simulation_id)
 
-    print("Starting VQA creation...")
-
     all_vqa = []
     stats = {}
 
@@ -158,7 +156,6 @@ def create_vqa(
 
     for category_key, category in questions.items():
         # current category dev
-        print(category_key)
         if categories != [] and (category_key not in categories):
             continue
 
@@ -572,8 +569,14 @@ def main(args):
     ) as ex:
         max_simulations = min(number_simulations, len(list_simulations))
         print(f"Processing {max_simulations} simulations...")
-        for sim_vqa, sim_stats in ex.map(
-            _process_one, list_simulations[:max_simulations], [args] * max_simulations
+        for sim_vqa, sim_stats in tqdm(
+            ex.map(
+                _process_one,
+                list_simulations[:max_simulations],
+                [args] * max_simulations,
+            ),
+            total=max_simulations,
+            desc="Simulations",
         ):  # limit to 100s for now
             all_vqa.extend(sim_vqa)
             _merge_stats(all_stats, sim_stats)

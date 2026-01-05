@@ -97,8 +97,6 @@ def create_vqa(
     answered = 0
     failed = 0
 
-    print("Starting VQA creation...")
-
     all_vqa = []
 
     for category_key, category in questions.items():

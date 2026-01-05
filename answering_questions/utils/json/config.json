@@ -11,5 +11,6 @@
     "min_pixels_visible": 150,
     "max_allowed_difference_youngs_modulus": 10000,
     "max_allowed_difference_poisson_ratio": 0.02,
-    "timestart": 0.01
+    "timestart": 0.01,
+    "temporal_confounding_strategy": "ssim_gpu"
 }

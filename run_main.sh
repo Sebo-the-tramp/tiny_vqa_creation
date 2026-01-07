@@ -35,7 +35,7 @@ GENERAL_RUN_COUNT=13
 python main_parallel.py --simulation_path "${BASE_PATH}/random/" "${BASE_PATH}/random-cam-stationary/" \
     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
     --run_name "run_${GENERAL_RUN_COUNT}_general" \
-    --n_scenes 40 \
+    --n_scenes 4000 \
     --exclude_simulations_file "problematic_paths.txt" \
     --n_proc $CPUS \
     --timeit \
@@ -112,28 +112,28 @@ cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_
 
 # -------------------------------------------------------------
 # 1K general # text counterfactual shift
-python main_parallel_counterfactual.py --simulation_path "${BASE_PATH_CF}/shift-x" "${BASE_PATH_CF}/shift-z" \
-    --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
-    --run_name "run_${GENERAL_RUN_COUNT}_counterfactual_shift" \
-    --counterfactual_type "shift" \
-    --timeit \
-    --n_scenes 2000
+# python main_parallel_counterfactual.py --simulation_path "${BASE_PATH_CF}/shift-x" "${BASE_PATH_CF}/shift-z" \
+#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
+#     --run_name "run_${GENERAL_RUN_COUNT}_counterfactual_shift" \
+#     --counterfactual_type "shift" \
+#     --timeit \
+#     --n_scenes 2000
     
-# -------------------------------------------------------------
-# 1K general # text counterfactual gravity
-python main_parallel_counterfactual.py --simulation_path "${BASE_PATH_CF}/low-gravity" \
-    --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
-    --run_name "run_${GENERAL_RUN_COUNT}_counterfactual_gravity" \
-    --counterfactual_type "gravity" \
-    --n_scenes 1000
+# # -------------------------------------------------------------
+# # 1K general # text counterfactual gravity
+# python main_parallel_counterfactual.py --simulation_path "${BASE_PATH_CF}/low-gravity" \
+#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
+#     --run_name "run_${GENERAL_RUN_COUNT}_counterfactual_gravity" \
+#     --counterfactual_type "gravity" \
+#     --n_scenes 1000
 
-# -------------------------------------------------------------
-1K general # text counterfactual volume
-python main_parallel_counterfactual.py --simulation_path "${BASE_PATH_CF}/2xsmaller" \
-    --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
-    --run_name "run_${GENERAL_RUN_COUNT}_counterfactual_smaller" \
-    --counterfactual_type "volume" \
-    --n_scenes 1000
+# # -------------------------------------------------------------
+# 1K general # text counterfactual volume
+# python main_parallel_counterfactual.py --simulation_path "${BASE_PATH_CF}/2xsmaller" \
+#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
+#     --run_name "run_${GENERAL_RUN_COUNT}_counterfactual_smaller" \
+#     --counterfactual_type "volume" \
+#     --n_scenes 1000
 
 # -------------------------------------------------------------
 # ABLATION STUDYs

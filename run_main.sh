@@ -39,7 +39,7 @@ python main_parallel.py --simulation_path "${BASE_PATH}/random/" "${BASE_PATH}/r
     --exclude_simulations_file "problematic_paths.txt" \
     --n_proc $CPUS \
     --timeit \
-    --include_categories "material_understanding" \
+    # --include_categories "material_understanding" \
 
 RUN_NAME="run_${GENERAL_RUN_COUNT}_general"
 python ./subsample_questions_percentage.py \

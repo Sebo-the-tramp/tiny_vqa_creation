@@ -32,7 +32,6 @@ from utils.helpers import (
     get_timestep_from_idx,
 )
 
-
 from .mechanics_helpers import (
     get_speed,
     get_acceleration,
@@ -98,10 +97,19 @@ def CF_KINEMATICS_SPEED_OBJECT(
     )
     labels = [f"{label} m/s" for label in labels]
 
-    answer_list_original_data_cf[0][1] = labels
-    answer_list_original_data_cf[0][2] = correct_idx
+    resolved_attributes = resolve_attributes_visible_at_timestep(
+        ["OBJECT"], world_state_og, timestep_end
+    )
 
-    return answer_list_original_data_cf
+    return fill_questions_cf(
+        question,
+        labels,
+        correct_idx,
+        world_state_og,
+        world_state_mod,
+        timestep_end,
+        resolved_attributes,
+    )
 
 
 @with_resolved_attributes_cf
@@ -135,10 +143,19 @@ def CF_KINEMATICS_ACCEL_OBJECT(
     )
     labels = [f"{label} m/s^2" for label in labels]
 
-    answer_list_original_data_cf[0][1] = labels
-    answer_list_original_data_cf[0][2] = correct_idx
+    resolved_attributes = resolve_attributes_visible_at_timestep(
+        ["OBJECT"], world_state_og, timestep_end
+    )
 
-    return answer_list_original_data_cf
+    return fill_questions_cf(
+        question,
+        labels,
+        correct_idx,
+        world_state_og,
+        world_state_mod,
+        timestep_end,
+        resolved_attributes,
+    )
 
 
 @with_resolved_attributes_cf
@@ -182,10 +199,20 @@ def CF_KINEMATICS_DISTANCE_TRAVELED_INTERVAL(
     labels = uniform_labels(options, integer=False, decimals=1)
     labels = [f"{opt} meters" for opt in labels]
 
-    answer_list_original_data_cf[0][1] = labels
-    answer_list_original_data_cf[0][2] = correct_idx
+    resolved_attributes = resolve_attributes_visible_at_timestep(
+        ["OBJECT"], world_state_og, timestep_start
+    )
 
-    return answer_list_original_data_cf
+    return fill_questions_cf(
+        question,
+        labels,
+        correct_idx,
+        world_state_og,
+        world_state_mod,
+        timestep_end,
+        resolved_attributes,
+        initial_timestep=timestep_start,
+    )
 
 
 ## --- COLLISION RESOLVERS --- ##

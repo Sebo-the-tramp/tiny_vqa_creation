@@ -16,7 +16,6 @@ from typing import (
     Union,
 )
 
-
 from utils.my_exception import ImpossibleToAnswer
 
 from utils.all_objects import get_all_objects_names
@@ -195,7 +194,7 @@ def F_MASS_LIGHTEST_OBJECT(
     second_lightest_object_mass, _ = object_ordered_by_mass[-2]
 
     if (
-        lightest_object_mass - second_lightest_object_mass
+        second_lightest_object_mass - lightest_object_mass
         < THRESHOLD_DIFFERENCE_PERCENTAGE * second_lightest_object_mass
     ):
         raise ImpossibleToAnswer("No single lightest object in the scene.")

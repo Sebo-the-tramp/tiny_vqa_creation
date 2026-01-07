@@ -82,7 +82,7 @@ def _process_one(sim_file, args):
         if not os.path.isfile(sim_file):
             if VERBOSE:
                 print("Skipping non-file:", sim_file)
-            return [], {}
+            return [], {}, 0
         simulation_id_path = sim_file.replace("simulation.json", "")
         destination_simulation_id_path = os.path.join(DEST_ROOT, simulation_id_path)
         simulation_steps_modified = read_simulation(
@@ -98,9 +98,7 @@ def _process_one(sim_file, args):
 
         matches = glob.glob(base_dir + "seed-" + seed + "_*")
         if len(matches) == 0:
-            raise FileNotFoundError(
-                f"Original simulation folder not found for {simulation_id_path_og}"
-            )
+            return [], {}, 1
         simulation_id_path_og = matches[0]
 
         simulation_steps_og = read_simulation(
@@ -115,13 +113,17 @@ def _process_one(sim_file, args):
             destination_simulation_id_path,
             verbose=VERBOSE,
             config=args,
-        )
+        ) + (0,)
+    except FileNotFoundError:
+        if VERBOSE:
+            print("Skipping missing file for:", sim_file)
+        return [], {}, 1
     except Exception as e:
         # Keep the pool running even if one simulation fails
         # if VERBOSE:
         print("\033[91mWorker error on", simulation_id_path, "->", repr(e), "\033[0m")
         print(e.with_traceback())
-        return [], {}
+        return [], {}, 0
 
 
 # ----- UTILS FUNCTIONS
@@ -166,7 +168,7 @@ def create_vqa(
     config=None,
 ):
     seed_utils.reseed_for_context(simulation_id)
-    impossible_to_answer = 0    
+    impossible_to_answer = 0
 
     all_vqa = []
     stats = {}
@@ -203,7 +205,9 @@ def create_vqa(
                     "time_count": 0,
                 }
 
-            question_start = time.perf_counter() if getattr(config, "timeit", False) else None
+            question_start = (
+                time.perf_counter() if getattr(config, "timeit", False) else None
+            )
             attempted_in_question = 0
 
             fn_to_answer_question_modified_data_factual = get_answer(
@@ -230,7 +234,9 @@ def create_vqa(
                     stats[stats_key]["time_count"] += attempted_in_question
                 stats[stats_key]["attempted"] += attempted_in_question
                 continue
-            except Exception:
+            except Exception as e:
+                print(f"Error occurred while checking original data CF: {e}")
+                print(e.with_traceback())
                 stats[stats_key]["errors"] += 1
                 attempted_in_question += 1
                 if question_start is not None:
@@ -269,7 +275,9 @@ def create_vqa(
                     stats[stats_key]["time_count"] += attempted_in_question
                 stats[stats_key]["attempted"] += attempted_in_question
                 continue
-            except Exception:
+            except Exception as e:
+                print(f"Error occurred while checking original data CF: {e}")
+                print(e.with_traceback())
                 stats[stats_key]["errors"] += 1
                 attempted_in_question += 1
                 if question_start is not None:
@@ -298,7 +306,6 @@ def create_vqa(
             ]
 
             if str(correct_answer_counterfactual) == str(correct_answer_factual):
-                print("NOT INTERESTING AT ALL!")
                 stats[stats_key]["non_interesting"] += len(
                     answer_list_modified_data_factual
                 )
@@ -309,8 +316,6 @@ def create_vqa(
                     stats[stats_key]["time_count"] += attempted_in_question
                 stats[stats_key]["attempted"] += attempted_in_question
                 continue
-            else:
-                print("INTERESTING!")
 
             # we need to change the question from factual to counterfactual
             for question_factual, question_counterfactual in zip(
@@ -582,6 +587,7 @@ def main(args):
     # ready to go
     all_vqa = []
     all_stats = {}
+    missing_original_matches = 0
 
     simulation_roots = args.simulation_paths
     list_simulations = []
@@ -605,7 +611,7 @@ def main(args):
     print("Found", len(list_simulations), "simulation files.")
     ctx = get_context("spawn")
     with ProcessPoolExecutor(
-        max_workers=12,
+        max_workers=args.n_proc,
         initializer=_init_worker,
         initargs=(
             args.vqa_path,
@@ -618,7 +624,7 @@ def main(args):
     ) as ex:
         max_simulations = min(number_simulations, len(list_simulations))
         print(f"Processing {max_simulations} simulations...")
-        for sim_vqa, sim_stats in tqdm(
+        for sim_vqa, sim_stats, sim_missing in tqdm(
             ex.map(
                 _process_one,
                 list_simulations[:max_simulations],
@@ -629,6 +635,7 @@ def main(args):
         ):  # limit to 100s for now
             all_vqa.extend(sim_vqa)
             _merge_stats(all_stats, sim_stats)
+            missing_original_matches += sim_missing
 
     print(f"Saved {len(all_vqa)} questions and answers.")
 
@@ -639,15 +646,14 @@ def main(args):
     )
     print(f"Saved questions and answers to {args.output_path}")
 
-    print("VQA creation completed.")
-    print("LIST OF SIMULATIONS PROCESSED:", len(list_simulations))
     _print_summary(all_stats, args.timeit)
     run_wall = time.perf_counter() - run_start_wall
     run_cpu = time.process_time() - run_start_cpu
     max_rss_kb = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
     print(
         f"RUN SUMMARY:\tquestions={len(all_vqa)}\twall={run_wall:.2f}s\t"
-        f"cpu={run_cpu:.2f}s\trss={max_rss_kb}KB"
+        f"cpu={run_cpu:.2f}s\trss={max_rss_kb}KB\t"
+        f"missing_matches={missing_original_matches}"
     )
 
 
@@ -707,6 +713,12 @@ if __name__ == "__main__":
         type=int,
         default=4000,
         help="Number of scenes to process.",
+    )
+    parser.add_argument(
+        "--n_proc",
+        type=int,
+        default=36,
+        help="Number of worker processes to spawn.",
     )
 
     # changing the slope

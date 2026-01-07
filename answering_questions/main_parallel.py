@@ -185,7 +185,9 @@ def create_vqa(
                     "time_count": 0,
                 }
 
-            question_start = time.perf_counter() if getattr(config, "timeit", False) else None
+            question_start = (
+                time.perf_counter() if getattr(config, "timeit", False) else None
+            )
             attempted_in_question = 0
 
             fn_to_answer_question = get_answer(question_key, category_key)
@@ -557,7 +559,7 @@ def main(args):
     print("Found", len(list_simulations), "simulation files.")
     ctx = get_context("spawn")
     with ProcessPoolExecutor(
-        max_workers=12,
+        max_workers=args.n_proc,
         initializer=_init_worker,
         initargs=(
             args.vqa_path,
@@ -590,8 +592,6 @@ def main(args):
     )
     print(f"Saved questions and answers to {args.output_path}")
 
-    print("VQA creation completed.")
-    print("LIST OF SIMULATIONS PROCESSED:", len(list_simulations))
     _print_summary(all_stats, args.timeit)
     run_wall = time.perf_counter() - run_start_wall
     run_cpu = time.process_time() - run_start_cpu
@@ -677,21 +677,27 @@ if __name__ == "__main__":
         default=4000,
         help="Number of scenes to process.",
     )
-    
+    parser.add_argument(
+        "--n_proc",
+        type=int,
+        default=12,
+        help="Number of worker processes to spawn.",
+    )
+
     parser.add_argument(
         "--slope",
         type=float,
         default=4,
         help="Slope value to be used in the simulation.",
     )
-    
+
     parser.add_argument(
         "--augmentation",
         type=str,
         default=None,
         help="Type of augmentation to use (roi_circling, masking, scene_context, textual_context, etc).",
     )
-    
+
     parser.add_argument(
         "--include_categories",
         nargs="+",
@@ -706,7 +712,7 @@ if __name__ == "__main__":
         default=[],
         help="List of question IDs to skip entirely when creating the VQA.",
     )
-    
+
     parser.add_argument(
         "--timeit",
         action="store_true",

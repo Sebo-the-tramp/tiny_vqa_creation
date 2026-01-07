@@ -193,7 +193,7 @@ def compute_counterfactual_string(
         counterfact_phrase += " " + english_join(parts)
     counterfact_phrase += ". Under this new condition, "
 
-    print(counterfact_phrase)
+    # print(counterfact_phrase)
 
     # print("Check pitagora:")
     # print("Distance in camera view:", math.sqrt(dx**2 + dy**2 + dz**2))
@@ -532,15 +532,19 @@ def get_visible_timesteps_for_attributes_min_objects(
                 continue
             obj_state = get_object_state_at_timestep(world_state, obj_id, timestep)
 
-            pixels_visible = (
-                obj_state["infov_pixels_visible"] + obj_state["infov_pixels_void"]
-            )
+            # pixels_visible = (
+            #     obj_state["infov_pixels_visible"] + obj_state["infov_pixels_void"]
+            # )
+            # fov_visibility = obj_state["fov_visibility"]
+            pixels_void = obj_state["infov_pixels_void"]
+            pixels_visible = obj_state["infov_pixels_visible"]
             fov_visibility = obj_state["fov_visibility"]
 
             visible = (
                 # Case 1: Object is mostly unoccluded
-                fov_visibility >= VISIBILITY_THRESHOLD
-                or pixels_visible >= MIN_PIXELS_VISIBLE
+                # fov_visibility >= VISIBILITY_THRESHOLD
+                # or pixels_visible >= MIN_PIXELS_VISIBLE
+                fov_visibility >= VISIBILITY_THRESHOLD and pixels_visible > pixels_void
             )
 
             if visible:

@@ -7,7 +7,6 @@ from utils.config import get_config
 
 
 def _select_by_temporal_distance(confounding_images, target_index):
-
     if type(target_index) is not int:
         target_index = int(target_index)
 

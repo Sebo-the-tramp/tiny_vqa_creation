@@ -7,11 +7,13 @@ if [ -d "/data0/sebastian.cavada/datasets/simulations_v4" ]; then
     BASE_PATH="/data0/sebastian.cavada/datasets/simulations_v4/dl3dv"
     BASE_PATH_CF="/data0/sebastian.cavada/datasets/simulations_v4/dl3dv-counterfact"
     DESTINATION_SIMULATION_PATH="/data0/sebastian.cavada/datasets/physbench/simulations"
+    CPUS="32"
 else
     source "/home/it4i-thvu/seb_dev/.telegram_bot.env"
     BASE_PATH="/scratch/project/eu-25-92/composite_physics/dataset/simulation_v4/dl3dv"
     BASE_PATH_CF="/scratch/project/eu-25-92/composite_physics/dataset/simulation_v4/dl3dv-counterfact"
     DESTINATION_SIMULATION_PATH="/scratch/project/eu-25-92/composite_physics/dataset/physbench/simulation_v4"
+    CPUS="128"
 fi
 
 cd answering_questions
@@ -19,6 +21,7 @@ cd answering_questions
 # This are the runs I need to create
 
 GENERAL_RUN_COUNT=13
+
 
 # # 10K general # text - no circling
 # python main_parallel.py --simulation_path "${BASE_PATH}/random/" \
@@ -29,12 +32,12 @@ GENERAL_RUN_COUNT=13
 
 ####################
 
-python main_parallel.py --simulation_path "${BASE_PATH}/random/" \
+python main_parallel.py --simulation_path "${BASE_PATH}/random/" "${BASE_PATH}/random-cam-stationary/" \
     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
     --run_name "run_${GENERAL_RUN_COUNT}_general" \
     --n_scenes 2000 \
     --exclude_simulations_file "problematic_paths.txt" \
-    --n_proc 32
+    --n_proc $CPUS
 
 RUN_NAME="run_${GENERAL_RUN_COUNT}_general"
 python ./subsample_questions_percentage.py \

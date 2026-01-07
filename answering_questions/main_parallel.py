@@ -154,6 +154,8 @@ def create_vqa(
     categories = getattr(config, "include_categories", [])
     excluded_question_ids = set(getattr(config, "exclude_question_ids", []) or [])
 
+    # print("###" * 10, f"Processing simulation: {simulation_id}", "###" * 10)
+
     for category_key, category in questions.items():
         # current category dev
         if categories != [] and (category_key not in categories):

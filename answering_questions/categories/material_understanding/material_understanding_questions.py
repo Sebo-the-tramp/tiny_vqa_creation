@@ -26,6 +26,7 @@ from utils.helpers import (
     get_random_timestep_from_list,
     resolve_attributes_visible_at_timestep,
     get_visible_timesteps_for_attributes_min_objects,
+    is_object_visible
 )
 
 from utils.config import get_config
@@ -40,6 +41,8 @@ from utils.bin_creation import (
 
 from .material_understanding_helpers import get_material_dataset_different_from_target
 
+import math
+
 Number = Union[int, float]
 Vector = Tuple[float, float, float]
 WorldState = Mapping[str, Any]
@@ -51,8 +54,8 @@ MOVEMENT_TOLERANCE = get_config()["movement_tolerance"]
 VISIBILITY_THRESHOLD = get_config()["visibility_threshold"]
 THRESHOLD_DIFFERENCE_PERCENTAGE = get_config()["threshold_difference_percentage"]
 MIN_VISIBLE_PIXELS = get_config()["min_pixels_visible"]
-MAX_ALLOWED_DIFFERENCE_YOUNGS_MODULUS = get_config()[
-    "max_allowed_difference_youngs_modulus"
+MAX_ALLOWED_DIFFERENCE_YOUNGS_MODULUS_LOG = get_config()[
+    "max_allowed_difference_youngs_modulus_log"
 ]
 MAX_ALLOWED_DIFFERENCE_POISSON_RATIO = get_config()[
     "max_allowed_difference_poisson_ratio"
@@ -116,14 +119,9 @@ def F_MASS_HEAVIEST_OBJECT(
     objects_masses = []
 
     for obj in iter_objects(world_state):
-        obj_state = world_state["simulation"][timestep]["objects"][obj["id"]]
+        obj_state = world_state["simulation"][timestep]["objects"][obj["id"]] 
 
-        is_object_visible = (
-            obj_state["infov_pixels"] > MIN_VISIBLE_PIXELS
-            and obj_state["fov_visibility"] >= VISIBILITY_THRESHOLD
-        )
-
-        if is_object_visible:
+        if is_object_visible(obj_state):
             objects_masses.append((obj["mass"], obj))
 
     if len(objects_masses) < 2:
@@ -176,14 +174,9 @@ def F_MASS_LIGHTEST_OBJECT(
     objects_masses = []
 
     for obj in iter_objects(world_state):
-        obj_state = world_state["simulation"][timestep]["objects"][obj["id"]]
+        obj_state = world_state["simulation"][timestep]["objects"][obj["id"]]        
 
-        is_object_visible = (
-            obj_state["infov_pixels"] > MIN_VISIBLE_PIXELS
-            and obj_state["fov_visibility"] >= VISIBILITY_THRESHOLD
-        )
-
-        if is_object_visible:
+        if is_object_visible(obj_state):
             objects_masses.append((obj["mass"], obj))
 
     if len(objects_masses) < 2:
@@ -260,14 +253,9 @@ def F_PHYSICS_PROPERTY_DENSITY_OBJECT_RELATIVE(
 
     denser_object = None
     for object in iter_objects(world_state):
-        obj_state = world_state["simulation"][timestep]["objects"][object["id"]]
+        obj_state = world_state["simulation"][timestep]["objects"][object["id"]]        
 
-        is_object_visible = (
-            obj_state["infov_pixels"] > MIN_VISIBLE_PIXELS
-            and obj_state["fov_visibility"] >= VISIBILITY_THRESHOLD
-        )
-
-        if is_object_visible:
+        if is_object_visible(obj_state):
             if (
                 denser_object is None
                 or object["props"]["rhos"] > denser_object["props"]["rhos"]
@@ -329,63 +317,59 @@ def F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT(
 def F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
-    assert len(attributes) == 1 and "OBJECT"
+    assert len(attributes) == 1 and "OBJECT" in attributes
 
-    # First we find the pairs of objects visible
+    if kwargs["current_world_number_of_objects"] < 2:
+        raise ImpossibleToAnswer("Not enough objects in the scene.")
+
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
         ["OBJECT"], world_state, min_objects=1
     )
-    # if we are in a multi-image setting, we need to ensure there are enough frames
     timestep = get_random_timestep_from_list(visible_timesteps, question)
 
-    resolved_attributes = resolve_attributes_visible_at_timestep(
+    resolved = resolve_attributes_visible_at_timestep(
         attributes, world_state, timestep
     )
+    ref_obj = resolved["OBJECT"]["choice"]
+    ref_yms = ref_obj["props"]["yms"]
 
-    object = resolved_attributes["OBJECT"]["choice"]
+    if ref_yms <= 0:
+        raise ImpossibleToAnswer("Invalid Young's modulus.")
 
-    youngs_modulus = object["props"]["yms"]
+    similar_objects = []
 
-    # search for another object with similar young's modulus
-    similar_object = None
-    similar_object_count = 0
+    for candidate in iter_objects(world_state):
+        if candidate["id"] == ref_obj["id"]:
+            continue
 
-    for obj in iter_objects(world_state):
-        if obj["id"] == object["id"]:
-            continue  # skip the same object
+        cand_yms = candidate["props"]["yms"]
+        if cand_yms <= 0:
+            continue
 
-        obj_state = world_state["simulation"][timestep]["objects"][obj["id"]]
+        log_diff = abs(math.log10(cand_yms) - math.log10(ref_yms))
+        cand_state = world_state["simulation"][timestep]["objects"][candidate["id"]]
 
-        is_object_visible = (
-            obj_state["infov_pixels"] > MIN_VISIBLE_PIXELS
-            and obj_state["fov_visibility"] >= VISIBILITY_THRESHOLD
-        )
+        if log_diff <= MAX_ALLOWED_DIFFERENCE_YOUNGS_MODULUS_LOG and is_object_visible(cand_state):
+            similar_objects.append(candidate)
 
-        difference = abs(obj["props"]["yms"] - youngs_modulus)
+    if len(similar_objects) == 0:
+        raise ImpossibleToAnswer("No similar object found.")
 
-        if difference < MAX_ALLOWED_DIFFERENCE_YOUNGS_MODULUS and is_object_visible:
-            similar_object = obj
-            similar_object_count += 1
+    if len(similar_objects) > 1:
+        raise ImpossibleToAnswer("Multiple similar objects found. Ambiguous.")
 
-    if similar_object_count >= 2:
-        raise ImpossibleToAnswer(
-            "Too many similar objects in the scene. Ambiguous question."
-        )
-
-    if similar_object is None:
-        raise ImpossibleToAnswer("No similar object found in the scene.")
-        # similar_object = {"name": "None of the objects"}
+    target = similar_objects[0]
 
     presents = [obj["name"] for obj in iter_objects(world_state)]
     labels, correct_idx = create_mc_object_names_from_dataset(
-        similar_object["name"],
+        target["name"],
         presents,
         get_all_objects_names(),
         num_answers=4,
     )
 
     return fill_questions(
-        question, labels, correct_idx, world_state, timestep, resolved_attributes
+        question, labels, correct_idx, world_state, timestep, resolved
     )
 
 

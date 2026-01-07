@@ -14,6 +14,15 @@ from typing import Any, DefaultDict, Dict, Iterable, List
 from subsample_questions_balanced import MISSING_TOKEN, load_questions
 
 NUM_OBJECTS_PATTERN = re.compile(r"_no-(\d+)")
+ANSI_RESET = "\033[0m"
+ANSI_COLORS = [
+    "\033[31m",  # red
+    "\033[32m",  # green
+    "\033[33m",  # yellow
+    "\033[34m",  # blue
+    "\033[35m",  # magenta
+    "\033[36m",  # cyan
+]
 
 
 class AllocationError(RuntimeError):
@@ -103,6 +112,14 @@ def resolve_num_objects(record: dict[str, Any]) -> int:
     return resolved
 
 
+def resolve_question_id(record: dict[str, Any]) -> str:
+    for key in ("question_id", "question_key", "idx"):
+        value = record.get(key)
+        if value not in {None, ""}:
+            return str(value)
+    return MISSING_TOKEN
+
+
 def group_by_sub_category(
     questions: Iterable[dict[str, Any]],
 ) -> DefaultDict[str, List[dict[str, Any]]]:
@@ -189,6 +206,7 @@ def sample_within_sub_category(
     required: int,
     pair_target: int,
     rng: random.Random,
+    warnings: List[str],
 ) -> List[dict[str, Any]]:
     buckets = group_by_num_objects(records)
     cap_value: int | None = None
@@ -199,7 +217,7 @@ def sample_within_sub_category(
         if capped_capacity >= required:
             cap_value = pair_target
         else:
-            print(
+            warnings.append(
                 f"Warning: sub_category '{sub_category}' requires {required} samples but only "
                 f"{capped_capacity} fit the per-pair cap of {pair_target}; relaxing the cap."
             )
@@ -220,7 +238,13 @@ def stratified_sample(
     total: int,
     pair_target: int,
     rng: random.Random,
-) -> tuple[List[dict[str, Any]], Dict[str, Counter]]:
+) -> tuple[
+    List[dict[str, Any]],
+    Dict[str, Counter],
+    Dict[str, List[str]],
+    Dict[str, Counter],
+    List[str],
+]:
     for record in questions:
         resolve_num_objects(record)
 
@@ -240,6 +264,9 @@ def stratified_sample(
 
     sampled: List[dict[str, Any]] = []
     summary: Dict[str, Counter] = {}
+    summary_question_ids: Dict[str, set[str]] = defaultdict(set)
+    summary_question_counts: Dict[str, Counter] = defaultdict(Counter)
+    warnings: List[str] = []
 
     for sub_category, records in grouped.items():
         required = sub_allocations[sub_category]
@@ -247,7 +274,7 @@ def stratified_sample(
             continue
         try:
             chosen = sample_within_sub_category(
-                sub_category, records, required, pair_target, rng
+                sub_category, records, required, pair_target, rng, warnings
             )
         except AllocationError as exc:
             raise SystemExit(
@@ -257,31 +284,111 @@ def stratified_sample(
         counters = summary.setdefault(sub_category, Counter())
         for record in chosen:
             counters[resolve_num_objects(record)] += 1
+            question_id = resolve_question_id(record)
+            summary_question_ids[sub_category].add(question_id)
+            summary_question_counts[sub_category][question_id] += 1
         sampled.extend(chosen)
 
     rng.shuffle(sampled)
-    return sampled, summary
+    summary_question_ids_list = {
+        key: sorted(values) for key, values in summary_question_ids.items()
+    }
+    return sampled, summary, summary_question_ids_list, summary_question_counts, warnings
 
 
-def print_summary(summary: Dict[str, Counter]) -> None:
+def print_summary(
+    summary: Dict[str, Counter],
+    summary_question_ids: Dict[str, List[str]],
+    summary_question_counts: Dict[str, Counter],
+) -> None:
+    if not summary:
+        print("No summary stats available.")
+        return
+
     total_records = 0
     aggregate_objects: Counter[int] = Counter()
+    sub_totals: Dict[str, int] = {}
+    max_num_len = 0
+    max_count_len = 0
+    all_num_objects: List[int] = []
 
-    print("Distribution by sub_category and num_objects:")
+    for sub_category, counters in summary.items():
+        sub_total = sum(counters.values())
+        sub_totals[sub_category] = sub_total
+        total_records += sub_total
+        max_count_len = max(max_count_len, len(str(sub_total)))
+        for num_objects, count in counters.items():
+            aggregate_objects[num_objects] += count
+            max_num_len = max(max_num_len, len(str(num_objects)))
+            max_count_len = max(max_count_len, len(str(count)))
+
+    max_num_len = max(max_num_len, len("TOTAL"))
+    all_num_objects = sorted(aggregate_objects.keys())
+
+    color_map: Dict[int, str] = {}
+    for idx, num_objects in enumerate(all_num_objects):
+        color_map[num_objects] = ANSI_COLORS[idx % len(ANSI_COLORS)]
+
+    def build_bar(counters: Counter[int], total: int, width: int = 30) -> str:
+        if total <= 0:
+            return "[" + (" " * width) + "]"
+        segments = []
+        remaining = width
+        ordered = [n for n in all_num_objects if counters.get(n, 0) > 0]
+        for i, num_objects in enumerate(ordered):
+            count = counters[num_objects]
+            if i == len(ordered) - 1:
+                seg_len = remaining
+            else:
+                seg_len = max(1, int(round((count / total) * width)))
+                seg_len = min(seg_len, remaining)
+            remaining -= seg_len
+            color = color_map[num_objects]
+            segments.append(f"{color}{'#' * seg_len}{ANSI_RESET}")
+            if remaining <= 0:
+                break
+        if remaining > 0:
+            segments.append(" " * remaining)
+        return "[" + "".join(segments) + "]"
+
+    print("\nSummary by sub_category and num_objects:")
+    legend_parts = [f"{color_map[n]}{n}{ANSI_RESET}" for n in all_num_objects]
+    print(f"Legend:\tN=count, colors(num_objects)={' '.join(legend_parts)}")
     for sub_category in sorted(summary.keys()):
         counters = summary[sub_category]
-        sub_total = sum(counters.values())
-        total_records += sub_total
-        print(f"  {sub_category}: {sub_total}")
+        sub_total = sub_totals[sub_category]
+        print(f"---- {sub_category.upper()} ----")
+        print(f"{build_bar(counters, sub_total)}")
         for num_objects in sorted(counters.keys()):
             count = counters[num_objects]
-            aggregate_objects[num_objects] += count
-            print(f"    num_objects={num_objects}: {count}")
+            num_field = str(num_objects).rjust(max_num_len)
+            count_field = str(count).rjust(max_count_len)
+            print(f"{num_field}\tN={count_field}")
+        total_field = "TOTAL".rjust(max_num_len)
+        total_count = str(sub_total).rjust(max_count_len)
+        print(f"{total_field}\tN={total_count}")
+        question_ids = summary_question_ids.get(sub_category, [])
+        print(f"question_ids: {', '.join(question_ids) if question_ids else '-'}")
+        question_counts = summary_question_counts.get(sub_category, Counter())
+        if question_counts:
+            counts_str = ", ".join(
+                f"{question_id}={count}"
+                for question_id, count in sorted(question_counts.items())
+            )
+        else:
+            counts_str = "-"
+        print(f"question_id counts: {counts_str}")
 
-    print("Totals per num_objects across all sub_categories:")
+    print("-" * 12)
+    print("Totals by num_objects:")
+    print(f"{build_bar(aggregate_objects, total_records)}")
     for num_objects in sorted(aggregate_objects.keys()):
-        print(f"  num_objects={num_objects}: {aggregate_objects[num_objects]}")
-    print(f"Total sampled questions: {total_records}")
+        count_field = str(aggregate_objects[num_objects]).rjust(max_count_len)
+        num_field = str(num_objects).rjust(max_num_len)
+        print(f"{num_field}\tN={count_field}")
+    total_field = "TOTAL".rjust(max_num_len)
+    total_count = str(total_records).rjust(max_count_len)
+    print(f"{total_field}\tN={total_count}")
 
 
 def main() -> None:
@@ -297,7 +404,13 @@ def main() -> None:
         raise SystemExit("No records left after applying the requested filters.")
 
     rng = random.Random(args.seed)
-    sampled, summary = stratified_sample(
+    (
+        sampled,
+        summary,
+        summary_question_ids,
+        summary_question_counts,
+        warnings,
+    ) = stratified_sample(
         questions=questions,
         total=args.count,
         pair_target=args.pair_target,
@@ -308,7 +421,11 @@ def main() -> None:
     with args.output.open("w", encoding="utf-8") as handle:
         json.dump(sampled, handle, indent=4)
 
-    print_summary(summary)
+    print_summary(summary, summary_question_ids, summary_question_counts)
+    if warnings:
+        print("\nWarnings:")
+        for warning in warnings:
+            print(warning)
 
 
 if __name__ == "__main__":

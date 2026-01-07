@@ -35,20 +35,27 @@ python main_parallel.py --simulation_path "${BASE_PATH}/random/" \
     --n_scenes 2000 \
     --exclude_simulations_file "problematic_paths.txt" \
     --n_proc 32
-    # --timeit
 
-# python ./subsample_questions_percentage.py \
-#     --count 10000 \
-#     --input ../output/run_${GENERAL_RUN_COUNT}_general/test_run_${GENERAL_RUN_COUNT}_general.json \
-#     --output ../output/run_${GENERAL_RUN_COUNT}_general/test_run_${GENERAL_RUN_COUNT}_general_10K.json \
-#     --percentage-map ./balancing_sub_categories.json \
-#     --seed 42
+RUN_NAME="run_${GENERAL_RUN_COUNT}_general"
+python ./subsample_questions_percentage.py \
+    --count 10000 \
+    --input ../output/${RUN_NAME}/test_${RUN_NAME}.json \
+    --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
+    --percentage-map ./balancing_sub_categories.json \
+    --seed 42
 
-# python ./subsample_questions_numbers.py \
-#     --input ../output/run_11_general/test_run_11_general.json \
-#     --output ../output/run_${GENERAL_RUN_COUNT}_general/test_run_${GENERAL_RUN_COUNT}_general_10K.json \
-#     --count 15000 \
-#     --seed 42
+cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
+
+
+RUN_NAME="run_${GENERAL_RUN_COUNT}_general_obj_num"
+python ./subsample_questions_numbers.py \
+    --input ../output/${RUN_NAME}/test_${RUN_NAME}.json \
+    --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
+    --count 15000 \
+    --seed 42
+
+cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
+
 
 # RUN_NAME="run_${GENERAL_RUN_COUNT}_general"
 # cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json

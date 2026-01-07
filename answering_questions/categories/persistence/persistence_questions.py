@@ -41,7 +41,7 @@ Answer = Union[str, float, Vector, Mapping[str, Any], Sequence[str]]
 
 SAMPLING_RATE = get_config()["sampling_rate"]
 RENDER_STEP = 1.0 / SAMPLING_RATE
-FRAME_INTERLEAVE = 4  # custom only for temporal questions (heuristic)
+FRAME_INTERLEAVE = 2  # custom only for temporal questions (heuristic)
 MIN_PIXELS_VISIBLE = get_config()["min_pixels_visible"]
 CLIP_LENGTH = get_config()["clip_length"]
 
@@ -83,8 +83,8 @@ def F_PERSISTENCE_OBJECT_PRESENT(
                 f"Object '{object_name}' appeared but never disappeared."
             )
 
-        first_disappearance_idx = disappearance_indices[0]
-
+        # this modification could be strange but maybe useful, else we could do CLIP_LENGTH//3 for shorter hidden intervals
+        first_disappearance_idx = min(disappearance_indices[0] + (FRAME_INTERLEAVE * CLIP_LENGTH // 2), len(world_state["simulation"]) - 1)
         final_timestep = list(world_state["simulation"].keys())[first_disappearance_idx]
 
     if (
@@ -243,13 +243,3 @@ def F_PERSISTENCE_OBJECT_TOTAL_COUNT_HIDDEN(
         resolved_attributes,
         initial_timestep=initial_timestep,
     )
-
-
-# I don't know about this one actually
-@with_resolved_attributes
-def F_PERSISTENCE_OBJECT_COLLISION_HIDDEN(
-    world_state: WorldState, question: QuestionPayload, attributes, **kwargs
-) -> Sequence[str]:
-    assert len(attributes) == 0
-
-    raise ImpossibleToAnswer("Not implemented yet.")

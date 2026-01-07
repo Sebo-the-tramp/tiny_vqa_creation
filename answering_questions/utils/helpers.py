@@ -393,6 +393,20 @@ def get_total_images():
     # TODO supposing 100fps and 5 seconds of video
     return 8
 
+def is_object_visible(object_state):
+
+    pixels_void = object_state["infov_pixels_void"]
+    pixels_visible = object_state["infov_pixels_visible"]
+    fov_visibility = object_state["fov_visibility"]
+
+    visible = (
+        # Case 1: Object is mostly unoccluded
+        # (fov_visibility >= VISIBILITY_THRESHOLD or pixels_visible >= MIN_PIXELS_VISIBLE)
+        fov_visibility >= VISIBILITY_THRESHOLD and pixels_visible > pixels_void
+    )
+
+    return visible
+
 
 def get_random_timestep_from_list(visible_timesteps: List[str], question: Any) -> str:
     # MAX_TIMESTEP = len(visible_timesteps) - 1

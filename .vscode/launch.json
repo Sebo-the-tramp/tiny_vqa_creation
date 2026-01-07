@@ -22,7 +22,7 @@
                 // "--simulation_path", "/data0/sebastian.cavada/datasets/simulations_v4/dl3dv/random/1/c-1_no-1_d-10_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-194_20251212_003616",
                 // "--simulation_path", "/data0/sebastian.cavada/datasets/simulations_v3/dl3dv/random-cam-stationary/1/c-1_no-1_d-4_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-45_20251102_165527",
                 "--n_scenes", "200",
-                "--include_categories", "mechanics",
+                "--include_categories", "material_understanding",
                 // "--augmentation", "textual_context"
                 // "--roi_circling", "1",
                 // "--masking", "1"

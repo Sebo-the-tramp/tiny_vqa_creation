@@ -328,12 +328,6 @@
             "sub_category": "object_persistence",
             "choice": "mcq",
             "question": "How many objects are present but not visible in the last frame?"
-        },
-        "F_PERSISTENCE_OBJECT_COLLISION_HIDDEN": {
-            "task_splits": "multi",
-            "sub_category": "object_persistence",
-            "choice": "mcq",
-            "question": "Which object collides with another object but is not visible in the last frame?"
-        }
+        }        
     }
 }

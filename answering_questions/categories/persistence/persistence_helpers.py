@@ -47,8 +47,7 @@ def get_optimal_timestep_interval(world_state: WorldState) -> Sequence[str]:
     before_optimal = has_max_objects.copy()
     before_optimal[:initial_timestep_index] = True
 
-    # this is to avoid choosing a timestep too far, where things might have changed too much
-    # from
+    # this is to avoid choosing a timestep too far, where things might have changed too much    
     first_drop = np.argmax(~before_optimal)
     window_space = 10  # frames
     if (first_drop + window_space) < len(before_optimal):

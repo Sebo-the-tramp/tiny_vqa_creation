@@ -495,9 +495,7 @@ def _print_summary(stats, show_time):
         max_i2_len = max(max_i2_len, len(str(data["impossible_second"])))
         max_i_len = max(
             max_i_len,
-            len(
-                str(data["impossible_first"] + data["impossible_second"])
-            ),
+            len(str(data["impossible_first"] + data["impossible_second"])),
         )
         max_e_len = max(max_e_len, len(str(data["errors"])))
         max_n_len = max(max_n_len, len(str(data["non_interesting"])))
@@ -544,9 +542,6 @@ def _print_summary(stats, show_time):
         c_val = str(data["created"]).rjust(max_c_len)
         i1_val = str(data["impossible_first"]).rjust(max_i1_len)
         i2_val = str(data["impossible_second"]).rjust(max_i2_len)
-        i_val = str(data["impossible_first"] + data["impossible_second"]).rjust(
-            max_i_len
-        )
         e_val = str(data["errors"]).rjust(max_e_len)
         n_val = str(data["non_interesting"]).rjust(max_n_len)
         a_val = str(data["attempted"]).rjust(max_a_len)
@@ -582,7 +577,6 @@ def _print_summary(stats, show_time):
     total_c = str(total_created).rjust(max_c_len)
     total_i1 = str(total_impossible_first).rjust(max_i1_len)
     total_i2 = str(total_impossible_second).rjust(max_i2_len)
-    total_i = str(total_impossible).rjust(max_i_len)
     total_e = str(total_errors).rjust(max_e_len)
     total_n = str(total_non_interesting).rjust(max_n_len)
     total_a = str(total_attempted).rjust(max_a_len)

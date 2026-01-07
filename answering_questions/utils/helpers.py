@@ -393,8 +393,8 @@ def get_total_images():
     # TODO supposing 100fps and 5 seconds of video
     return 8
 
-def is_object_visible(object_state):
 
+def is_object_visible(object_state):
     pixels_void = object_state["infov_pixels_void"]
     pixels_visible = object_state["infov_pixels_visible"]
     fov_visibility = object_state["fov_visibility"]

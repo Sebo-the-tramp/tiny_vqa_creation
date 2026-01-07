@@ -31,7 +31,7 @@ from utils.helpers import (
     distance_between,
     resolve_attributes_visible_at_timestep,
     get_visible_timesteps_for_attributes_min_objects,
-    get_continuous_subsequences_min_length,    
+    get_continuous_subsequences_min_length,
     get_random_timestep_from_list,
     fill_template,
     get_timestep_from_idx,
@@ -47,7 +47,7 @@ from .mechanics_helpers import (
     get_acceleration,
     get_position,
     get_rotation,
-    get_mask_collisions, 
+    get_mask_collisions,
 )
 
 from utils.config import get_config
@@ -278,7 +278,9 @@ def F_KINEMATICS_SYSTEM_STABILITY(
 
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        attributes, world_state, min_objects=min(kwargs["current_world_number_of_objects"], 3)
+        attributes,
+        world_state,
+        min_objects=min(kwargs["current_world_number_of_objects"], 3),
     )
 
     continuous_subsequences = get_continuous_subsequences_min_length(
@@ -374,9 +376,10 @@ def F_KINEMATICS_STILL_OBJECT(
 def F_COLLISIONS_OBJ_OBJ_FIRST(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
-    
     if kwargs["current_world_number_of_objects"] < 2:
-        raise ImpossibleToAnswer("Not enough objects in the scene for a collision to happen.")
+        raise ImpossibleToAnswer(
+            "Not enough objects in the scene for a collision to happen."
+        )
 
     assert len(attributes) == 1 and "OBJECT" in attributes
 
@@ -445,15 +448,18 @@ def F_COLLISIONS_OBJ_OBJ_FIRST(
 def F_COLLISION_OBJECT_OBJECT_FRAME_SINGLE(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
-    
     if kwargs["current_world_number_of_objects"] < 2:
-        raise ImpossibleToAnswer("Not enough objects in the scene for a collision to happen.")
-    
+        raise ImpossibleToAnswer(
+            "Not enough objects in the scene for a collision to happen."
+        )
+
     assert len(attributes) == 1 and "OBJECT" in attributes
 
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        attributes, world_state, min_objects=min(kwargs["current_world_number_of_objects"], 3)
+        attributes,
+        world_state,
+        min_objects=min(kwargs["current_world_number_of_objects"], 3),
     )
 
     continuous_subsequences = get_continuous_subsequences_min_length(
@@ -461,22 +467,28 @@ def F_COLLISION_OBJECT_OBJECT_FRAME_SINGLE(
     )
 
     visible_timesteps = random.choice(continuous_subsequences)
-    
+
     collision_mask = get_mask_collisions(world_state)
 
-    visible_timesteps_index = [world_state['simulation'][i]['frame_idx'] for i in visible_timesteps]
-    visible_collision_mask = collision_mask[visible_timesteps_index[0]: visible_timesteps_index[-1]+1, 1:, 1:]
+    visible_timesteps_index = [
+        world_state["simulation"][i]["frame_idx"] for i in visible_timesteps
+    ]
+    visible_collision_mask = collision_mask[
+        visible_timesteps_index[0] : visible_timesteps_index[-1] + 1, 1:, 1:
+    ]
 
-    rows = visible_collision_mask.any(axis=(1,2))
+    rows = visible_collision_mask.any(axis=(1, 2))
     t_first = np.argmax(rows) if rows.any() else None
 
     if t_first is not None:
         row_first = visible_collision_mask[t_first]
-        idx = np.nonzero(row_first)[0]        # indices of non-zeros
-        
+        idx = np.nonzero(row_first)[0]  # indices of non-zeros
+
         if idx.size > 2:
-            raise ImpossibleToAnswer("Too many collisions at the first collision timestep.")
-        
+            raise ImpossibleToAnswer(
+                "Too many collisions at the first collision timestep."
+            )
+
         # adding +1 to match the object_id in the simulation file
         collision_object_a_id = idx[0] + 1 if len(idx) > 0 else None
         collision_object_b_id = idx[1] + 1 if len(idx) > 1 else None
@@ -518,43 +530,51 @@ def F_COLLISION_OBJECT_OBJECT_FRAME_SINGLE(
 def F_COLLISION_OBJECT_OBJECT_FRAME_MULTI(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
-
     if kwargs["current_world_number_of_objects"] < 2:
-        raise ImpossibleToAnswer("Not enough objects in the scene for a collision to happen.")
+        raise ImpossibleToAnswer(
+            "Not enough objects in the scene for a collision to happen."
+        )
 
     assert len(attributes) == 1 and "OBJECT" in attributes
 
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        attributes, world_state, min_objects=min(kwargs["current_world_number_of_objects"], 3)
+        attributes,
+        world_state,
+        min_objects=min(kwargs["current_world_number_of_objects"], 3),
     )
-    
+
     collision_mask = get_mask_collisions(world_state)
 
-    visible_timesteps_index = [world_state['simulation'][i]['frame_idx'] for i in visible_timesteps]
-    visible_collision_mask = collision_mask[visible_timesteps_index[0]: visible_timesteps_index[-1]+1, 1:, 1:]
+    visible_timesteps_index = [
+        world_state["simulation"][i]["frame_idx"] for i in visible_timesteps
+    ]
+    visible_collision_mask = collision_mask[
+        visible_timesteps_index[0] : visible_timesteps_index[-1] + 1, 1:, 1:
+    ]
 
-    rows = visible_collision_mask.any(axis=(1,2))
+    rows = visible_collision_mask.any(axis=(1, 2))
     t_first = np.argmax(rows) if rows.any() else None
 
     if t_first is not None:
         row_first = visible_collision_mask[t_first]
-        idx = np.nonzero(row_first)[0]        # indices of non-zeros
-        
-        if idx.size > 2:
-            raise ImpossibleToAnswer("Too many collisions at the first collision timestep.")
+        idx = np.nonzero(row_first)[0]  # indices of non-zeros
 
-        # adding +1 to match the object_id in the simulation file        
+        if idx.size > 2:
+            raise ImpossibleToAnswer(
+                "Too many collisions at the first collision timestep."
+            )
+
+        # adding +1 to match the object_id in the simulation file
         collision_object_b_id = idx[1] + 1 if len(idx) > 1 else None
         collision_timestep = get_timestep_from_idx(visible_timesteps_index[t_first])
 
     else:
         raise ImpossibleToAnswer("No collision found in the visible timesteps.")
-    
-    # technically the resolved object should be the one colliding
-    collider_object = world_state["objects"][str(collision_object_b_id)]    
-    resolved_attributes = {"OBJECT": {"choice": collider_object, "category": "OBJECT"}}
 
+    # technically the resolved object should be the one colliding
+    collider_object = world_state["objects"][str(collision_object_b_id)]
+    resolved_attributes = {"OBJECT": {"choice": collider_object, "category": "OBJECT"}}
 
     frames_og = sample_frames_before_timestep(
         world_state, collision_timestep, num_frames=4, frame_interleave=2
@@ -591,18 +611,24 @@ def F_COLLISION_OBJECT_SCENE_FRAME_MULTI(
 
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        attributes, world_state, min_objects=min(kwargs["current_world_number_of_objects"], 3)
+        attributes,
+        world_state,
+        min_objects=min(kwargs["current_world_number_of_objects"], 3),
     )
 
     collision_mask = get_mask_collisions(world_state)
 
-    visible_timesteps_index = [world_state['simulation'][i]['frame_idx'] for i in visible_timesteps]
-    visible_collision_mask = collision_mask[visible_timesteps_index[0]: visible_timesteps_index[-1]+1, 0, 1:]
+    visible_timesteps_index = [
+        world_state["simulation"][i]["frame_idx"] for i in visible_timesteps
+    ]
+    visible_collision_mask = collision_mask[
+        visible_timesteps_index[0] : visible_timesteps_index[-1] + 1, 0, 1:
+    ]
 
     rows = visible_collision_mask.any(axis=(1))
     t_first = np.argmax(rows) if rows.any() else None
 
-    if t_first is not None:        
+    if t_first is not None:
         collision_timestep = get_timestep_from_idx(visible_timesteps_index[t_first])
         collision_row = collision_mask[t_first, 0, 1:]
 
@@ -610,9 +636,11 @@ def F_COLLISION_OBJECT_SCENE_FRAME_MULTI(
         if collision_idx.size == 0:
             raise ImpossibleToAnswer("No collision object found.")
         if collision_idx.size > 1:
-            raise ImpossibleToAnswer("Multiple collision objects found.")        
+            raise ImpossibleToAnswer("Multiple collision objects found.")
 
-        collision_object_id = collision_idx[0] + 1 # to match object_id in the simulation        
+        collision_object_id = (
+            collision_idx[0] + 1
+        )  # to match object_id in the simulation
 
     else:
         raise ImpossibleToAnswer("No collision found in the visible timesteps.")

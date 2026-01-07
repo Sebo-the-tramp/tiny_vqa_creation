@@ -5,6 +5,8 @@ import torch
 from utils.my_exception import ImpossibleToAnswer
 from utils.config import get_config
 
+import fused_ssim
+
 
 def _select_by_temporal_distance(confounding_images, target_index):
     if type(target_index) is not int:
@@ -18,7 +20,9 @@ def _select_by_temporal_distance(confounding_images, target_index):
     # return ranked[:3] # this was the original way
 
     eligible = [
-        idx for idx in confounding_images if abs(int(idx) - target_index) >= min_distance
+        idx
+        for idx in confounding_images
+        if abs(int(idx) - target_index) >= min_distance
     ]
     if len(eligible) >= 3:
         return random.sample(eligible, 3)

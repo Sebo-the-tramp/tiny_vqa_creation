@@ -24,9 +24,7 @@ from utils.all_objects import get_all_objects_names
 from utils.helpers import (
     fill_questions_cf,
     iter_objects,
-    get_random_timestep_from_list,
     resolve_attributes_visible_at_timestep,
-    get_visible_timesteps_for_attributes_min_objects,
     get_timestep_from_idx,
     is_object_visible,
 )
@@ -85,7 +83,7 @@ def CF_MASS_OBJECT(
 
     object_id = answer_list_original_data_cf[0][5]["OBJECT"]["choice"]["id"]
 
-    object = world_state_og['objects'][object_id]
+    object = world_state_og["objects"][object_id]
     obj_state = world_state_og["simulation"][timestep_end]["objects"][object_id]
 
     if not is_object_visible(obj_state):
@@ -93,7 +91,7 @@ def CF_MASS_OBJECT(
 
     resolved_attributes = resolve_attributes_visible_at_timestep(
         attributes, world_state_mod, timestep_end
-    )    
+    )
 
     mass = object["mass"]
 
@@ -111,7 +109,7 @@ def CF_MASS_OBJECT(
         world_state_mod,
         timestep_end,
         resolved_attributes,
-        initial_timestep=timestep_start
+        initial_timestep=timestep_start,
     )
 
 
@@ -185,7 +183,7 @@ def CF_MASS_HEAVIEST_OBJECT(
         world_state_mod,
         timestep_end,
         resolved_attributes,
-        initial_timestep=timestep_start
+        initial_timestep=timestep_start,
     )
 
 
@@ -202,7 +200,7 @@ def CF_MASS_LIGHTEST_OBJECT(
 
     if kwargs["current_world_number_of_objects"] < 2:
         raise ImpossibleToAnswer("Not enough objects in the scene.")
-    
+
     timestep_end_index = int(
         answer_list_original_data_cf[0][3][-1]
     )  # this has to be the image to get the question
@@ -216,7 +214,6 @@ def CF_MASS_LIGHTEST_OBJECT(
     # check if the particular question asks something outside of simulation_og
     if timestep_end_index > len(world_state_og["simulation"]) - 1:
         raise ImpossibleToAnswer("Question refers to future timestep.")
-       
 
     resolved_attributes = resolve_attributes_visible_at_timestep(
         attributes, world_state_mod, timestep_end
@@ -225,7 +222,7 @@ def CF_MASS_LIGHTEST_OBJECT(
     objects_masses = []
 
     for obj in iter_objects(world_state_mod):
-        obj_state = world_state_mod["simulation"][timestep_end]["objects"][obj["id"]]        
+        obj_state = world_state_mod["simulation"][timestep_end]["objects"][obj["id"]]
 
         if is_object_visible(obj_state):
             objects_masses.append((obj["mass"], obj))
@@ -260,5 +257,5 @@ def CF_MASS_LIGHTEST_OBJECT(
         world_state_mod,
         timestep_end,
         resolved_attributes,
-        initial_timestep=timestep_start
+        initial_timestep=timestep_start,
     )

@@ -84,7 +84,10 @@ def F_PERSISTENCE_OBJECT_PRESENT(
             )
 
         # this modification could be strange but maybe useful, else we could do CLIP_LENGTH//3 for shorter hidden intervals
-        first_disappearance_idx = min(disappearance_indices[0] + (FRAME_INTERLEAVE * CLIP_LENGTH // 2), len(world_state["simulation"]) - 1)
+        first_disappearance_idx = min(
+            disappearance_indices[0] + (FRAME_INTERLEAVE * CLIP_LENGTH // 2),
+            len(world_state["simulation"]) - 1,
+        )
         final_timestep = list(world_state["simulation"].keys())[first_disappearance_idx]
 
     if (

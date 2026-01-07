@@ -23,7 +23,6 @@ import random
 from utils.config import get_config
 from utils.all_objects import get_all_objects_names
 from utils.my_exception import ImpossibleToAnswer
-from utils.load_pointclouds import load_scene_pointcloud
 
 from utils.helpers import (
     iter_objects,
@@ -32,12 +31,12 @@ from utils.helpers import (
     get_random_timestep_from_list,
     resolve_attributes_visible_at_timestep,
     get_visible_timesteps_for_attributes_min_objects,
-    is_object_visible
+    is_object_visible,
 )
 from .spatial_reasoning_helpers import (
     get_position,
     get_closest_object,
-    get_position_camera,    
+    get_position_camera,
     get_spatial_relationship_camera_view,
     get_all_relational_positional_adjectives,
 )
@@ -282,7 +281,9 @@ def F_SIZE_OBJECT_BIGGER(
 
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        ["OBJECT"], world_state, min_objects=min(kwargs["current_world_number_of_objects"], 3)
+        ["OBJECT"],
+        world_state,
+        min_objects=min(kwargs["current_world_number_of_objects"], 3),
     )
 
     timestep = get_random_timestep_from_list(visible_timesteps, question)
@@ -295,16 +296,16 @@ def F_SIZE_OBJECT_BIGGER(
     biggest_object = None
     biggest_volume = -1.0
     total_object_seen = 0
-    
+
     for obj in iter_objects(world_state):
         volume = obj.get("volume", 0.0)
-        obj_state = world_state["simulation"][timestep]["objects"][obj["id"]]        
+        obj_state = world_state["simulation"][timestep]["objects"][obj["id"]]
 
         if is_object_visible(obj_state) and volume is not None:
             total_object_seen += 1
             if volume > biggest_volume:
                 biggest_volume = volume
-                biggest_object = obj            
+                biggest_object = obj
 
     if total_object_seen <= 1:
         raise ImpossibleToAnswer("No visible objects to compare.")
@@ -345,9 +346,11 @@ def F_SIZE_OBJECT_SMALLER(
     # Find the smallest object by volume
     smallest_object = None
     smallest_volume = 10e6
+    total_object_seen = 0
+
     for obj in iter_objects(world_state):
         volume = obj.get("volume", 0.0)
-        obj_state = world_state["simulation"][timestep]["objects"][obj["id"]]        
+        obj_state = world_state["simulation"][timestep]["objects"][obj["id"]]
 
         if is_object_visible(obj_state) and volume is not None:
             total_object_seen += 1

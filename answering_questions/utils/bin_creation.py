@@ -355,7 +355,7 @@ def create_mc_object_names_from_dataset(
     category_map: Optional[
         Dict[str, str]
     ] = None,  # optional: label->category (normalized keys)
-    prefer_same_category: bool = True,    
+    prefer_same_category: bool = True,
 ) -> Tuple[List[str], int]:
     """
     Make multiple-choice options for object names.

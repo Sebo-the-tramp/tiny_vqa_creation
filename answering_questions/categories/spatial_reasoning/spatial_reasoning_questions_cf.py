@@ -380,4 +380,3 @@ def CF_LAYOUT_POSITION_OBJECT_OBJECT(
         timestep_end,
         resolved_attributes,
     )
-

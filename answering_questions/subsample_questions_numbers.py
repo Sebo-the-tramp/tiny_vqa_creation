@@ -293,7 +293,13 @@ def stratified_sample(
     summary_question_ids_list = {
         key: sorted(values) for key, values in summary_question_ids.items()
     }
-    return sampled, summary, summary_question_ids_list, summary_question_counts, warnings
+    return (
+        sampled,
+        summary,
+        summary_question_ids_list,
+        summary_question_counts,
+        warnings,
+    )
 
 
 def print_summary(

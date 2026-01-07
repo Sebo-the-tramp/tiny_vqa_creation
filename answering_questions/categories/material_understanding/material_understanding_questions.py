@@ -26,7 +26,7 @@ from utils.helpers import (
     get_random_timestep_from_list,
     resolve_attributes_visible_at_timestep,
     get_visible_timesteps_for_attributes_min_objects,
-    is_object_visible
+    is_object_visible,
 )
 
 from utils.config import get_config
@@ -107,7 +107,9 @@ def F_MASS_HEAVIEST_OBJECT(
 
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        ["OBJECT"], world_state, min_objects=min(kwargs["current_world_number_of_objects"], 3)
+        ["OBJECT"],
+        world_state,
+        min_objects=min(kwargs["current_world_number_of_objects"], 3),
     )
 
     timestep = get_random_timestep_from_list(visible_timesteps, question)
@@ -119,7 +121,7 @@ def F_MASS_HEAVIEST_OBJECT(
     objects_masses = []
 
     for obj in iter_objects(world_state):
-        obj_state = world_state["simulation"][timestep]["objects"][obj["id"]] 
+        obj_state = world_state["simulation"][timestep]["objects"][obj["id"]]
 
         if is_object_visible(obj_state):
             objects_masses.append((obj["mass"], obj))
@@ -162,7 +164,9 @@ def F_MASS_LIGHTEST_OBJECT(
 
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        ["OBJECT"], world_state, min_objects=min(kwargs["current_world_number_of_objects"], 3)
+        ["OBJECT"],
+        world_state,
+        min_objects=min(kwargs["current_world_number_of_objects"], 3),
     )
 
     timestep = get_random_timestep_from_list(visible_timesteps, question)
@@ -174,7 +178,7 @@ def F_MASS_LIGHTEST_OBJECT(
     objects_masses = []
 
     for obj in iter_objects(world_state):
-        obj_state = world_state["simulation"][timestep]["objects"][obj["id"]]        
+        obj_state = world_state["simulation"][timestep]["objects"][obj["id"]]
 
         if is_object_visible(obj_state):
             objects_masses.append((obj["mass"], obj))
@@ -253,7 +257,7 @@ def F_PHYSICS_PROPERTY_DENSITY_OBJECT_RELATIVE(
 
     denser_object = None
     for object in iter_objects(world_state):
-        obj_state = world_state["simulation"][timestep]["objects"][object["id"]]        
+        obj_state = world_state["simulation"][timestep]["objects"][object["id"]]
 
         if is_object_visible(obj_state):
             if (
@@ -327,9 +331,7 @@ def F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR(
     )
     timestep = get_random_timestep_from_list(visible_timesteps, question)
 
-    resolved = resolve_attributes_visible_at_timestep(
-        attributes, world_state, timestep
-    )
+    resolved = resolve_attributes_visible_at_timestep(attributes, world_state, timestep)
     ref_obj = resolved["OBJECT"]["choice"]
     ref_yms = ref_obj["props"]["yms"]
 
@@ -349,7 +351,9 @@ def F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR(
         log_diff = abs(math.log10(cand_yms) - math.log10(ref_yms))
         cand_state = world_state["simulation"][timestep]["objects"][candidate["id"]]
 
-        if log_diff <= MAX_ALLOWED_DIFFERENCE_YOUNGS_MODULUS_LOG and is_object_visible(cand_state):
+        if log_diff <= MAX_ALLOWED_DIFFERENCE_YOUNGS_MODULUS_LOG and is_object_visible(
+            cand_state
+        ):
             similar_objects.append(candidate)
 
     if len(similar_objects) == 0:
@@ -360,7 +364,9 @@ def F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR(
 
     target = similar_objects[0]
 
-    presents = [obj["name"] for obj in iter_objects(world_state) if obj["id"] != ref_obj["id"]]
+    presents = [
+        obj["name"] for obj in iter_objects(world_state) if obj["id"] != ref_obj["id"]
+    ]
     labels, correct_idx = create_mc_object_names_from_dataset(
         target["name"],
         presents,
@@ -643,7 +649,11 @@ def F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR(
         raise ImpossibleToAnswer("No similar object found in the scene.")
         # similar_object = {"name": "None of the objects", "props": {"prs": -1}}
 
-    presents = [obj["name"] for obj in iter_objects(world_state) if obj["id"] != ref_object["id"]]
+    presents = [
+        obj["name"]
+        for obj in iter_objects(world_state)
+        if obj["id"] != ref_object["id"]
+    ]
     labels, correct_idx = create_mc_object_names_from_dataset(
         similar_object["name"],
         presents,
@@ -798,7 +808,7 @@ def F_MATERIAL_IDENTIFICATION_SIMILAR_OBJECT(
     similar_object_count = 0
 
     for obj in iter_objects(world_state):
-        obj_state = world_state["simulation"][timestep]["objects"][obj["id"]]        
+        obj_state = world_state["simulation"][timestep]["objects"][obj["id"]]
 
         if (
             obj["description"]["material_group"] == material

@@ -191,6 +191,7 @@ def create_vqa(
                 time.perf_counter() if getattr(config, "timeit", False) else None
             )
             attempted_in_question = 0
+            successful_in_question = 0
 
             fn_to_answer_question = get_answer(question_key, category_key)
 
@@ -201,28 +202,16 @@ def create_vqa(
             except ImpossibleToAnswer:
                 stats[stats_key]["impossible"] += 1
                 attempted_in_question += 1
-                if question_start is not None:
-                    elapsed = time.perf_counter() - question_start
-                    stats[stats_key]["time_sum"] += elapsed
-                    stats[stats_key]["time_count"] += attempted_in_question
                 stats[stats_key]["attempted"] += attempted_in_question
                 continue
             except Exception:
                 stats[stats_key]["errors"] += 1
                 attempted_in_question += 1
-                if question_start is not None:
-                    elapsed = time.perf_counter() - question_start
-                    stats[stats_key]["time_sum"] += elapsed
-                    stats[stats_key]["time_count"] += attempted_in_question
                 stats[stats_key]["attempted"] += attempted_in_question
                 continue
             if not answer_list:
                 stats[stats_key]["errors"] += 1
                 attempted_in_question += 1
-                if question_start is not None:
-                    elapsed = time.perf_counter() - question_start
-                    stats[stats_key]["time_sum"] += elapsed
-                    stats[stats_key]["time_count"] += attempted_in_question
                 stats[stats_key]["attempted"] += attempted_in_question
                 continue
 
@@ -297,6 +286,7 @@ def create_vqa(
 
                 stats[stats_key]["created"] += 1
                 attempted_in_question += 1
+                successful_in_question += 1
 
                 if verbose:
                     print(f"  Question: {question}")
@@ -307,10 +297,10 @@ def create_vqa(
                 if verbose:
                     print("===" * 20)
 
-            if question_start is not None and attempted_in_question > 0:
+            if question_start is not None and successful_in_question > 0:
                 elapsed = time.perf_counter() - question_start
                 stats[stats_key]["time_sum"] += elapsed
-                stats[stats_key]["time_count"] += attempted_in_question
+                stats[stats_key]["time_count"] += successful_in_question
             stats[stats_key]["attempted"] += attempted_in_question
 
     return all_vqa, stats
@@ -446,7 +436,11 @@ def _print_summary(stats, show_time):
             if show_time and data["time_count"] > 0
             else None
         )
-        t_val = f"{avg_ms:.3f}ms".rjust(max_t_len) if show_time else ""
+        if show_time:
+            avg_str = f"{avg_ms:.3f}ms" if avg_ms is not None else "-"
+            t_val = avg_str.rjust(max_t_len)
+        else:
+            t_val = ""
         line = (
             f"{bar}\t{key_field}\t{sub_field}\t"
             f"{ANSI_GREEN}C={c_val}{ANSI_RESET}\t"

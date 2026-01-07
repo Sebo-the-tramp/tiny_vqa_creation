@@ -1,5 +1,5 @@
-# RUN_NAME="run_13_counterfactual_shift"
-RUN_NAME="test_seed_00"
+RUN_NAME="run_13_general"
+# RUN_NAME="test_seed_00"
 
 # python check_VQA.py ../output/test$RUN_NAME.json ../output/val_answer$RUN_NAME.json --random --limit 500  --question-ids F_CAMERA_MOTION_DIRECTION
 

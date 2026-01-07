@@ -345,6 +345,120 @@ def create_bins_from_single_gt(
 
 
 # ---------- main helper ----------
+# def create_mc_object_names_from_dataset(
+#     gt: str,
+#     present_objects: Iterable[str],
+#     dataset_labels: Iterable[str],
+#     num_answers: int = 4,
+#     *,
+#     seed: Optional[int] = None,
+#     category_map: Optional[
+#         Dict[str, str]
+#     ] = None,  # optional: label->category (normalized keys)
+#     prefer_same_category: bool = True,
+#     min_name_sim_if_uncat: float = 0.15,  # when no category info, require some name similarity
+# ) -> Tuple[List[str], int]:
+#     """
+#     Make multiple-choice options for object names.
+
+#     Priority:
+#       1) Distractors from present_objects (excluding GT), preferring same category if provided.
+#       2) Top up from dataset_labels (excluding GT and any already used), again preferring same category.
+#       3) If no category info, fall back to simple name similarity to keep distractors plausible.
+
+#     Returns:
+#       (labels, correct_index) with consistent Title Case labeling.
+#     """
+#     if num_answers < 2:
+#         raise ValueError("num_answers must be at least 2")
+
+#     rng = _select_rng(seed)
+
+#     gt_n = norm(gt)
+#     if not gt_n:
+#         raise ValueError("Ground-truth object name becomes empty after normalization.")
+
+#     # Normalize datasets
+#     ds_norm_set = {
+#         norm(x) for x in dataset_labels if (norm(x) != "" and norm(x) != gt_n)
+#     }
+#     if gt_n in ds_norm_set:
+#         raise ValueError("Ground-truth object name found in dataset labels.")
+
+#     # Present objects (normalized, unique, excluding GT)
+#     seen_present = set()
+#     present_n = []
+#     for o in present_objects:
+#         n = norm(o)
+#         if n and n != gt_n and n not in seen_present:
+#             seen_present.add(n)
+#             present_n.append(n)
+
+#     # Category lookup helper
+#     def cat_of(n: str) -> Optional[str]:
+#         if not category_map:
+#             return None
+#         # category_map keys should be normalized
+#         return category_map.get(n)
+
+#     gt_cat = cat_of(gt_n)
+
+#     # Split present by category (if available)
+#     if prefer_same_category and gt_cat is not None:
+#         present_same = [x for x in present_n if cat_of(x) == gt_cat]
+#         present_other = [x for x in present_n if x not in present_same]
+#     else:
+#         present_same, present_other = [], present_n
+
+#     _shuffle_inplace(present_same, rng)
+#     _shuffle_inplace(present_other, rng)
+
+#     distractors: List[str] = []
+#     needed = num_answers - 1
+
+#     def take_from(lst: List[str], k: int):
+#         nonlocal distractors
+#         for x in lst:
+#             if len(distractors) >= k:
+#                 break
+#             if x != gt_n and x not in distractors:
+#                 distractors.append(x)
+
+#     # 1) Fill from present objects
+#     take_from(present_same, needed)
+#     if len(distractors) < needed:
+#         take_from(present_other, needed)
+
+#     # 2) Top up from dataset labels
+#     if len(distractors) < needed:
+#         # candidate pool = dataset minus GT and already used/present
+#         cand = [
+#             x
+#             for x in ds_norm_set
+#             if x != gt_n and x not in distractors and x not in seen_present
+#         ]
+
+#         for x in cand:
+#             distractors.append(x)
+#             if len(distractors) >= needed:
+#                 break
+
+#     # 3) Final sanity check
+#     if len(distractors) < needed:
+#         have = 1 + len(distractors)
+#         raise ValueError(
+#             f"Not enough unique object names to make {num_answers} options. "
+#             f"Only {have} available (including the correct answer). "
+#             f"Add more dataset_labels or lower num_answers."
+#         )
+
+#     # Assemble + shuffle; format labels uniformly
+#     options_n = [gt_n] + distractors[:needed]
+#     _shuffle_inplace(options_n, rng)
+#     labels = [x for x in options_n]
+#     correct_idx = options_n.index(gt_n)
+#     return labels, correct_idx
+
 def create_mc_object_names_from_dataset(
     gt: str,
     present_objects: Iterable[str],
@@ -352,22 +466,12 @@ def create_mc_object_names_from_dataset(
     num_answers: int = 4,
     *,
     seed: Optional[int] = None,
-    category_map: Optional[
-        Dict[str, str]
-    ] = None,  # optional: label->category (normalized keys)
+    category_map: Optional[Dict[str, str]] = None,
     prefer_same_category: bool = True,
-    min_name_sim_if_uncat: float = 0.15,  # when no category info, require some name similarity
+    min_name_sim_if_uncat: float = 0.15,
 ) -> Tuple[List[str], int]:
     """
     Make multiple-choice options for object names.
-
-    Priority:
-      1) Distractors from present_objects (excluding GT), preferring same category if provided.
-      2) Top up from dataset_labels (excluding GT and any already used), again preferring same category.
-      3) If no category info, fall back to simple name similarity to keep distractors plausible.
-
-    Returns:
-      (labels, correct_index) with consistent Title Case labeling.
     """
     if num_answers < 2:
         raise ValueError("num_answers must be at least 2")
@@ -378,32 +482,32 @@ def create_mc_object_names_from_dataset(
     if not gt_n:
         raise ValueError("Ground-truth object name becomes empty after normalization.")
 
-    # Normalize datasets
-    ds_norm_set = {
-        norm(x) for x in dataset_labels if (norm(x) != "" and norm(x) != gt_n)
-    }
-    if gt_n in ds_norm_set:
-        raise ValueError("Ground-truth object name found in dataset labels.")
+    # --- 1. Robust Dataset Normalization & Filtering ---
+    # We use a set to ensure uniqueness of available dataset labels
+    ds_norm_set = set()
+    for x in dataset_labels:
+        nx = norm(x)
+        # Filter out empty strings AND the ground truth immediately
+        if nx and nx != gt_n:
+            ds_norm_set.add(nx)
 
-    # Present objects (normalized, unique, excluding GT)
+    # --- 2. Process Present Objects ---
     seen_present = set()
     present_n = []
     for o in present_objects:
         n = norm(o)
+        # Ensure we don't include the GT or duplicates within present objects
         if n and n != gt_n and n not in seen_present:
             seen_present.add(n)
             present_n.append(n)
 
-    # Category lookup helper
+    # Helper for categories
     def cat_of(n: str) -> Optional[str]:
-        if not category_map:
-            return None
-        # category_map keys should be normalized
-        return category_map.get(n)
+        return category_map.get(n) if category_map else None
 
     gt_cat = cat_of(gt_n)
 
-    # Split present by category (if available)
+    # --- 3. Distractor Selection Phase 1: From Present Objects ---
     if prefer_same_category and gt_cat is not None:
         present_same = [x for x in present_n if cat_of(x) == gt_cat]
         present_other = [x for x in present_n if x not in present_same]
@@ -416,45 +520,71 @@ def create_mc_object_names_from_dataset(
     distractors: List[str] = []
     needed = num_answers - 1
 
-    def take_from(lst: List[str], k: int):
-        nonlocal distractors
+    def take_from(lst: List[str]):
+        """Helper to fill distractors from a source list."""
         for x in lst:
-            if len(distractors) >= k:
+            if len(distractors) >= needed:
                 break
+            # Double check exclusion (redundant but safe)
             if x != gt_n and x not in distractors:
                 distractors.append(x)
 
-    # 1) Fill from present objects
-    take_from(present_same, needed)
-    if len(distractors) < needed:
-        take_from(present_other, needed)
+    take_from(present_same)
+    take_from(present_other)
 
-    # 2) Top up from dataset labels
+    # --- 4. Distractor Selection Phase 2: From Dataset ---
     if len(distractors) < needed:
-        # candidate pool = dataset minus GT and already used/present
-        cand = [
-            x
-            for x in ds_norm_set
-            if x != gt_n and x not in distractors and x not in seen_present
+        # Candidate pool: valid dataset labels not already used or seen in image
+        candidates = [
+            x for x in ds_norm_set
+            if x not in distractors and x not in seen_present
         ]
 
-        for x in cand:
-            distractors.append(x)
-            if len(distractors) >= needed:
-                break
+        # Fix: Actually implement "prefer same category" for dataset items too
+        if prefer_same_category and gt_cat is not None:
+            cand_same = [x for x in candidates if cat_of(x) == gt_cat]
+            cand_other = [x for x in candidates if x not in cand_same]
+            _shuffle_inplace(cand_same, rng)
+            _shuffle_inplace(cand_other, rng)
+            ordered_candidates = cand_same + cand_other
+        else:
+            ordered_candidates = candidates
+            _shuffle_inplace(ordered_candidates, rng)
 
-    # 3) Final sanity check
+        take_from(ordered_candidates)
+
+    # --- 5. Final Assembly & Safety Check ---
     if len(distractors) < needed:
         have = 1 + len(distractors)
         raise ValueError(
             f"Not enough unique object names to make {num_answers} options. "
-            f"Only {have} available (including the correct answer). "
-            f"Add more dataset_labels or lower num_answers."
+            f"Only {have} available. Check dataset size or normalization."
         )
 
-    # Assemble + shuffle; format labels uniformly
     options_n = [gt_n] + distractors[:needed]
+    
+    # Sanity Check: Ensure GT is unique (catches 'Cat' vs 'cat' if norm() is broken)
+    if options_n.count(gt_n) > 1:
+         raise ValueError(f"Critical Logic Error: GT '{gt_n}' appears multiple times in options.")
+
     _shuffle_inplace(options_n, rng)
-    labels = [x for x in options_n]
+    
+    labels = list(options_n)
     correct_idx = options_n.index(gt_n)
+    
     return labels, correct_idx
+
+# --- Mock helpers assuming they exist in your scope ---
+def _select_rng(seed):
+    import random
+    if seed is not None:
+        r = random.Random(seed)
+        return r
+    return random
+
+def _shuffle_inplace(lst, rng):
+    rng.shuffle(lst)
+
+def norm(s):
+    # ENSURE THIS HANDLES CASE AND WHITESPACE
+    return s.lower().strip() if s else ""

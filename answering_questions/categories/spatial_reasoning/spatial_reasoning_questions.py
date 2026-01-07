@@ -32,12 +32,12 @@ from utils.helpers import (
     get_random_timestep_from_list,
     resolve_attributes_visible_at_timestep,
     get_visible_timesteps_for_attributes_min_objects,
+    is_object_visible
 )
 from .spatial_reasoning_helpers import (
     get_position,
     get_closest_object,
-    get_position_camera,
-    get_min_distance_pointcloud_to_obb,
+    get_position_camera,    
     get_spatial_relationship_camera_view,
     get_all_relational_positional_adjectives,
 )
@@ -80,7 +80,7 @@ def F_DISTANCE_OBJECT_OBJECT(
 
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        attributes, world_state, min_objects=kwargs["current_world_number_of_objects"]
+        attributes, world_state, min_objects=2
     )
 
     timestep = get_random_timestep_from_list(visible_timesteps, question)
@@ -109,44 +109,6 @@ def F_DISTANCE_OBJECT_OBJECT(
 
 
 @with_resolved_attributes
-def F_DISTANCE_OBJECT_GROUND(
-    world_state: WorldState, question: QuestionPayload, attributes, **kwargs
-) -> int:
-    assert len(attributes) == 1 and "OBJECT" in attributes
-
-    # First we find the pairs of objects visible
-    visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        attributes, world_state, min_objects=kwargs["current_world_number_of_objects"]
-    )
-
-    timestep = get_random_timestep_from_list(visible_timesteps, question)
-
-    resolved_attributes = resolve_attributes_visible_at_timestep(
-        attributes, world_state, timestep
-    )
-
-    obj1_id = resolved_attributes["OBJECT"]["choice"]["id"]
-
-    # loading pointcloud
-    pointcloud = load_scene_pointcloud(world_state["scene"]["scene"])
-
-    distance_to_scene = get_min_distance_pointcloud_to_obb(
-        pointcloud,
-        world_state["simulation"][timestep]["objects"][obj1_id]["obb"],
-    )
-
-    options, correct_idx = create_mc_options_around_gt(
-        distance_to_scene, num_answers=4, display_decimals=2, lo=0.0
-    )
-    labels = uniform_labels(options, integer=False, decimals=2)
-    labels = [str(label) + " meters" for label in labels]
-
-    return fill_questions(
-        question, labels, correct_idx, world_state, timestep, resolved_attributes
-    )
-
-
-@with_resolved_attributes
 def F_DISTANCE_OBJECT_CAMERA_DISTANCE(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
@@ -154,7 +116,7 @@ def F_DISTANCE_OBJECT_CAMERA_DISTANCE(
 
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        attributes, world_state, min_objects=kwargs["current_world_number_of_objects"]
+        attributes, world_state, min_objects=1
     )
 
     timestep = get_random_timestep_from_list(visible_timesteps, question)
@@ -185,6 +147,9 @@ def F_DISTANCE_OBJECT_CAMERA_DISTANCE(
 def F_CLOSEST_OBJECT_CAMERA(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
+    assert len(attributes) == 0
+
+    # we need this cause else there cannot be a comparison
     if kwargs["current_world_number_of_objects"] < 2:
         raise ImpossibleToAnswer(
             "Not enough objects in the scene to answer the question."
@@ -192,7 +157,7 @@ def F_CLOSEST_OBJECT_CAMERA(
 
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        attributes, world_state, min_objects=kwargs["current_world_number_of_objects"]
+        attributes, world_state, min_objects=2
     )
 
     timestep = get_random_timestep_from_list(visible_timesteps, question)
@@ -277,7 +242,7 @@ def F_SIZE_OBJECT(
 
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        attributes, world_state, min_objects=kwargs["current_world_number_of_objects"]
+        attributes, world_state, min_objects=1
     )
 
     timestep = get_random_timestep_from_list(visible_timesteps, question)
@@ -317,7 +282,7 @@ def F_SIZE_OBJECT_BIGGER(
 
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        ["OBJECT"], world_state, min_objects=kwargs["current_world_number_of_objects"]
+        ["OBJECT"], world_state, min_objects=min(kwargs["current_world_number_of_objects"], 3)
     )
 
     timestep = get_random_timestep_from_list(visible_timesteps, question)
@@ -329,19 +294,20 @@ def F_SIZE_OBJECT_BIGGER(
     # Find the biggest object by volume
     biggest_object = None
     biggest_volume = -1.0
+    total_object_seen = 0
+    
     for obj in iter_objects(world_state):
         volume = obj.get("volume", 0.0)
-        visible_at_timestep = (
-            world_state["simulation"][timestep]["objects"][obj["id"]]["infov_pixels"]
-            > MIN_VISIBLE_PIXELS
-            and world_state["simulation"][timestep]["objects"][obj["id"]][
-                "fov_visibility"
-            ]
-            > VISIBILITY_THRESHOLD
-        )
-        if volume > biggest_volume and visible_at_timestep:
-            biggest_volume = volume
-            biggest_object = obj
+        obj_state = world_state["simulation"][timestep]["objects"][obj["id"]]        
+
+        if is_object_visible(obj_state) and volume is not None:
+            total_object_seen += 1
+            if volume > biggest_volume:
+                biggest_volume = volume
+                biggest_object = obj            
+
+    if total_object_seen <= 1:
+        raise ImpossibleToAnswer("No visible objects to compare.")
 
     presents = [obj["name"] for obj in iter_objects(world_state)]
 
@@ -381,17 +347,17 @@ def F_SIZE_OBJECT_SMALLER(
     smallest_volume = 10e6
     for obj in iter_objects(world_state):
         volume = obj.get("volume", 0.0)
-        visible_at_timestep = (
-            world_state["simulation"][timestep]["objects"][obj["id"]]["infov_pixels"]
-            > MIN_VISIBLE_PIXELS
-            and world_state["simulation"][timestep]["objects"][obj["id"]][
-                "fov_visibility"
-            ]
-            > VISIBILITY_THRESHOLD
-        )
-        if volume < smallest_volume and visible_at_timestep:
-            smallest_volume = volume
-            smallest_object = obj
+        obj_state = world_state["simulation"][timestep]["objects"][obj["id"]]        
+
+        if is_object_visible(obj_state) and volume is not None:
+            total_object_seen += 1
+
+            if volume < smallest_volume:
+                smallest_volume = volume
+                smallest_object = obj
+
+    if total_object_seen <= 1:
+        raise ImpossibleToAnswer("No visible objects to compare.")
 
     presents = [obj["name"] for obj in iter_objects(world_state)]
 

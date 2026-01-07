@@ -31,11 +31,11 @@ from utils.helpers import (
     distance_between,
     resolve_attributes_visible_at_timestep,
     get_visible_timesteps_for_attributes_min_objects,
-    get_continuous_subsequences_min_length,
-    is_object_visible_at_timestep,
+    get_continuous_subsequences_min_length,    
     get_random_timestep_from_list,
     fill_template,
     get_timestep_from_idx,
+    is_object_visible,
 )
 
 from utils.frames_selection import (
@@ -84,7 +84,7 @@ def F_KINEMATICS_SPEED_OBJECT(
 
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        attributes, world_state, min_objects=kwargs["current_world_number_of_objects"]
+        attributes, world_state, min_objects=1
     )
 
     timestep = get_random_timestep_from_list(visible_timesteps, question)
@@ -117,7 +117,7 @@ def F_KINEMATICS_ACCEL_OBJECT(
 
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        attributes, world_state, min_objects=kwargs["current_world_number_of_objects"]
+        attributes, world_state, min_objects=1
     )
     # if we are in a multi-image setting, we need to ensure there are enough frames
     timestep = get_random_timestep_from_list(visible_timesteps, question)
@@ -149,7 +149,7 @@ def F_KINEMATICS_DISTANCE_TRAVELED_INTERVAL(
 
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        attributes, world_state, min_objects=kwargs["current_world_number_of_objects"]
+        attributes, world_state, min_objects=1
     )
 
     continuous_subsequences = get_continuous_subsequences_min_length(
@@ -169,6 +169,11 @@ def F_KINEMATICS_DISTANCE_TRAVELED_INTERVAL(
     )
 
     object_id = resolved_attributes["OBJECT"]["choice"]["id"]
+
+    # check if the object is visible at the timestep_end
+    object_state = world_state["simulation"][timestep_start]["objects"][object_id]
+    if not is_object_visible(object_state):
+        raise ImpossibleToAnswer("The object is not visible at the end timestep.")
 
     position_obj_state_timestep_start = get_position(
         world_state, object_id, timestep_start
@@ -273,7 +278,7 @@ def F_KINEMATICS_SYSTEM_STABILITY(
 
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        attributes, world_state, min_objects=kwargs["current_world_number_of_objects"]
+        attributes, world_state, min_objects=min(kwargs["current_world_number_of_objects"], 3)
     )
 
     continuous_subsequences = get_continuous_subsequences_min_length(
@@ -365,8 +370,6 @@ def F_KINEMATICS_STILL_OBJECT(
 
 
 ## --- COLLISION RESOLVERS --- ##
-
-
 @with_resolved_attributes
 def F_COLLISIONS_OBJ_OBJ_FIRST(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
@@ -450,8 +453,14 @@ def F_COLLISION_OBJECT_OBJECT_FRAME_SINGLE(
 
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        attributes, world_state, min_objects=kwargs["current_world_number_of_objects"]
-    )    
+        attributes, world_state, min_objects=min(kwargs["current_world_number_of_objects"], 3)
+    )
+
+    continuous_subsequences = get_continuous_subsequences_min_length(
+        visible_timesteps, min_length=CLIP_LENGTH * FRAME_INTERLEAVE
+    )
+
+    visible_timesteps = random.choice(continuous_subsequences)
     
     collision_mask = get_mask_collisions(world_state)
 
@@ -517,7 +526,7 @@ def F_COLLISION_OBJECT_OBJECT_FRAME_MULTI(
 
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        attributes, world_state, min_objects=kwargs["current_world_number_of_objects"]
+        attributes, world_state, min_objects=min(kwargs["current_world_number_of_objects"], 3)
     )
     
     collision_mask = get_mask_collisions(world_state)
@@ -535,8 +544,7 @@ def F_COLLISION_OBJECT_OBJECT_FRAME_MULTI(
         if idx.size > 2:
             raise ImpossibleToAnswer("Too many collisions at the first collision timestep.")
 
-        # adding +1 to match the object_id in the simulation file
-        collision_object_a_id = idx[0] + 1 if len(idx) > 0 else None
+        # adding +1 to match the object_id in the simulation file        
         collision_object_b_id = idx[1] + 1 if len(idx) > 1 else None
         collision_timestep = get_timestep_from_idx(visible_timesteps_index[t_first])
 
@@ -544,8 +552,7 @@ def F_COLLISION_OBJECT_OBJECT_FRAME_MULTI(
         raise ImpossibleToAnswer("No collision found in the visible timesteps.")
     
     # technically the resolved object should be the one colliding
-    collider_object = world_state["objects"][str(collision_object_b_id)]
-    # colliding_object = world_state["objects"][str(collision_object_a_id)]
+    collider_object = world_state["objects"][str(collision_object_b_id)]    
     resolved_attributes = {"OBJECT": {"choice": collider_object, "category": "OBJECT"}}
 
 
@@ -584,7 +591,7 @@ def F_COLLISION_OBJECT_SCENE_FRAME_MULTI(
 
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        attributes, world_state, min_objects=kwargs["current_world_number_of_objects"]
+        attributes, world_state, min_objects=min(kwargs["current_world_number_of_objects"], 3)
     )
 
     collision_mask = get_mask_collisions(world_state)

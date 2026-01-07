@@ -72,7 +72,7 @@ def F_MASS_OBJECT(
 
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        attributes, world_state, min_objects=kwargs["current_world_number_of_objects"]
+        attributes, world_state, min_objects=1
     )
 
     timestep = get_random_timestep_from_list(visible_timesteps, question)
@@ -107,7 +107,7 @@ def F_MASS_HEAVIEST_OBJECT(
 
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        ["OBJECT"], world_state, min_objects=kwargs["current_world_number_of_objects"]
+        ["OBJECT"], world_state, min_objects=min(kwargs["current_world_number_of_objects"], 3)
     )
 
     timestep = get_random_timestep_from_list(visible_timesteps, question)
@@ -162,7 +162,7 @@ def F_MASS_LIGHTEST_OBJECT(
 
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        ["OBJECT"], world_state, min_objects=1
+        ["OBJECT"], world_state, min_objects=min(kwargs["current_world_number_of_objects"], 3)
     )
 
     timestep = get_random_timestep_from_list(visible_timesteps, question)
@@ -323,7 +323,7 @@ def F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR(
         raise ImpossibleToAnswer("Not enough objects in the scene.")
 
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        ["OBJECT"], world_state, min_objects=1
+        ["OBJECT"], world_state, min_objects=2
     )
     timestep = get_random_timestep_from_list(visible_timesteps, question)
 
@@ -798,17 +798,12 @@ def F_MATERIAL_IDENTIFICATION_SIMILAR_OBJECT(
     similar_object_count = 0
 
     for obj in iter_objects(world_state):
-        obj_state = world_state["simulation"][timestep]["objects"][obj["id"]]
-
-        is_object_visible = (
-            obj_state["infov_pixels"] > MIN_VISIBLE_PIXELS
-            and obj_state["fov_visibility"] >= VISIBILITY_THRESHOLD
-        )
+        obj_state = world_state["simulation"][timestep]["objects"][obj["id"]]        
 
         if (
             obj["description"]["material_group"] == material
             and obj["id"] != object["id"]
-            and is_object_visible
+            and is_object_visible(obj_state)
         ):
             object_similar = obj
             similar_object_count += 1

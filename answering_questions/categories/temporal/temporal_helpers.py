@@ -1,6 +1,6 @@
+import random
 import cv2
 import torch
-from fused_ssim import fused_ssim
 
 from utils.my_exception import ImpossibleToAnswer
 from utils.config import get_config
@@ -10,10 +10,27 @@ def _select_by_temporal_distance(confounding_images, target_index):
     if type(target_index) is not int:
         target_index = int(target_index)
 
+    min_distance = 4
     ranked = sorted(
         confounding_images, key=lambda idx: abs(int(idx) - target_index), reverse=True
     )
-    return ranked[:3]
+
+    # return ranked[:3] # this was the original way
+
+    eligible = [
+        idx for idx in confounding_images if abs(int(idx) - target_index) >= min_distance
+    ]
+    if len(eligible) >= 3:
+        return random.sample(eligible, 3)
+
+    selected = list(eligible)
+    for idx in ranked:
+        if idx in selected:
+            continue
+        selected.append(idx)
+        if len(selected) == 3:
+            break
+    return selected
 
 
 def calculate_most_dissimilar_confounding_images(

@@ -607,7 +607,7 @@ def get_continuous_subsequences_min_length(
     )  # e.g., 100ms -> 100*10 = 1000
 
     # we live a buffer of 1 timestep to allow for small gaps
-    for i in range(2, len(sorted_timesteps)):
+    for i in range(1, len(sorted_timesteps)):
         if sorted_timesteps[i] == sorted_timesteps[i - 1] + (
             1 * time_interval_in_milliseconds
         ) or sorted_timesteps[i] == sorted_timesteps[i - 1] + (

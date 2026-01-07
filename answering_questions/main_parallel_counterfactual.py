@@ -197,7 +197,8 @@ def create_vqa(
             if stats_key not in stats:
                 stats[stats_key] = {
                     "created": 0,
-                    "impossible": 0,
+                    "impossible_first": 0,
+                    "impossible_second": 0,
                     "errors": 0,
                     "non_interesting": 0,
                     "attempted": 0,
@@ -226,7 +227,7 @@ def create_vqa(
                 )
             except ImpossibleToAnswer:
                 impossible_to_answer += 1
-                stats[stats_key]["impossible"] += 1
+                stats[stats_key]["impossible_first"] += 1
                 attempted_in_question += 1
                 if question_start is not None:
                     elapsed = time.perf_counter() - question_start
@@ -267,7 +268,7 @@ def create_vqa(
                 )
             except ImpossibleToAnswer:
                 impossible_to_answer += 1
-                stats[stats_key]["impossible"] += 1
+                stats[stats_key]["impossible_second"] += 1
                 attempted_in_question += 1
                 if question_start is not None:
                     elapsed = time.perf_counter() - question_start
@@ -397,14 +398,21 @@ def _merge_stats(target, incoming):
         if stats_key not in target:
             target[stats_key] = {
                 "created": 0,
-                "impossible": 0,
+                "impossible_first": 0,
+                "impossible_second": 0,
                 "errors": 0,
                 "non_interesting": 0,
                 "attempted": 0,
                 "time_sum": 0.0,
                 "time_count": 0,
             }
-        for field in ("created", "impossible", "errors", "non_interesting"):
+        for field in (
+            "created",
+            "impossible_first",
+            "impossible_second",
+            "errors",
+            "non_interesting",
+        ):
             target[stats_key][field] += data.get(field, 0)
         target[stats_key]["attempted"] += data.get("attempted", 0)
         target[stats_key]["time_sum"] += data.get("time_sum", 0.0)
@@ -414,14 +422,18 @@ def _merge_stats(target, incoming):
 def _stacked_progress_bar(data, width=32):
     total = (
         data.get("created", 0)
-        + data.get("impossible", 0)
+        + data.get("impossible_first", 0)
+        + data.get("impossible_second", 0)
         + data.get("errors", 0)
         + data.get("non_interesting", 0)
     )
     if total <= 0:
         return "[" + "-" * width + "]"
     created_len = int(round((data.get("created", 0) / total) * width))
-    impossible_len = int(round((data.get("impossible", 0) / total) * width))
+    impossible_total = data.get("impossible_first", 0) + data.get(
+        "impossible_second", 0
+    )
+    impossible_len = int(round((impossible_total / total) * width))
     errors_len = int(round((data.get("errors", 0) / total) * width))
     non_interesting_len = width - (created_len + impossible_len + errors_len)
     if non_interesting_len < 0:
@@ -453,12 +465,16 @@ def _print_summary(stats, show_time):
     max_sub_len = 0
     max_c_len = 0
     max_i_len = 0
+    max_i1_len = 0
+    max_i2_len = 0
     max_e_len = 0
     max_n_len = 0
     max_a_len = 0
     max_t_len = 0
     total_created = 0
     total_impossible = 0
+    total_impossible_first = 0
+    total_impossible_second = 0
     total_errors = 0
     total_non_interesting = 0
     total_attempted = 0
@@ -475,7 +491,14 @@ def _print_summary(stats, show_time):
         max_key_len = max(max_key_len, len(display_key))
         max_sub_len = max(max_sub_len, len(sub_category))
         max_c_len = max(max_c_len, len(str(data["created"])))
-        max_i_len = max(max_i_len, len(str(data["impossible"])))
+        max_i1_len = max(max_i1_len, len(str(data["impossible_first"])))
+        max_i2_len = max(max_i2_len, len(str(data["impossible_second"])))
+        max_i_len = max(
+            max_i_len,
+            len(
+                str(data["impossible_first"] + data["impossible_second"])
+            ),
+        )
         max_e_len = max(max_e_len, len(str(data["errors"])))
         max_n_len = max(max_n_len, len(str(data["non_interesting"])))
         max_a_len = max(max_a_len, len(str(data["attempted"])))
@@ -488,7 +511,9 @@ def _print_summary(stats, show_time):
             avg_str = f"{avg_ms:.3f}ms" if avg_ms is not None else "-"
             max_t_len = max(max_t_len, len(avg_str))
         total_created += data["created"]
-        total_impossible += data["impossible"]
+        total_impossible_first += data["impossible_first"]
+        total_impossible_second += data["impossible_second"]
+        total_impossible += data["impossible_first"] + data["impossible_second"]
         total_errors += data["errors"]
         total_non_interesting += data["non_interesting"]
         total_attempted += data["attempted"]
@@ -499,7 +524,8 @@ def _print_summary(stats, show_time):
     print("\nSummary by question_id and sub-category:")
     legend = (
         f"{ANSI_GREEN}C=created{ANSI_RESET}, "
-        f"{ANSI_ORANGE}I=impossible{ANSI_RESET}, "
+        f"{ANSI_ORANGE}I1=impossible_first{ANSI_RESET}, "
+        f"{ANSI_ORANGE}I2=impossible_second{ANSI_RESET}, "
         f"{ANSI_RED}E=errors{ANSI_RESET}, "
         f"{ANSI_GREY}N=non-interesting{ANSI_RESET}, "
         f"{ANSI_PURPLE}A=attempted{ANSI_RESET}"
@@ -516,7 +542,11 @@ def _print_summary(stats, show_time):
         key_field = display_key.ljust(max_key_len)
         sub_field = sub_category.ljust(max_sub_len)
         c_val = str(data["created"]).rjust(max_c_len)
-        i_val = str(data["impossible"]).rjust(max_i_len)
+        i1_val = str(data["impossible_first"]).rjust(max_i1_len)
+        i2_val = str(data["impossible_second"]).rjust(max_i2_len)
+        i_val = str(data["impossible_first"] + data["impossible_second"]).rjust(
+            max_i_len
+        )
         e_val = str(data["errors"]).rjust(max_e_len)
         n_val = str(data["non_interesting"]).rjust(max_n_len)
         a_val = str(data["attempted"]).rjust(max_a_len)
@@ -529,7 +559,8 @@ def _print_summary(stats, show_time):
         line = (
             f"{bar}\t{key_field}\t{sub_field}\t"
             f"{ANSI_GREEN}C={c_val}{ANSI_RESET}\t"
-            f"{ANSI_ORANGE}I={i_val}{ANSI_RESET}\t"
+            f"{ANSI_ORANGE}I1={i1_val}{ANSI_RESET}\t"
+            f"{ANSI_ORANGE}I2={i2_val}{ANSI_RESET}\t"
             f"{ANSI_RED}E={e_val}{ANSI_RESET}\t"
             f"{ANSI_GREY}N={n_val}{ANSI_RESET}\t"
             f"{ANSI_PURPLE}A={a_val}{ANSI_RESET}"
@@ -540,7 +571,8 @@ def _print_summary(stats, show_time):
     print("-" * 12)
     total_data = {
         "created": total_created,
-        "impossible": total_impossible,
+        "impossible_first": total_impossible_first,
+        "impossible_second": total_impossible_second,
         "errors": total_errors,
         "non_interesting": total_non_interesting,
     }
@@ -548,6 +580,8 @@ def _print_summary(stats, show_time):
     total_key = "TOTAL".ljust(max_key_len)
     total_sub = "-".ljust(max_sub_len)
     total_c = str(total_created).rjust(max_c_len)
+    total_i1 = str(total_impossible_first).rjust(max_i1_len)
+    total_i2 = str(total_impossible_second).rjust(max_i2_len)
     total_i = str(total_impossible).rjust(max_i_len)
     total_e = str(total_errors).rjust(max_e_len)
     total_n = str(total_non_interesting).rjust(max_n_len)
@@ -560,7 +594,8 @@ def _print_summary(stats, show_time):
     total_line = (
         f"{total_bar}\t{total_key}\t{total_sub}\t"
         f"{ANSI_GREEN}C={total_c}{ANSI_RESET}\t"
-        f"{ANSI_ORANGE}I={total_i}{ANSI_RESET}\t"
+        f"{ANSI_ORANGE}I1={total_i1}{ANSI_RESET}\t"
+        f"{ANSI_ORANGE}I2={total_i2}{ANSI_RESET}\t"
         f"{ANSI_RED}E={total_e}{ANSI_RESET}\t"
         f"{ANSI_GREY}N={total_n}{ANSI_RESET}\t"
         f"{ANSI_PURPLE}A={total_a}{ANSI_RESET}\t"

@@ -360,7 +360,7 @@ def F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR(
 
     target = similar_objects[0]
 
-    presents = [obj["name"] for obj in iter_objects(world_state)]
+    presents = [obj["name"] for obj in iter_objects(world_state) if obj["id"] != ref_obj["id"]]
     labels, correct_idx = create_mc_object_names_from_dataset(
         target["name"],
         presents,
@@ -611,14 +611,14 @@ def F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR(
         attributes, world_state, timestep
     )
 
-    object = resolved_attributes["OBJECT"]["choice"]
-    poisson_ratio = object["props"]["prs"]
+    ref_object = resolved_attributes["OBJECT"]["choice"]
+    poisson_ratio = ref_object["props"]["prs"]
 
     similar_object = None
     similar_object_count = 0
 
     for obj in iter_objects(world_state):
-        if obj["id"] == object["id"]:
+        if obj["id"] == ref_object["id"]:
             continue  # skip the same object
 
         obj_state = world_state["simulation"][timestep]["objects"][obj["id"]]
@@ -643,7 +643,7 @@ def F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR(
         raise ImpossibleToAnswer("No similar object found in the scene.")
         # similar_object = {"name": "None of the objects", "props": {"prs": -1}}
 
-    presents = [obj["name"] for obj in iter_objects(world_state)]
+    presents = [obj["name"] for obj in iter_objects(world_state) if obj["id"] != ref_object["id"]]
     labels, correct_idx = create_mc_object_names_from_dataset(
         similar_object["name"],
         presents,

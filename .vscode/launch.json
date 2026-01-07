@@ -13,7 +13,7 @@
             "cwd": "/data0/sebastian.cavada/compositional-physics/tiny_vqa_deterministic/answering_questions",
             "args": [
                 "--simulation_path", "/data0/sebastian.cavada/datasets/simulations_v4/dl3dv/random",
-                // "--simulation", "/data0/sebastian.cavada/datasets/simulations_v4/dl3dv/random/6/c-1_no-6_d-10_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-116_20251213_040619",
+                // "--simulation", "/data0/sebastian.cavada/datasets/simulations_v4/dl3dv/random/3/c-1_no-3_d-10_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-137_20251212_064037",
                 // "--simulation_path", "/data0/sebastian.cavada/datasets/simulations_v4/dl3dv/random/2/c-1_no-2_d-10_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-83_20251212_015551",
                 // "--simulation_path", "/data0/sebastian.cavada/datasets/simulations_v4/dl3dv/random/2/c-1_no-2_d-10_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-146_20251212_024816",
                 // "--simulation_path", "/data0/sebastian.cavada/datasets/simulations_v4/dl3dv/random/7/c-1_no-7_d-10_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-30_20251213_101500",
@@ -27,9 +27,9 @@
                 // "--roi_circling", "1",
                 // "--masking", "1"
                 // "--scene_context", "1"
-                // "--include_categories", "material_understanding",
+                "--include_categories", "material_understanding",
                 // "--augmentation", "roi_circling_no_text",
-                "--n_proc", "1",
+                "--n_proc", "16",
                 "--exclude_simulations_file", "/data0/sebastian.cavada/compositional-physics/tiny_vqa_deterministic/answering_questions/problematic_paths.txt"
             ]
         },
@@ -47,10 +47,10 @@
                 // "--simulation_path", "/data0/sebastian.cavada/datasets/simulations_v4/dl3dv-counterfact/shift-x/random/5/c-1_no-5_d-10_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-27_20251223_225559", //this changes the number of visible object in the counterfactual
                 // "--simulation_path", "/data0/sebastian.cavada/datasets/simulations_v4/dl3dv-counterfact/shift-x/random/4/c-1_no-4_d-10_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-39_20251224_070135",
                 // "--simulation_path", "/data0/sebastian.cavada/datasets/simulations_v4/dl3dv-counterfact/shift-x/random/2/c-1_no-2_d-10_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-38_20251224_062806",
-                "--simulation_path", "/data0/sebastian.cavada/datasets/simulations_v4/dl3dv-counterfact/shift-x",
+                "--simulation_path", "/data0/sebastian.cavada/datasets/simulations_v4/dl3dv-counterfact/low-gravity/random/3/c-1_no-3_d-10_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-66_20251231_064933/",
                 // "--simulation_path", "/data0/sebastian.cavada/datasets/simulations_v4/dl3dv-counterfact/shift-x/random",
-                "--n_scenes", "200",
-                "--counterfactual_type", "shift",
+                "--n_scenes", "20",
+                "--counterfactual_type", "gravity",
                 "--n_proc", "1"
                 // "--augmentation", "textual_context"
                 // "--roi_circling", "1",

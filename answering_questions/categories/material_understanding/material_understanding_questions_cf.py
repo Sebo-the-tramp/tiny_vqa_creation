@@ -27,6 +27,8 @@ from utils.helpers import (
     get_random_timestep_from_list,
     resolve_attributes_visible_at_timestep,
     get_visible_timesteps_for_attributes_min_objects,
+    get_timestep_from_idx,
+    is_object_visible,
 )
 
 from utils.config import get_config
@@ -49,9 +51,6 @@ MOVEMENT_TOLERANCE = get_config()["movement_tolerance"]
 VISIBILITY_THRESHOLD = get_config()["visibility_threshold"]
 THRESHOLD_DIFFERENCE_PERCENTAGE = get_config()["threshold_difference_percentage"]
 MIN_VISIBLE_PIXELS = get_config()["min_pixels_visible"]
-MAX_ALLOWED_DIFFERENCE_YOUNGS_MODULUS = get_config()[
-    "max_allowed_difference_youngs_modulus"
-]
 MAX_ALLOWED_DIFFERENCE_POISSON_RATIO = get_config()[
     "max_allowed_difference_poisson_ratio"
 ]
@@ -63,26 +62,38 @@ MAX_ALLOWED_DIFFERENCE_POISSON_RATIO = get_config()[
 def CF_MASS_OBJECT(
     world_state_og: WorldState,
     world_state_mod: WorldState,
+    answer_list_original_data_cf: dict,
     question: QuestionPayload,
     attributes,
     **kwargs,
 ) -> int:
-    assert len(attributes) == 1 and "OBJECT-CF" in attributes
+    assert len(attributes) == 1 and "OBJECT" in attributes
 
-    # First we find the pairs of objects visible
-    visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        attributes,
-        world_state_mod,
-        min_objects=kwargs["current_world_number_of_objects"],
-    )
+    timestep_end_index = int(
+        answer_list_original_data_cf[0][3][-1]
+    )  # this has to be the image to get the question
+    timestep_end = get_timestep_from_idx(timestep_end_index)
 
-    timestep = get_random_timestep_from_list(visible_timesteps, question)
+    timestep_start_index = int(
+        answer_list_original_data_cf[0][3][0]
+    )  # this has to be the image to get the question
+    timestep_start = get_timestep_from_idx(timestep_start_index)
+
+    # check if the particular question asks something outside of simulation_og
+    if timestep_end_index > len(world_state_og["simulation"]) - 1:
+        raise ImpossibleToAnswer("Question refers to future timestep.")
+
+    object_id = answer_list_original_data_cf[0][5]["OBJECT"]["choice"]["id"]
+
+    object = world_state_og['objects'][object_id]
+    obj_state = world_state_og["simulation"][timestep_end]["objects"][object_id]
+
+    if not is_object_visible(obj_state):
+        raise ImpossibleToAnswer("Object is not visible.")
 
     resolved_attributes = resolve_attributes_visible_at_timestep(
-        attributes, world_state_mod, timestep
-    )
-
-    object = resolved_attributes["OBJECT-CF"]["choice"]
+        attributes, world_state_mod, timestep_end
+    )    
 
     mass = object["mass"]
 
@@ -98,8 +109,9 @@ def CF_MASS_OBJECT(
         correct_idx,
         world_state_og,
         world_state_mod,
-        timestep,
+        timestep_end,
         resolved_attributes,
+        initial_timestep=timestep_start
     )
 
 
@@ -107,6 +119,7 @@ def CF_MASS_OBJECT(
 def CF_MASS_HEAVIEST_OBJECT(
     world_state_og: WorldState,
     world_state_mod: WorldState,
+    answer_list_original_data_cf: dict,
     question: QuestionPayload,
     attributes,
     **kwargs,
@@ -116,30 +129,30 @@ def CF_MASS_HEAVIEST_OBJECT(
     if kwargs["current_world_number_of_objects"] < 2:
         raise ImpossibleToAnswer("Not enough objects in the scene.")
 
-    # First we find the pairs of objects visible
-    visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        ["OBJECT-CF"],
-        world_state_mod,
-        min_objects=kwargs["current_world_number_of_objects"],
-    )
+    timestep_end_index = int(
+        answer_list_original_data_cf[0][3][-1]
+    )  # this has to be the image to get the question
+    timestep_end = get_timestep_from_idx(timestep_end_index)
 
-    timestep = get_random_timestep_from_list(visible_timesteps, question)
+    timestep_start_index = int(
+        answer_list_original_data_cf[0][3][0]
+    )  # this has to be the image to get the question
+    timestep_start = get_timestep_from_idx(timestep_start_index)
+
+    # check if the particular question asks something outside of simulation_og
+    if timestep_end_index > len(world_state_og["simulation"]) - 1:
+        raise ImpossibleToAnswer("Question refers to future timestep.")
 
     resolved_attributes = resolve_attributes_visible_at_timestep(
-        attributes, world_state_mod, timestep
+        attributes, world_state_mod, timestep_end
     )
 
     objects_masses = []
 
     for obj in iter_objects(world_state_mod):
-        obj_state = world_state_mod["simulation"][timestep]["objects"][obj["id"]]
+        obj_state = world_state_mod["simulation"][timestep_end]["objects"][obj["id"]]
 
-        is_object_visible = (
-            obj_state["infov_pixels"] > MIN_VISIBLE_PIXELS
-            and obj_state["fov_visibility"] >= VISIBILITY_THRESHOLD
-        )
-
-        if is_object_visible:
+        if is_object_visible(obj_state):
             objects_masses.append((obj["mass"], obj))
 
     if len(objects_masses) < 2:
@@ -170,8 +183,9 @@ def CF_MASS_HEAVIEST_OBJECT(
         correct_idx,
         world_state_og,
         world_state_mod,
-        timestep,
+        timestep_end,
         resolved_attributes,
+        initial_timestep=timestep_start
     )
 
 
@@ -179,6 +193,7 @@ def CF_MASS_HEAVIEST_OBJECT(
 def CF_MASS_LIGHTEST_OBJECT(
     world_state_og: WorldState,
     world_state_mod: WorldState,
+    answer_list_original_data_cf: dict,
     question: QuestionPayload,
     attributes,
     **kwargs,
@@ -187,29 +202,32 @@ def CF_MASS_LIGHTEST_OBJECT(
 
     if kwargs["current_world_number_of_objects"] < 2:
         raise ImpossibleToAnswer("Not enough objects in the scene.")
+    
+    timestep_end_index = int(
+        answer_list_original_data_cf[0][3][-1]
+    )  # this has to be the image to get the question
+    timestep_end = get_timestep_from_idx(timestep_end_index)
 
-    # First we find the pairs of objects visible
-    visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        ["OBJECT-CF"], world_state_mod, min_objects=1
-    )
+    timestep_start_index = int(
+        answer_list_original_data_cf[0][3][0]
+    )  # this has to be the image to get the question
+    timestep_start = get_timestep_from_idx(timestep_start_index)
 
-    timestep = get_random_timestep_from_list(visible_timesteps, question)
+    # check if the particular question asks something outside of simulation_og
+    if timestep_end_index > len(world_state_og["simulation"]) - 1:
+        raise ImpossibleToAnswer("Question refers to future timestep.")
+       
 
     resolved_attributes = resolve_attributes_visible_at_timestep(
-        attributes, world_state_mod, timestep
+        attributes, world_state_mod, timestep_end
     )
 
     objects_masses = []
 
     for obj in iter_objects(world_state_mod):
-        obj_state = world_state_mod["simulation"][timestep]["objects"][obj["id"]]
+        obj_state = world_state_mod["simulation"][timestep_end]["objects"][obj["id"]]        
 
-        is_object_visible = (
-            obj_state["infov_pixels"] > MIN_VISIBLE_PIXELS
-            and obj_state["fov_visibility"] >= VISIBILITY_THRESHOLD
-        )
-
-        if is_object_visible:
+        if is_object_visible(obj_state):
             objects_masses.append((obj["mass"], obj))
 
     if len(objects_masses) < 2:
@@ -220,7 +238,7 @@ def CF_MASS_LIGHTEST_OBJECT(
     second_lightest_object_mass, _ = object_ordered_by_mass[-2]
 
     if (
-        lightest_object_mass - second_lightest_object_mass
+        second_lightest_object_mass - lightest_object_mass
         < THRESHOLD_DIFFERENCE_PERCENTAGE * second_lightest_object_mass
     ):
         raise ImpossibleToAnswer("No single lightest object in the scene.")
@@ -240,6 +258,7 @@ def CF_MASS_LIGHTEST_OBJECT(
         correct_idx,
         world_state_og,
         world_state_mod,
-        timestep,
+        timestep_end,
         resolved_attributes,
+        initial_timestep=timestep_start
     )

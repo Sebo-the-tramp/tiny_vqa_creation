@@ -54,7 +54,7 @@ def F_PERSISTENCE_OBJECT_PRESENT(
 
     assert len(attributes) == 0
 
-    visibility_mask, _, _ = get_visibility_mask(world_state)
+    visibility_mask, _ = get_visibility_mask(world_state)
 
     changes_in_visibility = get_visibility_change(visibility_mask)
     changes_across_time = np.abs(changes_in_visibility).sum(axis=1)
@@ -84,23 +84,35 @@ def F_PERSISTENCE_OBJECT_PRESENT(
             )
 
         # this modification could be strange but maybe useful, else we could do CLIP_LENGTH//3 for shorter hidden intervals
-        first_disappearance_idx = min(
-            disappearance_indices[0] + (FRAME_INTERLEAVE * CLIP_LENGTH // 2),
-            len(world_state["simulation"]) - 1,
-        )
+        first_disappearance_idx = disappearance_indices[0]
+        # check if the index after is also not visible else remove cause we are not sure
+        visible_obj_t_init = visibility_mask[object_index, first_disappearance_idx]
+        visible_obj_t_next = visibility_mask[object_index, first_disappearance_idx + 1]
+        if visible_obj_t_init == 0 and visible_obj_t_next != 0:
+            # If the object is not visible in both frames, we can't be sure about its disappearance
+            raise ImpossibleToAnswer(
+                f"Not robust enough to determine disappearance."
+            )
+        
+        first_disappearance_idx += 1  # move to the frame where it is not visible
         final_timestep = list(world_state["simulation"].keys())[first_disappearance_idx]
+
+    # change the frame interleave or maybe not?
+    # we can have it -> stochastically will change, and then persistence should not
+    # be bound at the granularity of the frames only at object present or not
+    curr_frame_interleave = first_disappearance_idx // CLIP_LENGTH
 
     if (
         final_timestep is None
         or object_name == ""
-        or first_disappearance_idx < FRAME_INTERLEAVE * CLIP_LENGTH
+        or first_disappearance_idx < curr_frame_interleave * CLIP_LENGTH
     ):
         raise ImpossibleToAnswer(
             "Could not determine the disappeared object or final timestep."
         )
 
     initial_timestep = list(world_state["simulation"].keys())[
-        first_disappearance_idx - FRAME_INTERLEAVE * CLIP_LENGTH
+        first_disappearance_idx - (curr_frame_interleave * CLIP_LENGTH)
     ]
 
     labels, correct_idx = create_mc_object_names_from_dataset(
@@ -143,35 +155,36 @@ def F_PERSISTENCE_OBJECT_TOTAL_COUNT(
 
     assert len(attributes) == 0
 
-    visibility_mask, _, _ = get_visibility_mask(world_state)
-    total_visible_objects = np.sum(visibility_mask, axis=0)
+    visibility_mask, _ = get_visibility_mask(world_state)
 
-    initial_timestep_index, initial_timestep, final_timestep_index, final_timestep = (
+    initial_timestep_index, initial_timestep, final_timestep_index, final_timestep, _, _ = (
         get_optimal_timestep_interval(world_state)
     )
 
-    if final_timestep_index - initial_timestep_index < CLIP_LENGTH:
+    if (final_timestep_index + 1) - initial_timestep_index < CLIP_LENGTH:
         raise ImpossibleToAnswer(
             "Not enough timesteps before visibility drop to answer the question."
         )
 
-    final_timestep = list(world_state["simulation"].keys())[final_timestep_index]
-    initial_timestep = list(world_state["simulation"].keys())[initial_timestep_index]
-
     # this is not the initial count, but the count at the timestep before disappearing
-    count_objects_initial = total_visible_objects[initial_timestep_index]
+    # you cannot just count the objects at the beginning you should also take into account from beginning to end, max, and also based 
+    # on how many frames you are skipping -> KEEP GOING FROM HERE!
+    curr_frame_interleave = (final_timestep_index + 1 - initial_timestep_index) // CLIP_LENGTH
+    visibility_mask_valid = visibility_mask[:, initial_timestep_index:final_timestep_index + 1][:, ::curr_frame_interleave]
+    objects_seen_at_least_once_mask = np.any(visibility_mask_valid, axis=1)
+    total_unique_objects_seen = np.sum(objects_seen_at_least_once_mask)
 
     # balanced options around the initial count
-    start = max(0, count_objects_initial - 2)
-    shift = abs(count_objects_initial - 2) if count_objects_initial < 2 else 0
+    start = max(0, total_unique_objects_seen - 2)
+    shift = abs(total_unique_objects_seen - 2) if total_unique_objects_seen < 2 else 0
     balanced_bins = [
         str(i)
-        for i in range(start, count_objects_initial + 2 + shift)
-        if i != count_objects_initial
+        for i in range(start, total_unique_objects_seen + 2 + shift)
+        if i != total_unique_objects_seen
     ]
 
     labels, correct_idx = create_mc_object_names_from_dataset(
-        str(count_objects_initial),
+        str(total_unique_objects_seen),
         [],
         balanced_bins,
         num_answers=4,
@@ -200,26 +213,29 @@ def F_PERSISTENCE_OBJECT_TOTAL_COUNT_HIDDEN(
 
     assert len(attributes) == 0
 
-    visibility_mask, _, _ = get_visibility_mask(world_state)
+    visibility_mask, _ = get_visibility_mask(world_state)
     total_visible_objects = np.sum(visibility_mask, axis=0)
 
-    initial_timestep_index, initial_timestep, final_timestep_index, final_timestep = (
+    initial_timestep_index, initial_timestep, final_timestep_index, final_timestep, _, _ = (
         get_optimal_timestep_interval(world_state)
     )
 
-    if final_timestep_index - initial_timestep_index < CLIP_LENGTH:
+    if (final_timestep_index + 1) - initial_timestep_index < CLIP_LENGTH:
         raise ImpossibleToAnswer(
             "Not enough timesteps before visibility drop to answer the question."
         )
 
-    final_timestep = list(world_state["simulation"].keys())[final_timestep_index]
-    initial_timestep = list(world_state["simulation"].keys())[initial_timestep_index]
-
     # this is not the initial count, but the count at the timestep before disappearing
-    count_objects_initial = total_visible_objects[initial_timestep_index]
+    # you cannot just count the objects at the beginning you should also take into account from beginning to end, max, and also based 
+    # on how many frames you are skipping -> KEEP GOING FROM HERE!
+    curr_frame_interleave = (final_timestep_index + 1 - initial_timestep_index) // CLIP_LENGTH
+    visibility_mask_valid = visibility_mask[:, initial_timestep_index:final_timestep_index + 1][:, ::curr_frame_interleave]
+    objects_seen_at_least_once_mask = np.any(visibility_mask_valid, axis=1)
+    total_unique_objects_seen = np.sum(objects_seen_at_least_once_mask)
+
     count_objects_final = total_visible_objects[final_timestep_index]
 
-    hidden = count_objects_initial - count_objects_final
+    hidden = total_unique_objects_seen - count_objects_final
 
     # balanced options around the initial count
     start = max(0, hidden - 2)

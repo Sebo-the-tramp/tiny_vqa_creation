@@ -12,7 +12,7 @@
             "console": "integratedTerminal",
             "cwd": "/data0/sebastian.cavada/compositional-physics/tiny_vqa_deterministic/answering_questions",
             "args": [
-                "--simulation_path", "/data0/sebastian.cavada/datasets/simulations_v4/dl3dv/random",
+                "--simulation_path", "/data0/sebastian.cavada/datasets/simulations_v4/dl3dv/random/2/c-1_no-2_d-10_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-142_20251212_024533/",
                 // "--simulation", "/data0/sebastian.cavada/datasets/simulations_v4/dl3dv/random/3/c-1_no-3_d-10_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-137_20251212_064037",
                 // "--simulation_path", "/data0/sebastian.cavada/datasets/simulations_v4/dl3dv/random/2/c-1_no-2_d-10_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-83_20251212_015551",
                 // "--simulation_path", "/data0/sebastian.cavada/datasets/simulations_v4/dl3dv/random/2/c-1_no-2_d-10_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-146_20251212_024816",
@@ -27,7 +27,8 @@
                 // "--roi_circling", "1",
                 // "--masking", "1"
                 // "--scene_context", "1"
-                "--include_categories", "material_understanding",
+                "--include_categories", "mechanics",
+                // "--include_categories", "persistence",
                 // "--augmentation", "roi_circling_no_text",
                 "--n_proc", "16",
                 "--exclude_simulations_file", "/data0/sebastian.cavada/compositional-physics/tiny_vqa_deterministic/answering_questions/problematic_paths.txt"
@@ -58,6 +59,14 @@
                 // "--scene_context", "1"
                 // "--augmentation", "roi_circling"
             ]
+        }, 
+        {
+            "name": "VISIBILITY",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "./experiments/check_simulations_visibility.py",
+            "console": "integratedTerminal",
+            "cwd": "/data0/sebastian.cavada/compositional-physics/tiny_vqa_deterministic",
         }   
     ]
 }

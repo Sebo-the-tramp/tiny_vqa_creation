@@ -18,28 +18,18 @@ fi
 
 cd answering_questions
 
-# This are the runs I need to create
-
-GENERAL_RUN_COUNT=13
-
-
-# # 10K general # text - no circling
-# python main_parallel.py --simulation_path "${BASE_PATH}/random/" \
-#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
-#     --run_name "run_${GENERAL_RUN_COUNT}_general_test_persistance" \
-#     --include_categories "persistence" \
-#     --n_scenes 700
+GENERAL_RUN_COUNT=14
 
 ####################
 
-python main_parallel.py --simulation_path "${BASE_PATH}/random/" "${BASE_PATH}/random-cam-stationary/" \
+python main_parallel.py --simulation_path "${BASE_PATH}/random/" \
     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
     --run_name "run_${GENERAL_RUN_COUNT}_general" \
     --n_scenes 4000 \
     --exclude_simulations_file "problematic_paths.txt" \
     --n_proc $CPUS \
     --timeit \
-    # --include_categories "material_understanding" \
+    # --include_categories "persistence" \
 
 RUN_NAME="run_${GENERAL_RUN_COUNT}_general"
 python ./subsample_questions_percentage.py \

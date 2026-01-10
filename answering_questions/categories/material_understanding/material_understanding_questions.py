@@ -61,6 +61,8 @@ MAX_ALLOWED_DIFFERENCE_POISSON_RATIO = get_config()[
     "max_allowed_difference_poisson_ratio"
 ]
 
+MIN_LOG_DIFF = get_config()["min_log_difference_youngs_modulus_highest"]
+
 ## --- Resolver functions -- ##
 
 
@@ -406,39 +408,46 @@ def F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST(
         attributes, world_state, timestep
     )
 
-    # search for another object with similar young's modulus
-    highest_modulus_object = None
-    highest_modulus = -float("inf")
-    highest_modulus_count = 0
-    MIN_DIFFERENCE_YOUNGS_MODULUS_PERCENTAGE = (
-        0.1  # to avoid selecting objects with very similar modulus
-    )
+    visible_objects = []
 
+    # 1. First Pass: Collect all valid candidates
     for obj in iter_objects(world_state):
         obj_state = world_state["simulation"][timestep]["objects"][obj["id"]]
 
-        is_object_visible = (
-            obj_state["infov_pixels"] > MIN_VISIBLE_PIXELS
-            and obj_state["fov_visibility"] >= VISIBILITY_THRESHOLD
-        )
+        if is_object_visible(obj_state):
+            # Store tuple of (Young's Modulus, Object)
+            # Handle 0 or negative modulus edge cases if necessary
+            ym = obj["props"]["yms"]
+            if ym > 0:
+                visible_objects.append((ym, obj))
 
-        if (
-            obj["props"]["yms"]
-            > highest_modulus
-            + MIN_DIFFERENCE_YOUNGS_MODULUS_PERCENTAGE * highest_modulus
-            and is_object_visible
-        ):
-            highest_modulus = obj["props"]["yms"]
-            highest_modulus_object = obj
-            highest_modulus_count += 1
+    # 2. Logic: Sort and Compare
+    if not visible_objects:
+        raise ImpossibleToAnswer("No visible objects found.")
+    else:
+        # Sort by Young's Modulus descending (Highest first)
+        visible_objects.sort(key=lambda x: x[0], reverse=True)
 
-    if highest_modulus_count > 1:
-        raise ImpossibleToAnswer(
-            "Too many objects with similar highest Young's modulus. Ambiguous question."
-        )
+        best_ym, best_obj = visible_objects[0]
 
-    if highest_modulus_object is None:
-        raise ImpossibleToAnswer("No objects found in the scene.")
+        # If there is only one object, it is the winner
+        if len(visible_objects) == 1:
+            highest_modulus_object = best_obj
+        else:
+            second_best_ym = visible_objects[1][0]
+
+            # LOGARITHMIC COMPARISON
+            # Check if the best is significantly distinct from the second best
+            # abs() not strictly needed since we sorted, but good practice
+            log_diff = math.log10(best_ym) - math.log10(second_best_ym)
+
+            if log_diff < MIN_LOG_DIFF:
+                raise ImpossibleToAnswer(
+                    f"Ambiguous result: Top two objects have similar stiffness "
+                    f"(Log Diff: {log_diff:.3f})."
+                )
+            else:
+                highest_modulus_object = best_obj
 
     presents = [obj["name"] for obj in iter_objects(world_state)]
     labels, correct_idx = create_mc_object_names_from_dataset(

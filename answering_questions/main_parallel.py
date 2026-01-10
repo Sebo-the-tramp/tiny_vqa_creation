@@ -205,11 +205,19 @@ def create_vqa(
                 stats[stats_key]["attempted"] += attempted_in_question
                 continue
             except Exception:
+                print(
+                    f"{ANSI_RED}Error for question_id {question_key} in "
+                    f"{destination_simulation_id_path}{ANSI_RESET}"
+                )
                 stats[stats_key]["errors"] += 1
                 attempted_in_question += 1
                 stats[stats_key]["attempted"] += attempted_in_question
                 continue
             if not answer_list:
+                print(
+                    f"{ANSI_RED}Error for question_id {question_key} in "
+                    f"{destination_simulation_id_path}{ANSI_RESET}"
+                )
                 stats[stats_key]["errors"] += 1
                 attempted_in_question += 1
                 stats[stats_key]["attempted"] += attempted_in_question
@@ -280,6 +288,10 @@ def create_vqa(
                     attempted_in_question += 1
                     continue
                 except Exception:
+                    print(
+                        f"{ANSI_RED}Error for question_id {question_key} in "
+                        f"{destination_simulation_id_path}{ANSI_RESET}"
+                    )
                     stats[stats_key]["errors"] += 1
                     attempted_in_question += 1
                     continue

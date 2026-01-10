@@ -1,10 +1,11 @@
+import random
 import numpy as np
 from scipy.signal import convolve2d
 
 from typing import Any, Mapping, Sequence
 
 from utils.config import get_config
-from utils.helpers import iter_objects, is_object_visible_v2, get_visibility_ratio_v2
+from utils.helpers import iter_objects, is_object_visible_v3, get_visibility_ratio_v3
 
 from utils.my_exception import ImpossibleToAnswer
 
@@ -19,19 +20,194 @@ CLIP_LENGTH = get_config()["clip_length"]
 HIGH_PIXEL_COUNT_THRESHOLD = 2000  # heuristic for occluded but distinct objects
 
 
+def choose_best_window_object_id(world_state, object_proposed):
+    # check fo unique object that appears and then disappears for time interval
+    chosen_object_id = None
+
+    all_objects_ids = set([str(i) for i in range(1, len(world_state["objects"]) + 1)])
+
+    for obj_id in object_proposed:
+        initial_timestep_index = object_proposed[str(obj_id)][2]
+        final_timestep_index = object_proposed[str(obj_id)][3]
+
+        for obj_id_check in object_proposed:
+            if str(obj_id) == str(obj_id_check):
+                continue
+
+            initial_timestep_index_check = object_proposed[str(obj_id_check)][2]
+            final_timestep_index_check = object_proposed[str(obj_id_check)][3]
+
+            if final_timestep_index_check == -1 or initial_timestep_index_check == -1:
+                all_objects_ids.discard(str(obj_id_check))
+                continue
+
+            # check for overlap
+            if not (
+                final_timestep_index < initial_timestep_index_check
+                or final_timestep_index_check < initial_timestep_index
+            ):
+                all_objects_ids.discard(str(obj_id_check))
+                all_objects_ids.discard(str(obj_id))
+
+        if len(all_objects_ids) == 0:
+            raise ImpossibleToAnswer(
+                "More than one object found that appears and then disappears."
+            )
+
+    chosen_object_id = (
+        random.choice(list(all_objects_ids)) if len(all_objects_ids) == 1 else None
+    )
+    return chosen_object_id
+
+
+def get_maximum_windows_for_each_object(world_state: WorldState):
+    """This function returns for each object the best start and end timestep
+    where the object is highly visible at the start and not visible at the end."""
+
+    _, visibility_percentage_matrix = get_visibility_mask(world_state)
+
+    object_proposed = {}
+
+    # get optimal timesteps
+    for idx, object_percentage_array in enumerate(visibility_percentage_matrix):
+        best_current_object_max = 0
+        best_current_object_min = 100
+        best_current_object_max_index = -1
+        best_current_object_min_index = -1
+
+        highest_visible_percentage_index = np.argmax(object_percentage_array)
+
+        # here we could even look around the max like +/- 2 frame
+        # here instead of everything I could get the 8-16-24th frames away and see which one is the lowest
+        for i in range(-2, 2):
+            start_index = highest_visible_percentage_index + i
+
+            # check bounds
+            if start_index < 0 or start_index >= len(object_percentage_array):
+                continue
+
+            start_index_visibility = object_percentage_array[start_index]
+
+            # check if above threshold
+            if start_index_visibility > 0.9 * 100:  # maybe we can tune this
+
+                # this is to ensure we have enough frames to look ahead and not go OOB
+                candidates = [
+                    k for k in (1, 2, 3, 4)
+                    if start_index + k * CLIP_LENGTH - 1 < len(object_percentage_array)
+                ]
+                if not candidates:
+                    continue  # no valid window
+
+                max_k = max(candidates)
+                end_index = (
+                    np.argmin(
+                        object_percentage_array[
+                            start_index + (CLIP_LENGTH-1) : start_index + (max_k * CLIP_LENGTH)
+                        ][::(CLIP_LENGTH-1)]
+                    ) * (CLIP_LENGTH - 1)
+                ) + start_index + (CLIP_LENGTH-1)  # adding back the start index
+                end_index_visibility = object_percentage_array[end_index]
+
+                if end_index_visibility < 0.1 * 100:
+                    if start_index_visibility > best_current_object_max:
+                        best_current_object_max = start_index_visibility
+                        best_current_object_min = end_index_visibility
+                        best_current_object_max_index = start_index
+                        best_current_object_min_index = end_index
+
+                        # exit early if first is >0.99 and last <0.01
+                        if (
+                            best_current_object_max > 0.99 * 100
+                            and best_current_object_min < 0.01 * 100
+                        ):
+                            break
+
+        object_proposed[str(idx + 1)] = (
+            int(best_current_object_max),
+            int(best_current_object_min),
+            int(best_current_object_max_index),
+            int(best_current_object_min_index),
+        )
+
+    return object_proposed
+
+
 def generate_windows(T, window=8):
-    for s in range(4, 0, -1):   # now includes s=1
+    for s in range(4, 0, -1):  # now includes s=1
         if s == 3:
             continue
         idx = np.arange(0, window * s, s)
         if idx[-1] < T:
             yield idx, s
 
+
+def check_all_other_object_stable(visibility_mask, obj_id, start_idx, end_idx, stride):
+    all_row_correct = True
+
+    for row_id, obj_id_visibility in enumerate(visibility_mask):
+        if row_id == obj_id:
+            continue
+
+        considered_visible_mask = obj_id_visibility[start_idx : end_idx + 1][::stride]
+        sum_mask = np.sum(considered_visible_mask)
+
+        row_correct = sum_mask == len(considered_visible_mask) or sum_mask == 0
+
+        all_row_correct = all_row_correct and row_correct
+
+    return all_row_correct
+
+
+def get_optimal_timestep_interval_single(world_state: WorldState) -> Sequence[str]:
+    visibility_mask, visibility_percentage_matrix = get_visibility_mask(world_state)
+
+    T = len(visibility_mask[0])
+
+    best = None
+    best_score = float("inf")
+
+    for obj_id in [int(i) - 1 for i in world_state["objects"].keys()]:
+        visibility_mask_obj = visibility_mask[obj_id]
+
+        for idx, current_stride in generate_windows(T):
+            for s in range(0, T - (CLIP_LENGTH * current_stride) - 1):
+                win = idx + s
+
+                # check if it is a candidate
+                if (
+                    visibility_mask_obj[win[0]] == 1
+                    and visibility_mask_obj[win[-1]] == 0
+                ):
+                    start_idx = win[0]
+                    end_idx = win[-1]
+
+                    if check_all_other_object_stable(
+                        visibility_mask, obj_id, start_idx, end_idx, current_stride
+                    ):
+                        score = visibility_percentage_matrix[obj_id][idx + s][
+                            -1
+                        ]  # smaller is better
+                        if score < best_score:
+                            best_score = score
+                            best = (
+                                start_idx,
+                                list(world_state["simulation"].keys())[start_idx],
+                                end_idx,
+                                list(world_state["simulation"].keys())[end_idx],
+                                visibility_percentage_matrix[obj_id][idx + s][0],
+                                score,
+                                str(obj_id + 1),
+                            )
+
+    if best:
+        return best
+
+    raise ImpossibleToAnswer("Could not determine good interval")
+
+
 def get_optimal_timestep_interval(world_state: WorldState) -> Sequence[str]:
-    
-    visibility_mask, visibility_percentage_matrix = (
-        get_visibility_mask(world_state)
-    )
+    visibility_mask, visibility_percentage_matrix = get_visibility_mask(world_state)
 
     # Aggregate visibility metrics across all objects for each timestep
     visible_object_count = np.sum(visibility_mask, axis=0)
@@ -42,17 +218,18 @@ def get_optimal_timestep_interval(world_state: WorldState) -> Sequence[str]:
 
     T = len(visible_object_count)
 
-    candidate_list = []
-    
     best = None
     best_score = float("inf")
 
     for idx, current_stride in generate_windows(T):
-        for s in range(first_max_index, T - (CLIP_LENGTH*current_stride) - first_max_index):
-
-            if  visible_object_count[idx + s][0] > visible_object_count[idx + s][-1] and \
-                visible_object_count[idx + s][0] > visible_object_count[idx + s][-2]:
-
+        for s in range(
+            first_max_index, T - (CLIP_LENGTH * current_stride) - first_max_index
+        ):
+            win = idx + s
+            if (
+                visible_object_count[win[0]] > visible_object_count[win[-1]]
+                and visible_object_count[win[0]] > visible_object_count[win[-2]]
+            ):
                 score = percentage_visible[idx + s][-1]  # smaller is better
 
                 if score < best_score:
@@ -73,7 +250,7 @@ def get_optimal_timestep_interval(world_state: WorldState) -> Sequence[str]:
 
 
 # def get_optimal_timestep_interval(world_state: WorldState) -> Sequence[str]:
-    
+
 #     visibility_mask, visibility_percentage_mask, visibility_pixels_mask = (
 #         get_visibility_mask(world_state)
 #     )
@@ -90,57 +267,57 @@ def get_optimal_timestep_interval(world_state: WorldState) -> Sequence[str]:
 #         + (total_visibility_pixels / 10000)
 #     )
 
-    # # Find timesteps with maximum object visibility
-    # max_object_count = visible_object_count.max()
-    # has_max_objects = visible_object_count == max_object_count
+# # Find timesteps with maximum object visibility
+# max_object_count = visible_object_count.max()
+# has_max_objects = visible_object_count == max_object_count
 
-    # # Among max-object timesteps, find the one with highest visibility score
-    # masked_scores = np.where(has_max_objects, visibility_score, 0)
-    # initial_timestep_index = np.argmax(masked_scores)
-    # initial_timestep = list(world_state["simulation"].keys())[initial_timestep_index]
+# # Among max-object timesteps, find the one with highest visibility score
+# masked_scores = np.where(has_max_objects, visibility_score, 0)
+# initial_timestep_index = np.argmax(masked_scores)
+# initial_timestep = list(world_state["simulation"].keys())[initial_timestep_index]
 
-    # # Create masks for further processing
-    # before_optimal = has_max_objects.copy()
-    # before_optimal[:initial_timestep_index] = True
+# # Create masks for further processing
+# before_optimal = has_max_objects.copy()
+# before_optimal[:initial_timestep_index] = True
 
-    # # this is to avoid choosing a timestep too far, where things might have changed too much
-    # first_drop = np.argmax(~before_optimal)
-    # window_space = 10  # frames
-    # if (first_drop + window_space) < len(before_optimal):
-    #     before_optimal[first_drop + window_space :] = True
+# # this is to avoid choosing a timestep too far, where things might have changed too much
+# first_drop = np.argmax(~before_optimal)
+# window_space = 10  # frames
+# if (first_drop + window_space) < len(before_optimal):
+#     before_optimal[first_drop + window_space :] = True
 
-    # without_max_objects = ~before_optimal
-    # alternative_scores = np.where(without_max_objects, visibility_score, 0)
+# without_max_objects = ~before_optimal
+# alternative_scores = np.where(without_max_objects, visibility_score, 0)
 
-    # # Find timestep with highest visibility score excluding max-object timesteps
-    # final_timestep_index = np.argmax(alternative_scores)
-    # final_timestep = list(world_state["simulation"].keys())[final_timestep_index]
+# # Find timestep with highest visibility score excluding max-object timesteps
+# final_timestep_index = np.argmax(alternative_scores)
+# final_timestep = list(world_state["simulation"].keys())[final_timestep_index]
 
-    # previous_phase = initial_timestep_index % CLIP_LENGTH  
+# previous_phase = initial_timestep_index % CLIP_LENGTH
 
-    # # always take previous phase cause the object should be there
-    # previous_phase_index = (initial_timestep_index - previous_phase)
-    # # next_phase_index = initial_timestep_index + next_phase
+# # always take previous phase cause the object should be there
+# previous_phase_index = (initial_timestep_index - previous_phase)
+# # next_phase_index = initial_timestep_index + next_phase
 
-    # if previous_phase_index < 0:
-    #     raise ImpossibleToAnswer("Could not determine initial timestep.")
-        
-    # # if next_phase_index >= len(masked_scores):
-    # #     next_phase_index = None
+# if previous_phase_index < 0:
+#     raise ImpossibleToAnswer("Could not determine initial timestep.")
 
-    # if previous_phase_index is not None:
-    #     initial_timestep_index = previous_phase_index    
-    # else:
-    #     raise ImpossibleToAnswer("Could not determine initial timestep.")
+# # if next_phase_index >= len(masked_scores):
+# #     next_phase_index = None
 
-    # initial_timestep = list(world_state["simulation"].keys())[initial_timestep_index]
+# if previous_phase_index is not None:
+#     initial_timestep_index = previous_phase_index
+# else:
+#     raise ImpossibleToAnswer("Could not determine initial timestep.")
 
-    # return (
-    #     initial_timestep_index,
-    #     initial_timestep,
-    #     final_timestep_index,
-    #     final_timestep,
-    # )
+# initial_timestep = list(world_state["simulation"].keys())[initial_timestep_index]
+
+# return (
+#     initial_timestep_index,
+#     initial_timestep,
+#     final_timestep_index,
+#     final_timestep,
+# )
 
 
 def get_visibility_mask(world_state: WorldState) -> Mapping[str, Sequence[int]]:
@@ -156,13 +333,14 @@ def get_visibility_mask(world_state: WorldState) -> Mapping[str, Sequence[int]]:
     for object in iter_objects(world_state):
         obj_id = object["id"]
 
-        for t in all_timesteps:                        
-
-            bit = 1 if is_object_visible_v2(world_state, obj_id, t) else 0            
+        for t in all_timesteps:
+            bit = 1 if is_object_visible_v3(world_state, obj_id, t) else 0
             index_timestep = all_timesteps.index(t)
             visibility_mask[int(obj_id) - 1, index_timestep] = bit
 
-            visibility_percentage_obj = get_visibility_ratio_v2(world_state, obj_id, t) * 100.0
+            visibility_percentage_obj = (
+                get_visibility_ratio_v3(world_state, obj_id, t) * 100.0
+            )
             visibility_percentage_matrix[int(obj_id) - 1, all_timesteps.index(t)] = int(
                 visibility_percentage_obj
             )
@@ -197,9 +375,8 @@ def check_visibility_sequence(
     first_zero_timestep = None
     found = False
 
-    for t in all_timesteps[::FRAME_INTERLEAVE]:        
-
-        bit = 1 if is_object_visible_v2(world_state, obj_id, t) else 0
+    for t in all_timesteps[::FRAME_INTERLEAVE]:
+        bit = 1 if is_object_visible_v3(world_state, obj_id, t) else 0
 
         if phase == "ones":
             if bit == 1:
@@ -260,8 +437,8 @@ def compute_visibility_counts(world_state, timesteps):
         visible_count = 0
         objects = world_state["simulation"][t]["objects"]
 
-        for obj_id, obj_state in objects.items():            
-            if is_object_visible_v2(world_state, obj_id, t):
+        for obj_id, obj_state in objects.items():
+            if is_object_visible_v3(world_state, obj_id, t):
                 visible_count += 1
 
         counts.append(visible_count)

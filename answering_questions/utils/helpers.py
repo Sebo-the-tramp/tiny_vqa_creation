@@ -32,7 +32,12 @@ from utils.frames_selection import (
     sample_frames_before_timestep,
 )
 
-from utils.geometry import world_to_camera_view
+from utils.geometry import (
+    world_to_camera_view,
+    project_obb,
+    external_points_2d,
+    polygon_area,
+)
 
 Number = Union[int, float]
 WorldState = Mapping[str, Any]
@@ -45,7 +50,6 @@ VISIBILITY_THRESHOLD = get_config()["visibility_threshold"]
 FRAME_INTERLEAVE = get_config()["frame_interleave"]
 CLIP_LENGTH = get_config()["clip_length"]
 MIN_VISIBLE_PIXELS = get_config()["min_pixels_visible"]
-MIN_PIXELS_VISIBLE = 300
 TIMESTART = get_config()["timestart"]
 
 SAMPLING_RATE = get_config()["sampling_rate"]
@@ -101,11 +105,13 @@ def fill_questions(
             frames = sample_frames_at_timesteps(world_state, [timestep])
         else:  # "multi"
             if initial_timestep is not None:
-                initial_ts_float = float(initial_timestep)
-                ts_float = float(timestep)
-                effective_frame_interleave = int(
-                    (ts_float - initial_ts_float) * SAMPLING_RATE // (CLIP_LENGTH - 1)
-                )
+                initial_timestep_index = world_state["simulation"][initial_timestep][
+                    "frame_idx"
+                ]
+                final_timestep_index = world_state["simulation"][timestep]["frame_idx"]
+                effective_frame_interleave = (
+                    final_timestep_index - initial_timestep_index
+                ) // (CLIP_LENGTH - 1)
             else:
                 effective_frame_interleave = FRAME_INTERLEAVE
             frames = sample_frames_before_timestep(
@@ -397,15 +403,190 @@ def get_total_images():
 def is_object_visible(object_state):
     pixels_void = object_state["infov_pixels_void"]
     pixels_visible = object_state["infov_pixels_visible"]
-    fov_visibility = object_state["fov_visibility"]
+    infov_pixels = object_state["infov_pixels"]
 
-    visible = (
-        # Case 1: Object is mostly unoccluded
-        # (fov_visibility >= VISIBILITY_THRESHOLD or pixels_visible >= MIN_PIXELS_VISIBLE)
-        fov_visibility >= VISIBILITY_THRESHOLD and pixels_visible > pixels_void
+    if infov_pixels < 100:
+        return False
+
+    onscreen_pixels = pixels_visible + pixels_void
+
+    if pixels_visible < 20:
+        return False
+
+    true_visibility_ratio = onscreen_pixels / infov_pixels
+
+    return true_visibility_ratio >= VISIBILITY_THRESHOLD
+
+
+def _clip_polygon_to_rect(points, width, height):
+    def clip_edge(poly, edge_fn):
+        if len(poly) == 0:
+            return poly
+        clipped = []
+        for i in range(len(poly)):
+            curr = poly[i]
+            prev = poly[i - 1]
+            curr_in = edge_fn(curr)
+            prev_in = edge_fn(prev)
+            if curr_in:
+                if not prev_in:
+                    clipped.append(intersect(prev, curr, edge_fn))
+                clipped.append(curr)
+            elif prev_in:
+                clipped.append(intersect(prev, curr, edge_fn))
+        return np.array(clipped, dtype=float)
+
+    def intersect(p1, p2, edge_fn):
+        x1, y1 = p1
+        x2, y2 = p2
+        dx = x2 - x1
+        dy = y2 - y1
+        if edge_fn == left:
+            t = (0 - x1) / dx if dx != 0 else 0
+        elif edge_fn == right:
+            t = ((width - 1) - x1) / dx if dx != 0 else 0
+        elif edge_fn == top:
+            t = (0 - y1) / dy if dy != 0 else 0
+        else:  # bottom
+            t = ((height - 1) - y1) / dy if dy != 0 else 0
+        return np.array([x1 + t * dx, y1 + t * dy], dtype=float)
+
+    def left(p):
+        return p[0] >= 0
+
+    def right(p):
+        return p[0] <= width - 1
+
+    def top(p):
+        return p[1] >= 0
+
+    def bottom(p):
+        return p[1] <= height - 1
+
+    clipped = points.astype(float)
+    for edge in (left, right, top, bottom):
+        clipped = clip_edge(clipped, edge)
+        if len(clipped) == 0:
+            break
+    return clipped
+
+
+def _obb_inside_ratio(obb, cam):
+    width = cam.get("width")
+    height = cam.get("height")
+    if width is None or height is None:
+        return 0.0
+    uv, z = project_obb(obb, cam)
+    valid = np.isfinite(uv).all(axis=1) & np.isfinite(z) & (z > 0)
+    if not np.any(valid):
+        return 0.0
+    uv = uv[valid]
+    hull = external_points_2d(uv)
+    total_area = polygon_area(hull)
+    if total_area <= 0:
+        return 0.0
+    clipped = _clip_polygon_to_rect(hull, width, height)
+    inside_area = polygon_area(clipped)
+    inside_ratio = max(0.0, min(1.0, inside_area / total_area))
+    return inside_ratio
+
+
+def get_visibility_ratio_v3(world_state, obj_id, timestep):
+    pixel_threshold = 2000.0
+    """
+    Calculates visibility based on two parallel criteria:
+    1. Is the object geometrically complete? (Rewards small, fully visible objects)
+    2. Is the object visually salient? (Rewards large, cropped objects)
+    
+    Returns the higher of the two scores.
+    """
+    step = world_state["simulation"][str(timestep)]
+    obj_state = step["objects"][str(obj_id)]
+    cam = step["camera"]
+
+    if not obj_state or not cam or "obb" not in obj_state:
+        return 0.0
+
+    # 1. Raw Data
+    fov_visibility = float(obj_state["fov_visibility"])
+    pixels_visible = float(obj_state["infov_pixels_visible"])
+    pixels_void = float(obj_state["infov_pixels_void"])
+    inside_ratio = _obb_inside_ratio(obj_state["obb"], cam)
+
+    # # 2. Gatekeeping
+    # if pixels_visible < pixels_void:
+    #      raise ImpossibleToAnswer("Uncertainty too high.")
+
+    if pixels_visible <= 50 and pixels_void >= 200:
+        raise ImpossibleToAnswer("Uncertainty too high.")
+
+    # --- PATH A: Geometric Completeness ---
+    # Good for: Tiny objects that fit fully in the frame.
+    # Bad for: Large objects that get cut off by the camera edge.
+    score_geom = fov_visibility * inside_ratio
+
+    # --- PATH B: Visual Salience ---
+    # Good for: Large objects. If I see 2000px, I don't care if that's only 20% of the object.
+    # Bad for: Tiny objects (50px is a low score here).
+    score_pixel = min(1.0, pixels_visible / pixel_threshold)
+
+    # 3. The "Or" Gate
+    # We take the best of both worlds.
+    return max(score_geom, score_pixel)
+
+
+def get_visibility_ratio_v4(
+    world_state, obj_id, timestep, pixel_threshold=2000.0, geom_power=2.0
+):
+    """
+    Args:
+        pixel_threshold: Pixel count that guarantees a score of 1.0 (Visual Salience).
+        geom_power: Strictness of the geometric check.
+                    2.0 crushes low percentages (22% -> 0.04).
+                    1.0 is linear (22% -> 0.22).
+    """
+    step = world_state["simulation"][str(timestep)]
+    obj_state = step["objects"][str(obj_id)]
+    cam = step["camera"]
+
+    if not obj_state or not cam or "obb" not in obj_state:
+        return 0.0
+
+    # 1. Raw Data
+    fov_visibility = float(obj_state["fov_visibility"])
+    pixels_visible = float(obj_state["infov_pixels_visible"])
+    # pixels_void = float(obj_state["infov_pixels_void"])
+    inside_ratio = _obb_inside_ratio(obj_state["obb"], cam)
+
+    # 2. Gatekeeping
+    # I recommend keeping a hard floor for absurdly small specks (e.g. < 15px)
+    if pixels_visible < 15:
+        return 0.0
+    # if pixels_visible * 2 < pixels_void:
+    #      raise ImpossibleToAnswer("Uncertainty too high.")
+
+    # --- PATH A: Geometric Completeness (Strict) ---
+    # We apply a power curve here.
+    # 22% visible -> 0.22 ** 2.0 = 0.048 (Score is effectively 0)
+    # 90% visible -> 0.90 ** 2.0 = 0.81 (Score stays high)
+    raw_geom_score = fov_visibility * inside_ratio
+    score_geom = raw_geom_score**geom_power
+
+    # --- PATH B: Visual Salience ---
+    # 150 pixels / 2000 = 0.075 (Score is low)
+    # 2000 pixels / 2000 = 1.0 (Score is high)
+    score_pixel = min(1.0, pixels_visible / pixel_threshold)
+
+    # 3. The "Or" Gate
+    # Case: 150px @ 22%
+    # max(0.048, 0.075) = 0.075 -> VISIBILITY FAIL (Correct!)
+    return max(score_geom, score_pixel)
+
+
+def is_object_visible_v3(world_state, obj_id, timestep):
+    return (
+        get_visibility_ratio_v3(world_state, obj_id, timestep) >= VISIBILITY_THRESHOLD
     )
-
-    return visible
 
 
 def get_random_timestep_from_list(visible_timesteps: List[str], question: Any) -> str:

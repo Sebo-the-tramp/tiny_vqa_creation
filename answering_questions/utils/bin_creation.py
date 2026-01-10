@@ -34,13 +34,6 @@ def _deterministic_uniform(lo: float, hi: float, material: str) -> float:
     return random.Random(local_seed).uniform(lo, hi)
 
 
-def _round_sig(x: float, sig: int = 3) -> float:
-    sig = max(1, sig)
-    if x == 0:
-        return 0.0
-    return round(x, sig - 1 - int(math.floor(math.log10(abs(x)))))
-
-
 def _decimals_for_sig(x: float, sig: int = 3) -> int:
     if x == 0:
         return max(0, sig - 1)
@@ -49,70 +42,6 @@ def _decimals_for_sig(x: float, sig: int = 3) -> int:
 
 def norm(name: str) -> str:
     return name.lower()
-
-
-def title_label(name: str) -> str:
-    specials = {"tv": "TV", "tshirt": "T-shirt"}
-    n = norm(name)
-    return specials.get(n, " ".join(w.capitalize() for w in n.split()))
-
-
-def bigram_sim(a: str, b: str) -> float:
-    def grams(s: str) -> set[str]:
-        s = f" {s} "
-        return {s[i : i + 2] for i in range(len(s) - 1)}
-
-    A, B = grams(a), grams(b)
-    return (len(A & B) / len(A | B)) if A and B else 0.0
-
-
-# ---------- integer mode (counting) ----------
-def create_mc_options_integer(
-    gt: int,
-    num_answers: int = 4,
-    lo: int = 0,
-    hi: int = 9,
-    *,
-    seed: Optional[int] = None,
-) -> Tuple[List[int], int]:
-    if lo > hi:
-        raise ValueError("lo cannot be > hi")
-    if not (lo <= gt <= hi):
-        raise ValueError(f"gt={gt} is outside [{lo}, {hi}]")
-    domain_size = hi - lo + 1
-    if domain_size < num_answers:
-        raise ValueError(
-            f"Need {num_answers} unique ints but only {domain_size} available."
-        )
-
-    rng = _select_rng(seed)
-    needed = num_answers - 1
-
-    neighbors: List[int] = []
-    d = 1
-    while len(neighbors) < domain_size - 1:
-        for sgn in (-1, 1):
-            v = gt + sgn * d
-            if lo <= v <= hi and v != gt and v not in neighbors:
-                neighbors.append(v)
-        d += 1
-        if gt - d < lo and gt + d > hi:
-            break
-
-    band = neighbors[: max(needed + 2, min(5, len(neighbors)))]
-    _shuffle_inplace(band, rng)
-
-    distractors = band[:needed]
-    if len(distractors) < needed:
-        remaining = [v for v in neighbors if v not in distractors]
-        _shuffle_inplace(remaining, rng)
-        distractors += remaining[: needed - len(distractors)]
-
-    options = [gt] + distractors[:needed]
-    _shuffle_inplace(options, rng)
-    correct_idx = options.index(gt)
-    return options, correct_idx
-
 
 # improved version after Raoul's feedback
 # https://chatgpt.com/c/6906646f-be44-8325-a42e-98ddbf72eec8 -> to improve probably with slope bins
@@ -300,48 +229,6 @@ def uniform_labels(
     else:
         fmt = "{:." + str(decimals) + "f}"
         return [fmt.format(float(v)) for v in options]
-
-
-# ---------- convenience wrapper ----------
-def create_bins_from_single_gt(
-    gt: float,
-    num_answer: int = 4,
-    *,
-    integer: bool = False,
-    lo: Optional[Union[int, float]] = None,
-    hi: Optional[Union[int, float]] = None,
-    seed: Optional[int] = None,
-    return_labels: bool = False,
-    label_decimals: Optional[int] = None,
-) -> Union[List[Union[int, float]], List[str]]:
-    """
-    - integer=True  : integer mode (no decimals), options in [lo, hi] if provided.
-    - integer=False : float mode, rounded to sig figs; if `label_decimals` is provided,
-                      the generator ensures distinct on-screen labels at that resolution.
-    """
-    if integer:
-        if lo is None:
-            lo = 0
-        if hi is None:
-            hi = 9
-        opts, _ = create_mc_options_integer(
-            int(round(gt)), num_answers=num_answer, lo=int(lo), hi=int(hi), seed=seed
-        )
-        return uniform_labels(opts, integer=True) if return_labels else opts
-    else:
-        opts, _ = create_mc_options_around_gt(
-            float(gt),
-            num_answers=num_answer,
-            seed=seed,
-            display_decimals=label_decimals,
-            lo=(float(lo) if lo is not None else None),
-            hi=(float(hi) if hi is not None else None),
-        )
-        return (
-            uniform_labels(opts, integer=False, decimals=label_decimals)
-            if return_labels
-            else opts
-        )
 
 
 # ---------- main helper ----------

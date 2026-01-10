@@ -4,6 +4,7 @@ import json
 import math
 import os
 import random
+import re
 import textwrap
 from collections import defaultdict
 from typing import Callable, Dict, Iterable, List, Optional, Tuple
@@ -11,6 +12,7 @@ from typing import Callable, Dict, Iterable, List, Optional, Tuple
 import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
 from matplotlib import animation
+from matplotlib.widgets import Button
 
 try:
     import imageio  # type: ignore
@@ -132,6 +134,68 @@ def resolve_image_path(image_path: str, search_dirs: Iterable[str]) -> str:
         return absolute_candidate
 
     return image_path
+
+
+def summarize_media_path(path: str) -> str:
+    if not path:
+        return ""
+    norm = path.replace("\\", "/")
+    parts = [part for part in norm.split("/") if part]
+    num_objects = ""
+    for idx, part in enumerate(parts):
+        if part in {"random-cam-stationary", "random"} and idx + 1 < len(parts):
+            num_objects = parts[idx + 1]
+            break
+    if not num_objects:
+        match = re.search(r"/random-cam-stationary/(\d+)(?:/|$)", norm)
+        if match:
+            num_objects = match.group(1)
+    if not num_objects:
+        match = re.search(r"/random/(\d+)(?:/|$)", norm)
+        if match:
+            num_objects = match.group(1)
+    if not num_objects:
+        match = re.search(r"/num_objects/(\d+)(?:/|$)", norm)
+        if match:
+            num_objects = match.group(1)
+
+    seed = ""
+    seed_match = re.search(r"seed-([0-9]+)", norm)
+    if seed_match:
+        seed = seed_match.group(1)
+
+    if num_objects and seed:
+        return f"num_objects {num_objects}, seed {seed}"
+    if num_objects:
+        return f"num_objects {num_objects}"
+    if seed:
+        return f"seed {seed}"
+    return os.path.basename(path)
+
+
+def copy_text_to_clipboard(text: str) -> bool:
+    if not text:
+        return False
+    try:
+        import tkinter as tk
+
+        root = tk.Tk()
+        root.withdraw()
+        root.clipboard_clear()
+        root.clipboard_append(text)
+        root.update()
+        root.destroy()
+        return True
+    except Exception:  # pragma: no cover - best effort
+        pass
+
+    try:
+        import pyperclip  # type: ignore
+
+        pyperclip.copy(text)
+        return True
+    except Exception:  # pragma: no cover - optional dependency
+        return False
 
 
 def display_entry(
@@ -325,9 +389,18 @@ def display_entry(
     )
 
     primary_img_path = question_image_paths[0] if question_image_paths else None
+    copy_target_path = primary_img_path or (all_video_paths[0] if all_video_paths else "")
+    summary_source_path = (
+        entry.get("simulation_id")
+        if isinstance(entry.get("simulation_id"), str)
+        else ""
+    )
+    if not summary_source_path:
+        summary_source_path = copy_target_path
     info_cursor = 0.65
     if primary_img_path:
-        wrapped_path = textwrap.fill(f"Image path: {primary_img_path}", width=95)
+        summarized_path = summarize_media_path(summary_source_path or primary_img_path)
+        wrapped_path = textwrap.fill(f"Image path: {summarized_path}", width=95)
         text_ax.text(
             0.01,
             info_cursor,
@@ -342,7 +415,8 @@ def display_entry(
 
     if all_video_paths:
         for vid_index, video_path in enumerate(all_video_paths, start=1):
-            label = f"Video {vid_index}: {video_path}"
+            summarized_path = summarize_media_path(summary_source_path or video_path)
+            label = f"Video {vid_index}: {summarized_path}"
             wrapped_video = textwrap.fill(label, width=95)
             text_ax.text(
                 0.01,
@@ -355,6 +429,17 @@ def display_entry(
                 transform=text_ax.transAxes,
             )
             info_cursor -= 0.12
+
+    if copy_target_path:
+        button_ax = fig.add_axes([0.82, 0.9, 0.15, 0.06])
+        button = Button(button_ax, "Copy path")
+
+        def _copy_to_clipboard(_event) -> None:
+            if copy_text_to_clipboard(copy_target_path):
+                button.label.set_text("Copied!")
+                fig.canvas.draw_idle()
+
+        button.on_clicked(_copy_to_clipboard)
 
     if options:
         option_y = info_cursor if (primary_img_path or all_video_paths) else 0.5
@@ -659,7 +744,9 @@ def display_entry(
             except Exception:  # pragma: no cover - best effort
                 pass
 
-    def _close_on_click(_event) -> None:
+    def _close_on_click(event) -> None:
+        if event.inaxes is not None:
+            return
         _run_cleanups()
         plt.close(fig)
 

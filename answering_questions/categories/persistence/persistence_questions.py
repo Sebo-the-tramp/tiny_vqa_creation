@@ -8,6 +8,7 @@ and fall back to sensible defaults when information is missing.
 
 from __future__ import annotations
 
+import random
 import numpy as np
 
 from utils.config import get_config
@@ -23,13 +24,13 @@ from typing import (
     Union,
 )
 
-from utils.helpers import fill_questions, resolve_attributes_visible_at_timestep
+from utils.helpers import fill_questions, resolve_attributes_visible_at_timestep, get_timestep_from_idx
 
 from utils.bin_creation import create_mc_object_names_from_dataset
 from categories.persistence.persistence_helpers import (
-    get_visibility_mask,
-    get_visibility_change,
-    get_optimal_timestep_interval,
+    get_visibility_mask,    
+    get_optimal_timestep_interval,    
+    get_maximum_windows_for_each_object
 )
 
 
@@ -52,71 +53,67 @@ def F_PERSISTENCE_OBJECT_PRESENT(
 ) -> Sequence[str]:
     """Which object is seen during the frames, but not visible in the last frame?"""
 
-    assert len(attributes) == 0
+    assert len(attributes) == 0    
 
-    visibility_mask, _ = get_visibility_mask(world_state)
+    object_proposed = get_maximum_windows_for_each_object(world_state)
+    
+    # check fo unique object that appears and then disappears for time interval
+    chosen_object_id = None
 
-    changes_in_visibility = get_visibility_change(visibility_mask)
-    changes_across_time = np.abs(changes_in_visibility).sum(axis=1)
+    all_objects_ids = set([str(i) for i in range(1, len(world_state["objects"]) + 1)])
 
-    object_name = ""
-    final_timestep = None
-
-    if sum(changes_across_time >= 1) > 1:
-        raise ImpossibleToAnswer("Multiple significant changes detected.")
-
-    elif sum(changes_across_time >= 1) == 0:
-        raise ImpossibleToAnswer("No significant changes detected.")
-
-    else:
-        object_index = np.where(changes_across_time >= 1)[0][0]
-        object_name = world_state["objects"][str(object_index + 1)]["name"]
-
-        obj_changes = changes_in_visibility[object_index]
-
-        disappearance_indices = np.where(obj_changes == -1)[0]
-
-        if len(disappearance_indices) == 0:
-            # The object moved (sum > 0), but no -1 found.
-            # It must have only appeared (value 1).
-            raise ImpossibleToAnswer(
-                f"Object '{object_name}' appeared but never disappeared."
-            )
-
-        # this modification could be strange but maybe useful, else we could do CLIP_LENGTH//3 for shorter hidden intervals
-        first_disappearance_idx = disappearance_indices[0]
-        # check if the index after is also not visible else remove cause we are not sure
-        visible_obj_t_init = visibility_mask[object_index, first_disappearance_idx]
-        visible_obj_t_next = visibility_mask[object_index, first_disappearance_idx + 1]
-        if visible_obj_t_init == 0 and visible_obj_t_next != 0:
-            # If the object is not visible in both frames, we can't be sure about its disappearance
-            raise ImpossibleToAnswer(
-                f"Not robust enough to determine disappearance."
-            )
+    for obj_id in object_proposed:
+        initial_timestep_index = object_proposed[str(obj_id)][2]
+        final_timestep_index = object_proposed[str(obj_id)][3]
         
-        first_disappearance_idx += 1  # move to the frame where it is not visible
-        final_timestep = list(world_state["simulation"].keys())[first_disappearance_idx]
+        for obj_id_check in object_proposed:
+            if str(obj_id) == str(obj_id_check):
+                continue
+            
+            initial_timestep_index_check = object_proposed[str(obj_id_check)][2]
+            final_timestep_index_check = object_proposed[str(obj_id_check)][3]
 
-    # change the frame interleave or maybe not?
-    # we can have it -> stochastically will change, and then persistence should not
-    # be bound at the granularity of the frames only at object present or not
-    curr_frame_interleave = first_disappearance_idx // CLIP_LENGTH
+            if final_timestep_index_check == -1 or initial_timestep_index_check == -1:
+                all_objects_ids.discard(str(obj_id_check))
+                continue
 
-    if (
-        final_timestep is None
-        or object_name == ""
-        or first_disappearance_idx < curr_frame_interleave * CLIP_LENGTH
-    ):
+            # check for overlap
+            if not (final_timestep_index < initial_timestep_index_check or final_timestep_index_check < initial_timestep_index):
+                all_objects_ids.discard(str(obj_id_check))
+                all_objects_ids.discard(str(obj_id))
+
+        if len(all_objects_ids) == 0:
+            raise ImpossibleToAnswer(
+                "More than one object found that appears and then disappears."
+            )
+
+    chosen_object_id = random.choice(list(all_objects_ids)) if len(all_objects_ids) == 1 else None
+
+    if chosen_object_id is None:
         raise ImpossibleToAnswer(
-            "Could not determine the disappeared object or final timestep."
+            "No object found that appears and then disappears."
         )
 
-    initial_timestep = list(world_state["simulation"].keys())[
-        first_disappearance_idx - (curr_frame_interleave * CLIP_LENGTH)
-    ]
+    final_timestep_index = object_proposed[str(chosen_object_id)][3]
+    initial_timestep_index = object_proposed[str(chosen_object_id)][2]
+
+    if final_timestep_index == -1 or initial_timestep_index == -1:
+        raise ImpossibleToAnswer(
+            "No object found that appears and then disappears."
+        )
+    
+    if final_timestep_index < initial_timestep_index:
+        raise ImpossibleToAnswer(
+            "No object found that appears and then disappears."
+        )
+
+    final_timestep = get_timestep_from_idx(final_timestep_index)    
+    initial_timestep = get_timestep_from_idx(initial_timestep_index)
+
+    obj_name = world_state["objects"][str(chosen_object_id)]["name"]
 
     labels, correct_idx = create_mc_object_names_from_dataset(
-        object_name,
+        obj_name,
         [],
         get_all_objects_names(),
         num_answers=4,
@@ -169,7 +166,7 @@ def F_PERSISTENCE_OBJECT_TOTAL_COUNT(
     # this is not the initial count, but the count at the timestep before disappearing
     # you cannot just count the objects at the beginning you should also take into account from beginning to end, max, and also based 
     # on how many frames you are skipping -> KEEP GOING FROM HERE!
-    curr_frame_interleave = (final_timestep_index + 1 - initial_timestep_index) // CLIP_LENGTH
+    curr_frame_interleave = (final_timestep_index - initial_timestep_index) // (CLIP_LENGTH - 1)
     visibility_mask_valid = visibility_mask[:, initial_timestep_index:final_timestep_index + 1][:, ::curr_frame_interleave]
     objects_seen_at_least_once_mask = np.any(visibility_mask_valid, axis=1)
     total_unique_objects_seen = np.sum(objects_seen_at_least_once_mask)
@@ -228,7 +225,7 @@ def F_PERSISTENCE_OBJECT_TOTAL_COUNT_HIDDEN(
     # this is not the initial count, but the count at the timestep before disappearing
     # you cannot just count the objects at the beginning you should also take into account from beginning to end, max, and also based 
     # on how many frames you are skipping -> KEEP GOING FROM HERE!
-    curr_frame_interleave = (final_timestep_index + 1 - initial_timestep_index) // CLIP_LENGTH
+    curr_frame_interleave = (final_timestep_index - initial_timestep_index) // (CLIP_LENGTH - 1)
     visibility_mask_valid = visibility_mask[:, initial_timestep_index:final_timestep_index + 1][:, ::curr_frame_interleave]
     objects_seen_at_least_once_mask = np.any(visibility_mask_valid, axis=1)
     total_unique_objects_seen = np.sum(objects_seen_at_least_once_mask)

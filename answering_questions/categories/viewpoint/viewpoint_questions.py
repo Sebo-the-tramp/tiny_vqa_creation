@@ -31,9 +31,11 @@ from utils.helpers import (
     iter_objects,
     fill_questions,
     resolve_attributes,
+    get_visibility_mask,
+    get_timestep_from_idx,
     get_camera_at_timestep,
-    get_object_state_at_timestep,
     resolve_attributes_visible_at_timestep,
+    resolve_attributes_most_visible_at_timestep,
     get_visible_timesteps_for_attributes_min_objects,
 )
 
@@ -67,13 +69,27 @@ def F_VISIBILITY_OBJECT(
 
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        ["OBJECT"], world_state, min_objects=kwargs["current_world_number_of_objects"]
+        ["OBJECT"],
+        world_state,
+        min_objects=min(kwargs["current_world_number_of_objects"], 2),
     )
 
-    timestep = get_random_timestep_from_list(visible_timesteps, question)
+    final_timestep = get_random_timestep_from_list(visible_timesteps, question)
+    final_timestep_index = world_state["simulation"][final_timestep]["frame_idx"]
 
-    resolved_attributes = resolve_attributes_visible_at_timestep(
-        ["OBJECT"], world_state, timestep
+    candidates = [
+        k for k in (1, 2, 3, 4) if final_timestep_index - (k * (CLIP_LENGTH - 1)) >= 0
+    ]
+    if len(candidates) == 0:
+        raise ImpossibleToAnswer("Not enough previous frames to determine visibility.")
+
+    max_k = max(candidates)
+    initial_timestep_index = final_timestep_index - (max_k * (CLIP_LENGTH - 1))
+    initial_timestep = get_timestep_from_idx(initial_timestep_index)
+
+    # resolve attributes MOST visible
+    resolved_attributes = resolve_attributes_most_visible_at_timestep(
+        ["OBJECT"], world_state, final_timestep
     )
 
     object = resolved_attributes["OBJECT"]["choice"]
@@ -88,7 +104,13 @@ def F_VISIBILITY_OBJECT(
     )
 
     return fill_questions(
-        question, labels, correct_idx, world_state, timestep, resolved_attributes
+        question,
+        labels,
+        correct_idx,
+        world_state,
+        final_timestep,
+        resolved_attributes,
+        initial_timestep=initial_timestep,
     )
 
 
@@ -100,15 +122,23 @@ def F_VISIBILITY_OBJECT_COUNT(
 
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        ["OBJECT"],
-        world_state,
-        min_objects=1,  # cause we don't really care for this question I guess
+        ["OBJECT"], world_state, min_objects=2
     )
 
-    timestep = get_random_timestep_from_list(visible_timesteps, question)
-    timestep_index = world_state["simulation"][timestep]["frame_idx"]
+    final_timestep = get_random_timestep_from_list(visible_timesteps, question)
+    final_timestep_index = world_state["simulation"][final_timestep]["frame_idx"]
 
-    total_visible_objects = get_number_of_visible_objects(world_state, timestep_index)
+    candidates = [
+        k for k in (1, 2, 3, 4) if final_timestep_index - (k * (CLIP_LENGTH - 1)) >= 0
+    ]
+    if len(candidates) == 0:
+        raise ImpossibleToAnswer("Not enough previous frames to determine visibility.")
+
+    max_k = max(candidates)
+    initial_timestep_index = final_timestep_index - (max_k * (CLIP_LENGTH - 1))
+    initial_timestep = get_timestep_from_idx(initial_timestep_index)
+
+    total_visible_objects = get_number_of_visible_objects(world_state, final_timestep)
 
     # balanced options around the initial count
     start = max(0, total_visible_objects - 2)
@@ -127,11 +157,17 @@ def F_VISIBILITY_OBJECT_COUNT(
     )
 
     resolved_attributes = resolve_attributes_visible_at_timestep(
-        ["OBJECT"], world_state, timestep
+        ["OBJECT"], world_state, final_timestep
     )
 
     return fill_questions(
-        question, labels, correct_idx, world_state, timestep, resolved_attributes
+        question,
+        labels,
+        correct_idx,
+        world_state,
+        final_timestep,
+        resolved_attributes,
+        initial_timestep=initial_timestep,
     )
 
 
@@ -142,24 +178,40 @@ def F_OCCLUSION_PERCENTAGE_OBJECT(
     assert len(attributes) == 1 and "OBJECT" in attributes
 
     # First we find the pairs of objects visible
+    visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
+        ["OBJECT"], world_state, min_objects=0
+    )
+
+    max_timestep = visible_timesteps[-1]
+    max_timestep_index = world_state["simulation"][max_timestep]["frame_idx"]
+
+    _, visibility_percentage_matrix = get_visibility_mask(
+        world_state, max_timestep=max_timestep
+    )
+
+    # get random timestep >= 8
+    all_timesteps = list(world_state["simulation"].keys())[: max_timestep_index + 1]
+
+    final_timestep = get_random_timestep_from_list(all_timesteps, question)
+    final_timestep_index = world_state["simulation"][final_timestep]["frame_idx"]
+
+    candidates = [
+        k for k in (1, 2, 3, 4) if final_timestep_index - (k * (CLIP_LENGTH - 1)) >= 0
+    ]
+    if len(candidates) == 0:
+        raise ImpossibleToAnswer("Not enough previous frames to determine visibility.")
+
+    max_k = max(candidates)
+    initial_timestep_index = final_timestep_index - (max_k * (CLIP_LENGTH - 1))
+    initial_timestep = get_timestep_from_idx(initial_timestep_index)
+
+    # First we find the pairs of objects visible
     resolved_attributes = resolve_attributes(["OBJECT"], world_state)
+    object_id = resolved_attributes["OBJECT"]["choice"]["id"]
 
-    all_timesteps = list(world_state["simulation"].keys())
-
-    if len(all_timesteps) <= CLIP_LENGTH * FRAME_INTERLEAVE - FRAME_INTERLEAVE:
-        raise ImpossibleToAnswer("Not enough timesteps in the simulation.")
-
-    if "multi" in question.get("task_splits", ""):
-        timestep = random.choice(
-            all_timesteps[CLIP_LENGTH * FRAME_INTERLEAVE - FRAME_INTERLEAVE :]
-        )
-    else:
-        timestep = random.choice(all_timesteps)
-
-    object = resolved_attributes["OBJECT"]["choice"]
-    visibility_object = get_object_state_at_timestep(
-        world_state, object["id"], timestep
-    )["fov_visibility"]
+    visibility_object = (
+        visibility_percentage_matrix[int(object_id) - 1, final_timestep_index] / 100.0
+    )
 
     if visibility_object < 0.25:
         correct_idx = 0
@@ -178,7 +230,13 @@ def F_OCCLUSION_PERCENTAGE_OBJECT(
     ]
 
     return fill_questions(
-        question, labels, correct_idx, world_state, timestep, resolved_attributes
+        question,
+        labels,
+        correct_idx,
+        world_state,
+        final_timestep,
+        resolved_attributes,
+        initial_timestep=initial_timestep,
     )
 
 

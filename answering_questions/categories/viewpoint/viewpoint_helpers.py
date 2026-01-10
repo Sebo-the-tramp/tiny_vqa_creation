@@ -158,12 +158,15 @@ def classify_focal_length_index(hfov_deg):
     return labels, correct_idx
 
 
-def get_number_of_visible_objects(world_state: WorldState, timestep: int) -> int:
+def get_number_of_visible_objects(world_state: WorldState, timestep: str) -> int:
     """
     Count the number of visible objects in the world state at a specific timestep.
     """
-    visibility_mask, _, _ = get_visibility_mask(world_state)
+    visibility_mask, _ = get_visibility_mask(world_state, max_timestep=timestep)
     total_visible_objects = np.sum(visibility_mask, axis=0)
+    timestep_index = world_state["simulation"][timestep]["frame_idx"]
     return (
-        total_visible_objects[timestep] if timestep < len(total_visible_objects) else 0
+        total_visible_objects[timestep_index]
+        if timestep_index < len(total_visible_objects)
+        else 0
     )

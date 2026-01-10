@@ -24,6 +24,7 @@ os.environ.setdefault("CUDA_VISIBLE_DEVICES", "")
 
 warnings.filterwarnings("ignore", message="CUDA initialization:", category=UserWarning)
 
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Detect temporal slowdowns in simulation.json files."

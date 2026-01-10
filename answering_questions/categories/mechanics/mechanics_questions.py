@@ -35,7 +35,7 @@ from utils.helpers import (
     get_random_timestep_from_list,
     fill_template,
     get_timestep_from_idx,
-    is_object_visible,
+    is_object_visible_v3,
 )
 
 from utils.frames_selection import (
@@ -158,27 +158,34 @@ def F_KINEMATICS_DISTANCE_TRAVELED_INTERVAL(
 
     visible_timesteps = random.choice(continuous_subsequences)
 
-    timestep_end = get_random_timestep_from_list(visible_timesteps, question)
-    timestep_start = visible_timesteps[
-        visible_timesteps.index(timestep_end)
-        - ((CLIP_LENGTH * FRAME_INTERLEAVE) - FRAME_INTERLEAVE)
+    final_timestep = get_random_timestep_from_list(visible_timesteps, question)
+    final_timestep_index = world_state["simulation"][final_timestep]["frame_idx"]
+
+    candidates = [
+        k for k in (1, 2, 3, 4) if final_timestep_index - (k * (CLIP_LENGTH - 1)) >= 0
     ]
+    if len(candidates) == 0:
+        raise ImpossibleToAnswer("Not enough previous frames to determine visibility.")
+
+    max_k = max(candidates)
+    initial_timestep_index = final_timestep_index - (max_k * (CLIP_LENGTH - 1))
+    initial_timestep = get_timestep_from_idx(initial_timestep_index)
 
     resolved_attributes = resolve_attributes_visible_at_timestep(
-        attributes, world_state, timestep_start
+        attributes, world_state, initial_timestep
     )
 
     object_id = resolved_attributes["OBJECT"]["choice"]["id"]
 
-    # check if the object is visible at the timestep_end
-    object_state = world_state["simulation"][timestep_start]["objects"][object_id]
-    if not is_object_visible(object_state):
+    if not is_object_visible_v3(world_state, object_id, final_timestep):
         raise ImpossibleToAnswer("The object is not visible at the end timestep.")
 
     position_obj_state_timestep_start = get_position(
-        world_state, object_id, timestep_start
+        world_state, object_id, initial_timestep
     )
-    position_obj_state_timestep_end = get_position(world_state, object_id, timestep_end)
+    position_obj_state_timestep_end = get_position(
+        world_state, object_id, final_timestep
+    )
     distance = distance_between(
         position_obj_state_timestep_start, position_obj_state_timestep_end
     )
@@ -190,7 +197,13 @@ def F_KINEMATICS_DISTANCE_TRAVELED_INTERVAL(
     labels = [f"{opt} meters" for opt in labels]
 
     return fill_questions(
-        question, labels, correct_idx, world_state, timestep_end, resolved_attributes
+        question,
+        labels,
+        correct_idx,
+        world_state,
+        final_timestep,
+        resolved_attributes,
+        initial_timestep=initial_timestep,
     )
 
 
@@ -462,20 +475,12 @@ def F_COLLISION_OBJECT_OBJECT_FRAME_SINGLE(
         min_objects=min(kwargs["current_world_number_of_objects"], 3),
     )
 
-    continuous_subsequences = get_continuous_subsequences_min_length(
-        visible_timesteps, min_length=CLIP_LENGTH * FRAME_INTERLEAVE
-    )
-
-    visible_timesteps = random.choice(continuous_subsequences)
-
     collision_mask = get_mask_collisions(world_state)
 
     visible_timesteps_index = [
         world_state["simulation"][i]["frame_idx"] for i in visible_timesteps
     ]
-    visible_collision_mask = collision_mask[
-        visible_timesteps_index[0] : visible_timesteps_index[-1] + 1, 1:, 1:
-    ]
+    visible_collision_mask = collision_mask[visible_timesteps_index, 1:, 1:]
 
     rows = visible_collision_mask.any(axis=(1, 2))
     t_first = np.argmax(rows) if rows.any() else None
@@ -549,9 +554,7 @@ def F_COLLISION_OBJECT_OBJECT_FRAME_MULTI(
     visible_timesteps_index = [
         world_state["simulation"][i]["frame_idx"] for i in visible_timesteps
     ]
-    visible_collision_mask = collision_mask[
-        visible_timesteps_index[0] : visible_timesteps_index[-1] + 1, 1:, 1:
-    ]
+    visible_collision_mask = collision_mask[visible_timesteps_index, 1:, 1:]
 
     rows = visible_collision_mask.any(axis=(1, 2))
     t_first = np.argmax(rows) if rows.any() else None

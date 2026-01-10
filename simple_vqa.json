@@ -238,6 +238,12 @@
             "choice": "mcq",            
             "question": "How much of the <OBJECT> is occluded in the image/frame?"
         },
+        "F_VISIBILITY_OBJECT_COUNT": {
+            "task_splits": "single+multi",
+            "sub_category": "visibility",
+            "choice": "mcq",
+            "question": "How many objects are visible in the image/frame?"
+        },
         "F_VIEWPOINT_CAMERA_ANGLE": {
             "task_splits": "single+multi",            
             "sub_category": "camera_characteristics",

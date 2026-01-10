@@ -8,6 +8,17 @@ from typing import Dict, List, Mapping, Optional, Sequence, Tuple
 
 import numpy as np
 
+from answering_questions.categories.persistence.persistence_helpers import (  # noqa: E402
+    get_visibility_mask,
+)
+from answering_questions.utils.helpers import (  # noqa: E402    
+    is_object_visible_v3,
+    get_visibility_ratio_v3,
+)
+from answering_questions.utils.geometry import external_points_2d  # noqa: E402
+from answering_questions.utils.all_objects import get_gso_mapping
+
+from answering_questions.utils.geometry import project_obb
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.abspath(os.path.join(SCRIPT_DIR, ".."))
@@ -17,22 +28,10 @@ for path in (REPO_ROOT, ANSWERING_QUESTIONS_DIR):
         sys.path.insert(0, path)
 os.chdir(ANSWERING_QUESTIONS_DIR)
 
-from answering_questions.categories.persistence.persistence_helpers import (  # noqa: E402
-    get_visibility_mask,
-)
-from answering_questions.utils.helpers import (  # noqa: E402
-    is_object_visible,
-    is_object_visible_v3,
-    get_visibility_ratio_v3,
-)
-from answering_questions.utils.geometry import project_obb, external_points_2d  # noqa: E402
-from answering_questions.utils.all_objects import get_gso_mapping
-
-from answering_questions.utils.geometry import project_obb
-
 gso_mapping = get_gso_mapping()
 
-#decorator
+
+# decorator
 def add_obj_id(func):
     def wrapper(world_state: Mapping) -> Mapping:
         for obj_id, object in world_state["objects"].items():
@@ -43,13 +42,17 @@ def add_obj_id(func):
 
     return wrapper
 
+
 def read_json(path: str) -> Mapping:
     with open(path, "r") as f:
         return json.load(f)
 
 
 def natural_key(s: str) -> List[object]:
-    return [int(t) if t.isdigit() else t.lower() for t in __import__("re").split(r"(\d+)", s)]
+    return [
+        int(t) if t.isdigit() else t.lower()
+        for t in __import__("re").split(r"(\d+)", s)
+    ]
 
 
 def list_render_frames(render_dir: str) -> List[str]:
@@ -58,6 +61,7 @@ def list_render_frames(render_dir: str) -> List[str]:
     )
     frames.sort(key=natural_key)
     return frames
+
 
 @add_obj_id
 def build_frame_timestep_map(world_state: Mapping) -> Dict[int, str]:
@@ -78,10 +82,12 @@ def resolve_instance_dir(instances_root: str, obj_id: str) -> Optional[str]:
 
 
 def visible_objects_for_timestep(world_state: Mapping, timestep: str) -> List[str]:
-    objects = world_state.get("simulation", {}).get(str(timestep), {}).get("objects", {})
+    objects = (
+        world_state.get("simulation", {}).get(str(timestep), {}).get("objects", {})
+    )
     visible_ids: List[str] = []
     for obj_id, obj_state in objects.items():
-        if is_object_visible(obj_state):
+        if is_object_visible_v3(obj_state):
             visible_ids.append(str(obj_id))
     return visible_ids
 
@@ -101,7 +107,9 @@ def visibility_percent(
     return float(visibility_percentage_mask[obj_index, timestep_index])
 
 
-def visibility_stats(world_state: Mapping, timestep: str, obj_id: str) -> Dict[str, float]:
+def visibility_stats(
+    world_state: Mapping, timestep: str, obj_id: str
+) -> Dict[str, float]:
     obj_state = (
         world_state.get("simulation", {})
         .get(str(timestep), {})
@@ -112,7 +120,9 @@ def visibility_stats(world_state: Mapping, timestep: str, obj_id: str) -> Dict[s
     pixels_visible = float(obj_state.get("infov_pixels_visible", 0.0))
     infov_pixels = float(obj_state.get("infov_pixels", 0.0))
     onscreen_pixels = pixels_visible + pixels_void
-    true_visibility_ratio = (onscreen_pixels / infov_pixels) if infov_pixels > 0 else 0.0
+    true_visibility_ratio = (
+        (onscreen_pixels / infov_pixels) if infov_pixels > 0 else 0.0
+    )
     return {
         "pixels_void": pixels_void,
         "pixels_visible": pixels_visible,
@@ -130,7 +140,9 @@ def load_mask(mask_path: str) -> np.ndarray:
 
 
 def overlay_masks(
-    base: np.ndarray, masks: Sequence[np.ndarray], colors: Sequence[Tuple[int, int, int]]
+    base: np.ndarray,
+    masks: Sequence[np.ndarray],
+    colors: Sequence[Tuple[int, int, int]],
 ) -> np.ndarray:
     out = base.astype(np.float32) / 255.0
     for mask, color in zip(masks, colors):
@@ -179,9 +191,7 @@ def polygon_area(poly: np.ndarray) -> float:
     return 0.5 * abs(np.dot(x, np.roll(y, -1)) - np.dot(y, np.roll(x, -1)))
 
 
-def clip_polygon_to_rect(
-    poly: np.ndarray, width: int, height: int
-) -> np.ndarray:
+def clip_polygon_to_rect(poly: np.ndarray, width: int, height: int) -> np.ndarray:
     def clip_edge(points: np.ndarray, edge_fn):
         if len(points) == 0:
             return points
@@ -288,7 +298,10 @@ def main() -> None:
     frame_to_timestep = build_frame_timestep_map(world_state)
     all_timesteps = list(world_state.get("simulation", {}).keys())
     timestep_to_index = {timestep: idx for idx, timestep in enumerate(all_timesteps)}
-    visibility_mask, visibility_percentage_mask, = get_visibility_mask(world_state)
+    (
+        visibility_mask,
+        visibility_percentage_mask,
+    ) = get_visibility_mask(world_state)
 
     frame_paths = list_render_frames(render_dir)
     if not frame_paths:
@@ -298,7 +311,9 @@ def main() -> None:
         [str(obj_id) for obj_id in world_state.get("objects", {}).keys()],
         key=natural_key,
     )
-    obj_dirs = {obj_id: resolve_instance_dir(instances_root, obj_id) for obj_id in object_ids}
+    obj_dirs = {
+        obj_id: resolve_instance_dir(instances_root, obj_id) for obj_id in object_ids
+    }
     colors = color_palette(len(object_ids))
     obj_color = {obj_id: colors[i] for i, obj_id in enumerate(object_ids)}
 
@@ -334,7 +349,9 @@ def main() -> None:
     initial_idx = max(0, min(args.start_frame, len(frame_paths) - 1))
     fig, (ax_left, ax_mid, ax_right) = plt.subplots(1, 3, figsize=(13, 5))
     plt.subplots_adjust(bottom=0.35, wspace=0.05)
-    left_img = ax_left.imshow(np.array(Image.open(frame_paths[initial_idx]).convert("RGB")))
+    left_img = ax_left.imshow(
+        np.array(Image.open(frame_paths[initial_idx]).convert("RGB"))
+    )
     inst_path = os.path.join(instances_root, os.path.basename(frame_paths[initial_idx]))
     if os.path.isfile(inst_path):
         mid_img = ax_mid.imshow(np.array(Image.open(inst_path).convert("RGB")))
@@ -385,17 +402,23 @@ def main() -> None:
         else:
             handles = []
             for obj_id in object_ids:
-                t_idx = timestep_to_index.get(timestep, -1)
-                obj_idx = int(obj_id) - 1 if obj_id.isdigit() else -1
-                percent = visibility_percent(t_idx, obj_idx, visibility_percentage_mask)
-                is_visible = 1 if is_object_visible_v3(world_state, obj_id, timestep) else 0
+                # t_idx = timestep_to_index.get(timestep, -1)
+                # obj_idx = int(obj_id) - 1 if obj_id.isdigit() else -1
+                # percent = visibility_percent(t_idx, obj_idx, visibility_percentage_mask)
+                is_visible = (
+                    1 if is_object_visible_v3(world_state, obj_id, timestep) else 0
+                )
                 obj_state = (
                     world_state.get("simulation", {})
                     .get(str(timestep), {})
                     .get("objects", {})
                     .get(str(obj_id), {})
                 )
-                cam = world_state.get("simulation", {}).get(str(timestep), {}).get("camera", {})
+                cam = (
+                    world_state.get("simulation", {})
+                    .get(str(timestep), {})
+                    .get("camera", {})
+                )
                 inside_ratio = 0.0
                 hull = None
                 bbox = None
@@ -412,8 +435,14 @@ def main() -> None:
                     if obj_state
                     else 0.0
                 )
-                fov_visibility = float(obj_state.get("fov_visibility", 0.0)) if obj_state else 0.0
-                pixels_visible = float(obj_state.get("infov_pixels_visible", 0.0)) if obj_state else 0.0
+                fov_visibility = (
+                    float(obj_state.get("fov_visibility", 0.0)) if obj_state else 0.0
+                )
+                pixels_visible = (
+                    float(obj_state.get("infov_pixels_visible", 0.0))
+                    if obj_state
+                    else 0.0
+                )
                 color = np.array(obj_color.get(obj_id, (255, 255, 255))) / 255.0
                 handles.append(
                     plt.Line2D(
@@ -426,9 +455,9 @@ def main() -> None:
                         markersize=8,
                         label=(
                             f"obj {obj_id}: visible {is_visible} | "
-                            f"fov {fov_visibility*100:.1f}% | "
-                            f"obb in {inside_ratio*100:.1f}% out {outside_ratio*100:.1f}% | "
-                            f"pix {pixels_visible:.0f} | total {total_visibility*100:.1f}%"
+                            f"fov {fov_visibility * 100:.1f}% | "
+                            f"obb in {inside_ratio * 100:.1f}% out {outside_ratio * 100:.1f}% | "
+                            f"pix {pixels_visible:.0f} | total {total_visibility * 100:.1f}%"
                         ),
                     )
                 )

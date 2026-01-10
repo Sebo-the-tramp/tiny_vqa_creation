@@ -5,7 +5,7 @@ from scipy.signal import convolve2d
 from typing import Any, Mapping, Sequence
 
 from utils.config import get_config
-from utils.helpers import iter_objects, is_object_visible_v3, get_visibility_ratio_v3
+from utils.helpers import is_object_visible_v3, get_visibility_mask
 
 from utils.my_exception import ImpossibleToAnswer
 
@@ -90,10 +90,10 @@ def get_maximum_windows_for_each_object(world_state: WorldState):
 
             # check if above threshold
             if start_index_visibility > 0.9 * 100:  # maybe we can tune this
-
                 # this is to ensure we have enough frames to look ahead and not go OOB
                 candidates = [
-                    k for k in (1, 2, 3, 4)
+                    k
+                    for k in (1, 2, 3, 4)
                     if start_index + k * CLIP_LENGTH - 1 < len(object_percentage_array)
                 ]
                 if not candidates:
@@ -101,12 +101,18 @@ def get_maximum_windows_for_each_object(world_state: WorldState):
 
                 max_k = max(candidates)
                 end_index = (
-                    np.argmin(
-                        object_percentage_array[
-                            start_index + (CLIP_LENGTH-1) : start_index + (max_k * CLIP_LENGTH)
-                        ][::(CLIP_LENGTH-1)]
-                    ) * (CLIP_LENGTH - 1)
-                ) + start_index + (CLIP_LENGTH-1)  # adding back the start index
+                    (
+                        np.argmin(
+                            object_percentage_array[
+                                start_index + (CLIP_LENGTH - 1) : start_index
+                                + (max_k * CLIP_LENGTH)
+                            ][:: (CLIP_LENGTH - 1)]
+                        )
+                        * (CLIP_LENGTH - 1)
+                    )
+                    + start_index
+                    + (CLIP_LENGTH - 1)
+                )  # adding back the start index
                 end_index_visibility = object_percentage_array[end_index]
 
                 if end_index_visibility < 0.1 * 100:
@@ -247,105 +253,6 @@ def get_optimal_timestep_interval(world_state: WorldState) -> Sequence[str]:
         return best
 
     raise ImpossibleToAnswer("Could not determine good interval")
-
-
-# def get_optimal_timestep_interval(world_state: WorldState) -> Sequence[str]:
-
-#     visibility_mask, visibility_percentage_mask, visibility_pixels_mask = (
-#         get_visibility_mask(world_state)
-#     )
-
-#     # Aggregate visibility metrics across all objects for each timestep
-#     visible_object_count = np.sum(visibility_mask, axis=0)
-#     total_visibility_percentage = np.sum(visibility_percentage_mask, axis=0)
-#     total_visibility_pixels = np.sum(visibility_pixels_mask, axis=0)
-
-#     # Composite score: objects are weighted most heavily, then percentage, then pixels
-#     visibility_score = (
-#         visible_object_count
-#         + (total_visibility_percentage / 1000)
-#         + (total_visibility_pixels / 10000)
-#     )
-
-# # Find timesteps with maximum object visibility
-# max_object_count = visible_object_count.max()
-# has_max_objects = visible_object_count == max_object_count
-
-# # Among max-object timesteps, find the one with highest visibility score
-# masked_scores = np.where(has_max_objects, visibility_score, 0)
-# initial_timestep_index = np.argmax(masked_scores)
-# initial_timestep = list(world_state["simulation"].keys())[initial_timestep_index]
-
-# # Create masks for further processing
-# before_optimal = has_max_objects.copy()
-# before_optimal[:initial_timestep_index] = True
-
-# # this is to avoid choosing a timestep too far, where things might have changed too much
-# first_drop = np.argmax(~before_optimal)
-# window_space = 10  # frames
-# if (first_drop + window_space) < len(before_optimal):
-#     before_optimal[first_drop + window_space :] = True
-
-# without_max_objects = ~before_optimal
-# alternative_scores = np.where(without_max_objects, visibility_score, 0)
-
-# # Find timestep with highest visibility score excluding max-object timesteps
-# final_timestep_index = np.argmax(alternative_scores)
-# final_timestep = list(world_state["simulation"].keys())[final_timestep_index]
-
-# previous_phase = initial_timestep_index % CLIP_LENGTH
-
-# # always take previous phase cause the object should be there
-# previous_phase_index = (initial_timestep_index - previous_phase)
-# # next_phase_index = initial_timestep_index + next_phase
-
-# if previous_phase_index < 0:
-#     raise ImpossibleToAnswer("Could not determine initial timestep.")
-
-# # if next_phase_index >= len(masked_scores):
-# #     next_phase_index = None
-
-# if previous_phase_index is not None:
-#     initial_timestep_index = previous_phase_index
-# else:
-#     raise ImpossibleToAnswer("Could not determine initial timestep.")
-
-# initial_timestep = list(world_state["simulation"].keys())[initial_timestep_index]
-
-# return (
-#     initial_timestep_index,
-#     initial_timestep,
-#     final_timestep_index,
-#     final_timestep,
-# )
-
-
-def get_visibility_mask(world_state: WorldState) -> Mapping[str, Sequence[int]]:
-    all_timesteps = list(world_state["simulation"].keys())
-    visibility_mask = np.zeros(
-        (len(world_state["objects"]), len(all_timesteps)), dtype=int
-    )
-
-    visibility_percentage_matrix = np.zeros(
-        (len(world_state["objects"]), len(all_timesteps)), dtype=int
-    )
-
-    for object in iter_objects(world_state):
-        obj_id = object["id"]
-
-        for t in all_timesteps:
-            bit = 1 if is_object_visible_v3(world_state, obj_id, t) else 0
-            index_timestep = all_timesteps.index(t)
-            visibility_mask[int(obj_id) - 1, index_timestep] = bit
-
-            visibility_percentage_obj = (
-                get_visibility_ratio_v3(world_state, obj_id, t) * 100.0
-            )
-            visibility_percentage_matrix[int(obj_id) - 1, all_timesteps.index(t)] = int(
-                visibility_percentage_obj
-            )
-
-    return visibility_mask, visibility_percentage_matrix
 
 
 def get_visibility_change(visibility_mask: np.array) -> Sequence[int]:

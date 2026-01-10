@@ -121,7 +121,7 @@ def F_PERSISTENCE_OBJECT_TOTAL_COUNT(
     assert len(attributes) == 0
 
     # order for longest window
-    visibility_mask, _ = get_visibility_mask(world_state)    
+    visibility_mask, _ = get_visibility_mask(world_state)
     object_proposed = get_maximum_windows_for_each_object(world_state)
     chosen_object_id = choose_best_window_object_id(world_state, object_proposed)
 
@@ -139,9 +139,15 @@ def F_PERSISTENCE_OBJECT_TOTAL_COUNT(
 
     if final_timestep_index < initial_timestep_index:
         raise ImpossibleToAnswer("No object found that appears and then disappears.")
-    
-    curr_frame_interleave = ((final_timestep_index) - initial_timestep_index) // (CLIP_LENGTH - 1) # there seems to be a problem here
-    total_unique_objects_seen = np.sum(visibility_mask[:, initial_timestep_index: final_timestep_index+1][:, ::curr_frame_interleave].any(axis=1))
+
+    curr_frame_interleave = ((final_timestep_index) - initial_timestep_index) // (
+        CLIP_LENGTH - 1
+    )  # there seems to be a problem here
+    total_unique_objects_seen = np.sum(
+        visibility_mask[:, initial_timestep_index : final_timestep_index + 1][
+            :, ::curr_frame_interleave
+        ].any(axis=1)
+    )
 
     # balanced options around the initial count
     start = max(0, total_unique_objects_seen - 2)
@@ -183,7 +189,7 @@ def F_PERSISTENCE_OBJECT_TOTAL_COUNT_HIDDEN(
     assert len(attributes) == 0
 
     # order for longest window
-    visibility_mask, _ = get_visibility_mask(world_state)    
+    visibility_mask, _ = get_visibility_mask(world_state)
     object_proposed = get_maximum_windows_for_each_object(world_state)
     chosen_object_id = choose_best_window_object_id(world_state, object_proposed)
 
@@ -202,8 +208,12 @@ def F_PERSISTENCE_OBJECT_TOTAL_COUNT_HIDDEN(
     if final_timestep_index < initial_timestep_index:
         raise ImpossibleToAnswer("No object found that appears and then disappears.")
 
-    curr_frame_interleave = ((final_timestep_index) - initial_timestep_index) // (CLIP_LENGTH - 1) # there seems to be a problem here
-    visibility_objecst_window = visibility_mask[:, initial_timestep_index: final_timestep_index+1][:, ::curr_frame_interleave]
+    curr_frame_interleave = ((final_timestep_index) - initial_timestep_index) // (
+        CLIP_LENGTH - 1
+    )  # there seems to be a problem here
+    visibility_objecst_window = visibility_mask[
+        :, initial_timestep_index : final_timestep_index + 1
+    ][:, ::curr_frame_interleave]
     total_unique_objects_seen = np.sum(visibility_objecst_window.any(axis=1))
     count_objects_final = visibility_objecst_window[:, -1].sum()
 

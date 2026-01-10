@@ -13,34 +13,7 @@ with open("./utils/json/gso_mapping.json", "r") as f:
 
 
 def get_gso_mapping():
-    # adding an immediate fix:
-    gso_mapping["Rexy_Glove_Heavy_Duty_Large"] = {
-        "name": "Rexy Glove Heavy Duty Large",
-    }
-    gso_mapping["Avengers_Gamma_Green_Smash_Fists"] = {
-        "name": "Avengers Gamma Green Smash Fists",
-    }
-
     return gso_mapping
-
-
-def get_all_scenes_segments():
-    # TODO dummy for now
-    scenes_segments = [
-        "Statue",
-        "Wood Bench",
-        "Marble Bench",
-        "Fountain",
-        "Tree",
-        "Lamp Post",
-        "Trash Can",
-        "Bushes",
-        "Flower Bed",
-        "Clock Tower",
-        "Bridge",
-    ]
-
-    return list(scenes_segments)
 
 
 def get_all_objects_names():
@@ -52,27 +25,3 @@ def get_all_objects_names():
         all_objects_names.add(obj["name"])
 
     return list(all_objects_names)
-
-
-def get_all_objects_categoories():
-    categories = set()
-    for obj in all_objects.values():
-        categories.add(obj["categories_gso"])
-    return list(categories)
-
-
-def get_all_objects_ID():
-    ids = set()
-    for obj_id in all_objects.keys():
-        ids.add(obj_id)
-    return list(ids)
-
-
-def get_all_materials():
-    # Using cached version
-    if len(all_materials) > 0:
-        return list(all_materials)
-    for obj in all_objects.values():
-        material = obj["material_group"]
-        all_materials.add(material)
-    return list(all_materials)

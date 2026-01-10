@@ -66,7 +66,7 @@ def fill_questions(
     labels,
     correct_idx,
     world_state,
-    timestep,
+    final_timestep,
     resolved_attributes,
     initial_timestep=None,
 ) -> List:
@@ -74,11 +74,30 @@ def fill_questions(
     # 1) Keep the correct label before shuffling
     correct_label = labels[correct_idx]
 
+    # there's a problem now with frame interleave we are allowing
+    # dynamic frame interleave based on initial and final timestep
+    if initial_timestep is None:
+        final_timestep_index = world_state["simulation"][final_timestep]["frame_idx"]
+        # we need to compute the closest initial timestep based the current timestep
+        candidates = [
+            k
+            for k in (1, 2, 3, 4)
+            if final_timestep_index - (k * (CLIP_LENGTH - 1)) >= 0
+        ]
+        if len(candidates) == 0:
+            raise ImpossibleToAnswer(
+                "Not enough previous frames to determine visibility."
+            )
+
+        max_k = max(candidates)
+        initial_timestep_index = final_timestep_index - (max_k * (CLIP_LENGTH - 1))
+        initial_timestep = get_timestep_from_idx(initial_timestep_index)
+
     seed_material = "::".join(
         [
             str(question.get("_simulation_id", "")),
             str(question.get("_question_key", "")),
-            str(timestep),
+            str(final_timestep),
         ]
     )
     local_seed = seed_utils.seed_from_material(seed_material)
@@ -102,13 +121,15 @@ def fill_questions(
         fill_template(q_copy, resolved_attributes)
 
         if split == "single":
-            frames = sample_frames_at_timesteps(world_state, [timestep])
+            frames = sample_frames_at_timesteps(world_state, [final_timestep])
         else:  # "multi"
             if initial_timestep is not None:
                 initial_timestep_index = world_state["simulation"][initial_timestep][
                     "frame_idx"
                 ]
-                final_timestep_index = world_state["simulation"][timestep]["frame_idx"]
+                final_timestep_index = world_state["simulation"][final_timestep][
+                    "frame_idx"
+                ]
                 effective_frame_interleave = (
                     final_timestep_index - initial_timestep_index
                 ) // (CLIP_LENGTH - 1)
@@ -116,7 +137,7 @@ def fill_questions(
                 effective_frame_interleave = FRAME_INTERLEAVE
             frames = sample_frames_before_timestep(
                 world_state,
-                timestep,
+                final_timestep,
                 num_frames=CLIP_LENGTH,
                 frame_interleave=effective_frame_interleave,
             )
@@ -400,22 +421,40 @@ def get_total_images():
     return 8
 
 
-def is_object_visible(object_state):
-    pixels_void = object_state["infov_pixels_void"]
-    pixels_visible = object_state["infov_pixels_visible"]
-    infov_pixels = object_state["infov_pixels"]
+def get_visibility_mask(
+    world_state: WorldState, max_timestep=None
+) -> Mapping[str, Sequence[int]]:
+    all_timesteps = list(world_state["simulation"].keys())
+    max_timestep_index = (
+        len(all_timesteps) - 1
+        if max_timestep is None
+        else world_state["simulation"][max_timestep]["frame_idx"] + 1
+    )  # +1 to include the max_timestep
 
-    if infov_pixels < 100:
-        return False
+    visibility_mask = np.zeros(
+        (len(world_state["objects"]), max_timestep_index), dtype=int
+    )
 
-    onscreen_pixels = pixels_visible + pixels_void
+    visibility_percentage_matrix = np.zeros(
+        (len(world_state["objects"]), max_timestep_index), dtype=int
+    )
 
-    if pixels_visible < 20:
-        return False
+    for object in iter_objects(world_state):
+        obj_id = object["id"]
 
-    true_visibility_ratio = onscreen_pixels / infov_pixels
+        for t in all_timesteps[:max_timestep_index]:
+            bit = 1 if is_object_visible_v3(world_state, obj_id, t) else 0
+            index_timestep = all_timesteps.index(t)
+            visibility_mask[int(obj_id) - 1, index_timestep] = bit
 
-    return true_visibility_ratio >= VISIBILITY_THRESHOLD
+            visibility_percentage_obj = (
+                get_visibility_ratio_v3(world_state, obj_id, t) * 100.0
+            )
+            visibility_percentage_matrix[int(obj_id) - 1, all_timesteps.index(t)] = int(
+                visibility_percentage_obj
+            )
+
+    return visibility_mask, visibility_percentage_matrix
 
 
 def _clip_polygon_to_rect(points, width, height):
@@ -517,6 +556,7 @@ def get_visibility_ratio_v3(world_state, obj_id, timestep):
     # if pixels_visible < pixels_void:
     #      raise ImpossibleToAnswer("Uncertainty too high.")
 
+    # TODOD # just to check the fucking difference in this, cause they fuck up entire simulations just because there uncertain parts in it...
     if pixels_visible <= 50 and pixels_void >= 200:
         raise ImpossibleToAnswer("Uncertainty too high.")
 
@@ -594,13 +634,12 @@ def get_random_timestep_from_list(visible_timesteps: List[str], question: Any) -
     MAX_TIMESTEP = min(
         len(visible_timesteps), 30
     )  # usually most things happen before 2 second/50 frames
+
     if "multi" in question.get("task_splits", ""):
-        if len(visible_timesteps) < (CLIP_LENGTH * FRAME_INTERLEAVE):
+        if len(visible_timesteps) < (CLIP_LENGTH):
             raise ImpossibleToAnswer("No timestep with visible objects.")
         timestep = random.choice(
-            visible_timesteps[
-                (CLIP_LENGTH * FRAME_INTERLEAVE) - FRAME_INTERLEAVE : MAX_TIMESTEP + 1
-            ]
+            visible_timesteps[(CLIP_LENGTH - 1) : MAX_TIMESTEP + 1]
         )
     else:
         if len(visible_timesteps) == 0:
@@ -725,24 +764,24 @@ def get_visible_timesteps_for_attributes_min_objects(
             obj_id = obj.get("id")
             if not obj_id:
                 continue
-            obj_state = get_object_state_at_timestep(world_state, obj_id, timestep)
+            # obj_state = get_object_state_at_timestep(world_state, obj_id, timestep)
 
-            # pixels_visible = (
-            #     obj_state["infov_pixels_visible"] + obj_state["infov_pixels_void"]
-            # )
+            # # pixels_visible = (
+            # #     obj_state["infov_pixels_visible"] + obj_state["infov_pixels_void"]
+            # # )
+            # # fov_visibility = obj_state["fov_visibility"]
+            # pixels_void = obj_state["infov_pixels_void"]
+            # pixels_visible = obj_state["infov_pixels_visible"]
             # fov_visibility = obj_state["fov_visibility"]
-            pixels_void = obj_state["infov_pixels_void"]
-            pixels_visible = obj_state["infov_pixels_visible"]
-            fov_visibility = obj_state["fov_visibility"]
 
-            visible = (
-                # Case 1: Object is mostly unoccluded
-                # fov_visibility >= VISIBILITY_THRESHOLD
-                # or pixels_visible >= MIN_PIXELS_VISIBLE
-                fov_visibility >= VISIBILITY_THRESHOLD and pixels_visible > pixels_void
-            )
+            # visible = (
+            #     # Case 1: Object is mostly unoccluded
+            #     # fov_visibility >= VISIBILITY_THRESHOLD
+            #     # or pixels_visible >= MIN_PIXELS_VISIBLE
+            #     fov_visibility >= VISIBILITY_THRESHOLD and pixels_visible > pixels_void
+            # )
 
-            if visible:
+            if is_object_visible_v3(world_state, obj_id, timestep):
                 visible_objects_id.append(obj_id)
 
         # we shall check that also is not the same object name to remove for
@@ -848,6 +887,36 @@ def resolve_attributes_visible_at_timestep(
 
         attribute_resolved[attribute]["choice"] = result
         attribute_resolved[attribute]["category"] = attribute_category
+
+    return attribute_resolved
+
+
+def resolve_attributes_most_visible_at_timestep(
+    attributes: List[Mapping[str, Any]], world_state: Mapping[str, Any], timestep: str
+) -> Mapping[str, Any]:
+    assert len(attributes) == 1, "Only one attribute is supported in this function."
+
+    _, visibility_percentage_matrix = get_visibility_mask(
+        world_state, max_timestep=timestep
+    )
+
+    attribute = attributes[0]
+    attribute_resolved = {}
+
+    attribute_resolved[attribute] = {}
+    attribute_category = attribute.split("_")[0]
+
+    timestep_index = int(world_state["simulation"][timestep]["frame_idx"])
+    visibility_percentage_matrix_at_timestep = visibility_percentage_matrix[
+        :, timestep_index
+    ]
+
+    most_visible_object_index = np.argmax(visibility_percentage_matrix_at_timestep)
+    most_visible_object_id = str(most_visible_object_index + 1)
+    chosen_object = world_state["objects"][most_visible_object_id]
+
+    attribute_resolved[attribute]["choice"] = chosen_object
+    attribute_resolved[attribute]["category"] = attribute_category
 
     return attribute_resolved
 
@@ -1106,24 +1175,24 @@ def get_random_timestep(world_state: Mapping[str, Any]) -> float:
 resolver = {
     "CAMERA": get_camera,
     "CATEGORY": get_random_OBJECT_CATEGORY,
-    "DENSITY": lambda ws: round(
+    "DENSITY": lambda: round(
         random.uniform(10, 600), 1
     ),  # random density between 10 and 600 kg/m3
-    "DISTANCE": lambda ws: round(
+    "DISTANCE": lambda: round(
         random.uniform(1.0, 5.0), 1
     ),  # random distance between 1 and 5 meters, 1 decimal place
-    "MASS": lambda ws: round(
+    "MASS": lambda: round(
         random.uniform(0.1, 3.0), 1
     ),  # random mass between 0.1 and 5 kg
     "MATERIAL": get_random_material,
     "OBJECT-CATEGORY": get_random_OBJECT_CATEGORY,
     "OBJECT": get_random_object_and_remove,
     "OBJECT-CF": get_first_object_and_remove,
-    "STRESS-THRESHOLD": lambda ws: round(
+    "STRESS-THRESHOLD": lambda: round(
         random.uniform(0.0, 10.0), 1
     ),  # random stress threshold between 10 and 100 MPa
     "TIME": get_random_timestep,
-    "VOLUME": lambda ws: round(
+    "VOLUME": lambda: round(
         random.uniform(0.001, 0.5), 1
     ),  # random volume between 0.001 and .5 cubic meters
 }

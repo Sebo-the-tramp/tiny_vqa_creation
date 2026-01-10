@@ -4,37 +4,7 @@ from utils.helpers import extract_attributes
 
 
 gso_mapping = get_gso_mapping()
-
 MIN_PIXELS_VISIBLE = get_config()["min_pixels_visible"]
-
-
-# this is a patch to solve for materials not being in all objects
-
-# all material for reference
-# ['plastic', 'metal', 'leather', 'wood', 'paper/cardboard', 'plush/fiberfill', 'ceramic', 'foam', 'fabric/textile', 'mixed (paper + plastic)']
-
-material_patch = {
-    "Chefmate_8_Frypan": "metal",
-    "Dog": "plush/fiberfill",
-    "Jansport_School_Backpack_Blue_Streak": "fabric/textile",
-    "KS_Chocolate_Cube_Box_Assortment_By_Neuhaus_2010_Ounces": "paper/cardboard",
-    "Marvel_Avengers_Titan_Hero_Series_Doctor_Doom": "plastic",
-    "Nickelodeon_Teenage_Mutant_Ninja_Turtles_Raphael": "plastic",
-    "Nintendo_Yoshi_Action_Figure": "plastic",
-    "Ortho_Forward_Facing": "plush/fiberfill",
-    "Ortho_Forward_Facing_CkAW6rL25xH": "plush/fiberfill",
-    "Ortho_Forward_Facing_QCaor9ImJ2G": "metal",
-    "Playmates_nickelodeon_teenage_mutant_ninja_turtles_shredder": "plastic",
-    "Racoon": "plush/fiberfill",
-    "Retail_Leadership_Summit_eCT3zqHYIkX": "fabric/textile",
-    "Retail_Leadership_Summit_tQFCizMt6g0": "fabric/textile",
-    "Rexy_Glove_Heavy_Duty_Large": "plastic",
-    "Shark": "plastic",
-    "Squirrel": "plush/fiberfill",
-    "Vtech_Roll_Learn_Turtle": "plastic",
-    "Weisshai_Great_White_Shark": "plastic",
-    "Whey_Protein_Vanilla": "plastic",
-}
 
 
 def with_resolved_attributes(func):
@@ -60,10 +30,6 @@ def with_resolved_attributes(func):
         for obj_id, object in world_state["objects"].items():
             object["id"] = obj_id
             object["name"] = gso_mapping[object["model"]]["name"]
-            if object["description"].get("material_group", None) is None:
-                object["description"]["material_group"] = material_patch[
-                    object["model"]
-                ]
 
         # Pass them along so the wrapped function can use them
         return func(world_state, question, attributes["attributes"], *args, **kwargs)
@@ -102,19 +68,11 @@ def with_resolved_attributes_cf(func):
         for obj_id, object in world_state_modified["objects"].items():
             object["id"] = obj_id
             object["name"] = gso_mapping[object["model"]]["name"]
-            if object["description"].get("material_group", None) is None:
-                object["description"]["material_group"] = material_patch[
-                    object["model"]
-                ]
 
         # adaptor part to original names format -> also for original even though st should be just for original
         for obj_id, object in world_state_og["objects"].items():
             object["id"] = obj_id
             object["name"] = gso_mapping[object["model"]]["name"]
-            if object["description"].get("material_group", None) is None:
-                object["description"]["material_group"] = material_patch[
-                    object["model"]
-                ]
 
         # Pass them along so the wrapped function can use them
         return func(

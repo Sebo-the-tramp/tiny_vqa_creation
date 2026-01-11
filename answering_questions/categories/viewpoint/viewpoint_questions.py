@@ -177,23 +177,13 @@ def F_OCCLUSION_PERCENTAGE_OBJECT(
 ) -> int:
     assert len(attributes) == 1 and "OBJECT" in attributes
 
-    # First we find the pairs of objects visible
-    visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        ["OBJECT"], world_state, min_objects=0
-    )
-
-    max_timestep = visible_timesteps[-1]
-    max_timestep_index = world_state["simulation"][max_timestep]["frame_idx"]
+    # I mean it doesn't have to be visible at all it can just be any timestep    
+    final_timestep = get_random_timestep_from_list(list(world_state["simulation"].keys())[CLIP_LENGTH:], question)
+    final_timestep_index = world_state["simulation"][final_timestep]["frame_idx"]
 
     _, visibility_percentage_matrix = get_visibility_mask(
-        world_state, max_timestep=max_timestep
+        world_state, max_timestep=final_timestep
     )
-
-    # get random timestep >= 8
-    all_timesteps = list(world_state["simulation"].keys())[: max_timestep_index + 1]
-
-    final_timestep = get_random_timestep_from_list(all_timesteps, question)
-    final_timestep_index = world_state["simulation"][final_timestep]["frame_idx"]
 
     candidates = [
         k for k in (1, 2, 3, 4) if final_timestep_index - (k * (CLIP_LENGTH - 1)) >= 0
@@ -206,8 +196,11 @@ def F_OCCLUSION_PERCENTAGE_OBJECT(
     initial_timestep = get_timestep_from_idx(initial_timestep_index)
 
     # First we find the pairs of objects visible
-    resolved_attributes = resolve_attributes(["OBJECT"], world_state)
-    object_id = resolved_attributes["OBJECT"]["choice"]["id"]
+    # also the object can be any object in the scene not necessarily visible
+    resolved_attributes = resolve_attributes(["OBJECT-RANDOM"], world_state)
+
+    resolved_attributes["OBJECT"] = resolved_attributes.pop("OBJECT-RANDOM")
+    object_id = resolved_attributes["OBJECT"]["choice"]["id"]    
 
     visibility_object = (
         visibility_percentage_matrix[int(object_id) - 1, final_timestep_index] / 100.0
@@ -215,18 +208,18 @@ def F_OCCLUSION_PERCENTAGE_OBJECT(
 
     if visibility_object < 0.25:
         correct_idx = 0
-    elif visibility_object < 0.5:
+    elif visibility_object < 0.65:
         correct_idx = 1
-    elif visibility_object < 0.75:
+    elif visibility_object < 0.95:
         correct_idx = 2
     else:
         correct_idx = 3
 
     labels = [
-        "100% (Fully Occluded)",
-        "50%-99% (Major Occlusion)",
-        "1%-49% (Minor Occlusion)",
-        "0% (Not Occluded)",
+        "Severely Occluded (0-25% visible)", # Hard: Requires context/guessing
+        "Partially Occluded (25-65% visible)", # Medium: Major parts missing
+        "Slightly Occluded (65-95% visible)", # Easy: Minor obstructions
+        "Fully Visible (>95% visible)",      # Control: Clean object
     ]
 
     return fill_questions(

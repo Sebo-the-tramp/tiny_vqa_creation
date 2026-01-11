@@ -1,3 +1,6 @@
+
+#codex resume 019ba9d1-3a57-79d1-b924-7c0377312510 -> thinking about labels balance
+
 from __future__ import annotations
 from typing import List, Tuple, Optional, Union, Iterable, Dict
 import math
@@ -274,6 +277,7 @@ def create_mc_object_names_from_dataset(
     # Present objects (normalized, unique, excluding GT)
     seen_present = set()
     present_n = []
+
     for o in present_objects:
         n = norm(o)
         if n and n != gt_n and n not in seen_present:

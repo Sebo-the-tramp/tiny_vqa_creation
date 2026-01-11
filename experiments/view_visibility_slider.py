@@ -8,6 +8,14 @@ from typing import Dict, List, Mapping, Optional, Sequence, Tuple
 
 import numpy as np
 
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+REPO_ROOT = os.path.abspath(os.path.join(SCRIPT_DIR, ".."))
+ANSWERING_QUESTIONS_DIR = os.path.join(REPO_ROOT, "answering_questions")
+for path in (REPO_ROOT, ANSWERING_QUESTIONS_DIR):
+    if path not in sys.path:
+        sys.path.insert(0, path)
+os.chdir(ANSWERING_QUESTIONS_DIR)
+
 from answering_questions.categories.persistence.persistence_helpers import (  # noqa: E402
     get_visibility_mask,
 )
@@ -19,14 +27,6 @@ from answering_questions.utils.geometry import external_points_2d  # noqa: E402
 from answering_questions.utils.all_objects import get_gso_mapping
 
 from answering_questions.utils.geometry import project_obb
-
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-REPO_ROOT = os.path.abspath(os.path.join(SCRIPT_DIR, ".."))
-ANSWERING_QUESTIONS_DIR = os.path.join(REPO_ROOT, "answering_questions")
-for path in (REPO_ROOT, ANSWERING_QUESTIONS_DIR):
-    if path not in sys.path:
-        sys.path.insert(0, path)
-os.chdir(ANSWERING_QUESTIONS_DIR)
 
 gso_mapping = get_gso_mapping()
 
@@ -266,6 +266,41 @@ def obb_inside_ratio(
     return inside_ratio, hull, bbox
 
 
+def normalize_collision_pairs(collisions: object) -> List[Tuple[str, str]]:
+    pairs: List[Tuple[str, str]] = []
+    if not isinstance(collisions, list):
+        return pairs
+    for entry in collisions:
+        pair = None
+        if isinstance(entry, (list, tuple)) and len(entry) >= 2:
+            pair = (entry[0], entry[1])
+        elif isinstance(entry, dict):
+            if "objects" in entry and isinstance(entry["objects"], (list, tuple)):
+                if len(entry["objects"]) >= 2:
+                    pair = (entry["objects"][0], entry["objects"][1])
+            elif "pair" in entry and isinstance(entry["pair"], (list, tuple)):
+                if len(entry["pair"]) >= 2:
+                    pair = (entry["pair"][0], entry["pair"][1])
+            elif "a" in entry and "b" in entry:
+                pair = (entry["a"], entry["b"])
+            elif "obj_a" in entry and "obj_b" in entry:
+                pair = (entry["obj_a"], entry["obj_b"])
+            elif "object_a" in entry and "object_b" in entry:
+                pair = (entry["object_a"], entry["object_b"])
+        if pair is not None:
+            pairs.append((str(pair[0]), str(pair[1])))
+    return pairs
+
+
+def build_collision_map(sim_state: Mapping) -> Dict[str, List[Tuple[str, str]]]:
+    collisions_by_timestep: Dict[str, List[Tuple[str, str]]] = {}
+    for timestep, step_data in sim_state.get("simulation", {}).items():
+        collisions_by_timestep[str(timestep)] = normalize_collision_pairs(
+            step_data.get("collisions", [])
+        )
+    return collisions_by_timestep
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -283,6 +318,7 @@ def main() -> None:
     args = parser.parse_args()
 
     simulation_dir = get_simulation_dir(args.simulation_dir)
+    simulation_json_path = os.path.join(simulation_dir, "simulation.json")
     kinematics_path = os.path.join(simulation_dir, "simulation_kinematics.json")
     render_dir = os.path.join(simulation_dir, "render")
     instances_root = os.path.join(simulation_dir, "instances")
@@ -295,6 +331,11 @@ def main() -> None:
         raise FileNotFoundError(f"Missing {instances_root}")
 
     world_state = read_json(kinematics_path)
+    sim_state = (
+        read_json(simulation_json_path)
+        if os.path.isfile(simulation_json_path)
+        else world_state
+    )
     frame_to_timestep = build_frame_timestep_map(world_state)
     all_timesteps = list(world_state.get("simulation", {}).keys())
     timestep_to_index = {timestep: idx for idx, timestep in enumerate(all_timesteps)}
@@ -302,6 +343,7 @@ def main() -> None:
         visibility_mask,
         visibility_percentage_mask,
     ) = get_visibility_mask(world_state)
+    collisions_by_timestep = build_collision_map(sim_state)
 
     frame_paths = list_render_frames(render_dir)
     if not frame_paths:
@@ -316,6 +358,14 @@ def main() -> None:
     }
     colors = color_palette(len(object_ids))
     obj_color = {obj_id: colors[i] for i, obj_id in enumerate(object_ids)}
+    objects_by_id = world_state.get("objects", {})
+
+    def describe_collision_obj(obj_id: str) -> str:
+        if obj_id == "0":
+            return "scene"
+        obj = objects_by_id.get(str(obj_id), {})
+        name = obj.get("name")
+        return f"obj {obj_id} ({name})" if name else f"obj {obj_id}"
 
     from PIL import Image
     import matplotlib.pyplot as plt
@@ -364,6 +414,14 @@ def main() -> None:
     ax_left.set_title("RGB")
     ax_mid.set_title("Instances")
     ax_right.set_title("RGB + visible masks")
+    collision_text = fig.text(
+        0.5,
+        0.02,
+        "",
+        ha="center",
+        va="bottom",
+        fontsize=9,
+    )
     legend = None
     patches: List[object] = []
 
@@ -399,7 +457,18 @@ def main() -> None:
             if legend is not None:
                 legend.remove()
                 legend = None
+            collision_text.set_text("")
         else:
+            collisions = collisions_by_timestep.get(str(timestep), [])
+            if collisions:
+                pairs = [
+                    f"{describe_collision_obj(obj_a)} <-> {describe_collision_obj(obj_b)}"
+                    for obj_a, obj_b in collisions
+                ]
+                collision_line = "Collisions: " + ", ".join(pairs)
+            else:
+                collision_line = "Collisions: none"
+            collision_text.set_text(f"t={timestep} | {collision_line}")
             handles = []
             for obj_id in object_ids:
                 # t_idx = timestep_to_index.get(timestep, -1)

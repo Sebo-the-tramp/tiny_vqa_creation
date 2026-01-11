@@ -208,75 +208,6 @@ def F_KINEMATICS_DISTANCE_TRAVELED_INTERVAL(
 
 
 @with_resolved_attributes
-def F_KINEMATICS_MOVING_OBJECT(
-    world_state: WorldState, question: QuestionPayload, attributes, **kwargs
-) -> int:
-    assert len(attributes) == 0
-
-    # First we find the pairs of objects visible
-    visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        attributes, world_state, min_objects=kwargs["current_world_number_of_objects"]
-    )
-
-    continuous_subsequences = get_continuous_subsequences_min_length(
-        visible_timesteps, min_length=CLIP_LENGTH * FRAME_INTERLEAVE
-    )
-
-    visible_timesteps = random.choice(continuous_subsequences)
-
-    timestep = get_random_timestep_from_list(visible_timesteps, question)
-
-    resolved_attributes = resolve_attributes_visible_at_timestep(
-        ["OBJECT"], world_state, timestep
-    )
-
-    object_id = resolved_attributes["OBJECT"]["choice"]["id"]
-
-    index_timestep = visible_timesteps.index(timestep)
-    list_of_position = []
-    list_of_rotation = []
-    for i in range((CLIP_LENGTH - 1), -1, -1):
-        current_timestep = visible_timesteps[index_timestep - i]
-        position = get_position(world_state, object_id, current_timestep)
-        rotation = get_rotation(world_state, object_id, current_timestep)
-        list_of_position.append(position)
-        list_of_rotation.append(rotation)
-
-    is_moving = False
-    for i in range(1, len(list_of_position)):
-        dist = distance_between(list_of_position[i - 1], list_of_position[i])
-        if dist > MOVEMENT_TOLERANCE:
-            is_moving = True
-            break
-        rot_diff = sum(
-            abs(list_of_rotation[i - 1][j] - list_of_rotation[i][j]) for j in range(3)
-        )
-        if rot_diff > ROTATION_TOLERANCE:
-            is_moving = True
-            break
-
-    # should return also the correct index, but we chose later based on is_moving
-    labels, _ = create_mc_object_names_from_dataset(
-        resolved_attributes["OBJECT"]["choice"]["name"],
-        ["No Object"],
-        get_all_objects_names(),
-    )
-
-    if is_moving:
-        correct_idx = labels.index(
-            resolved_attributes["OBJECT"]["choice"]["name"].lower()
-        )
-    else:
-        correct_idx = labels.index(
-            "no object"
-        )  # this version is correct because is lowercase
-
-    return fill_questions(
-        question, labels, correct_idx, world_state, timestep, resolved_attributes
-    )
-
-
-@with_resolved_attributes
 def F_KINEMATICS_SYSTEM_STABILITY(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
@@ -293,7 +224,7 @@ def F_KINEMATICS_SYSTEM_STABILITY(
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
         attributes,
         world_state,
-        min_objects=min(kwargs["current_world_number_of_objects"], 3),
+        min_objects=1,
     )
 
     continuous_subsequences = get_continuous_subsequences_min_length(
@@ -334,57 +265,79 @@ def F_KINEMATICS_SYSTEM_STABILITY(
     )
 
 
-@with_resolved_attributes
-def F_KINEMATICS_STILL_OBJECT(
-    world_state: WorldState, question: QuestionPayload, attributes, **kwargs
-) -> int:
-    """Return the velocity of the object referenced in the question."""
-
-    assert len(attributes) == 1 and "OBJECT" in attributes
-
-    # First we find the pairs of objects visible
-    visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        attributes, world_state, min_objects=kwargs["current_world_number_of_objects"]
-    )
-
-    continuous_subsequences = get_continuous_subsequences_min_length(
-        visible_timesteps, min_length=CLIP_LENGTH * FRAME_INTERLEAVE
-    )
-
-    visible_timesteps = random.choice(continuous_subsequences)
-
-    timestep = get_random_timestep_from_list(visible_timesteps, question)
-
-    resolved_attributes = resolve_attributes_visible_at_timestep(
-        attributes, world_state, timestep
-    )
-
-    object_id = resolved_attributes["OBJECT"]["choice"]["id"]
-
-    index_timestep = visible_timesteps.index(timestep)
-    list_of_position = []
-    for i in range((CLIP_LENGTH - 1), -1, -1):
-        current_timestep = visible_timesteps[index_timestep - i]
-        speed = get_position(world_state, object_id, current_timestep)
-        list_of_position.append(speed)
-
-    is_still = True
-    for i in range(1, len(list_of_position)):
-        dist = distance_between(list_of_position[i - 1], list_of_position[i])
-        if dist > MOVEMENT_TOLERANCE:
-            is_still = False
-            break
-
-    options = ["yes", "no"]
-    correct_idx = 0 if is_still else 1
-    labels = options
-
-    return fill_questions(
-        question, labels, correct_idx, world_state, timestep, resolved_attributes
-    )
-
-
 ## --- COLLISION RESOLVERS --- ##
+# @with_resolved_attributes
+# def F_COLLISIONS_OBJ_OBJ_FIRST(
+#     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
+# ) -> int:
+#     if kwargs["current_world_number_of_objects"] < 2:
+#         raise ImpossibleToAnswer(
+#             "Not enough objects in the scene for a collision to happen."
+#         )
+
+#     assert len(attributes) == 1 and "OBJECT" in attributes
+
+#     # First we find the pairs of objects visible
+#     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
+#         attributes, world_state, min_objects=2
+#     )
+
+#     # cause here we do not keep into account FRAME_INTERLEAVE THAT WILL BE CRUCIAL FOR LATER...
+#     continuous_subsequences = get_continuous_subsequences_min_length(
+#         visible_timesteps, min_length=CLIP_LENGTH
+#     )
+
+#     visible_timesteps = random.choice(continuous_subsequences)[(CLIP_LENGTH - 1) :]
+
+#     resolved_attributes = resolve_attributes_visible_at_timestep(
+#         attributes, world_state, visible_timesteps[0]
+#     )
+
+#     object = resolved_attributes["OBJECT"]["choice"]
+
+#     first_collided_object = None
+#     for timestep in visible_timesteps:
+#         value = world_state["simulation"][str(timestep)]
+#         collisions_at_sim_step = value["collisions"]
+#         for collision in collisions_at_sim_step:
+#             obj_a = collision[0]
+#             obj_b = collision[1]
+#             if obj_a == 0 or obj_b == 0:
+#                 continue  # we are just colliding with the ground
+#             if obj_a == object["id"] or obj_b == object["id"]:
+#                 if obj_a == object["id"]:
+#                     first_collided_object = world_state["objects"][str(obj_b)]
+#                 else:
+#                     first_collided_object = world_state["objects"][str(obj_a)]
+#                 break
+
+#     DATASET = get_all_objects_names()
+#     present = [
+#         obj["name"]
+#         for obj in list(iter_objects(world_state))
+#         if obj["id"] != object["id"]
+#     ]
+
+#     if first_collided_object is not None:
+#         labels, correct_idx = create_mc_object_names_from_dataset(
+#             first_collided_object["name"], present, DATASET
+#         )
+#     else:
+#         raise ImpossibleToAnswer("No collision found in the visible timesteps.")
+#         # labels, correct_idx = create_mc_object_names_from_dataset(
+#         #     "No Object", present, DATASET
+#         # )
+
+#     return fill_questions(
+#         question,
+#         labels,
+#         correct_idx,
+#         world_state,
+#         visible_timesteps[-1],
+#         resolved_attributes,
+#         visible_timesteps[0],
+#     )
+
 @with_resolved_attributes
 def F_COLLISIONS_OBJ_OBJ_FIRST(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
@@ -398,62 +351,65 @@ def F_COLLISIONS_OBJ_OBJ_FIRST(
 
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        attributes, world_state, min_objects=kwargs["current_world_number_of_objects"]
+        attributes,
+        world_state,
+        min_objects=kwargs["current_world_number_of_objects"],
     )
 
-    # cause here we do not keep into account FRAME_INTERLEAVE THAT WILL BE CRUCIAL FOR LATER...
-    continuous_subsequences = get_continuous_subsequences_min_length(
-        visible_timesteps, min_length=CLIP_LENGTH
-    )
+    collision_mask = get_mask_collisions(world_state)
 
-    visible_timesteps = random.choice(continuous_subsequences)[(CLIP_LENGTH - 1) :]
+    visible_timesteps_index = [
+        world_state["simulation"][i]["frame_idx"] for i in visible_timesteps
+    ]
+    visible_collision_mask = collision_mask[visible_timesteps_index, 1:, 1:]
 
-    resolved_attributes = resolve_attributes_visible_at_timestep(
-        attributes, world_state, visible_timesteps[0]
-    )
+    rows = visible_collision_mask.any(axis=(1, 2))
+    t_first = np.argmax(rows) if rows.any() else None
 
-    object = resolved_attributes["OBJECT"]["choice"]
+    if t_first is not None:
+        row_first = visible_collision_mask[t_first]
+        idx = np.nonzero(row_first)[0]  # indices of non-zeros
 
-    first_collided_object = None
-    for timestep in visible_timesteps:
-        value = world_state["simulation"][str(timestep)]
-        collisions_at_sim_step = value["collisions"]
-        for collision in collisions_at_sim_step:
-            obj_a = collision[0]
-            obj_b = collision[1]
-            if obj_a == 0 or obj_b == 0:
-                continue  # we are just colliding with the ground
-            if obj_a == object["id"] or obj_b == object["id"]:
-                if obj_a == object["id"]:
-                    first_collided_object = world_state["objects"][str(obj_b)]
-                else:
-                    first_collided_object = world_state["objects"][str(obj_a)]
-                break
+        if idx.size > 2:
+            raise ImpossibleToAnswer(
+                "Too many collisions at the first collision timestep."
+            )
 
-    DATASET = get_all_objects_names()
+        # adding +1 to match the object_id in the simulation file
+        collision_object_a_id = idx[0] + 1 if len(idx) > 0 else None
+        collision_object_b_id = idx[1] + 1 if len(idx) > 1 else None
+        collision_timestep = get_timestep_from_idx(visible_timesteps_index[t_first])
+
+    else:
+        raise ImpossibleToAnswer("No collision found in the visible timesteps.")
+
+    """ How the object looks like:
+    {"OBJECT": {'choice': {'model': 'Olive_Kids_Game_On_Pack_n_Snack', 'sim': 'rho-medium_yms-medium_prs-medium', 'props': {...}, 'volume': 0.02960631065070629, 'mass': 1.6283470392227173, 'description': {...}, 'spawning_region': 'above_ground', 
+    'initial_condition': {...}, 'scale': 1.2468836307525635, 'obb_size': None, 'id': '2', 'name': 'Olive_Kids_Game_On_Pack_n_Snack'}, 'category': 'OBJECT'}
+    """
+    # technically the resolved object should be the one colliding
+    collider_object = world_state["objects"][str(collision_object_b_id)]
+    colliding_object = world_state["objects"][str(collision_object_a_id)]
+
+    resolved_attributes = {"OBJECT": {"choice": collider_object, "category": "OBJECT"}}
+
     present = [
         obj["name"]
         for obj in list(iter_objects(world_state))
-        if obj["id"] != object["id"]
+        if obj["id"] != collider_object["id"]
     ]
 
-    if first_collided_object is not None:
-        labels, correct_idx = create_mc_object_names_from_dataset(
-            first_collided_object["name"], present, DATASET
-        )
-    else:
-        labels, correct_idx = create_mc_object_names_from_dataset(
-            "No Object", present, DATASET
-        )
+    labels, correct_idx = create_mc_object_names_from_dataset(
+        colliding_object["name"], present, get_all_objects_names()
+    )
 
     return fill_questions(
         question,
         labels,
         correct_idx,
         world_state,
-        visible_timesteps[-1],
+        collision_timestep,
         resolved_attributes,
-        visible_timesteps[0],
     )
 
 
@@ -472,7 +428,7 @@ def F_COLLISION_OBJECT_OBJECT_FRAME_SINGLE(
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
         attributes,
         world_state,
-        min_objects=min(kwargs["current_world_number_of_objects"], 3),
+        min_objects=kwargs["current_world_number_of_objects"],
     )
 
     collision_mask = get_mask_collisions(world_state)

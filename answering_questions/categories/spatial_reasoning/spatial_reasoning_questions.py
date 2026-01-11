@@ -202,7 +202,7 @@ def F_CLOSEST_OBJECT_OBJECT(
 
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        attributes, world_state, min_objects=kwargs["current_world_number_of_objects"]
+        attributes, world_state, min_objects=2
     )
 
     timestep = get_random_timestep_from_list(visible_timesteps, question)
@@ -283,7 +283,7 @@ def F_SIZE_OBJECT_BIGGER(
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
         ["OBJECT"],
         world_state,
-        min_objects=min(kwargs["current_world_number_of_objects"], 3),
+        min_objects=2,
     )
 
     timestep = get_random_timestep_from_list(visible_timesteps, question)
@@ -336,7 +336,7 @@ def F_SIZE_OBJECT_SMALLER(
 
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        ["OBJECT"], world_state, min_objects=kwargs["current_world_number_of_objects"]
+        ["OBJECT"], world_state, min_objects=2
     )
 
     timestep = get_random_timestep_from_list(visible_timesteps, question)

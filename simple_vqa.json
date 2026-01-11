@@ -120,7 +120,7 @@
             "question": "What is the average (or effective) density of the <OBJECT> seen in the image?"
         },
         "F_PHYSICS_PROPERTY_DENSITY_OBJECT_RELATIVE": {
-            "task_splits": "single+multi",
+            "task_splitis": "single+multi",
             "sub_category": "density",
             "choice": "mcq",
             "question": "Which object seen in the image has the highest effective density?"

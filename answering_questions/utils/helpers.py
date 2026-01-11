@@ -1042,13 +1042,9 @@ def get_random_object_and_remove(
         visible_objects = []
         visible_objects_ids = []
         for obj_id, object in objects.items():
-            obj_state = get_object_state_at_timestep(
-                world_state, obj_id, visible_at_timestep
-            )
-            if (
-                obj_state["fov_visibility"] > VISIBILITY_THRESHOLD
-                and obj_state["infov_pixels"] >= MIN_VISIBLE_PIXELS
-            ):
+
+            # better visibility check            
+            if is_object_visible_v3(world_state, obj_id, visible_at_timestep):            
                 obj_copy = object.copy()
                 obj_copy["id"] = obj_id
                 visible_objects.append(obj_copy)
@@ -1071,6 +1067,55 @@ def get_random_object_and_remove(
         raise ImpossibleToAnswer(f"No objects found of type '{OBJECT_CATEGORY}'")
 
     object_chosen = random.choice(list(objects.values()))
+
+    del world_state["objects"][object_chosen["id"]]
+
+    return object_chosen
+
+def get_random_most_visible_object_and_remove(
+    world_state: Mapping[str, Any],
+    OBJECT_CATEGORY: Optional[str] = None,
+    visible_at_timestep: str = None,
+) -> Mapping[str, Any]:
+    objects = world_state["objects"]
+    if visible_at_timestep is not None:
+        visible_objects = []
+        visible_objects_ids = []
+        for obj_id, object in objects.items():
+
+            # better visibility check            
+            if is_object_visible_v3(world_state, obj_id, visible_at_timestep):            
+                obj_copy = object.copy()
+                obj_copy["id"] = obj_id
+                obj_copy["visibility_ratio"] = get_visibility_ratio_v3(
+                    world_state, obj_id, visible_at_timestep
+                )
+                visible_objects.append(obj_copy)
+                visible_objects_ids.append(obj_id)
+
+        list_of_duplicate_object_models = get_list_model_of_duplicate_objects(
+            world_state, visible_objects_ids
+        )
+        # remove duplicate objects by name
+        visible_objects = [
+            obj
+            for obj in visible_objects
+            if obj["model"] not in list_of_duplicate_object_models
+        ]
+
+        objects = {obj["id"]: obj for obj in visible_objects}
+
+    # also if no visible objects found, we raise an error
+    if not objects:
+        raise ImpossibleToAnswer(f"No objects found of type '{OBJECT_CATEGORY}'")
+
+
+    # filter objects to only those that have visibility ratio above threshold
+    filtered_objects = {obj_id: obj for obj_id, obj in objects.items() if obj["visibility_ratio"] >= 0.9}
+    if not filtered_objects:
+        raise ImpossibleToAnswer(f"No objects found of type '{OBJECT_CATEGORY}' with sufficient visibility.")
+
+    object_chosen = random.choice(list(filtered_objects.values()))
 
     del world_state["objects"][object_chosen["id"]]
 
@@ -1186,7 +1231,8 @@ resolver = {
     ),  # random mass between 0.1 and 5 kg
     "MATERIAL": get_random_material,
     "OBJECT-CATEGORY": get_random_OBJECT_CATEGORY,
-    "OBJECT": get_random_object_and_remove,
+    "OBJECT-RANDOM": get_random_object_and_remove,
+    "OBJECT": get_random_most_visible_object_and_remove,
     "OBJECT-CF": get_first_object_and_remove,
     "STRESS-THRESHOLD": lambda: round(
         random.uniform(0.0, 10.0), 1

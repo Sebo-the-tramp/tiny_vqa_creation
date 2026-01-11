@@ -426,7 +426,7 @@ def get_visibility_mask(
 ) -> Mapping[str, Sequence[int]]:
     all_timesteps = list(world_state["simulation"].keys())
     max_timestep_index = (
-        len(all_timesteps) - 1
+        len(all_timesteps)
         if max_timestep is None
         else world_state["simulation"][max_timestep]["frame_idx"] + 1
     )  # +1 to include the max_timestep
@@ -557,7 +557,7 @@ def get_visibility_ratio_v3(world_state, obj_id, timestep):
     #      raise ImpossibleToAnswer("Uncertainty too high.")
 
     # TODOD # just to check the fucking difference in this, cause they fuck up entire simulations just because there uncertain parts in it...
-    if pixels_visible <= 50 and pixels_void >= 200:
+    if pixels_visible <= 10 and pixels_void >= 400:
         raise ImpossibleToAnswer("Uncertainty too high.")
 
     # --- PATH A: Geometric Completeness ---
@@ -572,54 +572,6 @@ def get_visibility_ratio_v3(world_state, obj_id, timestep):
 
     # 3. The "Or" Gate
     # We take the best of both worlds.
-    return max(score_geom, score_pixel)
-
-
-def get_visibility_ratio_v4(
-    world_state, obj_id, timestep, pixel_threshold=2000.0, geom_power=2.0
-):
-    """
-    Args:
-        pixel_threshold: Pixel count that guarantees a score of 1.0 (Visual Salience).
-        geom_power: Strictness of the geometric check.
-                    2.0 crushes low percentages (22% -> 0.04).
-                    1.0 is linear (22% -> 0.22).
-    """
-    step = world_state["simulation"][str(timestep)]
-    obj_state = step["objects"][str(obj_id)]
-    cam = step["camera"]
-
-    if not obj_state or not cam or "obb" not in obj_state:
-        return 0.0
-
-    # 1. Raw Data
-    fov_visibility = float(obj_state["fov_visibility"])
-    pixels_visible = float(obj_state["infov_pixels_visible"])
-    # pixels_void = float(obj_state["infov_pixels_void"])
-    inside_ratio = _obb_inside_ratio(obj_state["obb"], cam)
-
-    # 2. Gatekeeping
-    # I recommend keeping a hard floor for absurdly small specks (e.g. < 15px)
-    if pixels_visible < 15:
-        return 0.0
-    # if pixels_visible * 2 < pixels_void:
-    #      raise ImpossibleToAnswer("Uncertainty too high.")
-
-    # --- PATH A: Geometric Completeness (Strict) ---
-    # We apply a power curve here.
-    # 22% visible -> 0.22 ** 2.0 = 0.048 (Score is effectively 0)
-    # 90% visible -> 0.90 ** 2.0 = 0.81 (Score stays high)
-    raw_geom_score = fov_visibility * inside_ratio
-    score_geom = raw_geom_score**geom_power
-
-    # --- PATH B: Visual Salience ---
-    # 150 pixels / 2000 = 0.075 (Score is low)
-    # 2000 pixels / 2000 = 1.0 (Score is high)
-    score_pixel = min(1.0, pixels_visible / pixel_threshold)
-
-    # 3. The "Or" Gate
-    # Case: 150px @ 22%
-    # max(0.048, 0.075) = 0.075 -> VISIBILITY FAIL (Correct!)
     return max(score_geom, score_pixel)
 
 

@@ -99,8 +99,15 @@ def _process_one(sim_file, args):
     except Exception as e:
         # Keep the pool running even if one simulation fails
         # if VERBOSE:
-        print("\033[91mWorker error on", simulation_id_path, "->", repr(e), "\033[0m")
-        print(e.with_traceback())
+        if getattr(args, "print_errors", False):
+            print(
+                "\033[91mWorker error on",
+                simulation_id_path,
+                "->",
+                repr(e),
+                "\033[0m",
+            )
+            print(e.with_traceback())
         return [], {}
 
 
@@ -150,6 +157,16 @@ def create_vqa(
 
     all_vqa = []
     stats = {}
+    raw_scene_path = simulation_steps.get("scene", {}).get("scene")
+    if raw_scene_path:
+        if os.path.isabs(raw_scene_path):
+            scene_path = raw_scene_path
+        else:
+            scene_path = os.path.abspath(
+                os.path.join(os.path.dirname(simulation_id), raw_scene_path)
+            )
+    else:
+        scene_path = os.path.abspath(simulation_id)
 
     categories = getattr(config, "include_categories", [])
     excluded_question_ids = set(getattr(config, "exclude_question_ids", []) or [])
@@ -201,23 +218,30 @@ def create_vqa(
                 )
             except ImpossibleToAnswer:
                 stats[stats_key]["impossible"] += 1
+                if getattr(config, "print_impossible", False):
+                    print(
+                        f"{ANSI_ORANGE}Impossible for question_id {question_key} in "
+                        f"{scene_path}{ANSI_RESET}"
+                    )
                 attempted_in_question += 1
                 stats[stats_key]["attempted"] += attempted_in_question
                 continue
             except Exception:
-                print(
-                    f"{ANSI_RED}Error for question_id {question_key} in "
-                    f"{destination_simulation_id_path}{ANSI_RESET}"
-                )
+                if getattr(config, "print_errors", False):
+                    print(
+                        f"{ANSI_RED}Error for question_id {question_key} in "
+                        f"{destination_simulation_id_path}{ANSI_RESET}"
+                    )
                 stats[stats_key]["errors"] += 1
                 attempted_in_question += 1
                 stats[stats_key]["attempted"] += attempted_in_question
                 continue
             if not answer_list:
-                print(
-                    f"{ANSI_RED}Error for question_id {question_key} in "
-                    f"{destination_simulation_id_path}{ANSI_RESET}"
-                )
+                if getattr(config, "print_errors", False):
+                    print(
+                        f"{ANSI_RED}Error for question_id {question_key} in "
+                        f"{destination_simulation_id_path}{ANSI_RESET}"
+                    )
                 stats[stats_key]["errors"] += 1
                 attempted_in_question += 1
                 stats[stats_key]["attempted"] += attempted_in_question
@@ -285,13 +309,19 @@ def create_vqa(
 
                 except ImpossibleToAnswer:
                     stats[stats_key]["impossible"] += 1
+                    if getattr(config, "print_impossible", False):
+                        print(
+                            f"{ANSI_ORANGE}Impossible for question_id {question_key} in "
+                            f"{scene_path}{ANSI_RESET}"
+                        )
                     attempted_in_question += 1
                     continue
                 except Exception:
-                    print(
-                        f"{ANSI_RED}Error for question_id {question_key} in "
-                        f"{destination_simulation_id_path}{ANSI_RESET}"
-                    )
+                    if getattr(config, "print_errors", False):
+                        print(
+                            f"{ANSI_RED}Error for question_id {question_key} in "
+                            f"{destination_simulation_id_path}{ANSI_RESET}"
+                        )
                     stats[stats_key]["errors"] += 1
                     attempted_in_question += 1
                     continue
@@ -659,6 +689,16 @@ if __name__ == "__main__":
         "--verbose",
         action="store_true",
         help="Enable verbose output for debugging.",
+    )
+    parser.add_argument(
+        "--print_errors",
+        action="store_true",
+        help="Print per-question errors and worker errors.",
+    )
+    parser.add_argument(
+        "--print_impossible",
+        action="store_true",
+        help="Print per-question impossible scene paths.",
     )
     parser.add_argument(
         "--number_of_images_max",

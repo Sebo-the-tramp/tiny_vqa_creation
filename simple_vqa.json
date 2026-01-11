@@ -68,12 +68,7 @@
             "choice": "mcq",
             "question": "Analyzing the motion trend across the 8-frame sequence, which statement best describes the system's state at the final frame?"
         },
-        "F_COLLISIONS_OBJ_OBJ_FIRST":{
-            "task_splits": "multi",
-            "sub_category": "collision",
-            "choice": "mcq",
-            "question": "Which of the objects in the images collides first with the <OBJECT> during the sequence?"
-        }, 
+        
         "F_COLLISION_OBJECT_OBJECT_FRAME_SINGLE":{
             "task_splits": "single",
             "sub_category": "collision",
@@ -84,7 +79,7 @@
             "task_splits": "multi",
             "sub_category": "collision",
             "choice": "mcq",
-            "question": "In which frame does the <OBJECT> collide with another object first?"
+            "question": "In which frame does the <OBJECT> collide with another object?"
         },        
         "F_COLLISION_OBJECT_SCENE_FRAME_MULTI":{
             "task_splits": "multi",

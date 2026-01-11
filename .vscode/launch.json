@@ -12,7 +12,7 @@
             "console": "integratedTerminal",
             "cwd": "/data0/sebastian.cavada/compositional-physics/tiny_vqa_deterministic/answering_questions",
             "args": [
-                "--simulation_path", "/data0/sebastian.cavada/datasets/simulations_v4/dl3dv/random/3/c-1_no-3_d-10_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-125_20251212_062602",
+                "--simulation_path", "/data0/sebastian.cavada/datasets/simulations_v4/dl3dv/random/4/c-1_no-4_d-10_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-7_20251212_082626",
                 // "--simulation", "/data0/sebastian.cavada/datasets/simulations_v4/dl3dv/random/3/c-1_no-3_d-10_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-137_20251212_064037",
                 // "--simulation_path", "/data0/sebastian.cavada/datasets/simulations_v4/dl3dv/random/2/c-1_no-2_d-10_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-83_20251212_015551",
                 // "--simulation_path", "/data0/sebastian.cavada/datasets/simulations_v4/dl3dv/random/2/c-1_no-2_d-10_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-146_20251212_024816",

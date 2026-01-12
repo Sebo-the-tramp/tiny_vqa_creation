@@ -41,6 +41,8 @@ def build_eval_df(base_path: str | Path) -> pd.DataFrame:
             "question_id",
             "category",
             "sub_category",
+            "num_objects",
+            "object_count",
             "answer",
             "mode_test",
             "mode_val",

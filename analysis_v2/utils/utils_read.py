@@ -16,6 +16,7 @@ _SIM_METADATA_CACHE: dict[str, dict] = {}
 
 def load_results(
     base_path: str | Path,
+    run_folder: str | None = None,
     drop_cols: list[str] | None = None,
     keep_cols: list[str] | None = None,
     add_sim_metadata: bool = False,
@@ -27,8 +28,13 @@ def load_results(
     cache_path: str | Path | None = None,
 ) -> pd.DataFrame:
     base = Path(base_path)
-    test_path = base / "test_run_15_general_10K.json"
-    val_path = base / "val_answer_run_15_general.json"
+
+    test_path = base / run_folder / f"test_{run_folder}_10K.json"
+    val_path = base / run_folder / f"val_answer_{run_folder}.json"
+
+    print(f"Loading test data from: {test_path}")
+    print(f"Loading val data from: {val_path}")
+
     if cache_path is None:
         cache_path = base / "merged_results.pkl"
     else:
@@ -43,7 +49,7 @@ def load_results(
             results_dir = (
                 Path(model_results_dir)
                 if model_results_dir is not None
-                else base / "results_run_15_general"
+                else base / run_folder / f"results_{run_folder}"
             )
             required_cols.extend(
                 p.stem.replace("_val", "") for p in results_dir.glob("*_val.json")
@@ -55,6 +61,7 @@ def load_results(
     df_val = _read_json_dataframe(val_path)
 
     # FOR AGENT Keep the hardcoded columns #
+    print("Processing columns...")
 
     drop_cols = [
         "scene", "source", "file_name"
@@ -81,7 +88,7 @@ def load_results(
         results_dir = (
             Path(model_results_dir)
             if model_results_dir is not None
-            else base / "results_run_15_general"
+            else base / run_folder / f"results_{run_folder}"
         )
         df_models = load_model_answers(results_dir, wide=model_answers_wide)
         if model_answers_wide:

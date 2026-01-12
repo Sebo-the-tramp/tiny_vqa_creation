@@ -237,8 +237,6 @@ def create_graph_from_eval_balanced(
     run = globals().get("RUN_NAME", "default")
     os.makedirs(f"./output/{run}/", exist_ok=True)
     plt.savefig(f"./output/{run}/{title}.png", dpi=300, bbox_inches="tight")
-    if show:
-        plt.show()
 
     return acc, breakdown
 
@@ -378,9 +376,7 @@ def create_sub_categories_summary(
     plt.tight_layout()
     run = globals().get("RUN_NAME", "default")
     os.makedirs(f"./output/{run}/", exist_ok=True)
-    plt.savefig(f"./output/{run}/{title}.png", dpi=300, bbox_inches="tight")
-    if show:
-        plt.show()
+    plt.savefig(f"./output/{run}/{title}.png", dpi=300, bbox_inches="tight")    
 
 
 def create_correlation_common_sense(
@@ -485,8 +481,6 @@ def create_correlation_common_sense(
     run = globals().get("RUN_NAME", "default")
     os.makedirs(f"./output/{run}/", exist_ok=True)
     plt.savefig(f"./output/{run}/{title}.png", dpi=300, bbox_inches="tight")
-    if show:
-        plt.show()
 
     return corr_sorted
 
@@ -676,4 +670,3 @@ def create_accuracy_bench_vs_common_sense(eval_df: pd.DataFrame, acc_mat: pd.Dat
         )
 
     plt.tight_layout()
-    plt.show()

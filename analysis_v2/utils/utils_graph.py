@@ -1,7 +1,6 @@
 import os
 import json
 import hashlib
-import re
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -508,7 +507,6 @@ def create_accuracy_bench_vs_common_sense(eval_df: pd.DataFrame, acc_mat: pd.Dat
     model_unique_ids = eval_df['model_id'].unique()
 
     common_sense_accuracy = {}
-    common_sense_params = {}
 
     for model_id in model_unique_ids:
         for cs_model_id in common_sense_df['Method'].values:
@@ -519,11 +517,6 @@ def create_accuracy_bench_vs_common_sense(eval_df: pd.DataFrame, acc_mat: pd.Dat
                 # print(f"Model: {modified_model_id}, Common Sense Score: {cs_model_id}")
                 row = common_sense_df[common_sense_df['Method'] == cs_model_id].iloc[0]
                 common_sense_accuracy[model_id] = row.get('Avg. Score')
-                params_raw = row.get('Params', '')
-                if isinstance(params_raw, str):
-                    m = re.search(r"([0-9]+(?:\\.[0-9]+)?)\\s*B", params_raw, flags=re.IGNORECASE)
-                    if m:
-                        common_sense_params[model_id] = float(m.group(1))
 
     accuracy_total_per_model = acc_mat.iloc[-1:, :]
     eval_df_accuracy_total_per_model = eval_df.merge(
@@ -554,7 +547,6 @@ def create_accuracy_bench_vs_common_sense(eval_df: pd.DataFrame, acc_mat: pd.Dat
         pd.DataFrame.from_dict(
             {
                 "common_sense_accuracy": common_sense_accuracy,
-                "params_b_cs": common_sense_params,
             }
         )
         .reset_index()
@@ -570,13 +562,8 @@ def create_accuracy_bench_vs_common_sense(eval_df: pd.DataFrame, acc_mat: pd.Dat
         .dropna(subset=['common_sense_accuracy'])
     )
 
-    if "params_b" in eval_df_accuracy_total_per_model.columns:
-        eval_df_accuracy_total_per_model["params_b"] = (
-            eval_df_accuracy_total_per_model["params_b"]
-            .fillna(eval_df_accuracy_total_per_model.get("params_b_cs"))
-        )
-    else:
-        eval_df_accuracy_total_per_model["params_b"] = eval_df_accuracy_total_per_model.get("params_b_cs")
+    if "params_b" not in eval_df_accuracy_total_per_model.columns:
+        eval_df_accuracy_total_per_model["params_b"] = pd.NA
     eval_df_accuracy_total_per_model["common_sense_accuracy"] = (
         pd.to_numeric(eval_df_accuracy_total_per_model["common_sense_accuracy"], errors="coerce")
     )

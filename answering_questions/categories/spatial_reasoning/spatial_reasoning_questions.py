@@ -351,10 +351,9 @@ def F_SIZE_OBJECT_SMALLER(
     total_object_seen = 0
 
     for obj in iter_objects(world_state):
-        volume = obj.get("volume", 0.0)
-        obj_state = world_state["simulation"][timestep]["objects"][obj["id"]]
+        volume = obj.get("volume", 0.0)        
 
-        if is_object_visible_v3(obj_state) and volume is not None:
+        if is_object_visible_v3(world_state=world_state, obj_id=obj["id"], timestep=timestep) and volume is not None:
             total_object_seen += 1
 
             if volume < smallest_volume:

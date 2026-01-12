@@ -86,8 +86,8 @@ def visible_objects_for_timestep(world_state: Mapping, timestep: str) -> List[st
         world_state.get("simulation", {}).get(str(timestep), {}).get("objects", {})
     )
     visible_ids: List[str] = []
-    for obj_id, obj_state in objects.items():
-        if is_object_visible_v3(obj_state):
+    for obj_id, _ in objects.items():
+        if is_object_visible_v3(world_state=world_state, obj_id=obj_id, timestep=timestep):
             visible_ids.append(str(obj_id))
     return visible_ids
 

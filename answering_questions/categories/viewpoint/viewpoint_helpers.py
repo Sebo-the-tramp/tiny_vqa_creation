@@ -162,6 +162,7 @@ def get_number_of_visible_objects(world_state: WorldState, timestep: str) -> int
     """
     Count the number of visible objects in the world state at a specific timestep.
     """
+    
     visibility_mask, _ = get_visibility_mask(world_state, max_timestep=timestep)
     total_visible_objects = np.sum(visibility_mask, axis=0)
     timestep_index = world_state["simulation"][timestep]["frame_idx"]

@@ -28,3 +28,6 @@ analysis_example/*
 
 main_parallel.dist/**
 main_parallel.build/**
+
+
+rsync*

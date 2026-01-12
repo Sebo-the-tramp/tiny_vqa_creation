@@ -99,7 +99,7 @@ def CF_CLOSEST_OBJECT_OBJECT(
         raise ImpossibleToAnswer("Question refers to future timestep.")
 
     object_id = answer_list_original_data_cf[5]["OBJECT"]["choice"]["id"]
-    visibility_mask, _, _ = get_visibility_mask(world_state_og)
+    visibility_mask, _ = get_visibility_mask(world_state_og)
 
     # just check that object_id is visible
     if not visibility_mask[int(object_id) - 1][timestep_end_index]:

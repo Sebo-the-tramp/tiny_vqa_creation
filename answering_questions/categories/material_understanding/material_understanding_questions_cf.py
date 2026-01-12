@@ -83,10 +83,9 @@ def CF_MASS_OBJECT(
 
     object_id = answer_list_original_data_cf[0][5]["OBJECT"]["choice"]["id"]
 
-    object = world_state_og["objects"][object_id]
-    obj_state = world_state_og["simulation"][timestep_end]["objects"][object_id]
+    object = world_state_og["objects"][object_id]    
 
-    if not is_object_visible_v3(obj_state):
+    if not is_object_visible_v3(world_state=world_state_og, obj_id=object_id, timestep=timestep_end):
         raise ImpossibleToAnswer("Object is not visible.")
 
     resolved_attributes = resolve_attributes_visible_at_timestep(
@@ -148,9 +147,7 @@ def CF_MASS_HEAVIEST_OBJECT(
     objects_masses = []
 
     for obj in iter_objects(world_state_mod):
-        obj_state = world_state_mod["simulation"][timestep_end]["objects"][obj["id"]]
-
-        if is_object_visible_v3(obj_state):
+        if is_object_visible_v3(world_state=world_state_mod, obj_id=obj["id"], timestep=timestep_end):
             objects_masses.append((obj["mass"], obj))
 
     if len(objects_masses) < 2:
@@ -222,9 +219,7 @@ def CF_MASS_LIGHTEST_OBJECT(
     objects_masses = []
 
     for obj in iter_objects(world_state_mod):
-        obj_state = world_state_mod["simulation"][timestep_end]["objects"][obj["id"]]
-
-        if is_object_visible_v3(obj_state):
+        if is_object_visible_v3(world_state=world_state_mod, obj_id=obj["id"], timestep=timestep_end):
             objects_masses.append((obj["mass"], obj))
 
     if len(objects_masses) < 2:

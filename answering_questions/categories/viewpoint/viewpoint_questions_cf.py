@@ -56,7 +56,7 @@ def CF_VISIBILITY_OBJECT_COUNT(
         raise ImpossibleToAnswer(
             "Modified simulation has fewer timesteps than original; cannot compare."
         )
-
+    
     assert len(attributes) == 0
 
     # Only take the first as the image is always that one
@@ -67,7 +67,7 @@ def CF_VISIBILITY_OBJECT_COUNT(
     timestep = f"{TIMESTART + float(timestep_index) * RENDER_STEP:08.3f}"
 
     total_visible_objects = get_number_of_visible_objects(
-        world_state_og, timestep_index
+        world_state_og, timestep
     )
 
     # balanced options around the initial count

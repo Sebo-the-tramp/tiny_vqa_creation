@@ -65,7 +65,7 @@ def CF_PERSISTENCE_OBJECT_TOTAL_COUNT(
         f"{TIMESTART + float(x) * RENDER_STEP:08.3f}" for x in frames_int
     ]
 
-    visibility_mask, _, _ = get_visibility_mask(world_state_og)
+    visibility_mask, _ = get_visibility_mask(world_state_og)
     total_visible_objects = np.sum(visibility_mask, axis=0)
 
     final_timestep = timestep_strings[-1]
@@ -132,7 +132,7 @@ def CF_PERSISTENCE_OBJECT_TOTAL_COUNT_HIDDEN(
         f"{TIMESTART + float(x) * RENDER_STEP:08.3f}" for x in frames_int
     ]
 
-    visibility_mask, _, _ = get_visibility_mask(world_state_og)
+    visibility_mask, _ = get_visibility_mask(world_state_og)
     total_visible_objects = np.sum(visibility_mask, axis=0)
 
     final_timestep = timestep_strings[-1]

@@ -37,13 +37,7 @@
             "sub_category": "kinematics",
             "choice": "mcq",
             "question": "Considering the geometrical center of <OBJECT>, what would be the straight-line distance it has traveled during the sequence?"
-        },
-        "CF_COLLISIONS_OBJ_OBJ_FIRST":{
-            "task_splits": "multi",
-            "sub_category": "collision",
-            "choice": "mcq",
-            "question": "Which of those objects would collide first with the <OBJECT> during the sequence?"
-        }, 
+        },        
         "CF_COLLISION_OBJECT_OBJECT_FRAME_SINGLE":{
             "task_splits": "single",
             "sub_category": "collision",

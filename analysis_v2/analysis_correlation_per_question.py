@@ -91,34 +91,14 @@ def main() -> None:
     output_dir = Path("output") / args.run_name
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    eval_df = build_eval_df(args.base_path)
-    
-    for x in range(1, 1):
-        create_num_objects_violin_grid(
-            eval_df,
-            group_by="model_id",        
-            save_per_category=True,
-            per_category_dirname="num_objects_per_model",
-            save_grid=True,
-            save_legend=True,
-            legend_filename="num_objects_legend_models.png",
-            legend_cols=6,
-            sample_frac=0.8,
-            sample_seed=x,
-            y_limit_mode="fixed",
-        )
-        
-    # create_num_objects_violin_grid(
-    #     eval_df,
-    #     group_by="family",    
-    #     save_per_category=True,
-    #     per_category_dirname="num_objects_per_family",
-    #     save_grid=False,
-    #     save_legend=True,
-    #     legend_filename="num_objects_legend_families.png",
-    #     legend_cols=4,
-    #     sample_frac=0.8,
-    # ) 
+    eval_df = build_eval_df(args.base_path)       
+
+    create_num_objects_violin_per_question_id(
+        eval_df,
+        group_by="model_id",
+        per_question_dirname="num_objects_per_question",
+        y_limit_mode="fixed"
+    )
     
 
 if __name__ == "__main__":

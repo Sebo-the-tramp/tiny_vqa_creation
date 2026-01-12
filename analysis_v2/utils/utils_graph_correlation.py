@@ -139,6 +139,7 @@ def create_num_objects_violin_grid(
     group_by: str = "model_id",
     save_per_category: bool = False,
     per_category_dirname: str | None = None,
+    save_grid: bool = False,
     save_legend: bool = False,
     legend_filename: str | None = None,
     legend_cols: int = 4,
@@ -348,7 +349,8 @@ def create_num_objects_violin_grid(
     run = run_name or globals().get("RUN_NAME", "default")
     out_dir = Path(output_dir) if output_dir is not None else Path("output") / run
     out_dir.mkdir(parents=True, exist_ok=True)
-    fig.savefig(out_dir / filename, dpi=300, bbox_inches="tight")
+    if save_grid:
+        fig.savefig(out_dir / filename, dpi=300, bbox_inches="tight")
 
     if save_legend:
         fig_legend = plt.figure(figsize=legend_figsize or (5 * legend_cols, 1.0))

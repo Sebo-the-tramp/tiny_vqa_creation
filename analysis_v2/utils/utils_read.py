@@ -101,6 +101,101 @@ def load_results(
 
     return df
 
+def load_results_levels(
+    base_path: str | Path,
+    run_folder: str | None = None,
+    drop_cols: list[str] | None = None,
+    keep_cols: list[str] | None = None,
+    add_sim_metadata: bool = False,
+    sim_path_col: str = "simulation_id",
+    merge_model_answers: bool = False,
+    model_answers_wide: bool = True,
+    model_results_dir: str | Path | None = None,
+    cache: bool = True,
+    cache_path: str | Path | None = None,
+) -> pd.DataFrame:
+    base = Path(base_path)
+
+    test_path = base / run_folder / f"test_{run_folder}_10K.json"
+    val_path = base / run_folder / f"val_answer_{run_folder}.json"
+
+    print(f"Loading test data from: {test_path}")
+    print(f"Loading val data from: {val_path}")
+
+    if cache_path is None:
+        cache_path = base / "merged_results.pkl"
+    else:
+        cache_path = Path(cache_path)
+
+    if cache and cache_path.exists():
+        df_cached = _load_cached_df(cache_path)
+        required_cols = []
+        if add_sim_metadata:
+            required_cols.append("object_count")
+        if merge_model_answers:
+            results_dir = (
+                Path(model_results_dir)
+                if model_results_dir is not None
+                else base / run_folder / f"results_{run_folder}"
+            )
+            required_cols.extend(
+                p.stem.replace("_val", "") for p in results_dir.glob("*_val.json")
+            )
+        if all(col in df_cached.columns for col in required_cols):
+            return df_cached
+
+    df_test = _read_json_dataframe(test_path)
+    df_val = _read_json_dataframe(val_path)
+
+    # FOR AGENT Keep the hardcoded columns #
+    print("Processing columns...")
+
+    drop_cols = [
+        "scene", "source", "file_name"
+    ]
+
+    if drop_cols and keep_cols:
+        raise ValueError("Use only one of drop_cols or keep_cols.")
+    if keep_cols is not None:
+        df_test = df_test[keep_cols]
+    elif drop_cols is not None:
+        df_test = df_test.drop(columns=drop_cols, errors="ignore")
+
+    def _base_idx(val: object) -> str:
+        text = str(val)
+        parts = text.split("_")
+        return "_".join(parts[:2]) if len(parts) >= 2 else text
+
+    df_test["idx_base"] = df_test["idx"].apply(_base_idx)
+    df_val["idx_base"] = df_val["idx"].apply(_base_idx)
+
+    # Keep all test questions; val answers may include extra idx.
+    df = df_test.merge(df_val, on="idx_base", how="left", suffixes=("_test", "_val"))
+    df = df.rename(columns={"idx_test": "idx"})
+
+    if add_sim_metadata:
+        if sim_path_col not in df.columns:
+            raise KeyError(f"Column '{sim_path_col}' not found in merged DataFrame.")
+        df["object_count"] = df[sim_path_col].apply(
+            lambda p: read_simulation_metadata(str(p))["object_count"]
+        )
+
+    if merge_model_answers:
+        results_dir = (
+            Path(model_results_dir)
+            if model_results_dir is not None
+            else base / run_folder / f"results_{run_folder}"
+        )
+        df_models = load_model_answers(results_dir, wide=model_answers_wide)
+        if model_answers_wide:
+            df = df.merge(df_models, on="idx", how="left")
+        else:
+            raise ValueError("model_answers_wide=False not supported in load_results.")
+
+    if cache:
+        _save_cached_df(df, cache_path)
+
+    return df
 
 def read_simulation_metadata(simulation_json_path: str | Path, verbose: bool = False) -> dict:    
     simulation_json_path = Path(simulation_json_path.replace("simulation.json", "simulation_min.json"))

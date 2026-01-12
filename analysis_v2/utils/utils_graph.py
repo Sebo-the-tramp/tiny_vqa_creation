@@ -1,6 +1,7 @@
 import os
 import json
 import hashlib
+import re
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -496,12 +497,18 @@ def create_accuracy_bench_vs_common_sense(eval_df: pd.DataFrame, acc_mat: pd.Dat
 
     with open('./utils/common_sense.json', 'r') as file:
         common_sense_df = pd.DataFrame(json.load(file))
+    with open('./utils/metadata.json', 'r') as file:
+        metadata_models = pd.DataFrame(json.load(file))
+
+    with open("./utils/metadata.json", 'r') as file:
+        metadata_models = pd.DataFrame(json.load(file))      
 
     common_sense_df.head()
 
     model_unique_ids = eval_df['model_id'].unique()
 
     common_sense_accuracy = {}
+    common_sense_params = {}
 
     for model_id in model_unique_ids:
         for cs_model_id in common_sense_df['Method'].values:
@@ -510,8 +517,13 @@ def create_accuracy_bench_vs_common_sense(eval_df: pd.DataFrame, acc_mat: pd.Dat
                 modified_model_id = model_id.replace("2_5", "2.5")
             if modified_model_id in cs_model_id:
                 # print(f"Model: {modified_model_id}, Common Sense Score: {cs_model_id}")
-                common_sense_accuracy[model_id] = common_sense_df[common_sense_df['Method'] == cs_model_id]['Avg. Score'].values[0]
-
+                row = common_sense_df[common_sense_df['Method'] == cs_model_id].iloc[0]
+                common_sense_accuracy[model_id] = row.get('Avg. Score')
+                params_raw = row.get('Params', '')
+                if isinstance(params_raw, str):
+                    m = re.search(r"([0-9]+(?:\\.[0-9]+)?)\\s*B", params_raw, flags=re.IGNORECASE)
+                    if m:
+                        common_sense_params[model_id] = float(m.group(1))
 
     accuracy_total_per_model = acc_mat.iloc[-1:, :]
     eval_df_accuracy_total_per_model = eval_df.merge(
@@ -521,6 +533,17 @@ def create_accuracy_bench_vs_common_sense(eval_df: pd.DataFrame, acc_mat: pd.Dat
         how='left'
     ).groupby('model_id').first().reset_index()
 
+    if "idx" in eval_df.columns and "model_id" in eval_df.columns:
+        multi_models = set(
+            eval_df[
+                eval_df["idx"].astype(str).str.contains("_g")
+                & eval_df["model_answer"].notna()
+            ]["model_id"].unique()
+        )
+        eval_df_accuracy_total_per_model["mode_y"] = eval_df_accuracy_total_per_model[
+            "model_id"
+        ].apply(lambda m: "general" if m in multi_models else "image-only")
+
     base_cols = ['model_id', 'Total', 'mode_y']
     if 'params_b' in eval_df_accuracy_total_per_model.columns:
         base_cols.append('params_b')
@@ -528,16 +551,35 @@ def create_accuracy_bench_vs_common_sense(eval_df: pd.DataFrame, acc_mat: pd.Dat
         eval_df_accuracy_total_per_model[base_cols]
         .rename(columns={'Total': 'balanced_accuracy', 'mode_y': 'mode'})
         .merge(
-        pd.DataFrame.from_dict(common_sense_accuracy, orient='index', columns=['common_sense_accuracy']).reset_index().rename(columns={'index': 'model_id'}),
+        pd.DataFrame.from_dict(
+            {
+                "common_sense_accuracy": common_sense_accuracy,
+                "params_b_cs": common_sense_params,
+            }
+        )
+        .reset_index()
+        .rename(columns={"index": "model_id"}),
         on='model_id',
         how='left'
         )
+        .merge(
+        metadata_models[["id", "params_b"]].rename(columns={"id": "model_id"}),
+        on="model_id",
+        how="left",
+        )
         .dropna(subset=['common_sense_accuracy'])
     )
+
+    if "params_b" in eval_df_accuracy_total_per_model.columns:
+        eval_df_accuracy_total_per_model["params_b"] = (
+            eval_df_accuracy_total_per_model["params_b"]
+            .fillna(eval_df_accuracy_total_per_model.get("params_b_cs"))
+        )
+    else:
+        eval_df_accuracy_total_per_model["params_b"] = eval_df_accuracy_total_per_model.get("params_b_cs")
     eval_df_accuracy_total_per_model["common_sense_accuracy"] = (
         pd.to_numeric(eval_df_accuracy_total_per_model["common_sense_accuracy"], errors="coerce")
     )
-
 
     plt.figure(figsize=(12, 6))
 
@@ -576,12 +618,20 @@ def create_accuracy_bench_vs_common_sense(eval_df: pd.DataFrame, acc_mat: pd.Dat
         alpha=0.9,
         legend=False,
     )
+
+    print(eval_df_accuracy_total_per_model.head())
+
     if "params_b" in eval_df_accuracy_total_per_model.columns:
-        scatter_kwargs.update(
-            size="params_b",
-            sizes=(40, 900),
-            size_norm=LogNorm(),   # params_b must be > 0
-        )
+        params = pd.to_numeric(eval_df_accuracy_total_per_model["params_b"], errors="coerce")
+        positive = params[params > 0]
+        if not positive.empty:
+            min_pos = float(positive.min())
+            eval_df_accuracy_total_per_model["params_b_plot"] = params.fillna(min_pos)
+            scatter_kwargs.update(
+                size="params_b_plot",
+                sizes=(40, 900),
+                size_norm=LogNorm(),   # params_b must be > 0
+            )
     ax = sns.scatterplot(**scatter_kwargs)
 
     ax.set_xlabel("Common Sense Accuracy")

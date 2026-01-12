@@ -130,18 +130,18 @@ def main() -> None:
         show=False,
     )
 
-    create_sub_categories_summary(
-        acc_mat=acc_mat,
-        title="Sub-category accuracy summary - all",
-        show=False,
-    )
+    # create_sub_categories_summary(
+    #     acc_mat=acc_mat,
+    #     title="Sub-category accuracy summary - all",
+    #     show=False,
+    # )
 
-    create_correlation_common_sense(
-        eval_df,
-        acc_mat,
-        title="Correlation common sense",
-        show=False,
-    )
+    # create_correlation_common_sense(
+    #     eval_df,
+    #     acc_mat,
+    #     title="Correlation common sense",
+    #     show=False,
+    # )
 
     create_accuracy_bench_vs_common_sense(
         eval_df,

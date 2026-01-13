@@ -98,7 +98,7 @@ def F_TEMPORAL_SEQUENCE_IMAGES(
         other_choices[:correct_index]
         + [choices_correct_order]
         + other_choices[correct_index:]
-    )
+    )    
 
     return [[question, labels, correct_index, imgs_idx_shuffled, world_state, {}]]
 

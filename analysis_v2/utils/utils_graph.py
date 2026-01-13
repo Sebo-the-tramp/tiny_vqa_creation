@@ -14,7 +14,10 @@ from scipy.stats import pearsonr
 
 colors_balanced = ["#E57373", "#F6E6B3", "#8BC87A"]
 cmap_balanced = LinearSegmentedColormap.from_list("soft_r2g", colors_balanced)
-_SUBCATEGORY_PALETTE = [to_hex(plt.get_cmap("tab20")(i)) for i in range(20)]
+_SUBCATEGORY_PALETTE = []
+for _name in ("Dark2", "tab10"):
+    _cmap = plt.get_cmap(_name)
+    _SUBCATEGORY_PALETTE.extend(to_hex(_cmap(i)) for i in range(_cmap.N))
 
 def _color_for_subcategory(sub_category: str, palette: list[str]) -> str:
     digest = hashlib.md5(sub_category.encode("utf-8")).hexdigest()
@@ -180,7 +183,7 @@ def create_graph_from_eval_balanced(
     ax = sns.heatmap(
         acc,
         vmin=0, vmax=1,
-        cmap="plasma",
+        cmap=cmap_balanced,
         annot=labels,
         fmt="",
         linewidths=0.5,

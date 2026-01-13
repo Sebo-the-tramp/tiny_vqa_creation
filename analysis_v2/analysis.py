@@ -35,7 +35,7 @@ def build_eval_df(base_path: str | Path) -> pd.DataFrame:
     if not model_cols:
         raise ValueError(f"No model answer columns found in {results_dir}")
 
-    df["answer"] = df["answer"].apply(_sanitize_answer)
+    df["answer"] = df["answer"].apply(lambda a: _sanitize_answer(a, max_prefix_chars=None))
 
     id_cols = [
         c
@@ -90,6 +90,8 @@ def main() -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
 
     eval_df = build_eval_df(args.base_path)
+
+    # print(eval_df.head().to_string())
 
     eval_df_single_image = eval_df[eval_df["idx"].astype(str).str.contains("_i")]
     acc_mat_single, _ = create_graph_from_eval_balanced(

@@ -9,7 +9,9 @@ newtphys.github.io/
 .venv
 .vscode
 
-output*/
+/output*/
+
+
 
 answering_questions/categories_old/
 
@@ -31,3 +33,8 @@ main_parallel.build/**
 
 
 rsync*
+
+analysis_v2/*
+!analysis_v2/output/
+analysis_v2/output/*
+!analysis_v2/output/run_16_general/

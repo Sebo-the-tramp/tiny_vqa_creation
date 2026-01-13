@@ -4,6 +4,7 @@ import re
 import pandas as pd
 
 _ANSWER_RE = re.compile(r"(?i)^\s*([a-d])(?:[^a-z0-9]|$)")
+# _ANSWER_RE = re.compile(r"\b([A-D])\s*[\.\,\:\)]")
 
 try:
     import orjson
@@ -32,15 +33,13 @@ def load_results(
     test_path = base / run_folder / f"test_{run_folder}_10K.json"
     val_path = base / run_folder / f"val_answer_{run_folder}.json"
 
-    print(f"Loading test data from: {test_path}")
-    print(f"Loading val data from: {val_path}")
-
     if cache_path is None:
-        cache_path = base / "merged_results.pkl"
+        cache_path = base / run_folder / "merged_results.pkl"
     else:
         cache_path = Path(cache_path)
 
     if cache and cache_path.exists():
+        print("Cache found at ", cache_path)
         df_cached = _load_cached_df(cache_path)
         required_cols = []
         if add_sim_metadata:
@@ -123,7 +122,7 @@ def load_results_levels(
     print(f"Loading val data from: {val_path}")
 
     if cache_path is None:
-        cache_path = base / "merged_results.pkl"
+        cache_path = base / run_folder / "merged_results.pkl" if run_folder else base / "merged_results.pkl"
     else:
         cache_path = Path(cache_path)
 

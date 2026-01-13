@@ -38,3 +38,5 @@ analysis_v2/*
 !analysis_v2/output/
 analysis_v2/output/*
 !analysis_v2/output/run_16_general/
+
+visualization/*

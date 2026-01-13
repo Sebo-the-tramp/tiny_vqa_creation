@@ -31,7 +31,7 @@ def build_eval_df(base_path: str | Path) -> pd.DataFrame:
 
     results_dir = base / run_folder / f"results_{run_folder}"
     model_cols = sorted(p.stem.replace("_val", "") for p in results_dir.glob("*_val.json"))
-    model_cols = [c for c in model_cols if c in df.columns]
+    model_cols = [c for c in model_cols if c in df.columns]    
     if not model_cols:
         raise ValueError(f"No model answer columns found in {results_dir}")
 

@@ -36,7 +36,7 @@ def build_eval_df(base_path: str | Path) -> pd.DataFrame:
     if not model_cols:
         raise ValueError(f"No model answer columns found in {results_dir}")
 
-    df["answer"] = df["answer"].apply(_sanitize_answer)
+    df["answer"] = df["answer"].apply(lambda a: _sanitize_answer(a, max_prefix_chars=None))
 
     id_cols = [
         c
@@ -82,7 +82,7 @@ def main() -> None:
         "--base-path",
         default="/data0/sebastian.cavada/compositional-physics/tiny_vqa_deterministic/output/",
     )
-    parser.add_argument("--run-name", default="run_15_general_obj_num")
+    parser.add_argument("--run-name", default="run_16_general_obj_num")
     args = parser.parse_args()
 
     utils_graph.RUN_NAME = args.run_name
@@ -108,17 +108,17 @@ def main() -> None:
             y_limit_mode="fixed",
         )
         
-    # create_num_objects_violin_grid(
-    #     eval_df,
-    #     group_by="family",    
-    #     save_per_category=True,
-    #     per_category_dirname="num_objects_per_family",
-    #     save_grid=False,
-    #     save_legend=True,
-    #     legend_filename="num_objects_legend_families.png",
-    #     legend_cols=4,
-    #     sample_frac=0.8,
-    # ) 
+    create_num_objects_violin_grid(
+        eval_df,
+        group_by="family",    
+        save_per_category=True,
+        per_category_dirname="num_objects_per_family",
+        save_grid=False,
+        save_legend=True,
+        legend_filename="num_objects_legend_families.png",
+        legend_cols=4,
+        sample_frac=0.8,
+    ) 
     
 
 if __name__ == "__main__":

@@ -1,10 +1,12 @@
 from pathlib import Path
 import re
+from typing import List
 
 import pandas as pd
 
-_ANSWER_RE = re.compile(r"(?i)^\s*([a-d])(?:[^a-z0-9]|$)")
+# _ANSWER_RE = re.compile(r"(?i)^\s*([a-d])(?:[^a-z0-9]|$)")
 # _ANSWER_RE = re.compile(r"\b([A-D])\s*[\.\,\:\)]")
+_ANSWER_RE = re.compile(r"(?:^([A-D])\b|\b([A-D])\s*[\.\,\:\)]|\b([A-D])\b$)")
 
 try:
     import orjson
@@ -14,6 +16,9 @@ except ImportError as exc:
     ) from exc
 
 _SIM_METADATA_CACHE: dict[str, dict] = {}
+TIMESTART = 0.01
+SAMPLING_RATE = 25
+RENDER_STEP = 1.0 / SAMPLING_RATE
 
 def load_results(
     base_path: str | Path,
@@ -44,6 +49,7 @@ def load_results(
         required_cols = []
         if add_sim_metadata:
             required_cols.append("object_count")
+            required_cols.append("visible_pixels_interested_object")
         if merge_model_answers:
             results_dir = (
                 Path(model_results_dir)
@@ -63,7 +69,7 @@ def load_results(
     print("Processing columns...")
 
     drop_cols = [
-        "scene", "source", "file_name"
+        "scene", "source"
     ]
 
     if drop_cols and keep_cols:
@@ -82,6 +88,20 @@ def load_results(
         df["object_count"] = df[sim_path_col].apply(
             lambda p: read_simulation_metadata(str(p))["object_count"]
         )
+
+        # if the interested objects are 2  we take the average of the visible pixels        
+        df["visible_pixels_interested_object"] = df.apply(
+            lambda row: find_insterted_object_pixels_count(
+                str(row[sim_path_col]),
+                str(row["question"]),
+                row['file_name'],
+            )["visible_pixels_interested_object"],
+            axis=1
+        )
+
+    print("Merging model answers...")
+    print(df.head().to_string())
+
 
     if merge_model_answers:
         results_dir = (
@@ -215,10 +235,53 @@ def read_simulation_metadata(simulation_json_path: str | Path, verbose: bool = F
         object_count = len(data["objects"])
 
     result = {
-        "object_count": object_count,
+            "object_count": object_count,
+            "objects": data["objects"],
+            "simulation": data["simulation"],
     }
     _SIM_METADATA_CACHE[cache_key] = result
     return result
+
+
+def find_insterted_object_pixels_count(simulation_json_path: str | Path, question: str, file_names: List, verbose: bool = False) -> dict:
+    
+    last_file_name = file_names[-1]
+    render_name = last_file_name.split("/")[-1].replace(".png", "")    
+    final_timestep = get_timestep_from_idx(int(render_name))
+
+    simulation_json_path = Path(simulation_json_path.replace("simulation.json", "simulation_min.json"))
+    cache_key = str(simulation_json_path)
+    cached = _SIM_METADATA_CACHE.get(cache_key)
+    if cached is not None:
+        if verbose:
+            print(f"cache hit: {cache_key}")
+    else:        
+        if verbose:
+            print(f"cache miss: {cache_key}")    
+    
+        # Stream only the objects list; ijson will stop as soon as the file ends.
+        with simulation_json_path.open("rb") as f:
+            data = orjson.loads(f.read())
+            object_count = len(data["objects"])
+
+        result = {
+            "object_count": object_count,
+            "objects": data["objects"],
+            "simulation": data["simulation"],
+        }
+        _SIM_METADATA_CACHE[cache_key] = result
+        cached = result
+
+    # find the interested objects from the question
+    for object_id, obj in cached["objects"].items():
+        if question.find(str(obj['description']['object_name'])) != -1:
+            print(f"Found interested object: {obj['description']['object_name']} with id {object_id}")
+
+            return {
+                "visible_pixels_interested_object": cached['simulation'][final_timestep]['objects'][object_id]['infov_pixels']
+            }
+        
+    return { "visible_pixels_interested_object": None }
 
 
 def _read_json_dataframe(path: Path) -> pd.DataFrame:
@@ -252,7 +315,8 @@ def load_model_answers(results_dir: str | Path, wide: bool = False) -> pd.DataFr
     for path in sorted(results_dir.glob("*_val.json")):
         df = pd.read_json(path)
         df["model"] = path.stem.replace("_val", "")
-        df["answer"] = df["answer"].apply(_sanitize_answer)
+        df["og_answer"] = df["answer"]
+        df["answer"] = df["answer"].apply(lambda a: _sanitize_answer(a, max_prefix_chars=None))        
         frames.append(df)
 
     if not frames:
@@ -265,17 +329,23 @@ def load_model_answers(results_dir: str | Path, wide: bool = False) -> pd.DataFr
     return df_all.pivot_table(index="idx", columns="model", values="answer", aggfunc="first")
 
 
-def _sanitize_answer(answer: object, max_prefix_chars: int | None = 10) -> str | None:
-    if answer is None or (isinstance(answer, float) and pd.isna(answer)):
+def get_timestep_from_idx(idx: int) -> str:
+    return f"{TIMESTART + float(idx) * RENDER_STEP:08.3f}"
+
+
+def _sanitize_answer(answer: object, max_prefix_chars: int | None = 10) -> str | None:    
+    if answer is None or (isinstance(answer, float) and pd.isna(answer)):        
         return None
     if max_prefix_chars is None or max_prefix_chars < 0:
         text = str(answer)
     else:
         text = str(answer)[:max_prefix_chars]
-    match = _ANSWER_RE.match(text)
+    # print(text)
+    match = _ANSWER_RE.search(text)
     if not match:
         return "?"
-    return match.group(1).upper()
+    answer = next((group for group in match.groups() if group), None)
+    return answer.upper()
 
 
 if __name__ == "__main__":

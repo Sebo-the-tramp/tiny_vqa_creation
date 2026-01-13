@@ -556,9 +556,13 @@ def get_visibility_ratio_v3(world_state, obj_id, timestep):
     # if pixels_visible < pixels_void:
     #      raise ImpossibleToAnswer("Uncertainty too high.")
 
-    # TODOD # just to check the fucking difference in this, cause they fuck up entire simulations just because there uncertain parts in it...
+    if pixels_visible < 562:
+        return 0.0
+
+    # # TODOD # just to check the fucking difference in this, cause they fuck up entire simulations just because there uncertain parts in it...
     if pixels_visible <= 10 and pixels_void >= 400:
-        raise ImpossibleToAnswer("Uncertainty too high.")
+        return 0.0
+        # raise ImpossibleToAnswer("Uncertainty too high.")
 
     # --- PATH A: Geometric Completeness ---
     # Good for: Tiny objects that fit fully in the frame.

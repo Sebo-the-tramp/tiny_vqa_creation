@@ -670,3 +670,10 @@ def create_accuracy_bench_vs_common_sense(eval_df: pd.DataFrame, acc_mat: pd.Dat
         )
 
     plt.tight_layout()
+    run = globals().get("RUN_NAME", "default")
+    os.makedirs(f"./output/{run}/", exist_ok=True)
+    plt.savefig(
+        f"./output/{run}/LoFi_Accuracy_vs_Common_Sense.png",
+        dpi=300,
+        bbox_inches="tight",
+    )

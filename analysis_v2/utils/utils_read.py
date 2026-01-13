@@ -266,13 +266,16 @@ def load_model_answers(results_dir: str | Path, wide: bool = False) -> pd.DataFr
     return df_all.pivot_table(index="idx", columns="model", values="answer", aggfunc="first")
 
 
-def _sanitize_answer(answer: object, max_prefix_chars: int = 10) -> str | None:
+def _sanitize_answer(answer: object, max_prefix_chars: int | None = 10) -> str | None:
     if answer is None or (isinstance(answer, float) and pd.isna(answer)):
         return None
-    text = str(answer)[:max_prefix_chars]
+    if max_prefix_chars is None or max_prefix_chars < 0:
+        text = str(answer)
+    else:
+        text = str(answer)[:max_prefix_chars]
     match = _ANSWER_RE.match(text)
     if not match:
-        return None
+        return "?"
     return match.group(1).upper()
 
 

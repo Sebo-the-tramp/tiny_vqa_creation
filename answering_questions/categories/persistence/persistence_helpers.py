@@ -5,7 +5,7 @@ from scipy.signal import convolve2d
 from typing import Any, Mapping, Sequence
 
 from utils.config import get_config
-from utils.helpers import is_object_visible_v3, get_visibility_mask
+from utils.helpers import is_object_visible_v3, get_visibility_mask_soft
 
 from utils.my_exception import ImpossibleToAnswer
 
@@ -64,7 +64,7 @@ def get_maximum_windows_for_each_object(world_state: WorldState):
     """This function returns for each object the best start and end timestep
     where the object is highly visible at the start and not visible at the end."""
 
-    _, visibility_percentage_matrix = get_visibility_mask(world_state)
+    _, visibility_percentage_matrix = get_visibility_mask_soft(world_state)
 
     object_proposed = {}
 

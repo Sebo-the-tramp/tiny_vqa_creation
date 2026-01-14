@@ -1,5 +1,4 @@
-
-#codex resume 019ba9d1-3a57-79d1-b924-7c0377312510 -> thinking about labels balance
+# codex resume 019ba9d1-3a57-79d1-b924-7c0377312510 -> thinking about labels balance
 
 from __future__ import annotations
 from typing import List, Tuple, Optional, Union, Iterable, Dict
@@ -45,6 +44,7 @@ def _decimals_for_sig(x: float, sig: int = 3) -> int:
 
 def norm(name: str) -> str:
     return name.lower()
+
 
 # improved version after Raoul's feedback
 # https://chatgpt.com/c/6906646f-be44-8325-a42e-98ddbf72eec8 -> to improve probably with slope bins
@@ -96,13 +96,15 @@ def create_mc_options_around_gt(
     options_raw = [(x + current_slope_bin) / current_slope_bin for x in intervals]
 
     options = [
-        f"{opt * gt:.{display_decimals}f}"
+        round(opt * gt, display_decimals)
         for opt in options_raw
         if (lo is None or round(opt * gt, display_decimals) >= lo)
         and (hi is None or round(opt * gt, display_decimals) <= hi)
     ]
-    options = [opt for opt in options if opt > min_threshold]
 
+    options = [f"{opt:.{display_decimals}f}" for opt in options if opt > min_threshold]
+
+    # random.shuffle(options) we could even shuffle more here
     options = options[: num_answers - 1]
     options.append(gt)
     random.shuffle(options)

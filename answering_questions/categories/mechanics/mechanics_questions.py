@@ -36,6 +36,7 @@ from utils.helpers import (
     fill_template,
     get_timestep_from_idx,
     is_object_visible_v3,
+    get_visibility_mask
 )
 
 from utils.frames_selection import (
@@ -45,8 +46,8 @@ from utils.frames_selection import (
 from .mechanics_helpers import (
     get_speed,
     get_acceleration,
-    get_position,    
-    get_mask_collisions,
+    get_position,
+    get_mask_collisions,    
 )
 
 from utils.config import get_config
@@ -55,10 +56,6 @@ from utils.bin_creation import (
     create_mc_options_around_gt,
     create_mc_object_names_from_dataset,
     uniform_labels,
-)
-
-from categories.persistence.persistence_helpers import (
-    get_visibility_mask,
 )
 
 Number = Union[int, float]
@@ -223,34 +220,34 @@ def F_KINEMATICS_SYSTEM_STABILITY(
 
     assert len(attributes) == 0
 
+    # check if at least one object is visible in the last frame
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        attributes,
-        world_state,
-        min_objects=1,
+        attributes, world_state, min_objects=max(kwargs['current_world_number_of_objects']//2,1), remove_last_n_frames=0
     )
 
-    continuous_subsequences = get_continuous_subsequences_min_length(
-        visible_timesteps, min_length=CLIP_LENGTH * FRAME_INTERLEAVE
-    )
-
-    visible_timesteps = random.choice(continuous_subsequences)
+    # motion_mask = get_motion_mask(world_state)    
 
     is_unstable = random.choice([True, False])
 
     # basically if the system is unstable, just give a random timestep beside the final ones
     # with the assumption that the frame n+1 will always be stable
     if is_unstable:
-        # removing the last 3 frames to avoid picking a stable frame
-        timestep = get_random_timestep_from_list(
-            visible_timesteps[: -(CLIP_LENGTH * FRAME_INTERLEAVE)], question
-        )
+
+        all_timesteps = list(set(list(world_state["simulation"].keys())[:-20]) & set(visible_timesteps))
+        
+        final_timestep = get_random_timestep_from_list(
+            all_timesteps[(CLIP_LENGTH - 1) * FRAME_INTERLEAVE: -10], question
+        )        
     else:
-        # we want to pick the first of the series for which the last frame is the actual last.
-        timestep = visible_timesteps[-(CLIP_LENGTH * FRAME_INTERLEAVE)]
+        final_timesteps = list(set(list(world_state["simulation"].keys())[-20:]) & set(visible_timesteps))
+        if len(final_timesteps) == 0:
+            raise ImpossibleToAnswer("No visible timesteps found in the last frames.")
+    
+        final_timestep = final_timesteps[-1]
 
     resolved_attributes = resolve_attributes_visible_at_timestep(
-        ["OBJECT"], world_state, timestep
+        [], world_state, final_timestep
     )
 
     options = [
@@ -264,7 +261,7 @@ def F_KINEMATICS_SYSTEM_STABILITY(
     labels = options
 
     return fill_questions(
-        question, labels, correct_idx, world_state, timestep, resolved_attributes
+        question, labels, correct_idx, world_state, final_timestep, resolved_attributes
     )
 
 
@@ -280,24 +277,26 @@ def F_COLLISION_OBJECT_OBJECT_FRAME_SINGLE(
             "Not enough objects in the scene for a collision to happen."
         )
 
-    assert len(attributes) == 1 and "OBJECT" in attributes  
+    assert len(attributes) == 1 and "OBJECT" in attributes
 
     collision_mask = get_mask_collisions(world_state)
-    visibility_mask, _ = get_visibility_mask(world_state)    
+    visibility_mask, _ = get_visibility_mask(world_state)
 
     # adding ground visibility (always visible)
     visibility_mask_T = np.append(
         visibility_mask,
         np.ones((1, visibility_mask.shape[1]), dtype=visibility_mask.dtype),
-        axis=0
+        axis=0,
     ).T
-    visibility_mask_T_extended = visibility_mask_T[:,:,None] * visibility_mask_T[:,None,:]
+    visibility_mask_T_extended = (
+        visibility_mask_T[:, :, None] * visibility_mask_T[:, None, :]
+    )
 
     # collision_mask AND visibility_mask
-    # the collision needs to be visible so 
+    # the collision needs to be visible so
     visible_collision_mask = collision_mask * visibility_mask_T_extended
 
-    rows = visible_collision_mask[:,1:,1:].any(axis=(1, 2))
+    rows = visible_collision_mask[:, 1:, 1:].any(axis=(1, 2))
     t_first = np.argmax(rows) if rows.any() else None
 
     if t_first is not None:
@@ -326,14 +325,25 @@ def F_COLLISION_OBJECT_OBJECT_FRAME_SINGLE(
     colliding_object = world_state["objects"][str(collision_object_a_id)]
     resolved_attributes = {"OBJECT": {"choice": collider_object, "category": "OBJECT"}}
 
-    present = [
-        obj["name"]
-        for obj in list(iter_objects(world_state))
-        if obj["id"] != collider_object["id"]
-    ]
+    present_and_not_colliding = []
+
+    collision_mask_timestep = collision_mask[t_first]
+    for obj_id in range(1, collision_mask_timestep.shape[0]):
+        if (
+            collision_mask_timestep[int(collider_object["id"]), obj_id] == 0
+            and collision_mask_timestep[obj_id, int(collider_object["id"])] == 0
+        ):
+            obj = world_state["objects"][str(obj_id)]
+            if obj["name"] not in present_and_not_colliding:
+                present_and_not_colliding.append(obj["name"])
+
+    # present = []
+    # for obj in iter_objects(world_state):
+    #     if obj["id"] != colliding_object["id"]:
+    #         present.append(obj["name"])
 
     labels, correct_idx = create_mc_object_names_from_dataset(
-        colliding_object["name"], present, get_all_objects_names()
+        colliding_object["name"], present_and_not_colliding, get_all_objects_names()
     )
 
     return fill_questions(
@@ -359,20 +369,22 @@ def F_COLLISION_OBJECT_OBJECT_FRAME_MULTI(
 
     collision_mask = get_mask_collisions(world_state)
     visibility_mask, _ = get_visibility_mask(world_state)
-    
+
     # adding ground visibility (always visible)
     visibility_mask_T = np.append(
         visibility_mask,
         np.ones((1, visibility_mask.shape[1]), dtype=visibility_mask.dtype),
-        axis=0
+        axis=0,
     ).T
-    visibility_mask_T_extended = visibility_mask_T[:,:,None] * visibility_mask_T[:,None,:]
+    visibility_mask_T_extended = (
+        visibility_mask_T[:, :, None] * visibility_mask_T[:, None, :]
+    )
 
     # collision_mask AND visibility_mask
-    # the collision needs to be visible so 
+    # the collision needs to be visible so
     visible_collision_mask = collision_mask * visibility_mask_T_extended
 
-    rows = visible_collision_mask[:,1:,1:].any(axis=(1, 2))
+    rows = visible_collision_mask[:, 1:, 1:].any(axis=(1, 2))
     t_first = np.argmax(rows) if rows.any() else None
 
     if t_first is not None:
@@ -416,7 +428,8 @@ def F_COLLISION_OBJECT_OBJECT_FRAME_MULTI(
         "Consider all frames, but answer only based on the last frame. ", ""
     )
 
-    return [[question, labels, correct_idx, frames, world_state, resolved_attributes]]
+    # no frames need to be provided as we already have them in the answer choices
+    return [[question, labels, correct_idx, [], world_state, resolved_attributes]]
 
 
 # assumption that the object is not colliding at the start, falling and the colliding with the scene
@@ -428,20 +441,22 @@ def F_COLLISION_OBJECT_SCENE_FRAME_MULTI(
 
     collision_mask = get_mask_collisions(world_state)
     visibility_mask, _ = get_visibility_mask(world_state)
-    
+
     # adding ground visibility (always visible)
     visibility_mask_T = np.append(
         visibility_mask,
         np.ones((1, visibility_mask.shape[1]), dtype=visibility_mask.dtype),
-        axis=0
+        axis=0,
     ).T
-    visibility_mask_T_extended = visibility_mask_T[:,:,None] * visibility_mask_T[:,None,:]
+    visibility_mask_T_extended = (
+        visibility_mask_T[:, :, None] * visibility_mask_T[:, None, :]
+    )
 
     # collision_mask AND visibility_mask
-    # the collision needs to be visible so 
+    # the collision needs to be visible so
     visible_collision_mask = collision_mask * visibility_mask_T_extended
 
-    rows = visible_collision_mask[:,0,1:].any(axis=(1))
+    rows = visible_collision_mask[:, 0, 1:].any(axis=(1))
     t_first = np.argmax(rows) if rows.any() else None
 
     if t_first is not None:

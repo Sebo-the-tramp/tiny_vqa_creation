@@ -96,10 +96,7 @@ def minify_single_simulation(
         json.dump(data, fh, indent=4, ensure_ascii=True)
     after_size = os.path.getsize(destination)
     factor = (before_size / after_size) if after_size else 0.0
-    print(
-        f"[{in_path}] size {before_size} -> {after_size} bytes "
-        f"(x{factor:.2f})"
-    )
+    print(f"[{in_path}] size {before_size} -> {after_size} bytes (x{factor:.2f})")
     print(f"[{in_path}] wrote minified simulation to {destination}")
     return destination
 

@@ -18,7 +18,7 @@ fi
 
 cd answering_questions
 
-GENERAL_RUN_COUNT=17
+GENERAL_RUN_COUNT=19
 
 ####################
 
@@ -29,7 +29,7 @@ python main_parallel.py --simulation_path "${BASE_PATH}/random/" "${BASE_PATH}/r
     --exclude_simulations_file "problematic_paths.txt" \
     --n_proc $CPUS \
     --timeit \
-#    --include_categories "mechanics" \
+   --include_categories "mechanics" \
 
 RUN_NAME="run_${GENERAL_RUN_COUNT}_general"
 python ./subsample_questions_percentage.py \

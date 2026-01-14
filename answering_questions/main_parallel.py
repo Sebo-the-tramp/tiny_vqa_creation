@@ -304,7 +304,9 @@ def create_vqa(
                             if question["task_splits"] == "single"
                             else "general",
                             "choice": question["choice"],
-                            "interested_objects": [x['choice']['id'] for x in resolved_attributes.values()]
+                            "interested_objects": [
+                                x["choice"]["id"] for x in resolved_attributes.values()
+                            ],
                         }
                     )
 

@@ -8,8 +8,6 @@ and fall back to sensible defaults when information is missing.
 
 from __future__ import annotations
 
-from utils.decorators import with_resolved_attributes_cf
-
 from typing import (
     Any,
     Mapping,
@@ -18,11 +16,10 @@ from typing import (
     Union,
 )
 
-import numpy as np
-
+from utils.config import get_config
 from utils.my_exception import ImpossibleToAnswer
-
 from utils.all_objects import get_all_objects_names
+from utils.decorators import with_resolved_attributes_cf
 
 from utils.helpers import (
     fill_questions_cf,
@@ -36,10 +33,7 @@ from .mechanics_helpers import (
     get_speed,
     get_acceleration,
     get_position,
-    get_mask_collisions,
 )
-
-from utils.config import get_config
 
 from utils.bin_creation import (
     create_mc_options_around_gt,

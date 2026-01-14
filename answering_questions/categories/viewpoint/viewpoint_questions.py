@@ -177,8 +177,10 @@ def F_OCCLUSION_PERCENTAGE_OBJECT(
 ) -> int:
     assert len(attributes) == 1 and "OBJECT" in attributes
 
-    # I mean it doesn't have to be visible at all it can just be any timestep    
-    final_timestep = get_random_timestep_from_list(list(world_state["simulation"].keys())[CLIP_LENGTH:], question)
+    # I mean it doesn't have to be visible at all it can just be any timestep
+    final_timestep = get_random_timestep_from_list(
+        list(world_state["simulation"].keys())[CLIP_LENGTH:], question
+    )
     final_timestep_index = world_state["simulation"][final_timestep]["frame_idx"]
 
     _, visibility_percentage_matrix = get_visibility_mask(
@@ -200,7 +202,7 @@ def F_OCCLUSION_PERCENTAGE_OBJECT(
     resolved_attributes = resolve_attributes(["OBJECT-RANDOM"], world_state)
 
     resolved_attributes["OBJECT"] = resolved_attributes.pop("OBJECT-RANDOM")
-    object_id = resolved_attributes["OBJECT"]["choice"]["id"]    
+    object_id = resolved_attributes["OBJECT"]["choice"]["id"]
 
     visibility_object = (
         visibility_percentage_matrix[int(object_id) - 1, final_timestep_index] / 100.0
@@ -216,10 +218,10 @@ def F_OCCLUSION_PERCENTAGE_OBJECT(
         correct_idx = 3
 
     labels = [
-        "Severely Occluded (0-25% visible)", # Hard: Requires context/guessing
-        "Partially Occluded (25-65% visible)", # Medium: Major parts missing
-        "Slightly Occluded (65-95% visible)", # Easy: Minor obstructions
-        "Fully Visible (>95% visible)",      # Control: Clean object
+        "Severely Occluded (0-25% visible)",  # Hard: Requires context/guessing
+        "Partially Occluded (25-65% visible)",  # Medium: Major parts missing
+        "Slightly Occluded (65-95% visible)",  # Easy: Minor obstructions
+        "Fully Visible (>95% visible)",  # Control: Clean object
     ]
 
     return fill_questions(

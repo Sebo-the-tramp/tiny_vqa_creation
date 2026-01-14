@@ -16,12 +16,10 @@ for path in (REPO_ROOT, ANSWERING_QUESTIONS_DIR):
         sys.path.insert(0, path)
 os.chdir(ANSWERING_QUESTIONS_DIR)
 
-from answering_questions.categories.persistence.persistence_helpers import (  # noqa: E402
-    get_visibility_mask,
-)
 from answering_questions.utils.helpers import (  # noqa: E402    
     is_object_visible_v3,
     get_visibility_ratio_v3,
+    get_visibility_mask
 )
 from answering_questions.utils.geometry import external_points_2d  # noqa: E402
 from answering_questions.utils.all_objects import get_gso_mapping

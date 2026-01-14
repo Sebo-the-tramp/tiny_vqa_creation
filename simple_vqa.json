@@ -79,7 +79,7 @@
             "task_splits": "multi",
             "sub_category": "collision",
             "choice": "mcq",
-            "question": "In which frame does the <OBJECT> collide with another object?"
+            "question": "In which frame is the <OBJECT> most likely colliding with another object?"
         },        
         "F_COLLISION_OBJECT_SCENE_FRAME_MULTI":{
             "task_splits": "multi",

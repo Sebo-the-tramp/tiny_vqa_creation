@@ -798,6 +798,7 @@ def get_visible_timesteps_for_attributes_min_objects(
     world_state: Mapping[str, Any],
     min_objects=1,
     min_n_frames=8,
+    remove_last_n_frames=10, # this is to avoid that the last frames, where everything is static, are considered
 ) -> List[str]:
     # I think attributes is not needed I just need to check that more than min_objects with
     # different models are visible at the same time
@@ -855,7 +856,14 @@ def get_visible_timesteps_for_attributes_min_objects(
         raise ImpossibleToAnswer(
             "No timesteps found where the required objects are visible."
         )
-    return visible_timesteps
+    if remove_last_n_frames >= len(visible_timesteps):
+        raise ImpossibleToAnswer(
+            "Not enough timesteps to remove the last frames where everything is static."
+        )
+    if remove_last_n_frames > 0:
+        return visible_timesteps[:-remove_last_n_frames]  # remove the last frames where everything is static
+    else:
+        return visible_timesteps
 
 
 def get_continuous_subsequences_min_length(

@@ -803,8 +803,6 @@ def F_MATERIAL_IDENTIFICATION_SIMILAR_OBJECT(
     object = resolved_attributes["OBJECT"]["choice"]
     material = object["description"]["material_group"]
 
-    present = []
-
     object_similar = None
     similar_object_count = 0
 
@@ -817,12 +815,6 @@ def F_MATERIAL_IDENTIFICATION_SIMILAR_OBJECT(
             object_similar = obj
             similar_object_count += 1
 
-    present = []
-    for obj in iter_objects(world_state):
-        if object_similar is not None and obj["id"] == object_similar["id"]:
-            continue  # skip the similar object
-        present.append(obj["name"])
-
     if similar_object_count == 0:
         raise ImpossibleToAnswer("No similar object found in the scene.")
         # object_similar = {"name": "None of the objects"}
@@ -831,6 +823,10 @@ def F_MATERIAL_IDENTIFICATION_SIMILAR_OBJECT(
         raise ImpossibleToAnswer(
             "Too many similar objects in the scene. Ambiguous question."
         )
+
+    present = [
+        obj["name"] for obj in iter_objects(world_state) if obj["id"] != object["id"]
+    ]
 
     options, correct_idx = create_mc_object_names_from_dataset(
         object_similar["name"], present, get_all_objects_names(), num_answers=4

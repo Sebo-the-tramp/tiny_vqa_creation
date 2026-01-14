@@ -25,8 +25,9 @@ from utils.all_objects import get_all_objects_names
 from utils.config import get_config
 from utils.helpers import (
     iter_objects,
-    fill_questions_cf,
     distance_between,
+    fill_questions_cf,
+    get_visibility_mask,    
     get_random_timestep_from_list,
     resolve_attributes_visible_at_timestep,
     get_visible_timesteps_for_attributes_min_objects,
@@ -43,8 +44,6 @@ from utils.bin_creation import (
     create_mc_object_names_from_dataset,
     uniform_labels,
 )
-
-from categories.persistence.persistence_helpers import get_visibility_mask
 
 Number = Union[int, float]
 Vector = Tuple[float, float, float]

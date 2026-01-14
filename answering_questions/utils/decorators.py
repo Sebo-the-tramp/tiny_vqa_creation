@@ -29,7 +29,7 @@ def with_resolved_attributes(func):
         # adaptor part to original names format
         for obj_id, object in world_state["objects"].items():
             object["id"] = obj_id
-            object["name"] = gso_mapping[object["model"]]["name"]                    
+            object["name"] = gso_mapping[object["model"]]["name"]
 
         # Pass them along so the wrapped function can use them
         return func(world_state, question, attributes["attributes"], *args, **kwargs)

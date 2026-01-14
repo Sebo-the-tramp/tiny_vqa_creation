@@ -25,13 +25,13 @@ from typing import (
 
 from utils.helpers import (
     fill_questions,
-    resolve_attributes_visible_at_timestep,
     get_timestep_from_idx,
+    get_visibility_mask_soft,
+    resolve_attributes_visible_at_timestep,
 )
 
 from utils.bin_creation import create_mc_object_names_from_dataset
 from categories.persistence.persistence_helpers import (
-    get_visibility_mask,
     get_maximum_windows_for_each_object,
     choose_best_window_object_id,
 )
@@ -121,7 +121,7 @@ def F_PERSISTENCE_OBJECT_TOTAL_COUNT(
     assert len(attributes) == 0
 
     # order for longest window
-    visibility_mask, _ = get_visibility_mask(world_state)
+    visibility_mask, _ = get_visibility_mask_soft(world_state)
     object_proposed = get_maximum_windows_for_each_object(world_state)
     chosen_object_id = choose_best_window_object_id(world_state, object_proposed)
 
@@ -189,7 +189,7 @@ def F_PERSISTENCE_OBJECT_TOTAL_COUNT_HIDDEN(
     assert len(attributes) == 0
 
     # order for longest window
-    visibility_mask, _ = get_visibility_mask(world_state)
+    visibility_mask, _ = get_visibility_mask_soft(world_state)
     object_proposed = get_maximum_windows_for_each_object(world_state)
     chosen_object_id = choose_best_window_object_id(world_state, object_proposed)
 

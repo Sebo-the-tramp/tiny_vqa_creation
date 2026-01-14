@@ -457,6 +457,49 @@ def get_visibility_mask(
     return visibility_mask, visibility_percentage_matrix
 
 
+def get_visibility_mask_soft(
+    world_state: WorldState, max_timestep=None
+) -> Mapping[str, Sequence[int]]:
+    """
+    This function is similar to get_visibility_mask but instead of hard cutting the visibility
+    THRESHOLD of 1/1000 of the image size, it will allow also very small objects to be considered visible
+    This is because it can be used for counting questions where even small objects are visible but
+    NOT identifiable.
+    """
+
+    all_timesteps = list(world_state["simulation"].keys())
+    max_timestep_index = (
+        len(all_timesteps)
+        if max_timestep is None
+        else world_state["simulation"][max_timestep]["frame_idx"] + 1
+    )  # +1 to include the max_timestep
+
+    visibility_mask = np.zeros(
+        (len(world_state["objects"]), max_timestep_index), dtype=int
+    )
+
+    visibility_percentage_matrix = np.zeros(
+        (len(world_state["objects"]), max_timestep_index), dtype=int
+    )
+
+    for object in iter_objects(world_state):
+        obj_id = object["id"]
+
+        for t in all_timesteps[:max_timestep_index]:
+            bit = 1 if is_object_visible_v3_soft(world_state, obj_id, t) else 0
+            index_timestep = all_timesteps.index(t)
+            visibility_mask[int(obj_id) - 1, index_timestep] = bit
+
+            visibility_percentage_obj = (
+                get_visibility_ratio_v3_soft(world_state, obj_id, t) * 100.0
+            )
+            visibility_percentage_matrix[int(obj_id) - 1, all_timesteps.index(t)] = int(
+                visibility_percentage_obj
+            )
+
+    return visibility_mask, visibility_percentage_matrix
+
+
 def _clip_polygon_to_rect(points, width, height):
     def clip_edge(poly, edge_fn):
         if len(poly) == 0:
@@ -579,9 +622,56 @@ def get_visibility_ratio_v3(world_state, obj_id, timestep):
     return max(score_geom, score_pixel)
 
 
+def get_visibility_ratio_v3_soft(world_state, obj_id, timestep):
+    pixel_threshold = 2000.0
+    """
+    Calculates visibility based on two parallel criteria:
+    1. Is the object geometrically complete? (Rewards small, fully visible objects)
+    2. Is the object visually salient? (Rewards large, cropped objects)
+    
+    Returns the higher of the two scores.
+    """
+    step = world_state["simulation"][str(timestep)]
+    obj_state = step["objects"][str(obj_id)]
+    cam = step["camera"]
+
+    if not obj_state or not cam or "obb" not in obj_state:
+        return 0.0
+
+    # 1. Raw Data
+    fov_visibility = float(obj_state["fov_visibility"])
+    pixels_visible = float(obj_state["infov_pixels_visible"])
+    pixels_void = float(obj_state["infov_pixels_void"])
+    inside_ratio = _obb_inside_ratio(obj_state["obb"], cam)
+
+    # # TODOD # just to check the fucking difference in this, cause they fuck up entire simulations just because there uncertain parts in it...
+    if pixels_visible <= 10 and pixels_void >= 400:
+        raise ImpossibleToAnswer("Uncertainty too high.")
+
+    # --- PATH A: Geometric Completeness ---
+    # Good for: Tiny objects that fit fully in the frame.
+    # Bad for: Large objects that get cut off by the camera edge.
+    score_geom = fov_visibility * inside_ratio
+
+    # --- PATH B: Visual Salience ---
+    # Good for: Large objects. If I see 2000px, I don't care if that's only 20% of the object.
+    # Bad for: Tiny objects (50px is a low score here).
+    score_pixel = min(1.0, pixels_visible / pixel_threshold)
+
+    # 3. The "Or" Gate
+    # We take the best of both worlds.
+    return max(score_geom, score_pixel)
+
+
 def is_object_visible_v3(world_state, obj_id, timestep):
     return (
         get_visibility_ratio_v3(world_state, obj_id, timestep) >= VISIBILITY_THRESHOLD
+    )
+
+
+def is_object_visible_v3_soft(world_state, obj_id, timestep):
+    return (
+        get_visibility_ratio_v3_soft(world_state, obj_id, timestep) >= VISIBILITY_THRESHOLD
     )
 
 
@@ -887,9 +977,9 @@ def fill_template(
                 resolved_attributes[attribute]["choice"],
             )
         elif "OBJECT" in attribute:
-            mapped_name = gso_mapping[
+            mapped_name = f"\"{gso_mapping[
                 resolved_attributes[attribute]["choice"]["model"]
-            ]["name"]
+            ]["name"]}\""
             # mapped_name = resolved_attributes[attribute]["choice"]["name"] OLD way
             question["question"] = question["question"].replace(
                 f"<{attribute}>", mapped_name
@@ -998,9 +1088,8 @@ def get_random_object_and_remove(
         visible_objects = []
         visible_objects_ids = []
         for obj_id, object in objects.items():
-
-            # better visibility check            
-            if is_object_visible_v3(world_state, obj_id, visible_at_timestep):            
+            # better visibility check
+            if is_object_visible_v3(world_state, obj_id, visible_at_timestep):
                 obj_copy = object.copy()
                 obj_copy["id"] = obj_id
                 visible_objects.append(obj_copy)
@@ -1028,6 +1117,7 @@ def get_random_object_and_remove(
 
     return object_chosen
 
+
 def get_random_most_visible_object_and_remove(
     world_state: Mapping[str, Any],
     OBJECT_CATEGORY: Optional[str] = None,
@@ -1038,9 +1128,8 @@ def get_random_most_visible_object_and_remove(
         visible_objects = []
         visible_objects_ids = []
         for obj_id, object in objects.items():
-
-            # better visibility check            
-            if is_object_visible_v3(world_state, obj_id, visible_at_timestep):            
+            # better visibility check
+            if is_object_visible_v3(world_state, obj_id, visible_at_timestep):
                 obj_copy = object.copy()
                 obj_copy["id"] = obj_id
                 obj_copy["visibility_ratio"] = get_visibility_ratio_v3(
@@ -1065,11 +1154,14 @@ def get_random_most_visible_object_and_remove(
     if not objects:
         raise ImpossibleToAnswer(f"No objects found of type '{OBJECT_CATEGORY}'")
 
-
     # filter objects to only those that have visibility ratio above threshold
-    filtered_objects = {obj_id: obj for obj_id, obj in objects.items() if obj["visibility_ratio"] >= 0.9}
+    filtered_objects = {
+        obj_id: obj for obj_id, obj in objects.items() if obj["visibility_ratio"] >= 0.9
+    }
     if not filtered_objects:
-        raise ImpossibleToAnswer(f"No objects found of type '{OBJECT_CATEGORY}' with sufficient visibility.")
+        raise ImpossibleToAnswer(
+            f"No objects found of type '{OBJECT_CATEGORY}' with sufficient visibility."
+        )
 
     object_chosen = random.choice(list(filtered_objects.values()))
 

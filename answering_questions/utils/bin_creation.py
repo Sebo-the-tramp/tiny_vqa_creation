@@ -96,7 +96,7 @@ def create_mc_options_around_gt(
     options_raw = [(x + current_slope_bin) / current_slope_bin for x in intervals]
 
     options = [
-        round(opt * gt, display_decimals)
+        f"{opt * gt:.{display_decimals}f}"
         for opt in options_raw
         if (lo is None or round(opt * gt, display_decimals) >= lo)
         and (hi is None or round(opt * gt, display_decimals) <= hi)

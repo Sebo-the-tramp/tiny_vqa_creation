@@ -4,6 +4,8 @@ repos:
     hooks:
       - id: ruff
         name: ruff-check
-        args: ["check", "--fix"]
+        args: ["--fix"]
       - id: ruff-format
         name: ruff-format
+
+exclude: ^analysis_example/

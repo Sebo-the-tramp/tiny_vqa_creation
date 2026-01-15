@@ -291,8 +291,8 @@ def F_COLLISION_OBJECT_OBJECT_FRAME_SINGLE(
 
     # adding ground visibility (always visible)
     visibility_mask_T = np.append(
-        visibility_mask,
         np.ones((1, visibility_mask.shape[1]), dtype=visibility_mask.dtype),
+        visibility_mask,
         axis=0,
     ).T
     visibility_mask_T_extended = (
@@ -380,8 +380,8 @@ def F_COLLISION_OBJECT_OBJECT_FRAME_MULTI(
 
     # adding ground visibility (always visible)
     visibility_mask_T = np.append(
-        visibility_mask,
         np.ones((1, visibility_mask.shape[1]), dtype=visibility_mask.dtype),
+        visibility_mask,
         axis=0,
     ).T
     visibility_mask_T_extended = (
@@ -453,8 +453,8 @@ def F_COLLISION_OBJECT_SCENE_FRAME_MULTI(
 
     # adding ground visibility (always visible)
     visibility_mask_T = np.append(
-        visibility_mask,
         np.ones((1, visibility_mask.shape[1]), dtype=visibility_mask.dtype),
+        visibility_mask,
         axis=0,
     ).T
     visibility_mask_T_extended = (

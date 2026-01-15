@@ -417,21 +417,36 @@ def F_COLLISION_OBJECT_OBJECT_FRAME_MULTI(
     collider_object = world_state["objects"][str(collision_object_b_id)]
     resolved_attributes = {"OBJECT": {"choice": collider_object, "category": "OBJECT"}}
 
-    frames_og = sample_frames_before_timestep(
-        world_state, collision_timestep, num_frames=4, frame_interleave=4
+    confounding_frames = []
+
+    for timestep in world_state["simulation"].keys():
+        all_other_objects_far_from_collision, _ = get_present_and_far_from_collision(
+            world_state, timestep, collision_object_b_id
+        )
+
+        if (
+            len(all_other_objects_far_from_collision)
+            != kwargs["current_world_number_of_objects"] - 2
+        ):
+            continue  # some other object is too close to the collision object
+
+        else:
+            confounding_frames.append(world_state["simulation"][timestep]["frame_idx"])
+
+    if len(confounding_frames) < 3:
+        raise ImpossibleToAnswer(
+            "Not enough frames found where the object is visible before collision."
+        )
+
+    correct_frame = sample_frames_before_timestep(
+        world_state, collision_timestep, num_frames=1, frame_interleave=2
     )
 
-    # all_frames_idx = uniformly_sample_frames_start_end_delta(0, len(world_state['simulation']), 1)
+    random.shuffle(confounding_frames)
+    confounding_frames = confounding_frames[:3]
 
-    # confounding_images = calculate_most_dissimilar_confounding_images(
-    #     all_frames_idx[:t_first], t_first, **kwargs
-    # )
-
-    confounding_images = frames_og[:3]
-    correct_frame = frames_og[3]
-    frames = confounding_images + [correct_frame]
+    frames = confounding_frames + [correct_frame[0]]
     labels = frames.copy()
-    random.shuffle(labels)
 
     correct_idx = labels.index(correct_frame)
 
@@ -496,12 +511,12 @@ def F_COLLISION_OBJECT_SCENE_FRAME_MULTI(
 
         if (
             len(all_other_objects_far_from_collision)
-            != kwargs["current_world_number_of_objects"] - 1
+            != kwargs["current_world_number_of_objects"] - 2
         ):
             continue  # some other object is too close to the collision object
 
         else:
-            confounding_frames.append(timestep)
+            confounding_frames.append(world_state["simulation"][timestep]["frame_idx"])
 
     if len(confounding_frames) < 3:
         raise ImpossibleToAnswer(

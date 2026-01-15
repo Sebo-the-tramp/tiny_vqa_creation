@@ -18,7 +18,7 @@ fi
 
 cd answering_questions
 
-GENERAL_RUN_COUNT=20
+GENERAL_RUN_COUNT=20_test_pa
 
 ####################
 

@@ -58,7 +58,7 @@ python main_parallel.py --simulation_path "${BASE_PATH}/random/" "${BASE_PATH}/r
     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
     --run_name "run_${GENERAL_RUN_COUNT}_general" \
     --n_scenes 1000 \
-    --questions_file "/data0/sebastian.cavada/compositional-physics/tiny_vqa_deterministic/simple_vqa_test_pa.json" \
+    --questions_file "simple_vqa_test_pa.json" \
     --exclude_simulations_file "problematic_paths.txt" \
     --n_proc $CPUS \
     --timeit \

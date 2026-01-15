@@ -19,21 +19,19 @@ def build_eval_df(base_path: str | Path) -> pd.DataFrame:
         merge_model_answers=True,
         model_answers_wide=True,
         cache=True,
-    )    
+    )
 
     results_dir = base / utils_graph.RUN_NAME / f"results_{utils_graph.RUN_NAME}"
-    model_cols = sorted(p.stem.replace("_val", "") for p in results_dir.glob("*_val.json"))
+    model_cols = sorted(
+        p.stem.replace("_val", "") for p in results_dir.glob("*_val.json")
+    )
     model_cols = [c for c in model_cols if c in df.columns]
     if not model_cols:
         raise ValueError(f"No model answer columns found in {results_dir}")
 
     df["answer"] = df["answer"].apply(_sanitize_answer)
     if "level" not in df.columns:
-        df["level"] = (
-            df["idx"]
-            .astype(str)
-            .str.extract(r"level_([^_]+)", expand=False)
-        )
+        df["level"] = df["idx"].astype(str).str.extract(r"level_([^_]+)", expand=False)
 
     id_cols = [
         c
@@ -62,7 +60,9 @@ def build_eval_df(base_path: str | Path) -> pd.DataFrame:
 
     valid = eval_df["model_answer"].notna() & eval_df["answer"].notna()
     eval_df["is_correct"] = pd.NA
-    eval_df.loc[valid, "is_correct"] = eval_df.loc[valid, "model_answer"] == eval_df.loc[valid, "answer"]
+    eval_df.loc[valid, "is_correct"] = (
+        eval_df.loc[valid, "model_answer"] == eval_df.loc[valid, "answer"]
+    )
 
     if "mode_val" in eval_df.columns:
         eval_df["mode_y"] = eval_df["mode_val"]
@@ -93,8 +93,6 @@ def main() -> None:
 
     create_scatter_by_family(eval_df, split_by_mode=True)
 
-
-    
 
 if __name__ == "__main__":
     main()

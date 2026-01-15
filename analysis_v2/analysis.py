@@ -11,10 +11,11 @@ from utils.utils_graph import (
     create_graph_from_eval_balanced,
     create_sub_categories_summary,
     create_correlation_common_sense,
-    create_accuracy_bench_vs_common_sense
+    create_accuracy_bench_vs_common_sense,
 )
 
 from utils.utils_paper import print_heatmap_table_latex
+
 
 def build_eval_df(base_path: str | Path) -> pd.DataFrame:
     base = Path(base_path)
@@ -30,12 +31,16 @@ def build_eval_df(base_path: str | Path) -> pd.DataFrame:
     )
 
     results_dir = base / run_folder / f"results_{run_folder}"
-    model_cols = sorted(p.stem.replace("_val", "") for p in results_dir.glob("*_val.json"))
-    model_cols = [c for c in model_cols if c in df.columns]    
+    model_cols = sorted(
+        p.stem.replace("_val", "") for p in results_dir.glob("*_val.json")
+    )
+    model_cols = [c for c in model_cols if c in df.columns]
     if not model_cols:
         raise ValueError(f"No model answer columns found in {results_dir}")
 
-    df["answer"] = df["answer"].apply(lambda a: _sanitize_answer(a, max_prefix_chars=None))
+    df["answer"] = df["answer"].apply(
+        lambda a: _sanitize_answer(a, max_prefix_chars=None)
+    )
 
     id_cols = [
         c
@@ -63,7 +68,9 @@ def build_eval_df(base_path: str | Path) -> pd.DataFrame:
 
     valid = eval_df["model_answer"].notna() & eval_df["answer"].notna()
     eval_df["is_correct"] = pd.NA
-    eval_df.loc[valid, "is_correct"] = eval_df.loc[valid, "model_answer"] == eval_df.loc[valid, "answer"]
+    eval_df.loc[valid, "is_correct"] = (
+        eval_df.loc[valid, "model_answer"] == eval_df.loc[valid, "answer"]
+    )
 
     if "mode_val" in eval_df.columns:
         eval_df["mode_y"] = eval_df["mode_val"]
@@ -104,13 +111,12 @@ def main() -> None:
         color_question_id_by_subcategory=True,
     )
 
-
     eval_df_multi_image = eval_df[eval_df["idx"].astype(str).str.contains("_g")]
     eval_df_multi_image = eval_df_multi_image.groupby("model_id").filter(
         lambda g: g["model_answer"].notna().any()
     )
     acc_mat_multi, _ = create_graph_from_eval_balanced(
-        eval_base=eval_df_multi_image,                     # your row-level eval with is_correct
+        eval_base=eval_df_multi_image,  # your row-level eval with is_correct
         index_to_use="question_id",
         title="Balanced accuracy by question_id and general models - multi-image task",
         color_by_mode=True,
@@ -133,7 +139,7 @@ def main() -> None:
         eval_base=eval_df_multi_image,
         index_to_use="sub_category",
         title="Balanced accuracy by sub_category and model - single-image",
-        color_by_mode=True,    
+        color_by_mode=True,
         show=False,
     )
 
@@ -155,7 +161,6 @@ def main() -> None:
         acc_mat,
     )
 
-    
 
 if __name__ == "__main__":
     main()

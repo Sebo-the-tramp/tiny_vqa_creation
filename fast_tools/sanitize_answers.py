@@ -1,6 +1,5 @@
 import argparse
 import json
-import os
 import re
 from pathlib import Path
 
@@ -63,7 +62,9 @@ def main():
         help="Truncate answers to this many chars before matching. Use -1 for no limit.",
     )
     args = parser.parse_args()
-    sanitize_folder(args.input_dir, args.output_dir, max_prefix_chars=args.max_prefix_chars)
+    sanitize_folder(
+        args.input_dir, args.output_dir, max_prefix_chars=args.max_prefix_chars
+    )
 
 
 if __name__ == "__main__":

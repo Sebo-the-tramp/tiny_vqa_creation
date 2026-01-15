@@ -9,7 +9,6 @@ from utils.utils_read import load_results, _sanitize_answer
 import utils.utils_graph as utils_graph
 import utils.utils_graph_correlation as utils_graph_correlation
 from utils.utils_graph_correlation import (
-    create_num_objects_violin_grid,
     create_num_objects_violin_per_question_id,
 )
 
@@ -29,9 +28,11 @@ def build_eval_df(base_path: str | Path) -> pd.DataFrame:
         cache=True,
         add_sim_metadata=True,
     )
-    
+
     results_dir = base / run_folder / f"results_{run_folder}"
-    model_cols = sorted(p.stem.replace("_val", "") for p in results_dir.glob("*_val.json"))
+    model_cols = sorted(
+        p.stem.replace("_val", "") for p in results_dir.glob("*_val.json")
+    )
     model_cols = [c for c in model_cols if c in df.columns]
     if not model_cols:
         raise ValueError(f"No model answer columns found in {results_dir}")
@@ -64,7 +65,9 @@ def build_eval_df(base_path: str | Path) -> pd.DataFrame:
 
     valid = eval_df["model_answer"].notna() & eval_df["answer"].notna()
     eval_df["is_correct"] = pd.NA
-    eval_df.loc[valid, "is_correct"] = eval_df.loc[valid, "model_answer"] == eval_df.loc[valid, "answer"]
+    eval_df.loc[valid, "is_correct"] = (
+        eval_df.loc[valid, "model_answer"] == eval_df.loc[valid, "answer"]
+    )
 
     if "mode_val" in eval_df.columns:
         eval_df["mode_y"] = eval_df["mode_val"]
@@ -91,15 +94,15 @@ def main() -> None:
     output_dir = Path("output") / args.run_name
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    eval_df = build_eval_df(args.base_path)       
+    eval_df = build_eval_df(args.base_path)
 
     create_num_objects_violin_per_question_id(
         eval_df,
         group_by="model_id",
         per_question_dirname="num_objects_per_question",
-        y_limit_mode="fixed"
+        y_limit_mode="fixed",
     )
-    
+
 
 if __name__ == "__main__":
     main()

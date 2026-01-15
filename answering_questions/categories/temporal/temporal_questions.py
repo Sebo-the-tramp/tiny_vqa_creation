@@ -87,7 +87,7 @@ def F_TEMPORAL_SEQUENCE_IMAGES(
     correct_pair_choice_imgs_idx = sorted(pair_choice_imgs_idx, key=lambda x: x[0])
     choices_correct_order = "-".join([pair[1] for pair in correct_pair_choice_imgs_idx])
     # so here sequence will correspond to the order chose
-    
+
     all_perms = ["-".join(p) for p in itertools.permutations(choices)]
     all_perms.remove(choices_correct_order)
     wrong_labels = random.sample(all_perms, 3)

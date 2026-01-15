@@ -7,8 +7,7 @@ api = HfApi()
 
 
 def get_metadata(model):
-
-    model_id = model['source']
+    model_id = model["source"]
     # Get model info
     info = api.model_info(model_id)
 
@@ -18,18 +17,19 @@ def get_metadata(model):
     print(f"Likes: {info.likes}")
     print(f"Last Modified: {info.lastModified}")
     print(f"Created at: {info.created_at}")
-    model['release_year'] = info.created_at.year
+    model["release_year"] = info.created_at.year
     print(f"Model Size in Billions: {info.safetensors.total/1e9:.2f}")
-    model['params_b'] = info.safetensors.total/1e9
+    model["params_b"] = info.safetensors.total / 1e9
     print(f"License: {info.card_data.get('license', 'N/A')}")
-    model['license'] = info.card_data.get('license', 'N/A')
+    model["license"] = info.card_data.get("license", "N/A")
     print(f"Tags: {info.tags}")
-    model['tags'] = info.tags
+    model["tags"] = info.tags
+
 
 for model in metadata:
     try:
         get_metadata(model)
-        print("-" * 10 + model['source'] + "-" * 10)
+        print("-" * 10 + model["source"] + "-" * 10)
         print()
         print(model)
     except Exception as e:
@@ -38,4 +38,5 @@ for model in metadata:
 print(metadata)
 with open("utils/metadata.json", "w") as f:
     import json
+
     json.dump(metadata, f, indent=4)

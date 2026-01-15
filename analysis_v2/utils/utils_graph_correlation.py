@@ -107,7 +107,9 @@ def _build_model_style(
         if marker not in markers:
             markers.append(marker)
 
-    family_markers = {fam: markers[i % len(markers)] for i, fam in enumerate(unique_families)}
+    family_markers = {
+        fam: markers[i % len(markers)] for i, fam in enumerate(unique_families)
+    }
 
     params = np.array(params, dtype=float)
     valid_params = params[~np.isnan(params)]
@@ -178,9 +180,13 @@ def create_num_objects_violin_grid(
     if sample_frac is not None and 0 < sample_frac < 1:
         sample_key = "question_id" if "question_id" in plot_df.columns else "idx"
         if sample_key in plot_df.columns:
-            rng = np.random.default_rng(sample_seed if sample_seed is not None else seed)
+            rng = np.random.default_rng(
+                sample_seed if sample_seed is not None else seed
+            )
             sampled_rows = []
-            for (_cat, _num), df_group in plot_df.groupby(["sub_category", "num_objects"], observed=True):
+            for (_cat, _num), df_group in plot_df.groupby(
+                ["sub_category", "num_objects"], observed=True
+            ):
                 unique_ids = pd.unique(df_group[sample_key])
                 if unique_ids.size == 0:
                     continue
@@ -192,17 +198,25 @@ def create_num_objects_violin_grid(
 
     if count_model_substring:
         counts_source = plot_df[
-            plot_df["model_id"].astype(str).str.contains(count_model_substring, na=False)
+            plot_df["model_id"]
+            .astype(str)
+            .str.contains(count_model_substring, na=False)
         ]
     else:
-        dedup_cols = [c for c in ["idx", "sub_category", "num_objects"] if c in plot_df.columns]
-        counts_source = plot_df.drop_duplicates(subset=dedup_cols) if dedup_cols else plot_df
+        dedup_cols = [
+            c for c in ["idx", "sub_category", "num_objects"] if c in plot_df.columns
+        ]
+        counts_source = (
+            plot_df.drop_duplicates(subset=dedup_cols) if dedup_cols else plot_df
+        )
 
     sub_categories = pd.unique(plot_df["sub_category"])
     if sub_categories.size == 0:
         raise ValueError("No sub_category values found after filtering.")
 
-    model_style, family_map = _build_model_style(plot_df, metadata_path, group_by=group_by)
+    model_style, family_map = _build_model_style(
+        plot_df, metadata_path, group_by=group_by
+    )
     rng = np.random.default_rng(seed)
 
     cols = max(1, n_cols)
@@ -256,7 +270,11 @@ def create_num_objects_violin_grid(
             order=list(range(len(num_values))),
         )
         ax.axhline(y=0.25, color="gray", linestyle="--", linewidth=1)
-        if split_values and split_values[0] in num_to_pos and split_values[1] in num_to_pos:
+        if (
+            split_values
+            and split_values[0] in num_to_pos
+            and split_values[1] in num_to_pos
+        ):
             left = num_to_pos[split_values[0]]
             right = num_to_pos[split_values[1]]
             line_x = (left + right) / 2
@@ -274,7 +292,9 @@ def create_num_objects_violin_grid(
             .count()
         )
         if global_limits:
-            label_y = global_limits[0] - n_label_offset * max(1e-6, global_limits[1] - global_limits[0])
+            label_y = global_limits[0] - n_label_offset * max(
+                1e-6, global_limits[1] - global_limits[0]
+            )
         else:
             label_y = -0.075
         for num_obj, count in counts_series.items():
@@ -310,7 +330,11 @@ def create_num_objects_violin_grid(
                 marker=marker,
             )
 
-        label = subcategory_label_map.get(str(cat), str(cat)) if subcategory_label_map else str(cat)
+        label = (
+            subcategory_label_map.get(str(cat), str(cat))
+            if subcategory_label_map
+            else str(cat)
+        )
         ax.set_title(label)
         ax.set_xlabel("Number of Objects")
         ax.set_ylabel("Accuracy")
@@ -368,7 +392,11 @@ def create_num_objects_violin_grid(
     seed_tag = f"_seed_{sample_seed}" if sample_seed is not None else ""
     out_dir.mkdir(parents=True, exist_ok=True)
     if save_grid:
-        fig.savefig(out_dir / f"{Path(filename).stem}{seed_tag}{Path(filename).suffix}", dpi=300, bbox_inches="tight")
+        fig.savefig(
+            out_dir / f"{Path(filename).stem}{seed_tag}{Path(filename).suffix}",
+            dpi=300,
+            bbox_inches="tight",
+        )
 
     if save_legend:
         fig_legend = plt.figure(figsize=legend_figsize or (5 * legend_cols, 1.0))
@@ -382,7 +410,11 @@ def create_num_objects_violin_grid(
         )
         fig_legend.tight_layout()
         legend_name = legend_filename or filename.replace(".png", "_legend.png")
-        fig_legend.savefig(out_dir / f"{Path(legend_name).stem}{seed_tag}{Path(legend_name).suffix}", dpi=300, bbox_inches="tight")
+        fig_legend.savefig(
+            out_dir / f"{Path(legend_name).stem}{seed_tag}{Path(legend_name).suffix}",
+            dpi=300,
+            bbox_inches="tight",
+        )
         plt.close(fig_legend)
 
     if save_per_category:
@@ -421,7 +453,11 @@ def create_num_objects_violin_grid(
                 order=list(range(len(num_values))),
             )
             ax_cat.axhline(y=0.25, color="gray", linestyle="--", linewidth=1)
-            if split_values and split_values[0] in num_to_pos and split_values[1] in num_to_pos:
+            if (
+                split_values
+                and split_values[0] in num_to_pos
+                and split_values[1] in num_to_pos
+            ):
                 left = num_to_pos[split_values[0]]
                 right = num_to_pos[split_values[1]]
                 line_x = (left + right) / 2
@@ -438,7 +474,9 @@ def create_num_objects_violin_grid(
                 .groupby("num_objects", observed=True)["num_objects"]
                 .count()
             )
-            label_y = agg_df["accuracy"].min() - n_label_offset * max(1e-6, agg_df["accuracy"].max() - agg_df["accuracy"].min())
+            label_y = agg_df["accuracy"].min() - n_label_offset * max(
+                1e-6, agg_df["accuracy"].max() - agg_df["accuracy"].min()
+            )
             for num_obj, count in counts_series.items():
                 x_pos = num_to_pos.get(num_obj)
                 if x_pos is None:
@@ -460,7 +498,9 @@ def create_num_objects_violin_grid(
                     continue
                 jitter = rng.uniform(-0.2, 0.2, size=x_vals.size)
                 x_jittered = x_vals + jitter
-                color, marker, size = model_style.get(str(group_id), ("black", "o", 0.5))
+                color, marker, size = model_style.get(
+                    str(group_id), ("black", "o", 0.5)
+                )
                 ax_cat.scatter(
                     x_jittered,
                     y_vals,
@@ -472,7 +512,11 @@ def create_num_objects_violin_grid(
                     marker=marker,
                 )
 
-            label = subcategory_label_map.get(str(cat), str(cat)) if subcategory_label_map else str(cat)
+            label = (
+                subcategory_label_map.get(str(cat), str(cat))
+                if subcategory_label_map
+                else str(cat)
+            )
             ax_cat.set_title(label)
             ax_cat.set_xlabel("Number of Objects")
             ax_cat.set_ylabel("Accuracy")
@@ -483,7 +527,9 @@ def create_num_objects_violin_grid(
                 y_min = float(agg_df["accuracy"].min())
                 y_max = float(agg_df["accuracy"].max())
                 pad = y_pad * max(1e-6, y_max - y_min)
-                ax_cat.set_ylim(y_min - n_label_offset * max(1e-6, y_max - y_min), y_max + pad)
+                ax_cat.set_ylim(
+                    y_min - n_label_offset * max(1e-6, y_max - y_min), y_max + pad
+                )
             else:
                 y_min = agg_df["accuracy"].min()
                 y_max = agg_df["accuracy"].max()
@@ -560,17 +606,25 @@ def create_num_objects_violin_per_question_id(
 
     if count_model_substring:
         counts_source = plot_df[
-            plot_df["model_id"].astype(str).str.contains(count_model_substring, na=False)
+            plot_df["model_id"]
+            .astype(str)
+            .str.contains(count_model_substring, na=False)
         ]
     else:
-        dedup_cols = [c for c in ["idx", "question_id", "num_objects"] if c in plot_df.columns]
-        counts_source = plot_df.drop_duplicates(subset=dedup_cols) if dedup_cols else plot_df
+        dedup_cols = [
+            c for c in ["idx", "question_id", "num_objects"] if c in plot_df.columns
+        ]
+        counts_source = (
+            plot_df.drop_duplicates(subset=dedup_cols) if dedup_cols else plot_df
+        )
 
     question_ids = pd.unique(plot_df["question_id"])
     if question_ids.size == 0:
         raise ValueError("No question_id values found after filtering.")
 
-    model_style, family_map = _build_model_style(plot_df, metadata_path, group_by=group_by)
+    model_style, family_map = _build_model_style(
+        plot_df, metadata_path, group_by=group_by
+    )
     rng = np.random.default_rng(seed)
 
     global_limits = None
@@ -653,7 +707,11 @@ def create_num_objects_violin_per_question_id(
             order=list(range(len(num_values))),
         )
         ax_q.axhline(y=0.25, color="gray", linestyle="--", linewidth=1)
-        if split_values and split_values[0] in num_to_pos and split_values[1] in num_to_pos:
+        if (
+            split_values
+            and split_values[0] in num_to_pos
+            and split_values[1] in num_to_pos
+        ):
             left = num_to_pos[split_values[0]]
             right = num_to_pos[split_values[1]]
             line_x = (left + right) / 2
@@ -671,9 +729,13 @@ def create_num_objects_violin_per_question_id(
             .count()
         )
         if global_limits:
-            label_y = global_limits[0] - n_label_offset * max(1e-6, global_limits[1] - global_limits[0])
+            label_y = global_limits[0] - n_label_offset * max(
+                1e-6, global_limits[1] - global_limits[0]
+            )
         else:
-            label_y = agg_df["accuracy"].min() - n_label_offset * max(1e-6, agg_df["accuracy"].max() - agg_df["accuracy"].min())
+            label_y = agg_df["accuracy"].min() - n_label_offset * max(
+                1e-6, agg_df["accuracy"].max() - agg_df["accuracy"].min()
+            )
         for num_obj, count in counts_series.items():
             x_pos = num_to_pos.get(num_obj)
             if x_pos is None:
@@ -707,7 +769,11 @@ def create_num_objects_violin_per_question_id(
                 marker=marker,
             )
 
-        label = question_label_map.get(str(qid), str(qid)) if question_label_map else str(qid)
+        label = (
+            question_label_map.get(str(qid), str(qid))
+            if question_label_map
+            else str(qid)
+        )
         ax_q.set_title(label)
         ax_q.set_xlabel("Number of Objects")
         ax_q.set_ylabel("Accuracy")
@@ -717,7 +783,9 @@ def create_num_objects_violin_per_question_id(
         elif y_limit_mode == "zero_to_max" and global_limits:
             y_min, y_max = global_limits
             pad = y_pad * max(1e-6, y_max - y_min)
-            ax_q.set_ylim(y_min - n_label_offset * max(1e-6, y_max - y_min), y_max + pad)
+            ax_q.set_ylim(
+                y_min - n_label_offset * max(1e-6, y_max - y_min), y_max + pad
+            )
         else:
             y_min = agg_df["accuracy"].min()
             y_max = agg_df["accuracy"].max()
@@ -731,7 +799,9 @@ def create_num_objects_violin_per_question_id(
 
         fig_q.tight_layout()
         safe_qid = _safe_filename(str(qid))
-        fig_q.savefig(per_q_dir / f"num_objects_{safe_qid}.png", dpi=300, bbox_inches="tight")
+        fig_q.savefig(
+            per_q_dir / f"num_objects_{safe_qid}.png", dpi=300, bbox_inches="tight"
+        )
         if show:
             plt.show()
         else:

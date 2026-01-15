@@ -26,7 +26,7 @@ from utils.my_exception import ImpossibleToAnswer
 from utils.all_objects import get_all_objects_names
 
 from utils.helpers import (
-    fill_questions,    
+    fill_questions,
     distance_between,
     resolve_attributes_visible_at_timestep,
     get_visible_timesteps_for_attributes_min_objects,
@@ -35,7 +35,7 @@ from utils.helpers import (
     fill_template,
     get_timestep_from_idx,
     is_object_visible_v3,
-    get_visibility_mask
+    get_visibility_mask,
 )
 
 from utils.frames_selection import (
@@ -46,7 +46,7 @@ from .mechanics_helpers import (
     get_speed,
     get_acceleration,
     get_position,
-    get_mask_collisions,    
+    get_mask_collisions,
 )
 
 from utils.config import get_config
@@ -225,25 +225,31 @@ def F_KINEMATICS_SYSTEM_STABILITY(
     # check if at least one object is visible in the last frame
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        attributes, world_state, min_objects=max(kwargs['current_world_number_of_objects']//2,1), remove_last_n_frames=0
-    )    
+        attributes,
+        world_state,
+        min_objects=max(kwargs["current_world_number_of_objects"] // 2, 1),
+        remove_last_n_frames=0,
+    )
 
     is_unstable = random.choice([True, False])
 
     # basically if the system is unstable, just give a random timestep beside the final ones
     # with the assumption that the frame n+1 will always be stable
     if is_unstable:
+        all_timesteps = list(
+            set(list(world_state["simulation"].keys())[:-20]) & set(visible_timesteps)
+        )
 
-        all_timesteps = list(set(list(world_state["simulation"].keys())[:-20]) & set(visible_timesteps))
-        
         final_timestep = get_random_timestep_from_list(
-            all_timesteps[(CLIP_LENGTH - 1) * FRAME_INTERLEAVE: -10], question
-        )        
+            all_timesteps[(CLIP_LENGTH - 1) * FRAME_INTERLEAVE : -10], question
+        )
     else:
-        final_timesteps = list(set(list(world_state["simulation"].keys())[-20:]) & set(visible_timesteps))
+        final_timesteps = list(
+            set(list(world_state["simulation"].keys())[-20:]) & set(visible_timesteps)
+        )
         if len(final_timesteps) == 0:
             raise ImpossibleToAnswer("No visible timesteps found in the last frames.")
-    
+
         final_timestep = final_timesteps[-1]
 
     resolved_attributes = resolve_attributes_visible_at_timestep(

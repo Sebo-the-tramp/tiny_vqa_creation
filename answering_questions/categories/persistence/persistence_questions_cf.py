@@ -19,7 +19,11 @@ from typing import (
 )
 
 from utils.config import get_config
-from utils.helpers import fill_questions_cf, resolve_attributes_visible_at_timestep, get_visibility_mask
+from utils.helpers import (
+    fill_questions_cf,
+    resolve_attributes_visible_at_timestep,
+    get_visibility_mask,
+)
 from utils.decorators import with_resolved_attributes_cf
 from utils.my_exception import ImpossibleToAnswer
 from utils.bin_creation import create_mc_object_names_from_dataset

@@ -75,7 +75,7 @@ def F_VISIBILITY_OBJECT(
         min_objects=min(kwargs["current_world_number_of_objects"], 2),
     )
 
-    final_timestep = get_random_timestep_from_list(visible_timesteps, question)    
+    final_timestep = get_random_timestep_from_list(visible_timesteps, question)
 
     # resolve attributes MOST visible
     resolved_attributes = resolve_attributes_most_visible_at_timestep(
@@ -94,12 +94,7 @@ def F_VISIBILITY_OBJECT(
     )
 
     return fill_questions(
-        question,
-        labels,
-        correct_idx,
-        world_state,
-        final_timestep,
-        resolved_attributes        
+        question, labels, correct_idx, world_state, final_timestep, resolved_attributes
     )
 
 

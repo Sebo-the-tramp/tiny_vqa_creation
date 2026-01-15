@@ -644,7 +644,8 @@ def F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR(
         difference = abs(obj["props"]["prs"] - poisson_ratio)
 
         if difference < MAX_ALLOWED_DIFFERENCE_POISSON_RATIO and is_object_visible_v3(
-            world_state, obj["id"], timestep):
+            world_state, obj["id"], timestep
+        ):
             similar_object = obj
             similar_object_count += 1
 
@@ -707,9 +708,10 @@ def F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST(
     highest_poisson_ratio = -float("inf")
     highest_poisson_ratio_count = 0
 
-    for obj in iter_objects(world_state):        
-
-        if obj["props"]["prs"] >= highest_poisson_ratio and is_object_visible_v3(world_state, obj["id"], timestep):
+    for obj in iter_objects(world_state):
+        if obj["props"]["prs"] >= highest_poisson_ratio and is_object_visible_v3(
+            world_state, obj["id"], timestep
+        ):
             highest_poisson_ratio = obj["props"]["prs"]
             highest_poisson_ratio_object = obj
             highest_poisson_ratio_count += 1

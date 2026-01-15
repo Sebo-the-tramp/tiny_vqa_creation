@@ -279,7 +279,9 @@ def CF_SIZE_OBJECT_BIGGER(
     for obj in iter_objects(world_state_mod):
         volume = obj.get("volume", 0.0)
 
-        if volume > biggest_volume and is_object_visible_v3(world_state_mod, obj["id"], timestep):
+        if volume > biggest_volume and is_object_visible_v3(
+            world_state_mod, obj["id"], timestep
+        ):
             biggest_volume = volume
             biggest_object = obj
 

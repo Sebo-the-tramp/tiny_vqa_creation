@@ -49,13 +49,15 @@ models = {
     "pllava-13b": "general",
 }
 
-with open("/Users/sebastiancavada/Desktop/tmp_Paris/vqa_analysis/utils/metadata.json", 'r') as f:
+with open(
+    "/Users/sebastiancavada/Desktop/tmp_Paris/vqa_analysis/utils/metadata.json", "r"
+) as f:
     config = json.load(f)
     print(config)
 
 for id in models.keys():
     # print(id)
     for entry in config:
-        if entry['id'] == id and entry["release_type"] == "open_weights":
+        if entry["id"] == id and entry["release_type"] == "open_weights":
             # print(str(round(entry['params_b'], 2)).replace('.', ',')) # printing number of params
-            print(entry['family'])
+            print(entry["family"])

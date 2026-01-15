@@ -10,7 +10,6 @@ import utils.utils_graph as utils_graph
 import utils.utils_graph_correlation as utils_graph_correlation
 from utils.utils_graph_correlation import (
     create_num_objects_violin_grid,
-    create_num_objects_violin_per_question_id,
 )
 
 # from utils.utils_paper import print_heatmap_table_latex
@@ -29,14 +28,18 @@ def build_eval_df(base_path: str | Path) -> pd.DataFrame:
         cache=True,
         add_sim_metadata=True,
     )
-    
+
     results_dir = base / run_folder / f"results_{run_folder}"
-    model_cols = sorted(p.stem.replace("_val", "") for p in results_dir.glob("*_val.json"))
+    model_cols = sorted(
+        p.stem.replace("_val", "") for p in results_dir.glob("*_val.json")
+    )
     model_cols = [c for c in model_cols if c in df.columns]
     if not model_cols:
         raise ValueError(f"No model answer columns found in {results_dir}")
 
-    df["answer"] = df["answer"].apply(lambda a: _sanitize_answer(a, max_prefix_chars=None))
+    df["answer"] = df["answer"].apply(
+        lambda a: _sanitize_answer(a, max_prefix_chars=None)
+    )
 
     id_cols = [
         c
@@ -64,7 +67,9 @@ def build_eval_df(base_path: str | Path) -> pd.DataFrame:
 
     valid = eval_df["model_answer"].notna() & eval_df["answer"].notna()
     eval_df["is_correct"] = pd.NA
-    eval_df.loc[valid, "is_correct"] = eval_df.loc[valid, "model_answer"] == eval_df.loc[valid, "answer"]
+    eval_df.loc[valid, "is_correct"] = (
+        eval_df.loc[valid, "model_answer"] == eval_df.loc[valid, "answer"]
+    )
 
     if "mode_val" in eval_df.columns:
         eval_df["mode_y"] = eval_df["mode_val"]
@@ -92,11 +97,11 @@ def main() -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
 
     eval_df = build_eval_df(args.base_path)
-    
+
     for x in range(1, 1):
         create_num_objects_violin_grid(
             eval_df,
-            group_by="model_id",        
+            group_by="model_id",
             save_per_category=True,
             per_category_dirname="num_objects_per_model",
             save_grid=True,
@@ -107,10 +112,10 @@ def main() -> None:
             sample_seed=x,
             y_limit_mode="fixed",
         )
-        
+
     create_num_objects_violin_grid(
         eval_df,
-        group_by="family",    
+        group_by="family",
         save_per_category=True,
         per_category_dirname="num_objects_per_family",
         save_grid=False,
@@ -118,8 +123,8 @@ def main() -> None:
         legend_filename="num_objects_legend_families.png",
         legend_cols=4,
         sample_frac=0.8,
-    ) 
-    
+    )
+
 
 if __name__ == "__main__":
     main()

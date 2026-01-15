@@ -12,7 +12,7 @@ import seaborn as sns
 
 warnings.filterwarnings("ignore", message=".*edgecolor.*unfilled marker.*")
 
-#/data0/sebastian.cavada/compositional-physics/tiny_vqa_deterministic/output/run_11_general_levels
+# /data0/sebastian.cavada/compositional-physics/tiny_vqa_deterministic/output/run_11_general_levels
 
 _DEFAULT_MARKERS = [
     "o",
@@ -106,7 +106,9 @@ def _build_model_style(
         if marker not in markers:
             markers.append(marker)
 
-    family_markers = {fam: markers[i % len(markers)] for i, fam in enumerate(unique_families)}
+    family_markers = {
+        fam: markers[i % len(markers)] for i, fam in enumerate(unique_families)
+    }
 
     params = np.array(params, dtype=float)
     valid_params = params[~np.isnan(params)]
@@ -120,7 +122,6 @@ def _build_model_style(
         model_style[str(group_id)] = (color, family_markers.get(fam, "o"), float(size))
 
     return model_style, family_map
-
 
 
 def create_scatter_by_family(
@@ -151,7 +152,9 @@ def create_scatter_by_family(
     if "sub_category" not in eval_df.columns:
         raise KeyError("eval_df must include 'sub_category'.")
 
-    question_col = "question_id_base" if "question_id_base" in eval_df.columns else "question_id"
+    question_col = (
+        "question_id_base" if "question_id_base" in eval_df.columns else "question_id"
+    )
     if question_col not in eval_df.columns:
         raise KeyError("eval_df must include 'question_id' or 'question_id_base'.")
 
@@ -185,16 +188,22 @@ def create_scatter_by_family(
 
     line_styles = ["-", "--", "-.", ":", (0, (3, 1, 1, 1)), (0, (5, 3))]
 
-    def _plot_subset(plot_df: pd.DataFrame, title_suffix: str, output_name: str) -> plt.Figure:
+    def _plot_subset(
+        plot_df: pd.DataFrame, title_suffix: str, output_name: str
+    ) -> plt.Figure:
         q_scores = (
-            plot_df.groupby(["family", question_col, "level", "sub_category"], observed=True)["accuracy"]
+            plot_df.groupby(
+                ["family", question_col, "level", "sub_category"], observed=True
+            )["accuracy"]
             .mean()
             .reset_index()
             .dropna()
         )
 
         subcat_scores = (
-            q_scores.groupby(["family", "level", "sub_category"], observed=True)["accuracy"]
+            q_scores.groupby(["family", "level", "sub_category"], observed=True)[
+                "accuracy"
+            ]
             .mean()
             .reset_index(name="subcat_acc")
             .dropna()
@@ -220,8 +229,12 @@ def create_scatter_by_family(
             y_err = fam_data["band_width"].values
             color, marker, _size = family_style.get(family, ("black", "o", 0.5))
             ls = line_styles[i % len(line_styles)]
-            ax.plot(x, y, color=color, linestyle=ls, linewidth=2, alpha=0.85, label=family)
-            ax.scatter(x, y, color=color, marker=marker, s=60, edgecolor="white", linewidth=0.7)
+            ax.plot(
+                x, y, color=color, linestyle=ls, linewidth=2, alpha=0.85, label=family
+            )
+            ax.scatter(
+                x, y, color=color, marker=marker, s=60, edgecolor="white", linewidth=0.7
+            )
             if np.isfinite(y_err).any():
                 ax.fill_between(x, y - y_err, y + y_err, color=color, alpha=0.12)
 

@@ -671,7 +671,8 @@ def is_object_visible_v3(world_state, obj_id, timestep):
 
 def is_object_visible_v3_soft(world_state, obj_id, timestep):
     return (
-        get_visibility_ratio_v3_soft(world_state, obj_id, timestep) >= VISIBILITY_THRESHOLD
+        get_visibility_ratio_v3_soft(world_state, obj_id, timestep)
+        >= VISIBILITY_THRESHOLD
     )
 
 
@@ -771,7 +772,7 @@ def get_visible_timesteps_for_attributes_min_objects(
     world_state: Mapping[str, Any],
     min_objects=1,
     min_n_frames=8,
-    remove_last_n_frames=10, # this is to avoid that the last frames, where everything is static, are considered
+    remove_last_n_frames=10,  # this is to avoid that the last frames, where everything is static, are considered
 ) -> List[str]:
     # I think attributes is not needed I just need to check that more than min_objects with
     # different models are visible at the same time
@@ -783,7 +784,7 @@ def get_visible_timesteps_for_attributes_min_objects(
         for obj in iter_objects(world_state):
             obj_id = obj.get("id")
             if not obj_id:
-                continue            
+                continue
 
             if is_object_visible_v3(world_state, obj_id, timestep):
                 visible_objects_id.append(obj_id)
@@ -818,7 +819,9 @@ def get_visible_timesteps_for_attributes_min_objects(
             "Not enough timesteps to remove the last frames where everything is static."
         )
     if remove_last_n_frames > 0:
-        return visible_timesteps[:-remove_last_n_frames]  # remove the last frames where everything is static
+        return visible_timesteps[
+            :-remove_last_n_frames
+        ]  # remove the last frames where everything is static
     else:
         return visible_timesteps
 
@@ -946,7 +949,7 @@ def fill_template(
             # mapped_name = resolved_attributes[attribute]["choice"]["name"] --> OLD way
             question["question"] = question["question"].replace(
                 f"<{attribute}>", mapped_name
-            )            
+            )
         else:
             question["question"] = question["question"].replace(
                 f"<{attribute}>",
@@ -1209,7 +1212,7 @@ resolver = {
     "OBJECT-CF": get_first_object_and_remove,
     "STRESS-THRESHOLD": lambda: round(
         random.uniform(0.0, 10.0), 1
-    ),  # random stress threshold between 10 and 100 MPa    
+    ),  # random stress threshold between 10 and 100 MPa
     "VOLUME": lambda: round(
         random.uniform(0.001, 0.5), 1
     ),  # random volume between 0.001 and .5 cubic meters
@@ -1341,4 +1344,3 @@ def ensure_vector_size(
     while len(padded) < size:
         padded.append(0.0)
     return tuple(padded)
-

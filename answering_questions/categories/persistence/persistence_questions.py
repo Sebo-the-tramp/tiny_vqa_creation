@@ -54,7 +54,7 @@ CLIP_LENGTH = get_config()["clip_length"]
 def F_PERSISTENCE_OBJECT_PRESENT(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> Sequence[str]:
-    """Which object is seen during the frames, but not visible in the last frame?"""
+    """Question: Which object is seen during the frames, but not visible in the last frame?"""
 
     assert len(attributes) == 0
 
@@ -107,6 +107,7 @@ def F_PERSISTENCE_OBJECT_PRESENT(
 def F_PERSISTENCE_OBJECT_DISAPPEAR(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> Sequence[str]:
+    """Question: Which object disappears and does not reappear in the last frame?"""
     return F_PERSISTENCE_OBJECT_PRESENT(
         world_state, question, kwargs["destination_simulation_id_path"]
     )
@@ -116,7 +117,7 @@ def F_PERSISTENCE_OBJECT_DISAPPEAR(
 def F_PERSISTENCE_OBJECT_TOTAL_COUNT(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> Sequence[str]:
-    """How many objects are there in the last frame in total, including those currently hidden and/or out of frame?"""
+    """Question: How many objects are there in the last frame in total, including those currently hidden and/or out of frame?"""
 
     assert len(attributes) == 0
 
@@ -184,7 +185,7 @@ def F_PERSISTENCE_OBJECT_TOTAL_COUNT(
 def F_PERSISTENCE_OBJECT_TOTAL_COUNT_HIDDEN(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> Sequence[str]:
-    """How many objects are present but not visible in the last frame?"""
+    """Question: How many objects are present but not visible in the last frame?"""
 
     assert len(attributes) == 0
 

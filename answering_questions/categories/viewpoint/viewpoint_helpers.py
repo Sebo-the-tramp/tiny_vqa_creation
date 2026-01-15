@@ -21,7 +21,7 @@ import math
 import random
 import numpy as np
 
-from utils.helpers import get_visibility_mask
+from utils.helpers import get_visibility_mask_soft
 
 Number = Union[int, float]
 Vector = Tuple[float, float, float]
@@ -163,7 +163,7 @@ def get_number_of_visible_objects(world_state: WorldState, timestep: str) -> int
     Count the number of visible objects in the world state at a specific timestep.
     """
 
-    visibility_mask, _ = get_visibility_mask(world_state, max_timestep=timestep)
+    visibility_mask, _ = get_visibility_mask_soft(world_state, max_timestep=timestep)
     total_visible_objects = np.sum(visibility_mask, axis=0)
     timestep_index = world_state["simulation"][timestep]["frame_idx"]
     return (

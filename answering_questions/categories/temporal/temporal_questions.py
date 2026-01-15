@@ -53,8 +53,9 @@ CLIP_LENGTH = get_config()["clip_length"]
 def F_TEMPORAL_SEQUENCE_IMAGES(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> Sequence[str]:
-    """here we select a sequence of uniformly sampled images and return the next with random
-    position in the simulations steps"""
+    """
+    Question: Given the sequence of images A. - B. - C. - D. What is the correct rearrangement of images showing the events in the scene?
+    """
     assert len(attributes) == 0
     n_frames = 4
 
@@ -86,13 +87,16 @@ def F_TEMPORAL_SEQUENCE_IMAGES(
     correct_pair_choice_imgs_idx = sorted(pair_choice_imgs_idx, key=lambda x: x[0])
     choices_correct_order = "-".join([pair[1] for pair in correct_pair_choice_imgs_idx])
     # so here sequence will correspond to the order chose
-    other_choices = ["-".join(random.sample(choices, len(choices))) for _ in range(3)]
+    
+    all_perms = ["-".join(p) for p in itertools.permutations(choices)]
+    all_perms.remove(choices_correct_order)
+    wrong_labels = random.sample(all_perms, 3)
 
     correct_index = get_random_integer(0, 3)
     labels = (
-        other_choices[:correct_index]
+        wrong_labels[:correct_index]
         + [choices_correct_order]
-        + other_choices[correct_index:]
+        + wrong_labels[correct_index:]
     )
 
     return [[question, labels, correct_index, imgs_idx_shuffled, world_state, {}]]
@@ -154,6 +158,7 @@ def F_TEMPORAL_PREDICTION_NEXT_IMAGE(
 def F_TEMPORAL_PREDICTION_NEXT_IMAGE_GRANULARITY_1(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> Sequence[str]:
+    """Question: Which frame is most likely to occur after the last frame in the sequence?"""
     kwargs["frame_interleave"] = 1
     return F_TEMPORAL_PREDICTION_NEXT_IMAGE(world_state, question, attributes, **kwargs)
 
@@ -162,6 +167,7 @@ def F_TEMPORAL_PREDICTION_NEXT_IMAGE_GRANULARITY_1(
 def F_TEMPORAL_PREDICTION_NEXT_IMAGE_GRANULARITY_2(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> Sequence[str]:
+    """Question: Which frame is most likely to occur after the last frame in the sequence?"""
     kwargs["frame_interleave"] = 2
     return F_TEMPORAL_PREDICTION_NEXT_IMAGE(world_state, question, attributes, **kwargs)
 
@@ -170,6 +176,7 @@ def F_TEMPORAL_PREDICTION_NEXT_IMAGE_GRANULARITY_2(
 def F_TEMPORAL_PREDICTION_NEXT_IMAGE_GRANULARITY_5(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> Sequence[str]:
+    """Question: Which frame is most likely to occur after the last frame in the sequence?"""
     kwargs["frame_interleave"] = 5
     return F_TEMPORAL_PREDICTION_NEXT_IMAGE(world_state, question, attributes, **kwargs)
 
@@ -178,8 +185,9 @@ def F_TEMPORAL_PREDICTION_NEXT_IMAGE_GRANULARITY_5(
 def F_TEMPORAL_PREDICTION_PREVIOUS_IMAGE(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> Sequence[str]:
-    """here we select a sequence of uniformly sampled images and return the next with random
-    position in the simulations steps"""
+    """
+    Question: Which frame is most likely to have occurred just before the first frame in the sequence?
+    """
     assert len(attributes) == 0
     n_frames = 5
 
@@ -229,8 +237,9 @@ def F_TEMPORAL_PREDICTION_PREVIOUS_IMAGE(
 def F_TEMPORAL_PREDICTION_MISSING_IMAGE(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> Sequence[str]:
-    """here we select a sequence of uniformly sampled images and return the next with random
-    position in the simulations steps"""
+    """
+    Question: What frame is the most likely to have been removed from the scene?
+    """
     assert len(attributes) == 0
 
     n_frames = 5
@@ -287,6 +296,7 @@ def F_TEMPORAL_PREDICTION_MISSING_IMAGE(
 def F_CAMERA_MOTION_DIRECTION(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> Sequence[str]:
+    """Question: What is the predominant direction of the camera’s motion across the sequence?"""
     assert len(attributes) == 0
     n_frames = 8
     all_timesteps = len(world_state["simulation"]) // 3
@@ -434,6 +444,7 @@ def F_CAMERA_MOTION_DIRECTION(
 def F_CAMERA_ZOOM_BEHAVIOR(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> Sequence[str]:
+    """Question: How does the camera’s zoom level change across the sequence?"""
     assert len(attributes) == 0
 
     n_frames = 8

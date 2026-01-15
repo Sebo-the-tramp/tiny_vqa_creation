@@ -65,6 +65,7 @@ MIN_VISIBLE_PIXELS = get_config()["min_pixels_visible"]
 def F_VISIBILITY_OBJECT(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
+    """Question: Which of these objects is visible in the image/frame?"""
     assert len(attributes) == 0
 
     # First we find the pairs of objects visible
@@ -74,18 +75,7 @@ def F_VISIBILITY_OBJECT(
         min_objects=min(kwargs["current_world_number_of_objects"], 2),
     )
 
-    final_timestep = get_random_timestep_from_list(visible_timesteps, question)
-    final_timestep_index = world_state["simulation"][final_timestep]["frame_idx"]
-
-    candidates = [
-        k for k in (1, 2, 3, 4) if final_timestep_index - (k * (CLIP_LENGTH - 1)) >= 0
-    ]
-    if len(candidates) == 0:
-        raise ImpossibleToAnswer("Not enough previous frames to determine visibility.")
-
-    max_k = max(candidates)
-    initial_timestep_index = final_timestep_index - (max_k * (CLIP_LENGTH - 1))
-    initial_timestep = get_timestep_from_idx(initial_timestep_index)
+    final_timestep = get_random_timestep_from_list(visible_timesteps, question)    
 
     # resolve attributes MOST visible
     resolved_attributes = resolve_attributes_most_visible_at_timestep(
@@ -109,8 +99,7 @@ def F_VISIBILITY_OBJECT(
         correct_idx,
         world_state,
         final_timestep,
-        resolved_attributes,
-        initial_timestep=initial_timestep,
+        resolved_attributes        
     )
 
 
@@ -118,6 +107,7 @@ def F_VISIBILITY_OBJECT(
 def F_VISIBILITY_OBJECT_COUNT(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
+    """Question: How many objects are visible in the image/frame?"""
     assert len(attributes) == 0
 
     # First we find the pairs of objects visible
@@ -175,6 +165,7 @@ def F_VISIBILITY_OBJECT_COUNT(
 def F_OCCLUSION_PERCENTAGE_OBJECT(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
+    """Question: How much of the <OBJECT> is occluded in the image/frame?"""
     assert len(attributes) == 1 and "OBJECT" in attributes
 
     # I mean it doesn't have to be visible at all it can just be any timestep
@@ -240,8 +231,7 @@ def F_VIEWPOINT_CAMERA_ANGLE(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
     """
-    Maps camera pose to one of:
-    ["low angle","eye level","high angle","bird's-eye","worm's-eye"]
+    Question: From the camera's perspective, what is the camera's angle of view?
     """
     assert len(attributes) == 0
 
@@ -279,6 +269,7 @@ def F_VIEWPOINT_CAMERA_ANGLE(
 def F_FOCAL_LENGTH_CLASS(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
+    """Question: Which focal‑length class best matches the perspective in the image/frame?"""
     assert len(attributes) == 0
     """
     Maps FOV to one of:

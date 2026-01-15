@@ -26,8 +26,7 @@ from utils.my_exception import ImpossibleToAnswer
 from utils.all_objects import get_all_objects_names
 
 from utils.helpers import (
-    fill_questions,
-    iter_objects,
+    fill_questions,    
     distance_between,
     resolve_attributes_visible_at_timestep,
     get_visible_timesteps_for_attributes_min_objects,
@@ -78,7 +77,9 @@ ROTATION_TOLERANCE = get_config()["rotation_tolerance"]
 def F_KINEMATICS_SPEED_OBJECT(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
-    """Return the velocity of the object referenced in the question."""
+    """
+    Question: What is the speed of the <OBJECT> visible in the image?
+    """
 
     assert len(attributes) == 1 and "OBJECT" in attributes
 
@@ -111,7 +112,9 @@ def F_KINEMATICS_SPEED_OBJECT(
 def F_KINEMATICS_ACCEL_OBJECT(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
-    """Return the velocity of the object referenced in the question."""
+    """
+    Question: What is the magnitude of acceleration of the <OBJECT> in the image?
+    """
 
     assert len(attributes) == 1 and "OBJECT" in attributes
 
@@ -144,7 +147,9 @@ def F_KINEMATICS_ACCEL_OBJECT(
 def F_KINEMATICS_DISTANCE_TRAVELED_INTERVAL(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
-    """Count objects of a specific type that moved more than a given metric distance."""
+    """
+    Question: Considering the geometrical center of <OBJECT>, what is the straight-line distance it has traveled during the sequence?
+    """
     assert len(attributes) == 1 and "OBJECT" in attributes
 
     # First we find the pairs of objects visible
@@ -212,10 +217,7 @@ def F_KINEMATICS_SYSTEM_STABILITY(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
     """
-    Stable: The system has stopped. (False)
-    Unstable: The system is currently moving. (True)
-    Cyclic: The system has returned to its exact starting position. (False - very rare in physics towers)
-    Invisible: The objects have moved out of the frame entirely. (False - assuming they are visible)
+    Question: Analyzing the motion trend across the 8-frame sequence, which statement best describes the system's state at the final frame?
     """
 
     assert len(attributes) == 0
@@ -224,9 +226,7 @@ def F_KINEMATICS_SYSTEM_STABILITY(
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
         attributes, world_state, min_objects=max(kwargs['current_world_number_of_objects']//2,1), remove_last_n_frames=0
-    )
-
-    # motion_mask = get_motion_mask(world_state)    
+    )    
 
     is_unstable = random.choice([True, False])
 
@@ -272,6 +272,7 @@ def F_KINEMATICS_SYSTEM_STABILITY(
 def F_COLLISION_OBJECT_OBJECT_FRAME_SINGLE(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
+    """Question: Which object is the <OBJECT> colliding with in the frame?"""
     if kwargs["current_world_number_of_objects"] < 2:
         raise ImpossibleToAnswer(
             "Not enough objects in the scene for a collision to happen."
@@ -360,6 +361,7 @@ def F_COLLISION_OBJECT_OBJECT_FRAME_SINGLE(
 def F_COLLISION_OBJECT_OBJECT_FRAME_MULTI(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
+    """Question: In which frame is the <OBJECT> most likely colliding with another object?"""
     if kwargs["current_world_number_of_objects"] < 2:
         raise ImpossibleToAnswer(
             "Not enough objects in the scene for a collision to happen."
@@ -437,6 +439,7 @@ def F_COLLISION_OBJECT_OBJECT_FRAME_MULTI(
 def F_COLLISION_OBJECT_SCENE_FRAME_MULTI(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
+    """Question: In which frame is the <OBJECT> most likely colliding with the static scene?"""
     assert len(attributes) == 1 and "OBJECT" in attributes
 
     collision_mask = get_mask_collisions(world_state)

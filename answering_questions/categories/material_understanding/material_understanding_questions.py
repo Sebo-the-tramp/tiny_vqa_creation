@@ -70,6 +70,7 @@ MIN_LOG_DIFF = get_config()["min_log_difference_youngs_modulus_highest"]
 def F_MASS_OBJECT(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
+    """Question: What is the mass of the <OBJECT> seen in the image?"""
     assert len(attributes) == 1 and "OBJECT" in attributes
 
     # First we find the pairs of objects visible
@@ -102,6 +103,7 @@ def F_MASS_OBJECT(
 def F_MASS_HEAVIEST_OBJECT(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
+    """Question: Which single object seen in the image has the greatest mass?"""
     assert len(attributes) == 0
 
     if kwargs["current_world_number_of_objects"] < 2:
@@ -157,6 +159,7 @@ def F_MASS_HEAVIEST_OBJECT(
 def F_MASS_LIGHTEST_OBJECT(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
+    """Question: Which single object seen in the image has the least mass?"""
     assert len(attributes) == 0
 
     if kwargs["current_world_number_of_objects"] < 2:
@@ -212,6 +215,7 @@ def F_MASS_LIGHTEST_OBJECT(
 def F_PHYSICS_PROPERTY_DENSITY_OBJECT(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
+    """Question: What is the average (or effective) density of the <OBJECT> seen in the image?"""
     assert len(attributes) == 1 and "OBJECT"
 
     # First we find the pairs of objects visible
@@ -244,6 +248,7 @@ def F_PHYSICS_PROPERTY_DENSITY_OBJECT(
 def F_PHYSICS_PROPERTY_DENSITY_OBJECT_RELATIVE(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
+    """Question: Which object seen in the image has the highest effective density?"""
     assert len(attributes) == 0
 
     # First we find the pairs of objects visible
@@ -285,6 +290,7 @@ def F_PHYSICS_PROPERTY_DENSITY_OBJECT_RELATIVE(
 def F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
+    """Question: What is the Young's modulus of the <OBJECT> seen in the image?"""
     assert len(attributes) == 1 and "OBJECT"
 
     # First we find the pairs of objects visible
@@ -317,6 +323,7 @@ def F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT(
 def F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
+    """Question: Which object seen in the image has a Young's Modulus most similar to that of the <OBJECT>?"""
     assert len(attributes) == 1 and "OBJECT" in attributes
 
     if kwargs["current_world_number_of_objects"] < 2:
@@ -379,6 +386,7 @@ def F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR(
 def F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR_NON_TECHNICAL(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
+    """Question: Which object seen in the image has a softness most similar to that of the <OBJECT>?"""
     # better to reuse the previous function
     return F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR(
         world_state, question, kwargs["destination_simulation_id_path"]
@@ -389,6 +397,7 @@ def F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR_NON_TECHNICAL(
 def F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
+    """Question: Which object seen in the image exhibits the highest Young's Modulus?"""
     assert len(attributes) == 0
 
     # First we find the pairs of objects visible
@@ -458,6 +467,7 @@ def F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST(
 def F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST_NON_TECHNICAL(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
+    """Question: Which object seen in the image is the stiffest?"""
     # better to reuse the previous function
     return F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST(
         world_state, question, kwargs["destination_simulation_id_path"]
@@ -514,6 +524,7 @@ def F_PHYSICS_PROPERTY_YOUNG_MODULUS_BEHAVIOR(
 def F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_HIGH_LEVEL(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
+    """Question: Which attribute best describes the <OBJECT> seen in the image in terms of deformability?"""
     assert len(attributes) == 1 and "OBJECT" in attributes
 
     # First we find the pairs of objects visible
@@ -573,6 +584,7 @@ def F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_HIGH_LEVEL(
 def F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
+    """Question: What is the Poisson ratio of the <OBJECT> seen in the image?"""
     assert len(attributes) == 1 and "OBJECT"
 
     # First we find the pairs of objects visible
@@ -605,6 +617,7 @@ def F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT(
 def F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
+    """Question: Which object has a Poisson ratio most similar to that of the <OBJECT> seen in the image?"""
     assert len(attributes) == 1 and "OBJECT"
 
     # First we find the pairs of objects visible
@@ -628,16 +641,10 @@ def F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR(
         if obj["id"] == ref_object["id"]:
             continue  # skip the same object
 
-        obj_state = world_state["simulation"][timestep]["objects"][obj["id"]]
-
-        is_object_visible = (
-            obj_state["infov_pixels"] > MIN_VISIBLE_PIXELS
-            and obj_state["fov_visibility"] >= VISIBILITY_THRESHOLD
-        )
-
         difference = abs(obj["props"]["prs"] - poisson_ratio)
 
-        if difference < MAX_ALLOWED_DIFFERENCE_POISSON_RATIO and is_object_visible:
+        if difference < MAX_ALLOWED_DIFFERENCE_POISSON_RATIO and is_object_visible_v3(
+            world_state, obj["id"], timestep):
             similar_object = obj
             similar_object_count += 1
 
@@ -671,6 +678,7 @@ def F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR(
 def F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR_NON_TECHNICAL(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
+    """Question: Which object acts most like the <OBJECT> seen in the image in terms of how it bulges sideways when squeezed?"""
     # better to reuse the previous function
     return F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR(
         world_state, question, kwargs["destination_simulation_id_path"]
@@ -681,6 +689,7 @@ def F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR_NON_TECHNICAL(
 def F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
+    """Question: Which object seen in the image exhibits the largest Poisson ratio?"""
     assert len(attributes) == 0
 
     # First we find the pairs of objects visible
@@ -698,15 +707,9 @@ def F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST(
     highest_poisson_ratio = -float("inf")
     highest_poisson_ratio_count = 0
 
-    for obj in iter_objects(world_state):
-        obj_state = world_state["simulation"][timestep]["objects"][obj["id"]]
+    for obj in iter_objects(world_state):        
 
-        is_object_visible = (
-            obj_state["infov_pixels"] > MIN_VISIBLE_PIXELS
-            and obj_state["fov_visibility"] >= VISIBILITY_THRESHOLD
-        )
-
-        if obj["props"]["prs"] >= highest_poisson_ratio and is_object_visible:
+        if obj["props"]["prs"] >= highest_poisson_ratio and is_object_visible_v3(world_state, obj["id"], timestep):
             highest_poisson_ratio = obj["props"]["prs"]
             highest_poisson_ratio_object = obj
             highest_poisson_ratio_count += 1
@@ -736,6 +739,7 @@ def F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST(
 def F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST_NON_TECHNICAL(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
+    """Question: Which object seen in the image bulges out the most when you press on it?"""
     # better to reuse the previous function
     return F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST(
         world_state, question, kwargs["destination_simulation_id_path"]
@@ -746,6 +750,7 @@ def F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST_NON_TECHNICAL(
 def F_PHYSICS_PROPERTY_POISSON_HIGH_LEVEL(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
+    """Question: If the <OBJECT> seen in the image were compressed vertically, how would its horizontal dimensions change?"""
     assert len(attributes) == 1 and "OBJECT"
 
     # First we find the pairs of objects visible
@@ -788,6 +793,7 @@ def F_PHYSICS_PROPERTY_POISSON_HIGH_LEVEL(
 def F_MATERIAL_IDENTIFICATION_SIMILAR_OBJECT(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
+    """Question: Which object seen in the image is made of a material most similar to that of the <OBJECT>?"""
     assert len(attributes) == 1 and "OBJECT"
 
     # First we find the pairs of objects visible
@@ -841,6 +847,7 @@ def F_MATERIAL_IDENTIFICATION_SIMILAR_OBJECT(
 def F_MATERIAL_IDENTIFICATION_OBJECT_LEVEL_1(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
+    """Question: What material is the <OBJECT> seen in the image made of?"""
     assert len(attributes) == 1 and "OBJECT"
 
     # First we find the pairs of objects visible
@@ -875,6 +882,7 @@ def F_MATERIAL_IDENTIFICATION_OBJECT_LEVEL_1(
 def F_MATERIAL_IDENTIFICATION_OBJECT_LEVEL_2(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
+    """Question: What material is the <OBJECT> seen in the image made of?"""
     assert len(attributes) == 1 and "OBJECT"
 
     # First we find the pairs of objects visible
@@ -909,6 +917,7 @@ def F_MATERIAL_IDENTIFICATION_OBJECT_LEVEL_2(
 def F_MATERIAL_IDENTIFICATION_OBJECT_LEVEL_3(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
+    """Question: What material is the <OBJECT> seen in the image made of?"""
     assert len(attributes) == 1 and "OBJECT"
 
     # First we find the pairs of objects visible

@@ -68,6 +68,7 @@ MIN_VISIBLE_PIXELS = get_config()["min_pixels_visible"]
 def F_DISTANCE_OBJECT_OBJECT(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
+    """Question: What is the distance between the geometrical centers of <OBJECT_1> and the <OBJECT_2>?"""
     assert (
         len(attributes) == 2 and "OBJECT_1" in attributes and "OBJECT_2" in attributes
     )
@@ -111,6 +112,7 @@ def F_DISTANCE_OBJECT_OBJECT(
 def F_DISTANCE_OBJECT_CAMERA_DISTANCE(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
+    """Question: What is the distance between the geometrical center of the <OBJECT> and the camera?"""
     assert len(attributes) == 1 and "OBJECT" in attributes
 
     # First we find the pairs of objects visible
@@ -146,6 +148,7 @@ def F_DISTANCE_OBJECT_CAMERA_DISTANCE(
 def F_CLOSEST_OBJECT_CAMERA(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
+    """Question: Which object in the image is the closest to the camera?"""
     assert len(attributes) == 0
 
     # we need this cause else there cannot be a comparison
@@ -193,6 +196,7 @@ def F_CLOSEST_OBJECT_CAMERA(
 def F_CLOSEST_OBJECT_OBJECT(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
+    """Question: Which object in the image is closest to the geometrical center of the <OBJECT>?"""
     assert len(attributes) == 1 and "OBJECT" in attributes
 
     if kwargs["current_world_number_of_objects"] < 2:
@@ -237,6 +241,7 @@ def F_CLOSEST_OBJECT_OBJECT(
 def F_SIZE_OBJECT(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> int:
+    """Question: What is the volume of the <OBJECT> in the image?"""
     assert len(attributes) == 1 and "OBJECT" in attributes
 
     # First we find the pairs of objects visible
@@ -272,6 +277,7 @@ def F_SIZE_OBJECT(
 def F_SIZE_OBJECT_BIGGER(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> str:
+    """Question: Which single object in the image has the biggest volume?"""
     assert len(attributes) == 0
 
     if kwargs["current_world_number_of_objects"] < 2:
@@ -383,6 +389,7 @@ def F_SIZE_OBJECT_SMALLER(
 def F_LAYOUT_POSITION_OBJECT_OBJECT(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs
 ) -> str:
+    """Question: From the camera’s perspective, where is the <OBJECT_1> relative to the <OBJECT_2>?"""
     assert (
         len(attributes) == 2 and "OBJECT_1" in attributes and "OBJECT_2" in attributes
     )

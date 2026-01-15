@@ -27,7 +27,8 @@ from utils.helpers import (
     iter_objects,
     distance_between,
     fill_questions_cf,
-    get_visibility_mask,    
+    get_visibility_mask,
+    is_object_visible_v3,
     get_random_timestep_from_list,
     resolve_attributes_visible_at_timestep,
     get_visible_timesteps_for_attributes_min_objects,
@@ -277,17 +278,8 @@ def CF_SIZE_OBJECT_BIGGER(
     biggest_volume = -1.0
     for obj in iter_objects(world_state_mod):
         volume = obj.get("volume", 0.0)
-        visible_at_timestep = (
-            world_state_mod["simulation"][timestep]["objects"][obj["id"]][
-                "infov_pixels"
-            ]
-            > MIN_VISIBLE_PIXELS
-            and world_state_mod["simulation"][timestep]["objects"][obj["id"]][
-                "fov_visibility"
-            ]
-            > VISIBILITY_THRESHOLD
-        )
-        if volume > biggest_volume and visible_at_timestep:
+
+        if volume > biggest_volume and is_object_visible_v3(world_state_mod, obj["id"], timestep):
             biggest_volume = volume
             biggest_object = obj
 

@@ -487,9 +487,26 @@ def F_COLLISION_OBJECT_SCENE_FRAME_MULTI(
     else:
         raise ImpossibleToAnswer("No collision found in the visible timesteps.")
 
-    frames_og = sample_frames_before_timestep(
-        world_state, collision_timestep, num_frames=4, frame_interleave=4
-    )
+    confounding_frames = []
+
+    for timestep in world_state["simulation"].keys():
+        all_other_objects_far_from_collision, _ = get_present_and_far_from_collision(
+            world_state, timestep, collision_object_id
+        )
+
+        if (
+            len(all_other_objects_far_from_collision)
+            != kwargs["current_world_number_of_objects"] - 1
+        ):
+            continue  # some other object is too close to the collision object
+
+        else:
+            confounding_frames.append(timestep)
+
+    if len(confounding_frames) < 3:
+        raise ImpossibleToAnswer(
+            "Not enough frames found where the object is visible before collision."
+        )
 
     # technically the resolved object should be the one colliding
     resolved_attributes = {
@@ -499,15 +516,14 @@ def F_COLLISION_OBJECT_SCENE_FRAME_MULTI(
         }
     }
 
-    # Create the labels copy
-    labels = frames_og.copy()
+    correct_frame = sample_frames_before_timestep(
+        world_state, collision_timestep, num_frames=1, frame_interleave=2
+    )
 
-    correct_frame = frames_og[3]
+    random.shuffle(confounding_frames)
+    confounding_frames = confounding_frames[:3]
 
-    indices = list(range(len(frames_og)))
-    random.shuffle(indices)
-
-    frames = [frames_og[i] for i in indices]
+    frames = confounding_frames + [correct_frame[0]]
     labels = frames.copy()
 
     correct_idx = labels.index(correct_frame)

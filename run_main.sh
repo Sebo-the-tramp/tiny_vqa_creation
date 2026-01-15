@@ -18,50 +18,50 @@ fi
 
 cd answering_questions
 
-GENERAL_RUN_COUNT=20_test_pa
+GENERAL_RUN_COUNT=20
 
 ####################
-
-# python main_parallel.py --simulation_path "${BASE_PATH}/random/" "${BASE_PATH}/random-cam-stationary/" \
-#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
-#     --run_name "run_${GENERAL_RUN_COUNT}_general" \
-#     --n_scenes 5000 \
-#     --exclude_simulations_file "problematic_paths.txt" \
-#     --n_proc $CPUS \
-#     --timeit \
-#    --include_categories "mechanics" \
-
-# RUN_NAME="run_${GENERAL_RUN_COUNT}_general"
-# python ./subsample_questions_percentage.py \
-#     --count 10000 \
-#     --input ../output/${RUN_NAME}/test_${RUN_NAME}.json \
-#     --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
-#     --percentage-map ./balancing_sub_categories.json \
-#     --seed 42
-
-# cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
-
-
-# RUN_NAME="run_${GENERAL_RUN_COUNT}_general_obj_num"
-# python ./subsample_questions_numbers.py \
-#     --input ../output/run_${GENERAL_RUN_COUNT}_general/test_run_${GENERAL_RUN_COUNT}_general.json \
-#     --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
-#     --count 15000 \
-#     --seed 42
-
-# cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
-
-# -------------------------------------------------------------
-# TEST PA
 
 python main_parallel.py --simulation_path "${BASE_PATH}/random/" "${BASE_PATH}/random-cam-stationary/" \
     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
     --run_name "run_${GENERAL_RUN_COUNT}_general" \
-    --n_scenes 1000 \
-    --questions_file "simple_vqa_test_pa.json" \
+    --n_scenes 5000 \
     --exclude_simulations_file "problematic_paths.txt" \
     --n_proc $CPUS \
     --timeit \
+    --include_categories "mechanics" \
+
+RUN_NAME="run_${GENERAL_RUN_COUNT}_general"
+python ./subsample_questions_percentage.py \
+    --count 10000 \
+    --input ../output/${RUN_NAME}/test_${RUN_NAME}.json \
+    --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
+    --percentage-map ./balancing_sub_categories.json \
+    --seed 42
+
+cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
+
+
+RUN_NAME="run_${GENERAL_RUN_COUNT}_general_obj_num"
+python ./subsample_questions_numbers.py \
+    --input ../output/run_${GENERAL_RUN_COUNT}_general/test_run_${GENERAL_RUN_COUNT}_general.json \
+    --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
+    --count 15000 \
+    --seed 42
+
+cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
+
+# -------------------------------------------------------------
+# TEST PA
+
+# python main_parallel.py --simulation_path "${BASE_PATH}/random/" "${BASE_PATH}/random-cam-stationary/" \
+#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
+#     --run_name "run_${GENERAL_RUN_COUNT}_general" \
+#     --n_scenes 1000 \
+#     --questions_file "simple_vqa_test_pa.json" \
+#     --exclude_simulations_file "problematic_paths.txt" \
+#     --n_proc $CPUS \
+#     --timeit \
 
 
 # -------------------------------------------------------------

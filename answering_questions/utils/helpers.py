@@ -1324,8 +1324,8 @@ def minimum_distance_between_OBBs(
     min_distance = -np.inf
     eps = 1e-6
 
-    center_1, extents_1, R1 = obb1["cemter"], obb1["extents"], obb1["R"]
-    center_2, extents_2, R2 = obb2["cemter"], obb2["extents"], obb2["R"]
+    center_1, extents_1, R1 = obb1["center"], obb1["extents"], obb1["R"]
+    center_2, extents_2, R2 = obb2["center"], obb2["extents"], obb2["R"]
 
     axes_1 = np.array(R1).T
     axes_2 = np.array(R2).T
@@ -1336,7 +1336,7 @@ def minimum_distance_between_OBBs(
     abs_R = np.abs(R) + eps
 
     for axis_i in range(3):
-        axis = axes_1[axes_1]
+        axis = axes_1[axis_i]
         distance_centers_projected = abs(np.dot(distance_centers, axis))
         radius_1 = extents_1[axis_i]
         radius_2 = np.dot(extents_2, abs_R[axis_i])
@@ -1356,7 +1356,7 @@ def minimum_distance_between_OBBs(
     for i in range(3):
         for j in range(3):
             axis = np.cross(axes_1[i], axes_2[j])
-            if np.linalg.norm(axis) < axes_2:
+            if np.linalg.norm(axis) < eps:
                 continue  # parallel edges → skip
 
             center_sep = abs(np.dot(distance_centers, axis))

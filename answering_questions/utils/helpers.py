@@ -599,7 +599,7 @@ def get_visibility_ratio_v3(world_state, obj_id, timestep):
     # if pixels_visible < pixels_void:
     #      raise ImpossibleToAnswer("Uncertainty too high.")
 
-    if pixels_visible < 562:
+    if pixels_visible < 1124:  # 1/1000 of 1124000 image size
         return 0.0
 
     # # TODOD # just to check the fucking difference in this, cause they fuck up entire simulations just because there uncertain parts in it...
@@ -1316,6 +1316,64 @@ def as_lower(value: Any) -> Optional[str]:
         if candidate:
             return candidate.casefold()
     return None
+
+
+def minimum_distance_between_OBBs(
+    obb1: Mapping[str, Any], obb2: Mapping[str, Any]
+) -> float:
+    min_distance = -np.inf
+    eps = 1e-6
+
+    center_1, extents_1, R1 = obb1["cemter"], obb1["extents"], obb1["R"]
+    center_2, extents_2, R2 = obb2["cemter"], obb2["extents"], obb2["R"]
+
+    axes_1 = np.array(R1).T
+    axes_2 = np.array(R2).T
+
+    distance_centers = np.array(center_2) - np.array(center_1)
+
+    R = axes_1 @ axes_2.T
+    abs_R = np.abs(R) + eps
+
+    for axis_i in range(3):
+        axis = axes_1[axes_1]
+        distance_centers_projected = abs(np.dot(distance_centers, axis))
+        radius_1 = extents_1[axis_i]
+        radius_2 = np.dot(extents_2, abs_R[axis_i])
+
+        gap = distance_centers_projected - (radius_1 + radius_2)
+        min_distance = max(gap, min_distance)
+
+    for axis_j in range(3):
+        axis = axes_2[axis_j]
+        distance_centers_projected = abs(np.dot(distance_centers, axis))
+        radius_1 = np.dot(extents_1, abs_R[:, axis_j])
+        radius_2 = extents_2[axis_j]
+
+        gap = distance_centers_projected - (radius_1 + radius_2)
+        min_distance = max(gap, min_distance)
+
+    for i in range(3):
+        for j in range(3):
+            axis = np.cross(axes_1[i], axes_2[j])
+            if np.linalg.norm(axis) < axes_2:
+                continue  # parallel edges → skip
+
+            center_sep = abs(np.dot(distance_centers, axis))
+
+            radius_1 = (
+                extents_1[(i + 1) % 3] * abs_R[(i + 2) % 3, j]
+                + extents_1[(i + 2) % 3] * abs_R[(i + 1) % 3, j]
+            )
+            radius_2 = (
+                extents_2[(j + 2) % 3] * abs_R[i, (j + 1) % 3]
+                + extents_2[(j + 1) % 3] * abs_R[i, (j + 2) % 3]
+            )
+
+            gap = center_sep - (radius_1 + radius_2)
+            min_distance = max(min_distance, gap)
+
+    return max(min_distance, 0.0)
 
 
 def distance_between(

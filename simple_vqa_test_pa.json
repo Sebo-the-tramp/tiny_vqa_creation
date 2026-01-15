@@ -1,0 +1,22 @@
+{       
+    "material_understanding": {        
+        "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT": {
+            "task_splits": "single+multi",
+            "sub_category": "young_modulus",
+            "choice": "mcq",
+            "question": "What is the Young's modulus of the <OBJECT> seen in the image?"
+        },
+        "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SCIENTIFIC_NOTATION": {
+            "task_splits": "single+multi",
+            "sub_category": "young_modulus",
+            "choice": "mcq",
+            "question": "What is the Young's modulus of the <OBJECT> seen in the image?"
+        },
+        "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_METRIC_PREFIX": {
+            "task_splits": "single+multi",
+            "sub_category": "young_modulus",
+            "choice": "mcq",
+            "question": "What is the Young's modulus of the <OBJECT> seen in the image?"
+        }
+    }   
+}

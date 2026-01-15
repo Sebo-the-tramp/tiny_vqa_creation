@@ -37,18 +37,7 @@ def _select_by_temporal_distance(confounding_images, target_index):
     return selected
 
 
-def calculate_most_dissimilar_confounding_images(
-    confounding_images, next_image, **kwargs
-):
-    if len(confounding_images) <= 3:
-        raise ImpossibleToAnswer("Not enough confounding images")
-
-    strategy = kwargs.get("confounding_strategy")
-    if strategy is None:
-        strategy = get_config().get("temporal_confounding_strategy", "ssim_gpu")
-    if strategy == "temporal_distance":
-        return _select_by_temporal_distance(confounding_images, next_image)
-
+def _select_by_fused_ssim(confounding_images, next_image, **kwargs):
     # similar to difficulty in identifying the missing image
     # quite slow can we parallelize this?
     confounding_images_ssim = []
@@ -106,3 +95,19 @@ def calculate_most_dissimilar_confounding_images(
     ]
 
     return confounding_images
+
+
+def calculate_most_dissimilar_confounding_images(
+    confounding_images, next_image, **kwargs
+):
+    if len(confounding_images) <= 3:
+        raise ImpossibleToAnswer("Not enough confounding images")
+
+    strategy = kwargs.get("confounding_strategy")
+    if strategy is None:
+        strategy = get_config().get("temporal_confounding_strategy", "ssim_gpu")
+
+    if strategy == "temporal_distance":
+        return _select_by_temporal_distance(confounding_images, next_image)
+    else:
+        return _select_by_fused_ssim(confounding_images, next_image, **kwargs)

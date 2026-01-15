@@ -257,16 +257,25 @@ def F_SIZE_OBJECT(
 
     object_id = resolved_attributes["OBJECT"]["choice"]["id"]
 
-    volume_object_cubic_meters = world_state["objects"][object_id]["volume"]
-    volume_object_cubic_centimeters = volume_object_cubic_meters * 1e6
+    extents = world_state["simulation"][timestep]["objects"][object_id]["obb"][
+        "extents"
+    ]
+
+    first_extent = extents[0]
 
     options, correct_idx = create_mc_options_around_gt(
-        volume_object_cubic_centimeters,
+        first_extent,
         num_answers=4,
         display_decimals=2,
     )
-    labels = uniform_labels(options, integer=False, decimals=2)
-    labels = [str(label) + " cubic centimeters" for label in labels]
+
+    # we need to make better options per extents
+    scales = [float(option) / first_extent for option in options]
+
+    labels = [
+        f"{extents[0] * scale:.2f}m x {extents[1] * scale:.2f}m x {extents[2] * scale:.2f}m"
+        for scale in scales
+    ]
 
     return fill_questions(
         question, labels, correct_idx, world_state, timestep, resolved_attributes

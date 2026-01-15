@@ -5,7 +5,7 @@ import numpy as np
 
 from typing import Any, Mapping, Optional, Tuple, Union
 
-from utils.helpers import as_vector
+from utils.helpers import as_vector, iter_objects, minimum_distance_between_OBBs
 from utils.config import get_config
 
 from scipy.spatial.transform import Rotation as R
@@ -95,3 +95,56 @@ def get_mask_collisions(world_state: Mapping[str, Any]) -> Optional[np.ndarray]:
             mask[t, pairs[:, 1], pairs[:, 0]] = 1  # symmetric
 
     return mask
+
+
+# def get_mask_collisions_score(world_state: Mapping[str, Any]) -> Optional[np.ndarray]:
+#     timestep_length = len(world_state["simulation"])
+#     n_objects = len(world_state["objects"])
+
+#     mask = np.zeros((timestep_length, n_objects + 1, n_objects + 1), dtype=np.uint8)
+
+#     # basically this mask is a directed symmetric graph for which object is touching which other object
+#     # we could even just use the upper part, but is faster to use the full matrix
+#     for t, ts in enumerate(world_state["simulation"].values()):
+#         pairs = np.asarray(ts["collisions"], dtype=np.uint8)  # shape (M, 2)
+#         if pairs.shape[0] != 0:
+#             for object_id in ts["objects"].keys():
+#                 object_collisions = ts["objects"][object_id]['collisions']
+#                 for other_object_id in object_collisions.keys():
+#                     collision_point_count = len(object_collisions[other_object_id]['points'])
+
+#                     collision = 1 if collision_point_count > 5 else 0
+
+#                     mask[t, int(object_id), int(other_object_id)] = collision
+#                     mask[t, int(other_object_id), int(object_id)] = collision  # symmetric
+
+#     return mask
+
+
+def get_present_and_far_from_collision(
+    world_state: WorldState, timestep: str, collision_object_a_id: int
+) -> list:
+    """
+    Get list of objects that are present and not colliding with the given object at the specified timestep.
+    """
+
+    present_and_far_from_collision = []
+    present_and_close_to_collision = []
+
+    for object in iter_objects(world_state):
+        object_id = int(object["id"])
+        if object_id == collision_object_a_id:
+            continue  # Skip the colliding object itself
+
+        distance = minimum_distance_between_OBBs(
+            world_state["simulation"][timestep]["objects"][str(object_id)]["obb"],
+            world_state["simulation"][timestep]["objects"][str(collision_object_a_id)][
+                "obb"
+            ],
+        )
+        if distance > 2:  # Threshold distance to consider "far from collision"
+            present_and_far_from_collision.append(object["name"])
+        else:
+            present_and_close_to_collision.append(object["name"])
+
+    return present_and_far_from_collision, present_and_close_to_collision

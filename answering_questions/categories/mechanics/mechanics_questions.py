@@ -47,6 +47,7 @@ from .mechanics_helpers import (
     get_acceleration,
     get_position,
     get_mask_collisions,
+    get_present_and_far_from_collision,
 )
 
 from utils.config import get_config
@@ -56,6 +57,7 @@ from utils.bin_creation import (
     create_mc_object_names_from_dataset,
     uniform_labels,
 )
+
 
 Number = Union[int, float]
 Vector = Tuple[float, float, float]
@@ -332,25 +334,23 @@ def F_COLLISION_OBJECT_OBJECT_FRAME_SINGLE(
     colliding_object = world_state["objects"][str(collision_object_a_id)]
     resolved_attributes = {"OBJECT": {"choice": collider_object, "category": "OBJECT"}}
 
-    present_and_not_colliding = []
+    present_and_far_from_collision, present_and_close_to_collision = (
+        get_present_and_far_from_collision(
+            world_state, collision_timestep, int(collider_object["id"])
+        )
+    )
 
-    collision_mask_timestep = collision_mask[t_first]
-    for obj_id in range(1, collision_mask_timestep.shape[0]):
-        if (
-            collision_mask_timestep[int(collider_object["id"]), obj_id] == 0
-            and collision_mask_timestep[obj_id, int(collider_object["id"])] == 0
-        ):
-            obj = world_state["objects"][str(obj_id)]
-            if obj["name"] not in present_and_not_colliding:
-                present_and_not_colliding.append(obj["name"])
-
-    # present = []
-    # for obj in iter_objects(world_state):
-    #     if obj["id"] != colliding_object["id"]:
-    #         present.append(obj["name"])
+    other_objects_minus_present_and_close = [
+        obj_name
+        for obj_name in get_all_objects_names()
+        if obj_name not in present_and_close_to_collision
+        and obj_name != colliding_object["name"]
+    ]
 
     labels, correct_idx = create_mc_object_names_from_dataset(
-        colliding_object["name"], present_and_not_colliding, get_all_objects_names()
+        colliding_object["name"],
+        present_and_far_from_collision,
+        other_objects_minus_present_and_close,
     )
 
     return fill_questions(
@@ -408,6 +408,8 @@ def F_COLLISION_OBJECT_OBJECT_FRAME_MULTI(
         collision_object_b_id = idx[1] + 1 if len(idx) > 1 else None
         collision_timestep = get_timestep_from_idx(t_first)
 
+        # Other thing we can do is to check if the object is
+
     else:
         raise ImpossibleToAnswer("No collision found in the visible timesteps.")
 
@@ -416,16 +418,20 @@ def F_COLLISION_OBJECT_OBJECT_FRAME_MULTI(
     resolved_attributes = {"OBJECT": {"choice": collider_object, "category": "OBJECT"}}
 
     frames_og = sample_frames_before_timestep(
-        world_state, collision_timestep, num_frames=4, frame_interleave=2
+        world_state, collision_timestep, num_frames=4, frame_interleave=4
     )
 
+    # all_frames_idx = uniformly_sample_frames_start_end_delta(0, len(world_state['simulation']), 1)
+
+    # confounding_images = calculate_most_dissimilar_confounding_images(
+    #     all_frames_idx[:t_first], t_first, **kwargs
+    # )
+
+    confounding_images = frames_og[:3]
     correct_frame = frames_og[3]
-
-    indices = list(range(len(frames_og)))
-    random.shuffle(indices)
-
-    frames = [frames_og[i] for i in indices]
+    frames = confounding_images + [correct_frame]
     labels = frames.copy()
+    random.shuffle(labels)
 
     correct_idx = labels.index(correct_frame)
 
@@ -482,7 +488,7 @@ def F_COLLISION_OBJECT_SCENE_FRAME_MULTI(
         raise ImpossibleToAnswer("No collision found in the visible timesteps.")
 
     frames_og = sample_frames_before_timestep(
-        world_state, collision_timestep, num_frames=4, frame_interleave=2
+        world_state, collision_timestep, num_frames=4, frame_interleave=4
     )
 
     # technically the resolved object should be the one colliding

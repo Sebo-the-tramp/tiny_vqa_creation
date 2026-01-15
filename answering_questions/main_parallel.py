@@ -59,12 +59,16 @@ ANSI_PURPLE = "\033[95m"
 ANSI_RESET = "\033[0m"
 
 
-def _init_worker(vqa_path, dest_root, verbose, base_seed):
+def _init_worker(vqa_path, questions_file, dest_root, verbose, base_seed):
     """Runs once per worker process."""
     import os
 
     global QUESTIONS, DEST_ROOT, VERBOSE
-    QUESTIONS = read_questions(os.path.join(vqa_path, "simple_vqa.json"))
+    if os.path.isabs(questions_file):
+        questions_path = questions_file
+    else:
+        questions_path = os.path.join(vqa_path, questions_file)
+    QUESTIONS = read_questions(questions_path)
     DEST_ROOT = dest_root
     VERBOSE = verbose
     seed_utils.seed_everything(base_seed)
@@ -278,6 +282,7 @@ def create_vqa(
                 if missing_files:
                     stats[stats_key]["missing"] += missing_files
 
+                # if config.augmentation is not None: # maybe this speeds up the things a bit
                 try:
                     file_names = augment_image_VQA_with_context(
                         question,
@@ -604,6 +609,7 @@ def main(args):
         initializer=_init_worker,
         initargs=(
             args.vqa_path,
+            args.questions_file,
             args.destination_simulation_path,
             args.verbose,
             args.seed,
@@ -650,6 +656,12 @@ if __name__ == "__main__":
         type=str,
         default="../",
         help="Path to simpler.json file or similar that contain all the vqa templates.",
+    )
+    parser.add_argument(
+        "--questions_file",
+        type=str,
+        default="simple_vqa.json",
+        help="VQA template JSON file to load (relative to --vqa_path unless absolute).",
     )
     parser.add_argument(
         "--simulation_paths",

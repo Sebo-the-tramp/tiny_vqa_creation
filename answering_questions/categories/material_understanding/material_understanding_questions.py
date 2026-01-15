@@ -319,6 +319,108 @@ def F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT(
     )
 
 
+# THE FOLLOWINGS ARE JUST AN EXPEIMENTS #
+
+
+@with_resolved_attributes
+def F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SCIENTIFIC_NOTATION(
+    world_state: WorldState, question: QuestionPayload, attributes, **kwargs
+) -> int:
+    """Question: What is the Young's modulus of the <OBJECT> seen in the image, expressed in scientific notation?"""
+    assert len(attributes) == 1 and "OBJECT"
+
+    results = F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT(
+        world_state, question, kwargs["destination_simulation_id_path"]
+    )
+
+    new_results = []
+
+    for task in results:
+        question = task[0]
+        labels = task[1]
+        correct_idx = task[2]
+        frames = task[3]
+        world_state = task[4]
+        resolved_attributes = task[5]
+
+        new_labels = []
+        for label in labels:
+            value_str = label.replace(" Pa", "")
+            value = float(value_str)
+            if value == 0:
+                new_label = "0 x 10^0 Pa"
+            else:
+                exponent = int(math.floor(math.log10(abs(value))))
+                mantissa = value / (10**exponent)
+                new_label = f"{mantissa:.2f}x10^{exponent} Pa"
+            new_labels.append(new_label)
+
+        new_results.append(
+            [
+                question,
+                new_labels,
+                correct_idx,
+                frames,
+                world_state,
+                resolved_attributes,
+            ]
+        )
+
+    return new_results
+
+
+@with_resolved_attributes
+def F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_METRIC_PREFIX(
+    world_state: WorldState, question: QuestionPayload, attributes, **kwargs
+) -> int:
+    """Question: What is the Young's modulus of the <OBJECT> seen in the image, expressed in scientific notation?"""
+    assert len(attributes) == 1 and "OBJECT"
+
+    results = F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT(
+        world_state, question, kwargs["destination_simulation_id_path"]
+    )
+
+    new_results = []
+
+    for task in results:
+        question = task[0]
+        labels = task[1]
+        correct_idx = task[2]
+        frames = task[3]
+        world_state = task[4]
+        resolved_attributes = task[5]
+
+        new_labels = []
+        for label in labels:
+            value_str = label.replace(" Pa", "")
+            value = float(value_str)
+            if value >= 1e9:
+                new_value = value / 1e9
+                new_label = f"{new_value:.2f} GPa"
+            elif value >= 1e6:
+                new_value = value / 1e6
+                new_label = f"{new_value:.2f} MPa"
+            elif value >= 1e3:
+                new_value = value / 1e3
+                new_label = f"{new_value:.2f} kPa"
+            else:
+                new_label = f"{value:.2f} Pa"
+            new_labels.append(new_label)
+
+        new_results.append(
+            [
+                question,
+                new_labels,
+                correct_idx,
+                frames,
+                world_state,
+                resolved_attributes,
+            ]
+        )
+
+    return new_results
+
+
 @with_resolved_attributes
 def F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR(
     world_state: WorldState, question: QuestionPayload, attributes, **kwargs

@@ -7,7 +7,7 @@ if [ -d "/data0/sebastian.cavada/datasets/simulations_v4" ]; then
     BASE_PATH="/data0/sebastian.cavada/datasets/simulations_v4/dl3dv"
     BASE_PATH_CF="/data0/sebastian.cavada/datasets/simulations_v4/dl3dv-counterfact"
     DESTINATION_SIMULATION_PATH="/data0/sebastian.cavada/datasets/physbench/simulations"
-    CPUS="32"
+    CPUS="46"
 else
     source "/home/it4i-thvu/seb_dev/.telegram_bot.env"
     BASE_PATH="/scratch/project/eu-25-92/composite_physics/dataset/simulation_v4/dl3dv"
@@ -22,46 +22,66 @@ GENERAL_RUN_COUNT=20
 
 ####################
 
-python main_parallel.py --simulation_path "${BASE_PATH}/random/" "${BASE_PATH}/random-cam-stationary/" \
-    --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
-    --run_name "run_${GENERAL_RUN_COUNT}_general" \
-    --n_scenes 5000 \
-    --exclude_simulations_file "problematic_paths.txt" \
-    --n_proc $CPUS \
-    --timeit \
-    # --include_categories "mechanics" \
-
-RUN_NAME="run_${GENERAL_RUN_COUNT}_general"
-python ./subsample_questions_percentage.py \
-    --count 10000 \
-    --input ../output/${RUN_NAME}/test_${RUN_NAME}.json \
-    --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
-    --percentage-map ./balancing_sub_categories.json \
-    --seed 42
-
-cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
-
-
-RUN_NAME="run_${GENERAL_RUN_COUNT}_general_obj_num"
-python ./subsample_questions_numbers.py \
-    --input ../output/run_${GENERAL_RUN_COUNT}_general/test_run_${GENERAL_RUN_COUNT}_general.json \
-    --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
-    --count 15000 \
-    --seed 42
-
-cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
-
-# -------------------------------------------------------------
-# TEST PA
-
 # python main_parallel.py --simulation_path "${BASE_PATH}/random/" "${BASE_PATH}/random-cam-stationary/" \
 #     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
 #     --run_name "run_${GENERAL_RUN_COUNT}_general" \
-#     --n_scenes 1000 \
-#     --questions_file "simple_vqa_test_pa.json" \
+#     --n_scenes 5000 \
 #     --exclude_simulations_file "problematic_paths.txt" \
 #     --n_proc $CPUS \
 #     --timeit \
+#     # --include_categories "mechanics" \
+
+# RUN_NAME="run_${GENERAL_RUN_COUNT}_general"
+# python ./subsample_questions_percentage.py \
+#     --count 10000 \
+#     --input ../output/${RUN_NAME}/test_${RUN_NAME}.json \
+#     --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
+#     --percentage-map ./balancing_sub_categories.json \
+#     --seed 42
+
+# cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
+
+# RUN_NAME="run_${GENERAL_RUN_COUNT}_general_obj_num"
+# python ./subsample_questions_numbers.py \
+#     --input ../output/run_${GENERAL_RUN_COUNT}_general/test_run_${GENERAL_RUN_COUNT}_general.json \
+#     --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
+#     --count 15000 \
+#     --seed 42
+
+# cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
+
+# -------------------------------------------------------------
+# TEST PA
+# Create 1000 questions with baseline question, then augment for different questions
+
+
+RUN_NAME="run_${GENERAL_RUN_COUNT}_test_pa_general"
+
+python main_parallel.py --simulation_path "${BASE_PATH}/random/" "${BASE_PATH}/random-cam-stationary/" \
+    --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
+    --run_name "$RUN_NAME" \
+    --n_scenes 1000 \
+    --include_categories "material_understanding" \
+    --exclude_question_ids "F_MASS_HEAVIEST_OBJECT" "F_MASS_LIGHTEST_OBJECT" "F_PHYSICS_PROPERTY_DENSITY_OBJECT_RELATIVE" \
+    "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR" "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR_NON_TECHNICAL" \
+    "F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST" "F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST_NON_TECHNICAL" "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR" \
+    "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR_NON_TECHNICAL" "F_MATERIAL_IDENTIFICATION_SIMILAR_OBJECT" \
+    "F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST" "F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST_NON_TECHNICAL" \
+    "F_MASS_OBJECT" "F_MATERIAL_IDENTIFICATION_OBJECT_LEVEL_1" "F_MATERIAL_IDENTIFICATION_OBJECT_LEVEL_2" \
+    "F_MATERIAL_IDENTIFICATION_OBJECT_LEVEL_3" "F_PHYSICS_PROPERTY_DENSITY_OBJECT" \
+    "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT" "F_PHYSICS_PROPERTY_POISSON_HIGH_LEVEL" \
+    "F_PHYSICS_PROPERTY_VOLUME_OBJECT" "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_HIGH_LEVEL" \
+    --exclude_simulations_file "problematic_paths.txt" \
+    --n_proc $CPUS \
+    --timeit \
+
+python create_young_modulus_variants.py \
+    --input ../output/${RUN_NAME}/test_${RUN_NAME}.json \
+    --output ../output/${RUN_NAME}/test_${RUN_NAME}_variants.json
+
+cp ../output/${RUN_NAME}/test_${RUN_NAME}_variants.json \
+   ../output/${RUN_NAME}/test_${RUN_NAME}_variants_karo_3K.json
+
 
 
 # -------------------------------------------------------------

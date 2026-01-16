@@ -142,7 +142,7 @@ def get_present_and_far_from_collision(
                 "obb"
             ],
         )
-        if distance > 2:  # Threshold distance to consider "far from collision"
+        if distance > 0.2:  # Threshold distance to consider "far from collision"
             present_and_far_from_collision.append(object["name"])
         else:
             present_and_close_to_collision.append(object["name"])

@@ -58,6 +58,10 @@ from utils.bin_creation import (
     uniform_labels,
 )
 
+from categories.temporal.temporal_helpers import (
+    calculate_most_dissimilar_confounding_images,
+)
+
 
 Number = Union[int, float]
 Vector = Tuple[float, float, float]
@@ -420,6 +424,10 @@ def F_COLLISION_OBJECT_OBJECT_FRAME_MULTI(
     confounding_frames = []
 
     for timestep in world_state["simulation"].keys():
+        # check that timestep is not the collision timestep
+        if timestep == collision_timestep:
+            continue
+
         all_other_objects_far_from_collision, _ = get_present_and_far_from_collision(
             world_state, timestep, collision_object_b_id
         )
@@ -427,11 +435,17 @@ def F_COLLISION_OBJECT_OBJECT_FRAME_MULTI(
         if (
             len(all_other_objects_far_from_collision)
             != kwargs["current_world_number_of_objects"] - 2
+            # and is_object_visible_v3(
+            #     world_state, collision_object_b_id, timestep
+            # )
         ):
             continue  # some other object is too close to the collision object
 
         else:
-            confounding_frames.append(world_state["simulation"][timestep]["frame_idx"])
+            formatted_timestep_index = (
+                f"{world_state['simulation'][timestep]['frame_idx']:06}"
+            )
+            confounding_frames.append(formatted_timestep_index)
 
     if len(confounding_frames) < 3:
         raise ImpossibleToAnswer(
@@ -440,12 +454,12 @@ def F_COLLISION_OBJECT_OBJECT_FRAME_MULTI(
 
     correct_frame = sample_frames_before_timestep(
         world_state, collision_timestep, num_frames=1, frame_interleave=2
-    )
+    )[0]
 
     random.shuffle(confounding_frames)
     confounding_frames = confounding_frames[:3]
 
-    frames = confounding_frames + [correct_frame[0]]
+    frames = confounding_frames + [correct_frame]
     labels = frames.copy()
 
     correct_idx = labels.index(correct_frame)
@@ -502,46 +516,28 @@ def F_COLLISION_OBJECT_SCENE_FRAME_MULTI(
     else:
         raise ImpossibleToAnswer("No collision found in the visible timesteps.")
 
-    confounding_frames = []
-
-    for timestep in world_state["simulation"].keys():
-        all_other_objects_far_from_collision, _ = get_present_and_far_from_collision(
-            world_state, timestep, collision_object_id
-        )
-
-        if (
-            len(all_other_objects_far_from_collision)
-            != kwargs["current_world_number_of_objects"] - 2
-        ):
-            continue  # some other object is too close to the collision object
-
-        else:
-            confounding_frames.append(world_state["simulation"][timestep]["frame_idx"])
-
-    if len(confounding_frames) < 3:
-        raise ImpossibleToAnswer(
-            "Not enough frames found where the object is visible before collision."
-        )
-
-    # technically the resolved object should be the one colliding
-    resolved_attributes = {
-        "OBJECT": {
-            "choice": world_state["objects"][str(collision_object_id)],
-            "category": "OBJECT",
-        }
-    }
-
     correct_frame = sample_frames_before_timestep(
         world_state, collision_timestep, num_frames=1, frame_interleave=2
+    )[0]
+
+    confounding_images_candidates = sample_frames_before_timestep(
+        world_state, list(world_state["simulation"].keys())[-1], 40, frame_interleave=2
     )
 
-    random.shuffle(confounding_frames)
-    confounding_frames = confounding_frames[:3]
+    confounding_images = calculate_most_dissimilar_confounding_images(
+        confounding_images_candidates, correct_frame, **kwargs
+    )
 
-    frames = confounding_frames + [correct_frame[0]]
+    random.shuffle(confounding_images)
+    confounding_images = confounding_images[:3]
+
+    frames = confounding_images + [correct_frame]
     labels = frames.copy()
 
     correct_idx = labels.index(correct_frame)
+
+    collider_object = world_state["objects"][str(collision_object_id)]
+    resolved_attributes = {"OBJECT": {"choice": collider_object, "category": "OBJECT"}}
 
     fill_template(question, resolved_attributes)
 

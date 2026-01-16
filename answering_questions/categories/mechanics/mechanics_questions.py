@@ -34,8 +34,9 @@ from utils.helpers import (
     get_random_timestep_from_list,
     fill_template,
     get_timestep_from_idx,
-    is_object_visible_v3,
+    is_object_visible,
     get_visibility_mask,
+    get_visibility_mask_soft,
 )
 
 from utils.frames_selection import (
@@ -184,7 +185,7 @@ def F_KINEMATICS_DISTANCE_TRAVELED_INTERVAL(
 
     object_id = resolved_attributes["OBJECT"]["choice"]["id"]
 
-    if not is_object_visible_v3(world_state, object_id, final_timestep):
+    if not is_object_visible(world_state, object_id, final_timestep):
         raise ImpossibleToAnswer("The object is not visible at the end timestep.")
 
     position_obj_state_timestep_start = get_position(
@@ -345,6 +346,7 @@ def F_COLLISION_OBJECT_OBJECT_FRAME_SINGLE(
         for obj_name in get_all_objects_names()
         if obj_name not in present_and_close_to_collision
         and obj_name != colliding_object["name"]
+        and obj_name != collider_object["name"]
     ]
 
     labels, correct_idx = create_mc_object_names_from_dataset(
@@ -376,7 +378,7 @@ def F_COLLISION_OBJECT_OBJECT_FRAME_MULTI(
     assert len(attributes) == 1 and "OBJECT" in attributes
 
     collision_mask = get_mask_collisions(world_state)
-    visibility_mask, _ = get_visibility_mask(world_state)
+    visibility_mask, _ = get_visibility_mask_soft(world_state)
 
     # adding ground visibility (always visible)
     visibility_mask_T = np.append(
@@ -388,8 +390,7 @@ def F_COLLISION_OBJECT_OBJECT_FRAME_MULTI(
         visibility_mask_T[:, :, None] * visibility_mask_T[:, None, :]
     )
 
-    # collision_mask AND visibility_mask
-    # the collision needs to be visible so
+    # collision_mask AND visibility_mask the collision needs to be visible so
     visible_collision_mask = collision_mask * visibility_mask_T_extended
 
     rows = visible_collision_mask[:, 1:, 1:].any(axis=(1, 2))
@@ -405,10 +406,18 @@ def F_COLLISION_OBJECT_OBJECT_FRAME_MULTI(
             )
 
         # adding +1 to match the object_id in the simulation file
+        collision_object_a_id = idx[0] + 1 if len(idx) > 0 else None
         collision_object_b_id = idx[1] + 1 if len(idx) > 1 else None
         collision_timestep = get_timestep_from_idx(t_first)
 
-        # Other thing we can do is to check if the object is
+        if not is_object_visible(
+            world_state, collision_object_a_id, collision_timestep
+        ) and not is_object_visible(
+            world_state, collision_object_b_id, collision_timestep
+        ):
+            raise ImpossibleToAnswer(
+                "The objects colliding are not visible at the collision timestep."
+            )
 
     else:
         raise ImpossibleToAnswer("No collision found in the visible timesteps.")
@@ -417,46 +426,44 @@ def F_COLLISION_OBJECT_OBJECT_FRAME_MULTI(
     collider_object = world_state["objects"][str(collision_object_b_id)]
     resolved_attributes = {"OBJECT": {"choice": collider_object, "category": "OBJECT"}}
 
-    confounding_frames = []
+    correct_frames = sample_frames_before_timestep(
+        world_state, collision_timestep, num_frames=4, frame_interleave=4
+    )
 
-    for timestep in world_state["simulation"].keys():
-        # check that timestep is not the collision timestep
-        if timestep == collision_timestep:
-            continue
+    correct_frame = correct_frames[-1]
+    confounding_frames = correct_frames[:-1]
 
-        all_other_objects_far_from_collision, _ = get_present_and_far_from_collision(
-            world_state, timestep, collision_object_b_id
-        )
+    # for frame in correct_frames[:-1]:
+    #     timestep = get_timestep_from_idx(int(frame))
 
-        if (
-            len(all_other_objects_far_from_collision)
-            != kwargs["current_world_number_of_objects"] - 2
-            # and is_object_visible_v3(
-            #     world_state, collision_object_b_id, timestep
-            # )
-        ):
-            continue  # some other object is too close to the collision object
+    #     all_other_objects_far_from_collision, _ = get_present_and_far_from_collision(
+    #         world_state, timestep, collision_object_b_id
+    #     )
 
-        else:
-            formatted_timestep_index = (
-                f"{world_state['simulation'][timestep]['frame_idx']:06}"
-            )
-            confounding_frames.append(formatted_timestep_index)
+    #     if (
+    #         len(all_other_objects_far_from_collision)
+    #         != kwargs["current_world_number_of_objects"] - 2
+    #         # and is_object_visible(
+    #         #     world_state, collision_object_b_id, timestep
+    #         # )
+    #     ):
+    #         continue  # some other object is too close to the collision object
 
-    if len(confounding_frames) < 3:
-        raise ImpossibleToAnswer(
-            "Not enough frames found where the object is visible before collision."
-        )
+    #     else:
+    #         formatted_timestep_index = (
+    #             f"{world_state['simulation'][timestep]['frame_idx']:06}"
+    #         )
+    #         confounding_frames.append(formatted_timestep_index)
 
-    correct_frame = sample_frames_before_timestep(
-        world_state, collision_timestep, num_frames=1, frame_interleave=2
-    )[0]
-
-    random.shuffle(confounding_frames)
-    confounding_frames = confounding_frames[:3]
+    # if len(confounding_frames) < 3:
+    #     raise ImpossibleToAnswer(
+    #         "Not enough frames found where the object is visible before collision."
+    #     )
 
     frames = confounding_frames + [correct_frame]
     labels = frames.copy()
+
+    random.shuffle(labels)
 
     correct_idx = labels.index(correct_frame)
 

@@ -8,7 +8,7 @@
     "frame_interleave": 4,
     "slope_bins": 4,
     "threshold_difference_percentage": 0.1,
-    "min_pixels_visible": 100,
+    "min_pixels_visible": 1124,
     "max_allowed_difference_youngs_modulus_log": 0.3,
     "max_allowed_difference_poisson_ratio": 0.02,
     "timestart": 0.01,

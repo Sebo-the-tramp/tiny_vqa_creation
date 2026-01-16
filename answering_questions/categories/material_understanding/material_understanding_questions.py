@@ -26,7 +26,7 @@ from utils.helpers import (
     get_random_timestep_from_list,
     resolve_attributes_visible_at_timestep,
     get_visible_timesteps_for_attributes_min_objects,
-    is_object_visible_v3,
+    is_object_visible,
 )
 
 from utils.config import get_config
@@ -125,7 +125,7 @@ def F_MASS_HEAVIEST_OBJECT(
     objects_masses = []
 
     for obj in iter_objects(world_state):
-        if is_object_visible_v3(world_state, obj["id"], timestep):
+        if is_object_visible(world_state, obj["id"], timestep):
             objects_masses.append((obj["mass"], obj))
 
     if len(objects_masses) < 2:
@@ -181,7 +181,7 @@ def F_MASS_LIGHTEST_OBJECT(
     objects_masses = []
 
     for obj in iter_objects(world_state):
-        if is_object_visible_v3(world_state, obj["id"], timestep):
+        if is_object_visible(world_state, obj["id"], timestep):
             objects_masses.append((obj["mass"], obj))
 
     if len(objects_masses) < 2:
@@ -260,7 +260,7 @@ def F_PHYSICS_PROPERTY_DENSITY_OBJECT_RELATIVE(
 
     denser_object = None
     for obj in iter_objects(world_state):
-        if is_object_visible_v3(world_state, obj["id"], timestep):
+        if is_object_visible(world_state, obj["id"], timestep):
             if (
                 denser_object is None
                 or obj["props"]["rhos"] > denser_object["props"]["rhos"]
@@ -455,9 +455,8 @@ def F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR(
 
         log_diff = abs(math.log10(cand_yms) - math.log10(ref_yms))
 
-        if (
-            log_diff <= MAX_ALLOWED_DIFFERENCE_YOUNGS_MODULUS_LOG
-            and is_object_visible_v3(world_state, candidate["id"], timestep)
+        if log_diff <= MAX_ALLOWED_DIFFERENCE_YOUNGS_MODULUS_LOG and is_object_visible(
+            world_state, candidate["id"], timestep
         ):
             similar_objects.append(candidate)
 
@@ -517,7 +516,7 @@ def F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST(
 
     # 1. First Pass: Collect all valid candidates
     for obj in iter_objects(world_state):
-        if is_object_visible_v3(world_state, obj["id"], timestep):
+        if is_object_visible(world_state, obj["id"], timestep):
             # Store tuple of (Young's Modulus, Object)
             # Handle 0 or negative modulus edge cases if necessary
             ym = obj["props"]["yms"]
@@ -745,7 +744,7 @@ def F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR(
 
         difference = abs(obj["props"]["prs"] - poisson_ratio)
 
-        if difference < MAX_ALLOWED_DIFFERENCE_POISSON_RATIO and is_object_visible_v3(
+        if difference < MAX_ALLOWED_DIFFERENCE_POISSON_RATIO and is_object_visible(
             world_state, obj["id"], timestep
         ):
             similar_object = obj
@@ -811,7 +810,7 @@ def F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST(
     highest_poisson_ratio_count = 0
 
     for obj in iter_objects(world_state):
-        if obj["props"]["prs"] >= highest_poisson_ratio and is_object_visible_v3(
+        if obj["props"]["prs"] >= highest_poisson_ratio and is_object_visible(
             world_state, obj["id"], timestep
         ):
             highest_poisson_ratio = obj["props"]["prs"]
@@ -920,7 +919,7 @@ def F_MATERIAL_IDENTIFICATION_SIMILAR_OBJECT(
         if (
             obj["description"]["material_group"] == material
             and obj["id"] != object["id"]
-            and is_object_visible_v3(world_state, obj["id"], timestep)
+            and is_object_visible(world_state, obj["id"], timestep)
         ):
             object_similar = obj
             similar_object_count += 1

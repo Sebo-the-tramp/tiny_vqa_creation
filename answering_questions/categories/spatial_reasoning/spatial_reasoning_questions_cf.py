@@ -28,7 +28,7 @@ from utils.helpers import (
     distance_between,
     fill_questions_cf,
     get_visibility_mask,
-    is_object_visible_v3,
+    is_object_visible,
     get_random_timestep_from_list,
     resolve_attributes_visible_at_timestep,
     get_visible_timesteps_for_attributes_min_objects,
@@ -279,7 +279,7 @@ def CF_SIZE_OBJECT_BIGGER(
     for obj in iter_objects(world_state_mod):
         volume = obj.get("volume", 0.0)
 
-        if volume > biggest_volume and is_object_visible_v3(
+        if volume > biggest_volume and is_object_visible(
             world_state_mod, obj["id"], timestep
         ):
             biggest_volume = volume

@@ -26,7 +26,7 @@ from utils.helpers import (
     iter_objects,
     resolve_attributes_visible_at_timestep,
     get_timestep_from_idx,
-    is_object_visible_v3,
+    is_object_visible,
 )
 
 from utils.config import get_config
@@ -85,7 +85,7 @@ def CF_MASS_OBJECT(
 
     object = world_state_og["objects"][object_id]
 
-    if not is_object_visible_v3(
+    if not is_object_visible(
         world_state=world_state_og, obj_id=object_id, timestep=timestep_end
     ):
         raise ImpossibleToAnswer("Object is not visible.")
@@ -149,7 +149,7 @@ def CF_MASS_HEAVIEST_OBJECT(
     objects_masses = []
 
     for obj in iter_objects(world_state_mod):
-        if is_object_visible_v3(
+        if is_object_visible(
             world_state=world_state_mod, obj_id=obj["id"], timestep=timestep_end
         ):
             objects_masses.append((obj["mass"], obj))
@@ -223,7 +223,7 @@ def CF_MASS_LIGHTEST_OBJECT(
     objects_masses = []
 
     for obj in iter_objects(world_state_mod):
-        if is_object_visible_v3(
+        if is_object_visible(
             world_state=world_state_mod, obj_id=obj["id"], timestep=timestep_end
         ):
             objects_masses.append((obj["mass"], obj))

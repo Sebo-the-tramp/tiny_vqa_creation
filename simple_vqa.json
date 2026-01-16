@@ -121,7 +121,7 @@
             "question": "Which object seen in the image has the highest effective density?"
         },
         
-        "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT": {
+        "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_METRIC_PREFIX": {
             "task_splits": "single+multi",
             "sub_category": "young_modulus",
             "choice": "mcq",

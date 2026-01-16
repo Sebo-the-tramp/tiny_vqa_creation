@@ -443,7 +443,7 @@ def get_visibility_mask(
         obj_id = object["id"]
 
         for t in all_timesteps[:max_timestep_index]:
-            bit = 1 if is_object_visible_v3(world_state, obj_id, t) else 0
+            bit = 1 if is_object_visible(world_state, obj_id, t) else 0
             index_timestep = all_timesteps.index(t)
             visibility_mask[int(obj_id) - 1, index_timestep] = bit
 
@@ -486,7 +486,7 @@ def get_visibility_mask_soft(
         obj_id = object["id"]
 
         for t in all_timesteps[:max_timestep_index]:
-            bit = 1 if is_object_visible_v3_soft(world_state, obj_id, t) else 0
+            bit = 1 if is_object_visible_soft(world_state, obj_id, t) else 0
             index_timestep = all_timesteps.index(t)
             visibility_mask[int(obj_id) - 1, index_timestep] = bit
 
@@ -599,7 +599,7 @@ def get_visibility_ratio_v3(world_state, obj_id, timestep):
     # if pixels_visible < pixels_void:
     #      raise ImpossibleToAnswer("Uncertainty too high.")
 
-    if pixels_visible < 1124:  # 1/1000 of 1124000 image size
+    if pixels_visible < MIN_VISIBLE_PIXELS:
         return 0.0
 
     # # TODOD # just to check the fucking difference in this, cause they fuck up entire simulations just because there uncertain parts in it...
@@ -663,13 +663,13 @@ def get_visibility_ratio_v3_soft(world_state, obj_id, timestep):
     return max(score_geom, score_pixel)
 
 
-def is_object_visible_v3(world_state, obj_id, timestep):
+def is_object_visible(world_state, obj_id, timestep):
     return (
         get_visibility_ratio_v3(world_state, obj_id, timestep) >= VISIBILITY_THRESHOLD
     )
 
 
-def is_object_visible_v3_soft(world_state, obj_id, timestep):
+def is_object_visible_soft(world_state, obj_id, timestep):
     return (
         get_visibility_ratio_v3_soft(world_state, obj_id, timestep)
         >= VISIBILITY_THRESHOLD
@@ -786,7 +786,7 @@ def get_visible_timesteps_for_attributes_min_objects(
             if not obj_id:
                 continue
 
-            if is_object_visible_v3(world_state, obj_id, timestep):
+            if is_object_visible(world_state, obj_id, timestep):
                 visible_objects_id.append(obj_id)
 
         # we shall check that also is not the same object name to remove for
@@ -1054,7 +1054,7 @@ def get_random_object_and_remove(
         visible_objects_ids = []
         for obj_id, object in objects.items():
             # better visibility check
-            if is_object_visible_v3(world_state, obj_id, visible_at_timestep):
+            if is_object_visible(world_state, obj_id, visible_at_timestep):
                 obj_copy = object.copy()
                 obj_copy["id"] = obj_id
                 visible_objects.append(obj_copy)
@@ -1094,7 +1094,7 @@ def get_random_most_visible_object_and_remove(
         visible_objects_ids = []
         for obj_id, object in objects.items():
             # better visibility check
-            if is_object_visible_v3(world_state, obj_id, visible_at_timestep):
+            if is_object_visible(world_state, obj_id, visible_at_timestep):
                 obj_copy = object.copy()
                 obj_copy["id"] = obj_id
                 obj_copy["visibility_ratio"] = get_visibility_ratio_v3(
@@ -1324,11 +1324,11 @@ def minimum_distance_between_OBBs(
     min_distance = -np.inf
     eps = 1e-6
 
-    center_1, extents_1, R1 = obb1["center"], obb1["extents"], obb1["R"]
-    center_2, extents_2, R2 = obb2["center"], obb2["extents"], obb2["R"]
+    center_1, extents_1, R1 = obb1["center"], np.array(obb1["extents"]) / 2.0, obb1["R"]
+    center_2, extents_2, R2 = obb2["center"], np.array(obb2["extents"]) / 2.0, obb2["R"]
 
-    axes_1 = np.array(R1).T
-    axes_2 = np.array(R2).T
+    axes_1 = np.array(R1)
+    axes_2 = np.array(R2)
 
     distance_centers = np.array(center_2) - np.array(center_1)
 
@@ -1356,8 +1356,11 @@ def minimum_distance_between_OBBs(
     for i in range(3):
         for j in range(3):
             axis = np.cross(axes_1[i], axes_2[j])
-            if np.linalg.norm(axis) < eps:
-                continue  # parallel edges → skip
+            axis_norm = np.linalg.norm(axis)
+            if axis_norm < eps:
+                continue
+
+            axis = axis / axis_norm
 
             center_sep = abs(np.dot(distance_centers, axis))
 

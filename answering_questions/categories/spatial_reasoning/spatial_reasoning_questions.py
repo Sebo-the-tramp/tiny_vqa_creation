@@ -31,7 +31,7 @@ from utils.helpers import (
     get_random_timestep_from_list,
     resolve_attributes_visible_at_timestep,
     get_visible_timesteps_for_attributes_min_objects,
-    is_object_visible_v3,
+    is_object_visible,
 )
 from .spatial_reasoning_helpers import (
     get_position,
@@ -315,10 +315,7 @@ def F_SIZE_OBJECT_BIGGER(
     for obj in iter_objects(world_state):
         volume = obj.get("volume", 0.0)
 
-        if (
-            is_object_visible_v3(world_state, obj["id"], timestep)
-            and volume is not None
-        ):
+        if is_object_visible(world_state, obj["id"], timestep) and volume is not None:
             total_object_seen += 1
             if volume > biggest_volume:
                 biggest_volume = volume
@@ -369,7 +366,7 @@ def F_SIZE_OBJECT_SMALLER(
         volume = obj.get("volume", 0.0)
 
         if (
-            is_object_visible_v3(
+            is_object_visible(
                 world_state=world_state, obj_id=obj["id"], timestep=timestep
             )
             and volume is not None

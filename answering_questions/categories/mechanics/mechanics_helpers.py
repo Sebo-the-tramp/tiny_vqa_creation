@@ -133,8 +133,6 @@ def get_present_and_far_from_collision(
 
     for object in iter_objects(world_state):
         object_id = int(object["id"])
-        if object_id == collision_object_a_id:
-            continue  # Skip the colliding object itself
 
         distance = minimum_distance_between_OBBs(
             world_state["simulation"][timestep]["objects"][str(object_id)]["obb"],
@@ -142,7 +140,7 @@ def get_present_and_far_from_collision(
                 "obb"
             ],
         )
-        if distance > 0.2:  # Threshold distance to consider "far from collision"
+        if distance > 0.5:  # Threshold distance to consider "far from collision"
             present_and_far_from_collision.append(object["name"])
         else:
             present_and_close_to_collision.append(object["name"])

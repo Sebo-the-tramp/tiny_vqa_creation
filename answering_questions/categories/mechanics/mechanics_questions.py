@@ -58,10 +58,6 @@ from utils.bin_creation import (
     uniform_labels,
 )
 
-from categories.temporal.temporal_helpers import (
-    calculate_most_dissimilar_confounding_images,
-)
-
 
 Number = Union[int, float]
 Vector = Tuple[float, float, float]
@@ -516,17 +512,12 @@ def F_COLLISION_OBJECT_SCENE_FRAME_MULTI(
     else:
         raise ImpossibleToAnswer("No collision found in the visible timesteps.")
 
-    correct_frame = sample_frames_before_timestep(
-        world_state, collision_timestep, num_frames=1, frame_interleave=2
-    )[0]
-
-    confounding_images_candidates = sample_frames_before_timestep(
-        world_state, list(world_state["simulation"].keys())[-1], 40, frame_interleave=2
+    correct_frames = sample_frames_before_timestep(
+        world_state, collision_timestep, num_frames=4, frame_interleave=4
     )
+    correct_frame = correct_frames[-1]
 
-    confounding_images = calculate_most_dissimilar_confounding_images(
-        confounding_images_candidates, correct_frame, **kwargs
-    )
+    confounding_images = correct_frames[:3]
 
     random.shuffle(confounding_images)
     confounding_images = confounding_images[:3]

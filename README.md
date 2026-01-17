@@ -17,6 +17,13 @@ Overview
 - Output: `output/<run_name>/test_<run_name>.json` (questions) and
   `output/<run_name>/val_answer_<run_name>.json` (answers), plus a config snapshot.
 
+Recent Run Summary
+------------------
+RUN SUMMARY: questions=84850 wall=374.12s cpu=4.80s rss=867008KB
+
+That run clocks in at ~6m 14s for 84,850 questions, down from ~35 minutes on the
+previous version (around a 5.6x speedup). Not bad.
+
 Repository Layout
 -----------------
 - `answering_questions/`

@@ -30,21 +30,21 @@ from utils.helpers import (
     iter_objects,
     fill_questions,
     is_object_visible,
+    get_all_objects_presents,
     get_random_timestep_from_list,
     minimum_distance_between_OBBs,
     resolve_attributes_visible_at_timestep,
     get_visible_timesteps_for_attributes_min_objects,
 )
 from .spatial_reasoning_helpers import (
-    get_position,
     get_closest_visible_object,
     get_spatial_relationship_camera_view,
     get_all_relational_positional_adjectives,
 )
 from utils.bin_creation import (
+    uniform_labels,
     create_mc_options_around_gt,
     create_mc_object_names_from_dataset,
-    uniform_labels,
 )
 
 Number = Union[int, float]
@@ -189,10 +189,18 @@ def F_CLOSEST_OBJECT_CAMERA(
             closest_distance = distance
             closest_object = object
 
-    presents = [obj["name"] for obj in iter_objects(world_state)]
+    visible_objects_names, non_visible_objects_names = get_all_objects_presents(
+        world_state, timestep
+    )
+    all_objects_minus_visible_and_non_visible = list(
+        set(get_all_objects_names()) - set(non_visible_objects_names)
+    )
 
     labels, correct_idx = create_mc_object_names_from_dataset(
-        closest_object["name"], presents, get_all_objects_names(), num_answers=4
+        closest_object["name"],
+        visible_objects_names,
+        all_objects_minus_visible_and_non_visible,
+        num_answers=4,
     )
     labels = [str(label) for label in labels]
 
@@ -230,17 +238,20 @@ def F_CLOSEST_OBJECT_OBJECT(
 
     object_id = resolved_attributes["OBJECT"]["choice"]["id"]
 
-    object_position_at_time = get_position(world_state, object_id, timestep)
-    closest_object = get_closest_visible_object(
-        world_state, object_id, object_position_at_time, timestep
+    closest_object = get_closest_visible_object(world_state, object_id, timestep)
+
+    visible_objects_names, non_visible_objects_names = get_all_objects_presents(
+        world_state, timestep, [object_id]
+    )
+    all_objects_minus_visible_and_non_visible = list(
+        set(get_all_objects_names()) - set(non_visible_objects_names)
     )
 
-    presents = [
-        obj["name"] for obj in iter_objects(world_state) if obj["id"] != object_id
-    ]
-
     labels, correct_idx = create_mc_object_names_from_dataset(
-        closest_object["name"], presents, get_all_objects_names(), num_answers=4
+        closest_object["name"],
+        visible_objects_names,
+        all_objects_minus_visible_and_non_visible,
+        num_answers=4,
     )
 
     labels = [str(label) for label in labels]

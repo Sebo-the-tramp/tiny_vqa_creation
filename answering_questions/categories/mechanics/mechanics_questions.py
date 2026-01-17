@@ -439,33 +439,6 @@ def F_COLLISION_OBJECT_OBJECT_FRAME_MULTI(
     correct_frame = correct_frames[-1]
     confounding_frames = correct_frames[:-1]
 
-    # for frame in correct_frames[:-1]:
-    #     timestep = get_timestep_from_idx(int(frame))
-
-    #     all_other_objects_far_from_collision, _ = get_present_and_far_from_collision(
-    #         world_state, timestep, collision_object_b_id
-    #     )
-
-    #     if (
-    #         len(all_other_objects_far_from_collision)
-    #         != kwargs["current_world_number_of_objects"] - 2
-    #         # and is_object_visible(
-    #         #     world_state, collision_object_b_id, timestep
-    #         # )
-    #     ):
-    #         continue  # some other object is too close to the collision object
-
-    #     else:
-    #         formatted_timestep_index = (
-    #             f"{world_state['simulation'][timestep]['frame_idx']:06}"
-    #         )
-    #         confounding_frames.append(formatted_timestep_index)
-
-    # if len(confounding_frames) < 3:
-    #     raise ImpossibleToAnswer(
-    #         "Not enough frames found where the object is visible before collision."
-    #     )
-
     frames = confounding_frames + [correct_frame]
     labels = frames.copy()
 

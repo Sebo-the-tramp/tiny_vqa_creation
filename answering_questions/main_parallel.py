@@ -89,13 +89,19 @@ def _process_one(sim_file, args):
             return [], {}
         simulation_id_path = sim_file.replace("simulation.json", "")
         destination_simulation_id_path = os.path.join(DEST_ROOT, simulation_id_path)
+        read_start_wall = time.perf_counter()
+        read_start_cpu = time.process_time()
         simulation_steps = read_simulation(
             # os.path.join(simulation_id_path, "simulation_kinematics.json")
             os.path.join(
                 simulation_id_path, "simulation_kinematics_min.json"
             )  # this takes 40% less wall time
         )
-        return create_vqa(
+        read_wall = time.perf_counter() - read_start_wall
+        read_cpu = time.process_time() - read_start_cpu
+        create_start_wall = time.perf_counter()
+        create_start_cpu = time.process_time()
+        sim_vqa, sim_stats = create_vqa(
             QUESTIONS,
             simulation_steps,
             sim_file,
@@ -103,6 +109,17 @@ def _process_one(sim_file, args):
             verbose=VERBOSE,
             config=args,
         )
+        create_wall = time.perf_counter() - create_start_wall
+        create_cpu = time.process_time() - create_start_cpu
+        if getattr(args, "profile_io", False):
+            sim_stats["_perf"] = {
+                "sim_count": 1,
+                "read_wall": read_wall,
+                "read_cpu": read_cpu,
+                "create_wall": create_wall,
+                "create_cpu": create_cpu,
+            }
+        return sim_vqa, sim_stats
     except Exception as e:
         # Keep the pool running even if one simulation fails
         # if VERBOSE:
@@ -361,6 +378,21 @@ def create_vqa(
 
 def _merge_stats(target, incoming):
     for stats_key, data in incoming.items():
+        if stats_key == "_perf":
+            if "_perf" not in target:
+                target["_perf"] = {
+                    "sim_count": 0,
+                    "read_wall": 0.0,
+                    "read_cpu": 0.0,
+                    "create_wall": 0.0,
+                    "create_cpu": 0.0,
+                }
+            target["_perf"]["sim_count"] += data.get("sim_count", 0)
+            target["_perf"]["read_wall"] += data.get("read_wall", 0.0)
+            target["_perf"]["read_cpu"] += data.get("read_cpu", 0.0)
+            target["_perf"]["create_wall"] += data.get("create_wall", 0.0)
+            target["_perf"]["create_cpu"] += data.get("create_cpu", 0.0)
+            continue
         if stats_key not in target:
             target[stats_key] = {
                 "created": 0,
@@ -434,7 +466,12 @@ def _print_summary(stats, show_time):
     total_time_sum = 0.0
     total_time_count = 0
     for (category_key, question_key, sub_category), data in sorted(
-        stats.items(), key=lambda item: (item[0][0], item[0][1], item[0][2])
+        (
+            item
+            for item in stats.items()
+            if isinstance(item[0], tuple) and len(item[0]) == 3
+        ),
+        key=lambda item: (item[0][0], item[0][1], item[0][2]),
     ):
         max_key_len = max(max_key_len, len(question_key))
         max_sub_len = max(max_sub_len, len(sub_category))
@@ -537,6 +574,19 @@ def _print_summary(stats, show_time):
     if show_time:
         total_line += f"\tT={_colorize_time(total_avg, total_t)}"
     print(total_line)
+    perf = stats.get("_perf")
+    if perf:
+        sim_count = perf.get("sim_count", 0) or 0
+        if sim_count > 0:
+            read_wall_avg = perf.get("read_wall", 0.0) / sim_count
+            read_cpu_avg = perf.get("read_cpu", 0.0) / sim_count
+            create_wall_avg = perf.get("create_wall", 0.0) / sim_count
+            create_cpu_avg = perf.get("create_cpu", 0.0) / sim_count
+            print(
+                "Perf avg per simulation:\t"
+                f"read wall={read_wall_avg:.3f}s cpu={read_cpu_avg:.3f}s\t"
+                f"create wall={create_wall_avg:.3f}s cpu={create_cpu_avg:.3f}s"
+            )
 
 
 def main(args):
@@ -783,6 +833,11 @@ if __name__ == "__main__":
         "--timeit",
         action="store_true",
         help="Measure per-question execution time and report averages in the summary.",
+    )
+    parser.add_argument(
+        "--profile_io",
+        action="store_true",
+        help="Record average read/create times per simulation.",
     )
 
     args = parser.parse_args()

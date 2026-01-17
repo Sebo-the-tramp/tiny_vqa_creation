@@ -12,7 +12,6 @@ import numpy as np
 
 from utils.config import get_config
 from utils.decorators import with_resolved_attributes
-from utils.all_objects import get_all_objects_names
 from utils.my_exception import ImpossibleToAnswer
 
 from typing import (
@@ -27,6 +26,7 @@ from utils.helpers import (
     fill_questions,
     get_timestep_from_idx,
     get_visibility_mask_soft,
+    get_objects_present_and_not_present,
     resolve_attributes_visible_at_timestep,
 )
 
@@ -80,10 +80,14 @@ def F_PERSISTENCE_OBJECT_PRESENT(
 
     obj_name = world_state["objects"][str(chosen_object_id)]["name"]
 
+    _, all_objects_minus_visible_and_non_visible = get_objects_present_and_not_present(
+        world_state, final_timestep
+    )
+
     labels, correct_idx = create_mc_object_names_from_dataset(
         obj_name,
         [],
-        get_all_objects_names(),
+        all_objects_minus_visible_and_non_visible,
         num_answers=4,
     )
 

@@ -142,7 +142,6 @@ def get_closest_object(
 def get_closest_visible_object(
     world_state: Mapping[str, Any],
     query_object_id: str,
-    object_position_at_time: List[float],
     timestep: str,
 ) -> str:
     min_distance = float("inf")

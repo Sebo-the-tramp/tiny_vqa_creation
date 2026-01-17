@@ -8,7 +8,6 @@ and fall back to sensible defaults when information is missing.
 
 from __future__ import annotations
 
-
 from typing import (
     Any,
     Mapping,
@@ -21,30 +20,30 @@ import math
 import random
 
 from utils.config import get_config
-from utils.all_objects import get_all_objects_names
 from utils.decorators import with_resolved_attributes
 from utils.bin_creation import create_mc_object_names_from_dataset
+
 from utils.my_exception import ImpossibleToAnswer
 
 from utils.helpers import (
-    get_random_timestep_from_list,
-    iter_objects,
     fill_questions,
     resolve_attributes,
     get_visibility_mask,
     get_timestep_from_idx,
     get_camera_at_timestep,
+    get_random_timestep_from_list,
+    get_objects_present_and_not_present,
     resolve_attributes_visible_at_timestep,
     resolve_attributes_most_visible_at_timestep,
     get_visible_timesteps_for_attributes_min_objects,
 )
 
 from categories.viewpoint.viewpoint_helpers import (
-    infer_world_up,
     forward,
     pitch_deg,
-    classify_camera_angle_index,
+    infer_world_up,
     horizontal_fov_rad,
+    classify_camera_angle_index,
     classify_focal_length_index,
     get_number_of_visible_objects,
 )
@@ -84,13 +83,12 @@ def F_VISIBILITY_OBJECT(
 
     object = resolved_attributes["OBJECT"]["choice"]
 
-    presents = [obj["name"] for obj in iter_objects(world_state)]
-    all_objects = get_all_objects_names()
-
-    all_objects_minus_present = [obj for obj in all_objects if obj not in presents]
+    _, all_objects_minus_visible_and_non_visible = get_objects_present_and_not_present(
+        world_state, final_timestep
+    )
 
     labels, correct_idx = create_mc_object_names_from_dataset(
-        object["name"], all_objects_minus_present, [], num_answers=4
+        object["name"], all_objects_minus_visible_and_non_visible, [], num_answers=4
     )
 
     return fill_questions(

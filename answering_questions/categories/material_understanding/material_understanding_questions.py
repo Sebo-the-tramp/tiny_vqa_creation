@@ -6,7 +6,7 @@ These helpers extract best-effort material answers from the provided world state
 
 from __future__ import annotations
 
-from utils.decorators import with_resolved_attributes
+import math
 
 from typing import (
     Any,
@@ -18,30 +18,28 @@ from typing import (
 
 from utils.my_exception import ImpossibleToAnswer
 
-from utils.all_objects import get_all_objects_names
-
-from utils.helpers import (
-    fill_questions,
-    iter_objects,
-    get_random_timestep_from_list,
-    resolve_attributes_visible_at_timestep,
-    get_visible_timesteps_for_attributes_min_objects,
-    is_object_visible,
-)
-
 from utils.config import get_config
-
-from utils.bin_creation import (
-    create_mc_options_around_gt,
-    create_mc_options_around_gt_log,
-    create_mc_options_around_gt_poisson_ratio,
-    uniform_labels,
-    create_mc_object_names_from_dataset,
-)
+from utils.decorators import with_resolved_attributes
 
 from .material_understanding_helpers import get_material_dataset_different_from_target
 
-import math
+from utils.helpers import (
+    iter_objects,
+    fill_questions,
+    is_object_visible,
+    get_random_timestep_from_list,
+    get_objects_present_and_not_present,
+    resolve_attributes_visible_at_timestep,
+    get_visible_timesteps_for_attributes_min_objects,
+)
+
+from utils.bin_creation import (
+    uniform_labels,
+    create_mc_options_around_gt,
+    create_mc_options_around_gt_log,
+    create_mc_object_names_from_dataset,
+    create_mc_options_around_gt_poisson_ratio,
+)
 
 Number = Union[int, float]
 Vector = Tuple[float, float, float]
@@ -141,12 +139,14 @@ def F_MASS_HEAVIEST_OBJECT(
     ):
         raise ImpossibleToAnswer("No single heaviest object in the scene.")
 
-    presents = [obj["name"] for obj in iter_objects(world_state)]
+    visible_objects_names, all_objects_minus_visible_and_non_visible = (
+        get_objects_present_and_not_present(world_state, timestep)
+    )
 
     labels, correct_idx = create_mc_object_names_from_dataset(
         heaviest_visible_object["name"],
-        presents,
-        get_all_objects_names(),
+        visible_objects_names,
+        all_objects_minus_visible_and_non_visible,
         num_answers=4,
     )
 
@@ -197,12 +197,14 @@ def F_MASS_LIGHTEST_OBJECT(
     ):
         raise ImpossibleToAnswer("No single lightest object in the scene.")
 
-    presents = [obj["name"] for obj in iter_objects(world_state)]
+    visible_objects_names, all_objects_minus_visible_and_non_visible = (
+        get_objects_present_and_not_present(world_state, timestep)
+    )
 
     labels, correct_idx = create_mc_object_names_from_dataset(
         lightest_visible_object["name"],
-        presents,
-        get_all_objects_names(),
+        visible_objects_names,
+        all_objects_minus_visible_and_non_visible,
         num_answers=4,
     )
 
@@ -273,11 +275,14 @@ def F_PHYSICS_PROPERTY_DENSITY_OBJECT_RELATIVE(
     if denser_object is None:
         raise ImpossibleToAnswer("No objects found in the scene.")
 
-    presents = [obj["name"] for obj in iter_objects(world_state)]
+    visible_objects_names, all_objects_minus_visible_and_non_visible = (
+        get_objects_present_and_not_present(world_state, timestep)
+    )
+
     labels, correct_idx = create_mc_object_names_from_dataset(
         denser_object["name"],
-        presents,
-        get_all_objects_names(),
+        visible_objects_names,
+        all_objects_minus_visible_and_non_visible,
         num_answers=4,
     )
 
@@ -468,13 +473,14 @@ def F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR(
 
     target = similar_objects[0]
 
-    presents = [
-        obj["name"] for obj in iter_objects(world_state) if obj["id"] != ref_obj["id"]
-    ]
+    visible_objects_names, all_objects_minus_visible_and_non_visible = (
+        get_objects_present_and_not_present(world_state, timestep)
+    )
+
     labels, correct_idx = create_mc_object_names_from_dataset(
         target["name"],
-        presents,
-        get_all_objects_names(),
+        visible_objects_names,
+        all_objects_minus_visible_and_non_visible,
         num_answers=4,
     )
 
@@ -551,11 +557,14 @@ def F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST(
             else:
                 highest_modulus_object = best_obj
 
-    presents = [obj["name"] for obj in iter_objects(world_state)]
+    visible_objects_names, all_objects_minus_visible_and_non_visible = (
+        get_objects_present_and_not_present(world_state, timestep)
+    )
+
     labels, correct_idx = create_mc_object_names_from_dataset(
         highest_modulus_object["name"],
-        presents,
-        get_all_objects_names(),
+        visible_objects_names,
+        all_objects_minus_visible_and_non_visible,
         num_answers=4,
     )
 
@@ -759,15 +768,14 @@ def F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR(
         raise ImpossibleToAnswer("No similar object found in the scene.")
         # similar_object = {"name": "None of the objects", "props": {"prs": -1}}
 
-    presents = [
-        obj["name"]
-        for obj in iter_objects(world_state)
-        if obj["id"] != ref_object["id"]
-    ]
+    visible_objects_names, all_objects_minus_visible_and_non_visible = (
+        get_objects_present_and_not_present(world_state, timestep)
+    )
+
     labels, correct_idx = create_mc_object_names_from_dataset(
         similar_object["name"],
-        presents,
-        get_all_objects_names(),
+        visible_objects_names,
+        all_objects_minus_visible_and_non_visible,
         num_answers=4,
     )
 
@@ -825,11 +833,14 @@ def F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST(
             "Too many objects with similar highest Poisson's ratio. Ambiguous question."
         )
 
-    presents = [obj["name"] for obj in iter_objects(world_state)]
+    visible_objects_names, all_objects_minus_visible_and_non_visible = (
+        get_objects_present_and_not_present(world_state, timestep)
+    )
+
     labels, correct_idx = create_mc_object_names_from_dataset(
         highest_poisson_ratio_object["name"],
-        presents,
-        get_all_objects_names(),
+        visible_objects_names,
+        all_objects_minus_visible_and_non_visible,
         num_answers=4,
     )
 
@@ -933,12 +944,15 @@ def F_MATERIAL_IDENTIFICATION_SIMILAR_OBJECT(
             "Too many similar objects in the scene. Ambiguous question."
         )
 
-    present = [
-        obj["name"] for obj in iter_objects(world_state) if obj["id"] != object["id"]
-    ]
+    visible_objects_names, all_objects_minus_visible_and_non_visible = (
+        get_objects_present_and_not_present(world_state, timestep)
+    )
 
     options, correct_idx = create_mc_object_names_from_dataset(
-        object_similar["name"], present, get_all_objects_names(), num_answers=4
+        object_similar["name"],
+        visible_objects_names,
+        all_objects_minus_visible_and_non_visible,
+        num_answers=4,
     )
 
     return fill_questions(

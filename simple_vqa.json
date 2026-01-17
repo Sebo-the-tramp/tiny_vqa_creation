@@ -4,19 +4,19 @@
             "task_splits": "single+multi",
             "sub_category": "distance",
             "choice": "mcq",
-            "question": "What is the distance between the geometrical centers of <OBJECT_1> and the <OBJECT_2>?"
+            "question": "What is the distance between <OBJECT_1> and the <OBJECT_2>?"
         },
          "F_CLOSEST_OBJECT_OBJECT": {
             "task_splits": "single+multi",
             "sub_category": "distance",
             "choice": "mcq",
-            "question": "Which object in the image is closest to the geometrical center of the <OBJECT>?"
+            "question": "Which object in the image is closest to the <OBJECT>?"
         },
         "F_DISTANCE_OBJECT_CAMERA_DISTANCE": {
             "task_splits": "single+multi",
             "sub_category": "distance",
             "choice": "mcq",
-            "question": "What is the distance between the geometrical center of the <OBJECT> and the camera?"
+            "question": "What is the distance between the <OBJECT> and the camera?"
         },
         "F_CLOSEST_OBJECT_CAMERA": {
             "task_splits": "single+multi",

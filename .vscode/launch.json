@@ -28,7 +28,7 @@
                 // "--roi_circling", "1",
                 // "--masking", "1"
                 // "--scene_context", "1"
-                // "--include_categories", "mechanics",
+                "--include_categories", "spatial_reasoning",
                 "--print_errors", 
                 // "--include_categories", "persistence",
                 // "--augmentation", "roi_circling_no_text",

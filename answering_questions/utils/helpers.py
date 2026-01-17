@@ -23,7 +23,7 @@ import numpy as np
 
 from copy import deepcopy
 from utils.config import get_config
-from utils.all_objects import get_gso_mapping
+from utils.all_objects import get_gso_mapping, get_all_objects_names
 
 from utils.my_exception import ImpossibleToAnswer
 
@@ -944,7 +944,7 @@ def fill_template(
                 resolved_attributes[attribute]["choice"],
             )
         elif "OBJECT" in attribute:
-            mapped_name = f"\"{gso_mapping[resolved_attributes[attribute]['choice']['model']]['name']}\""
+            mapped_name = f'"{gso_mapping[resolved_attributes[attribute]["choice"]["model"]]["name"]}"'
             # mapped_name = resolved_attributes[attribute]["choice"]["name"] --> OLD way
             question["question"] = question["question"].replace(
                 f"<{attribute}>", mapped_name
@@ -1404,3 +1404,44 @@ def ensure_vector_size(
     while len(padded) < size:
         padded.append(0.0)
     return tuple(padded)
+
+
+def get_all_objects_presents(
+    world_state: Mapping[str, Any],
+    timestep: str,
+    resolved_attributes_id: List[str] = [],
+) -> List[str]:
+    visible_objects_names = []
+    non_visible_objects_names = []
+
+    for obj in iter_objects(world_state):
+        obj_id = obj["id"]
+        obj_name = obj["name"]
+        if obj_id in resolved_attributes_id:
+            continue  # skip already resolved objects
+
+        if is_object_visible(world_state, obj_id, timestep):
+            visible_objects_names.append(obj_name)
+        else:
+            non_visible_objects_names.append(obj_name)
+
+    return visible_objects_names, non_visible_objects_names
+
+
+def get_objects_present_and_not_present(
+    world_state: Mapping[str, Any], timestep: str
+) -> Tuple[List[str], List[str]]:
+    visible_objects_names, non_visible_objects_names = get_all_objects_presents(
+        world_state, timestep
+    )
+    all_objects_minus_visible_and_non_visible = list(
+        set(get_all_objects_names())
+        - set(non_visible_objects_names)
+        - set(visible_objects_names)
+    )
+
+    return visible_objects_names, all_objects_minus_visible_and_non_visible
+
+    visible_objects_names, all_objects_minus_visible_and_non_visible = (
+        get_objects_present_and_not_present(world_state, timestep)
+    )

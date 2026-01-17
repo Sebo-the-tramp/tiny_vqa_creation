@@ -18,43 +18,41 @@ from typing import (
 
 from utils.config import get_config
 from utils.my_exception import ImpossibleToAnswer
-from utils.all_objects import get_all_objects_names
 from utils.decorators import with_resolved_attributes_cf
 
 from utils.helpers import (
-    fill_questions_cf,
-    iter_objects,
     distance_between,
-    resolve_attributes_visible_at_timestep,
+    fill_questions_cf,
     get_timestep_from_idx,
+    get_objects_present_and_not_present,
+    resolve_attributes_visible_at_timestep,
 )
 
 from .mechanics_helpers import (
     get_speed,
-    get_acceleration,
     get_position,
+    get_acceleration,
 )
 
 from utils.bin_creation import (
+    uniform_labels,
     create_mc_options_around_gt,
     create_mc_object_names_from_dataset,
-    uniform_labels,
 )
 
-Number = Union[int, float]
 Vector = Tuple[float, float, float]
 WorldState = Mapping[str, Any]
 QuestionPayload = Mapping[str, Any]
+
+Number = Union[int, float]
 Answer = Union[str, float, Vector, Mapping[str, Any], Sequence[str]]
 
+TIMESTART = get_config()["timestart"]
 CLIP_LENGTH = get_config()["clip_length"]
+SAMPLING_RATE = get_config()["sampling_rate"]
 FRAME_INTERLEAVE = get_config()["frame_interleave"]
-
 MOVEMENT_TOLERANCE = get_config()["movement_tolerance"]
 ROTATION_TOLERANCE = get_config()["rotation_tolerance"]
-FRAME_INTERLEAVE = get_config()["frame_interleave"]
-SAMPLING_RATE = get_config()["sampling_rate"]
-TIMESTART = get_config()["timestart"]
 RENDER_STEP = 1.0 / SAMPLING_RATE
 
 
@@ -244,20 +242,25 @@ def CF_COLLISION_OBJECT_OBJECT_FRAME_SINGLE(
                 obj_colliding = other_object_id
             break
 
-    DATASET = get_all_objects_names()
-    present = [
-        obj["name"]
-        for obj in list(iter_objects(world_state_og))
-        if obj["id"] != object_id
-    ]
+    correct_name = world_state_og["objects"][obj_colliding]["name"]
+
+    visible_objects_names_minus_resolved, all_objects_minus_visible_and_non_visible = (
+        get_objects_present_and_not_present(
+            world_state_mod, timestep_end, [correct_name]
+        )
+    )
 
     if obj_colliding is not None:
         labels, correct_idx = create_mc_object_names_from_dataset(
-            world_state_og["objects"][obj_colliding]["name"], present, DATASET
+            correct_name,
+            visible_objects_names_minus_resolved,
+            all_objects_minus_visible_and_non_visible,
         )
     else:
         labels, correct_idx = create_mc_object_names_from_dataset(
-            "No Object", present, DATASET
+            "No Object",
+            visible_objects_names_minus_resolved,
+            all_objects_minus_visible_and_non_visible,
         )
 
     resolved_attributes = resolve_attributes_visible_at_timestep(

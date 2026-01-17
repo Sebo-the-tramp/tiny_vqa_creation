@@ -84,7 +84,7 @@ def F_VISIBILITY_OBJECT(
     object = resolved_attributes["OBJECT"]["choice"]
 
     _, all_objects_minus_visible_and_non_visible = get_objects_present_and_not_present(
-        world_state, final_timestep
+        world_state, final_timestep, [object["name"]]
     )
 
     labels, correct_idx = create_mc_object_names_from_dataset(

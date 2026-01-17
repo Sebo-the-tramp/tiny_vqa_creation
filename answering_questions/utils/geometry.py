@@ -132,12 +132,14 @@ def get_camera_OBB(camera):
     # --- camera frame ---
     f = _norm(at - eye)  # forward
     r = _norm(np.cross(f, up0))  # right
-    u = np.cross(r, f)  # corrected up
+    u = _norm(np.cross(r, f))  # corrected up
 
-    R = np.stack([r, u, f], axis=1)  # columns = axes
+    # b = -f
+    R = np.stack([r, -u, f], axis=1)  # columns = axes
 
     # --- camera body dimensions (meters / world units) ---
-    sx, sy, sz = 0.20, 0.10, 0.10  # width, height, depth
+    sx, sy, sz = 0.10, 0.10, 0.10  # width, height, depth
+    # a cube so it doesn't matter how it is rotated (+-90 deg)
     extents = np.array(
         [sx, sy, sz]
     )  # I do not halve them, as they will be halved later

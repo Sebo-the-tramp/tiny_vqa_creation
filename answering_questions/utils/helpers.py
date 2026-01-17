@@ -1406,42 +1406,46 @@ def ensure_vector_size(
     return tuple(padded)
 
 
-def get_all_objects_presents(
+def get_all_objects_presents_minus_resolved(
     world_state: Mapping[str, Any],
     timestep: str,
-    resolved_attributes_id: List[str] = [],
+    resolved_attributes_name: List[str] = [],
 ) -> List[str]:
-    visible_objects_names = []
+    visible_objects_names_minus_resolved = []
     non_visible_objects_names = []
 
     for obj in iter_objects(world_state):
         obj_id = obj["id"]
         obj_name = obj["name"]
-        if obj_id in resolved_attributes_id:
+        if obj_name in resolved_attributes_name:
             continue  # skip already resolved objects
 
         if is_object_visible(world_state, obj_id, timestep):
-            visible_objects_names.append(obj_name)
+            visible_objects_names_minus_resolved.append(obj_name)
         else:
             non_visible_objects_names.append(obj_name)
 
-    return visible_objects_names, non_visible_objects_names
+    return visible_objects_names_minus_resolved, non_visible_objects_names
 
 
 def get_objects_present_and_not_present(
-    world_state: Mapping[str, Any], timestep: str
+    world_state: Mapping[str, Any],
+    timestep: str,
+    resolved_attributes_name: List[str] = [],
 ) -> Tuple[List[str], List[str]]:
-    visible_objects_names, non_visible_objects_names = get_all_objects_presents(
-        world_state, timestep
+    visible_objects_names_minus_resolved, non_visible_objects_names = (
+        get_all_objects_presents_minus_resolved(
+            world_state, timestep, resolved_attributes_name
+        )
     )
     all_objects_minus_visible_and_non_visible = list(
         set(get_all_objects_names())
         - set(non_visible_objects_names)
-        - set(visible_objects_names)
+        - set(visible_objects_names_minus_resolved)
+        - set(resolved_attributes_name)
     )
 
-    return visible_objects_names, all_objects_minus_visible_and_non_visible
-
-    visible_objects_names, all_objects_minus_visible_and_non_visible = (
-        get_objects_present_and_not_present(world_state, timestep)
+    return (
+        visible_objects_names_minus_resolved,
+        all_objects_minus_visible_and_non_visible,
     )

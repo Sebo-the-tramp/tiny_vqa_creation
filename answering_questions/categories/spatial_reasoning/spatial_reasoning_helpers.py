@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import numpy as np
 
-from typing import Any, Mapping, Optional, Tuple, Union, List
+from typing import Any, Mapping, Optional, Tuple, Union
 
 from shapely.geometry import Polygon
 
@@ -109,34 +109,6 @@ def get_min_distance_pointcloud_to_obb(
         return float(np.median(d[:m]))
 
     return float(d[0])
-
-
-def get_closest_object(
-    world_state: Mapping[str, Any],
-    object_id: str,
-    object_position_at_time: List[float],
-    timestep: str,
-) -> str:
-    min_distance = float("inf")
-    closest_object = None
-
-    for obj_id, obj_data in world_state["objects"].items():
-        if obj_id == object_id:
-            continue
-        obj_position = get_position(world_state, obj_id, timestep)
-        if obj_position is None:
-            continue
-        distance = np.linalg.norm(
-            np.array(object_position_at_time) - np.array(obj_position)
-        )
-        if distance < min_distance:
-            min_distance = distance
-            closest_object = obj_data
-
-    if closest_object is None:
-        raise ImpossibleToAnswer("No other visbile objects found in the scene.")
-
-    return closest_object
 
 
 def get_closest_visible_object(

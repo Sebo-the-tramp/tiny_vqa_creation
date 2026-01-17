@@ -35,8 +35,8 @@ from utils.helpers import (
 )
 from .spatial_reasoning_helpers import (
     get_position,
-    get_closest_object,
     get_position_camera,
+    get_closest_visible_object,
     get_spatial_relationship_camera_view,
     get_all_relational_positional_adjectives,
 )
@@ -110,7 +110,7 @@ def CF_CLOSEST_OBJECT_OBJECT(
     )
 
     object_position_at_time = get_position(world_state_og, object_id, timestep_end)
-    closest_object = get_closest_object(
+    closest_object = get_closest_visible_object(
         world_state_og, object_id, object_position_at_time, timestep_end
     )
 

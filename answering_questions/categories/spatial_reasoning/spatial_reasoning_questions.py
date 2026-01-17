@@ -30,9 +30,9 @@ from utils.helpers import (
     iter_objects,
     fill_questions,
     is_object_visible,
-    get_all_objects_presents,
     get_random_timestep_from_list,
     minimum_distance_between_OBBs,
+    get_objects_present_and_not_present,
     resolve_attributes_visible_at_timestep,
     get_visible_timesteps_for_attributes_min_objects,
 )
@@ -189,16 +189,15 @@ def F_CLOSEST_OBJECT_CAMERA(
             closest_distance = distance
             closest_object = object
 
-    visible_objects_names, non_visible_objects_names = get_all_objects_presents(
-        world_state, timestep
-    )
-    all_objects_minus_visible_and_non_visible = list(
-        set(get_all_objects_names()) - set(non_visible_objects_names)
+    visible_objects_names_minus_resolved, all_objects_minus_visible_and_non_visible = (
+        get_objects_present_and_not_present(
+            world_state, timestep, [closest_object["name"]]
+        )
     )
 
     labels, correct_idx = create_mc_object_names_from_dataset(
         closest_object["name"],
-        visible_objects_names,
+        visible_objects_names_minus_resolved,
         all_objects_minus_visible_and_non_visible,
         num_answers=4,
     )
@@ -240,16 +239,15 @@ def F_CLOSEST_OBJECT_OBJECT(
 
     closest_object = get_closest_visible_object(world_state, object_id, timestep)
 
-    visible_objects_names, non_visible_objects_names = get_all_objects_presents(
-        world_state, timestep, [object_id]
-    )
-    all_objects_minus_visible_and_non_visible = list(
-        set(get_all_objects_names()) - set(non_visible_objects_names)
+    visible_objects_names_minus_resolved, all_objects_minus_visible_and_non_visible = (
+        get_objects_present_and_not_present(
+            world_state, timestep, [closest_object["name"]]
+        )
     )
 
     labels, correct_idx = create_mc_object_names_from_dataset(
         closest_object["name"],
-        visible_objects_names,
+        visible_objects_names_minus_resolved,
         all_objects_minus_visible_and_non_visible,
         num_answers=4,
     )

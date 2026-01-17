@@ -139,13 +139,15 @@ def F_MASS_HEAVIEST_OBJECT(
     ):
         raise ImpossibleToAnswer("No single heaviest object in the scene.")
 
-    visible_objects_names, all_objects_minus_visible_and_non_visible = (
-        get_objects_present_and_not_present(world_state, timestep)
+    visible_objects_names_minus_resolved, all_objects_minus_visible_and_non_visible = (
+        get_objects_present_and_not_present(
+            world_state, timestep, [heaviest_visible_object["name"]]
+        )
     )
 
     labels, correct_idx = create_mc_object_names_from_dataset(
         heaviest_visible_object["name"],
-        visible_objects_names,
+        visible_objects_names_minus_resolved,
         all_objects_minus_visible_and_non_visible,
         num_answers=4,
     )
@@ -197,13 +199,15 @@ def F_MASS_LIGHTEST_OBJECT(
     ):
         raise ImpossibleToAnswer("No single lightest object in the scene.")
 
-    visible_objects_names, all_objects_minus_visible_and_non_visible = (
-        get_objects_present_and_not_present(world_state, timestep)
+    visible_objects_names_minus_resolved, all_objects_minus_visible_and_non_visible = (
+        get_objects_present_and_not_present(
+            world_state, timestep, [lightest_visible_object["name"]]
+        )
     )
 
     labels, correct_idx = create_mc_object_names_from_dataset(
         lightest_visible_object["name"],
-        visible_objects_names,
+        visible_objects_names_minus_resolved,
         all_objects_minus_visible_and_non_visible,
         num_answers=4,
     )
@@ -275,13 +279,15 @@ def F_PHYSICS_PROPERTY_DENSITY_OBJECT_RELATIVE(
     if denser_object is None:
         raise ImpossibleToAnswer("No objects found in the scene.")
 
-    visible_objects_names, all_objects_minus_visible_and_non_visible = (
-        get_objects_present_and_not_present(world_state, timestep)
+    visible_objects_names_minus_resolved, all_objects_minus_visible_and_non_visible = (
+        get_objects_present_and_not_present(
+            world_state, timestep, [denser_object["name"]]
+        )
     )
 
     labels, correct_idx = create_mc_object_names_from_dataset(
         denser_object["name"],
-        visible_objects_names,
+        visible_objects_names_minus_resolved,
         all_objects_minus_visible_and_non_visible,
         num_answers=4,
     )
@@ -473,13 +479,13 @@ def F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR(
 
     target = similar_objects[0]
 
-    visible_objects_names, all_objects_minus_visible_and_non_visible = (
-        get_objects_present_and_not_present(world_state, timestep)
+    visible_objects_names_minus_resolved, all_objects_minus_visible_and_non_visible = (
+        get_objects_present_and_not_present(world_state, timestep, [target["name"]]),
     )
 
     labels, correct_idx = create_mc_object_names_from_dataset(
         target["name"],
-        visible_objects_names,
+        visible_objects_names_minus_resolved,
         all_objects_minus_visible_and_non_visible,
         num_answers=4,
     )
@@ -557,13 +563,15 @@ def F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST(
             else:
                 highest_modulus_object = best_obj
 
-    visible_objects_names, all_objects_minus_visible_and_non_visible = (
-        get_objects_present_and_not_present(world_state, timestep)
+    visible_objects_names_minus_resolved, all_objects_minus_visible_and_non_visible = (
+        get_objects_present_and_not_present(
+            world_state, timestep, [highest_modulus_object["name"]]
+        )
     )
 
     labels, correct_idx = create_mc_object_names_from_dataset(
         highest_modulus_object["name"],
-        visible_objects_names,
+        visible_objects_names_minus_resolved,
         all_objects_minus_visible_and_non_visible,
         num_answers=4,
     )
@@ -768,13 +776,15 @@ def F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR(
         raise ImpossibleToAnswer("No similar object found in the scene.")
         # similar_object = {"name": "None of the objects", "props": {"prs": -1}}
 
-    visible_objects_names, all_objects_minus_visible_and_non_visible = (
-        get_objects_present_and_not_present(world_state, timestep)
+    visible_objects_names_minus_resolved, all_objects_minus_visible_and_non_visible = (
+        get_objects_present_and_not_present(
+            world_state, timestep, [similar_object["name"]]
+        )
     )
 
     labels, correct_idx = create_mc_object_names_from_dataset(
         similar_object["name"],
-        visible_objects_names,
+        visible_objects_names_minus_resolved,
         all_objects_minus_visible_and_non_visible,
         num_answers=4,
     )
@@ -833,13 +843,15 @@ def F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST(
             "Too many objects with similar highest Poisson's ratio. Ambiguous question."
         )
 
-    visible_objects_names, all_objects_minus_visible_and_non_visible = (
-        get_objects_present_and_not_present(world_state, timestep)
+    visible_objects_names_minus_resolved, all_objects_minus_visible_and_non_visible = (
+        get_objects_present_and_not_present(
+            world_state, timestep, [highest_poisson_ratio_object["name"]]
+        )
     )
 
     labels, correct_idx = create_mc_object_names_from_dataset(
         highest_poisson_ratio_object["name"],
-        visible_objects_names,
+        visible_objects_names_minus_resolved,
         all_objects_minus_visible_and_non_visible,
         num_answers=4,
     )
@@ -944,13 +956,15 @@ def F_MATERIAL_IDENTIFICATION_SIMILAR_OBJECT(
             "Too many similar objects in the scene. Ambiguous question."
         )
 
-    visible_objects_names, all_objects_minus_visible_and_non_visible = (
-        get_objects_present_and_not_present(world_state, timestep)
+    visible_objects_names_minus_resolved, all_objects_minus_visible_and_non_visible = (
+        get_objects_present_and_not_present(
+            world_state, timestep, [object_similar["name"]]
+        )
     )
 
     options, correct_idx = create_mc_object_names_from_dataset(
         object_similar["name"],
-        visible_objects_names,
+        visible_objects_names_minus_resolved,
         all_objects_minus_visible_and_non_visible,
         num_answers=4,
     )

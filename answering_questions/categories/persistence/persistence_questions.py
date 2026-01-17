@@ -81,7 +81,7 @@ def F_PERSISTENCE_OBJECT_PRESENT(
     obj_name = world_state["objects"][str(chosen_object_id)]["name"]
 
     _, all_objects_minus_visible_and_non_visible = get_objects_present_and_not_present(
-        world_state, final_timestep
+        world_state, final_timestep, [obj_name]
     )
 
     labels, correct_idx = create_mc_object_names_from_dataset(

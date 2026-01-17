@@ -18,8 +18,7 @@ Overview
   `output/<run_name>/val_answer_<run_name>.json` (answers), plus a config snapshot.
 
 > [!NOTE]
-> Recent Run Summary
-> ------------------
+> **Recent Run Summary**
 > RUN SUMMARY: questions=84850 wall=374.12s cpu=4.80s rss=867008KB
 >
 > That run clocks in at ~6m 14s for 84,850 questions, down from ~35 minutes on the

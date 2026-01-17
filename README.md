@@ -17,12 +17,13 @@ Overview
 - Output: `output/<run_name>/test_<run_name>.json` (questions) and
   `output/<run_name>/val_answer_<run_name>.json` (answers), plus a config snapshot.
 
-Recent Run Summary
-------------------
-RUN SUMMARY: questions=84850 wall=374.12s cpu=4.80s rss=867008KB
-
-That run clocks in at ~6m 14s for 84,850 questions, down from ~35 minutes on the
-previous version (around a 5.6x speedup). Not bad.
+> [!NOTE]
+> Recent Run Summary
+> ------------------
+> RUN SUMMARY: questions=84850 wall=374.12s cpu=4.80s rss=867008KB
+>
+> That run clocks in at ~6m 14s for 84,850 questions, down from ~35 minutes on the
+> previous version (around a 5.6x speedup). Not bad.
 
 Repository Layout
 -----------------
@@ -342,6 +343,10 @@ Contributions are welcome. If you want to add a new VQA type:
    - Run a small job with `--n_scenes 5` and `--include_categories` for the new
      category.
    - Use `fast_tools/check_VQA.py` to visualize questions and image paths.
+
+5) Use pre-commit before opening a PR:
+   - Install and enable the hooks (see "Clean Commits (Formatting / Lint)").
+   - Run `pre-commit run --all-files` to catch lint/format issues.
 
 Status / Notes
 --------------

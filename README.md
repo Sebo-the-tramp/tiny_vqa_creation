@@ -60,6 +60,13 @@ Notes:
 - Counterfactual runs expect `dl3dv-counterfact/<variant>/...` folders and map them
   back to the original `dl3dv` seed folder.
 
+> [!NOTE]
+> For faster runs, create a minimized simulation folder by running:
+> ```bash
+> python minify_simulation_v1.py /data0/sebastian.cavada/datasets/simulations_v4/dl3dv \
+>   --input-name simulation_kinematics.json
+> ```
+
 Install / Setup (uv)
 --------------------
 Python 3.11 is required (`pyproject.toml`).

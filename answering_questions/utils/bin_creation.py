@@ -42,10 +42,6 @@ def _decimals_for_sig(x: float, sig: int = 3) -> int:
     return max(0, sig - 1 - int(math.floor(math.log10(abs(x)))))
 
 
-def norm(name: str) -> str:
-    return name.lower()
-
-
 # improved version after Raoul's feedback
 # https://chatgpt.com/c/6906646f-be44-8325-a42e-98ddbf72eec8 -> to improve probably with slope bins
 def create_mc_options_around_gt(
@@ -264,16 +260,8 @@ def create_mc_object_names_from_dataset(
         raise ValueError("num_answers must be at least 2")
 
     rng = _select_rng(seed)
-
-    gt_n = norm(gt)
-    if not gt_n:
-        raise ValueError("Ground-truth object name becomes empty after normalization.")
-
-    # Normalize datasets
-    ds_norm_set = {
-        norm(x) for x in dataset_labels if (norm(x) != "" and norm(x) != gt_n)
-    }
-    if gt_n in ds_norm_set:
+    
+    if gt in dataset_labels:
         raise ValueError("Ground-truth object name found in dataset labels.")
 
     # Present objects (normalized, unique, excluding GT)
@@ -281,8 +269,8 @@ def create_mc_object_names_from_dataset(
     present_n = []
 
     for o in present_objects:
-        n = norm(o)
-        if n and n != gt_n and n not in seen_present:
+        n = o
+        if n and n != gt and n not in seen_present:
             seen_present.add(n)
             present_n.append(n)
 
@@ -293,7 +281,7 @@ def create_mc_object_names_from_dataset(
         # category_map keys should be normalized
         return category_map.get(n)
 
-    gt_cat = cat_of(gt_n)
+    gt_cat = cat_of(gt)
 
     # Split present by category (if available)
     if prefer_same_category and gt_cat is not None:
@@ -313,7 +301,7 @@ def create_mc_object_names_from_dataset(
         for x in lst:
             if len(distractors) >= k:
                 break
-            if x != gt_n and x not in distractors:
+            if x != gt and x not in distractors:
                 distractors.append(x)
 
     # 1) Fill from present objects
@@ -326,8 +314,8 @@ def create_mc_object_names_from_dataset(
         # candidate pool = dataset minus GT and already used/present
         cand = [
             x
-            for x in ds_norm_set
-            if x != gt_n and x not in distractors and x not in seen_present
+            for x in dataset_labels
+            if x != gt and x not in distractors and x not in seen_present
         ]
 
         for x in cand:
@@ -345,8 +333,8 @@ def create_mc_object_names_from_dataset(
         )
 
     # Assemble + shuffle; format labels uniformly
-    options_n = [gt_n] + distractors[:needed]
+    options_n = [gt] + distractors[:needed]
     _shuffle_inplace(options_n, rng)
     labels = [x for x in options_n]
-    correct_idx = options_n.index(gt_n)
+    correct_idx = options_n.index(gt)
     return labels, correct_idx

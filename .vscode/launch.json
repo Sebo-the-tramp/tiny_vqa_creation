@@ -10,10 +10,10 @@
             "request": "launch",
             "program": "./main_parallel.py",
             "console": "integratedTerminal",
-            "cwd": "/data0/sebastian.cavada/compositional-physics/tiny_vqa_deterministic/answering_questions",
+            "cwd": "/data0/sebastian.cavada/compositional-physics/tiny_vqa_creation/answering_questions",
             "args": [
                 // "--simulation_path", "/data0/sebastian.cavada/datasets/simulations_v4/dl3dv/random",
-                "--simulation_path", "/data0/sebastian.cavada/datasets/simulations_v4/dl3dv/random/4",
+                "--simulation_path", "/data0/sebastian.cavada/datasets/simulations_v4/dl3dv/random-cam-stationary/10/c-1_no-10_d-10_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-1_20251218_155547",
                 // "--simulation", "/data0/sebastian.cavada/datasets/simulations_v4/dl3dv/random-cam-stationary/2/c-1_no-2_d-10_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-4_20251215_045541",
                 // "--simulation_path", "/data0/sebastian.cavada/datasets/simulations_v4/dl3dv/random/2/c-1_no-2_d-10_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-83_20251212_015551",
                 // "--simulation_path", "/data0/sebastian.cavada/datasets/simulations_v4/dl3dv/random/2/c-1_no-2_d-10_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-146_20251212_024816",
@@ -43,7 +43,7 @@
             "request": "launch",
             "program": "./main_parallel_counterfactual.py",
             "console": "integratedTerminal",
-            "cwd": "/data0/sebastian.cavada/compositional-physics/tiny_vqa_deterministic/answering_questions",
+            "cwd": "/data0/sebastian.cavada/compositional-physics/tiny_vqa_creation/answering_questions",
             "args": [
                 // "--simulation_path", "/data0/sebastian.cavada/datasets/simulations_v2",
                 "--verbose",

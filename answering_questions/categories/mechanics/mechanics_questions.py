@@ -248,7 +248,7 @@ def F_KINEMATICS_SYSTEM_STABILITY(
         )
     else:
         final_timesteps = list(
-            set(list(world_state["simulation"].keys())[-20:]) & set(visible_timesteps)
+            set(list(world_state["simulation"].keys())[-10:]) & set(visible_timesteps)
         )
         if len(final_timesteps) == 0:
             raise ImpossibleToAnswer("No visible timesteps found in the last frames.")
@@ -262,15 +262,21 @@ def F_KINEMATICS_SYSTEM_STABILITY(
     options = [
         "Stable: The system has stopped",
         "Unstable: The system is currently moving",
-        "Cyclic: The system has returned to its exact starting position",
-        "Invisible: The objects have moved out of the frame entirely",
+        "Cyclic: All objects returned to their initial position",
+        "Invisible: All objects have moved out of the frame entirely",
     ]
 
     correct_idx = 1 if is_unstable else 0
     labels = options
 
     return fill_questions(
-        question, labels, correct_idx, world_state, final_timestep, resolved_attributes
+        question,
+        labels,
+        correct_idx,
+        world_state,
+        final_timestep,
+        resolved_attributes,
+        k_options=(1, 2),
     )
 
 

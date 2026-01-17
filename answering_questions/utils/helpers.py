@@ -69,6 +69,7 @@ def fill_questions(
     final_timestep,
     resolved_attributes,
     initial_timestep=None,
+    k_options=(1, 2, 3, 4),
 ) -> List:
     questions = []
     # 1) Keep the correct label before shuffling
@@ -80,9 +81,7 @@ def fill_questions(
         final_timestep_index = world_state["simulation"][final_timestep]["frame_idx"]
         # we need to compute the closest initial timestep based the current timestep
         candidates = [
-            k
-            for k in (1, 2, 3, 4)
-            if final_timestep_index - (k * (CLIP_LENGTH - 1)) >= 0
+            k for k in k_options if final_timestep_index - (k * (CLIP_LENGTH - 1)) >= 0
         ]
         if len(candidates) == 0:
             raise ImpossibleToAnswer(

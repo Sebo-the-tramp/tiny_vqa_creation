@@ -113,3 +113,34 @@ def external_points_2d(points):
         return points  # all points are external if <3
     hull = ConvexHull(points)
     return points[hull.vertices]
+
+
+def get_camera_OBB(camera):
+    """
+    Returns the camera OBB in world coordinates.
+
+    Output:
+        center  : (3,) np.ndarray
+        extents : (3,) np.ndarray   # half-sizes
+        R       : (3,3) np.ndarray  # columns = local axes (right, up, forward)
+    """
+
+    eye = np.array(camera["eye"], dtype=np.float32)
+    at = np.array(camera["at"], dtype=np.float32)
+    up0 = np.array(camera["up"], dtype=np.float32)
+
+    # --- camera frame ---
+    f = _norm(at - eye)  # forward
+    r = _norm(np.cross(f, up0))  # right
+    u = np.cross(r, f)  # corrected up
+
+    R = np.stack([r, u, f], axis=1)  # columns = axes
+
+    # --- camera body dimensions (meters / world units) ---
+    sx, sy, sz = 0.20, 0.10, 0.10  # width, height, depth
+    extents = np.array([sx, sy, sz]) * 0.5
+
+    # --- center ---
+    center = eye + f * extents[2]  # push box slightly forward
+
+    return center, extents, R

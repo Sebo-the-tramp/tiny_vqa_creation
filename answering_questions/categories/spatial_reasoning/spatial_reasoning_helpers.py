@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 import numpy as np
 
 from typing import Any, Mapping, Optional, Tuple, Union, List
@@ -8,7 +7,7 @@ from typing import Any, Mapping, Optional, Tuple, Union, List
 from shapely.geometry import Polygon
 
 from utils.config import get_config
-from utils.helpers import as_vector
+from utils.helpers import as_vector, is_object_visible, minimum_distance_between_OBBs
 from utils.my_exception import ImpossibleToAnswer
 from utils.geometry import (
     OBB_to_eight_points,
@@ -130,6 +129,43 @@ def get_closest_object(
         distance = np.linalg.norm(
             np.array(object_position_at_time) - np.array(obj_position)
         )
+        if distance < min_distance:
+            min_distance = distance
+            closest_object = obj_data
+
+    if closest_object is None:
+        raise ImpossibleToAnswer("No other visbile objects found in the scene.")
+
+    return closest_object
+
+
+def get_closest_visible_object(
+    world_state: Mapping[str, Any],
+    query_object_id: str,
+    object_position_at_time: List[float],
+    timestep: str,
+) -> str:
+    min_distance = float("inf")
+    closest_object = None
+
+    for obj_id, obj_data in world_state["objects"].items():
+        if obj_id == query_object_id:
+            continue
+        if not is_object_visible(world_state, obj_id, timestep):
+            continue
+        obj_position = get_position(world_state, obj_id, timestep)
+        if obj_position is None:
+            continue
+
+        query_object_id_state = world_state["simulation"][timestep]["objects"][
+            query_object_id
+        ]
+        obj_id_state = world_state["simulation"][timestep]["objects"][obj_id]
+
+        distance = minimum_distance_between_OBBs(
+            query_object_id_state["obb"], obj_id_state["obb"]
+        )
+
         if distance < min_distance:
             min_distance = distance
             closest_object = obj_data

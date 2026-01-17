@@ -28,7 +28,7 @@
             "task_splits": "single+multi",
             "sub_category": "size",
             "choice": "mcq",
-            "question": "What is the volume of the <OBJECT> in the image?"
+            "question": "What are the dimensioins of the <OBJECT> in the image?"
         },
         "F_SIZE_OBJECT_BIGGER": {
             "task_splits": "single+multi",

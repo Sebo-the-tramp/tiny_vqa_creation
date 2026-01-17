@@ -23,13 +23,13 @@ def natural_key(path: str) -> List[object]:
     ]
 
 
-def find_simulation_files(simulation_root: str) -> List[str]:
-    """Return all simulation.json paths under the provided root."""
+def find_simulation_files(simulation_root: str, input_name: str) -> List[str]:
+    """Return all matching simulation paths under the provided root."""
     abs_root = os.path.abspath(simulation_root)
     if os.path.isfile(abs_root):
         return [abs_root]
 
-    pattern = os.path.join(abs_root, "**", "simulation.json")
+    pattern = os.path.join(abs_root, "**", input_name)
     print(f"Searching for simulation files with pattern: {pattern}")
     matches = glob.glob(pattern, recursive=True)
     matches.sort(key=natural_key)
@@ -78,10 +78,17 @@ def _drop_path(source, parts: List[str]) -> None:
     _drop_path(source[head], tail)
 
 
+def _default_output_name(input_name: str) -> str:
+    if input_name.endswith(".json"):
+        return input_name[:-5] + "_min.json"
+    return input_name + "_min.json"
+
+
 def minify_single_simulation(
     in_path: str,
     out_path: Optional[str] = None,
     drop_paths: Optional[List[str]] = None,
+    input_name: str = "simulation.json",
 ) -> str:
     before_size = os.path.getsize(in_path)
     with open(in_path, "r", encoding="utf-8") as fh:
@@ -91,9 +98,10 @@ def minify_single_simulation(
     if drop_paths:
         drop_by_paths(data, drop_paths)
 
-    destination = out_path or in_path.replace("simulation.json", "simulation_min.json")
+    default_output_name = _default_output_name(input_name)
+    destination = out_path or in_path.replace(input_name, default_output_name)
     with open(destination, "w", encoding="utf-8") as fh:
-        json.dump(data, fh, indent=4, ensure_ascii=True)
+        json.dump(data, fh, ensure_ascii=True, separators=(",", ":"))
     after_size = os.path.getsize(destination)
     factor = (before_size / after_size) if after_size else 0.0
     print(f"[{in_path}] size {before_size} -> {after_size} bytes (x{factor:.2f})")
@@ -103,11 +111,16 @@ def minify_single_simulation(
 
 def main(argv: Optional[Iterable[str]] = None) -> int:
     parser = argparse.ArgumentParser(
-        description="Create a minimal JSON snapshot from simulation.json files."
+        description="Create a minimal JSON snapshot from simulation files."
     )
     parser.add_argument(
         "simulation_path",
-        help="Path to a simulation.json file or a directory tree to search.",
+        help="Path to a simulation file or a directory tree to search.",
+    )
+    parser.add_argument(
+        "--input-name",
+        default="simulation.json",
+        help="Input filename to search for (default: simulation.json).",
     )
     parser.add_argument(
         "--out-path",
@@ -127,9 +140,9 @@ def main(argv: Optional[Iterable[str]] = None) -> int:
     )
     args = parser.parse_args(argv)
 
-    simulation_files = find_simulation_files(args.simulation_path)
+    simulation_files = find_simulation_files(args.simulation_path, args.input_name)
     if not simulation_files:
-        print("No simulation.json files found.", file=sys.stderr)
+        print(f"No {args.input_name} files found.", file=sys.stderr)
         return 1
 
     if args.out_path and len(simulation_files) > 1:
@@ -148,6 +161,7 @@ def main(argv: Optional[Iterable[str]] = None) -> int:
                 sim_file,
                 out_path=args.out_path,
                 drop_paths=drop_paths,
+                input_name=args.input_name,
             )
         except Exception as exc:
             print(f"Failed to process {sim_file}: {exc}", file=sys.stderr)
@@ -168,6 +182,7 @@ def main(argv: Optional[Iterable[str]] = None) -> int:
                 minify_single_simulation(
                     sim_file,
                     drop_paths=drop_paths,
+                    input_name=args.input_name,
                 )
             except Exception as exc:
                 print(f"Failed to process {sim_file}: {exc}", file=sys.stderr)
@@ -182,6 +197,7 @@ def main(argv: Optional[Iterable[str]] = None) -> int:
                 sim_path,
                 None,
                 drop_paths,
+                args.input_name,
             ): sim_path
             for sim_path in simulation_files
         }
@@ -197,3 +213,5 @@ def main(argv: Optional[Iterable[str]] = None) -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
+# python minify_simulation_v1.py /data0/sebastian.cavada/datasets/simulations_v4/dl3dv --input-name simulation_kinematics.json

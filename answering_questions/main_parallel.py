@@ -90,7 +90,10 @@ def _process_one(sim_file, args):
         simulation_id_path = sim_file.replace("simulation.json", "")
         destination_simulation_id_path = os.path.join(DEST_ROOT, simulation_id_path)
         simulation_steps = read_simulation(
-            os.path.join(simulation_id_path, "simulation_kinematics.json")
+            # os.path.join(simulation_id_path, "simulation_kinematics.json")
+            os.path.join(
+                simulation_id_path, "simulation_kinematics_min.json"
+            )  # this takes 40% less wall time
         )
         return create_vqa(
             QUESTIONS,

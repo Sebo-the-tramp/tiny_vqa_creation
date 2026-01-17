@@ -26,6 +26,7 @@ from typing import (
 
 from utils.helpers import (
     get_random_integer,
+    get_visible_timesteps_for_attributes_min_objects,
 )
 
 
@@ -112,8 +113,13 @@ def F_TEMPORAL_PREDICTION_NEXT_IMAGE(
 
     _FRAME_INTERLEAVE = kwargs["frame_interleave"]
 
+    # First we find the pairs of objects visible
+    visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
+        attributes, world_state, min_objects=1
+    )
+
     total_frames = len(world_state["simulation"]) // 3
-    min_frame = 0
+    min_frame = int(world_state["simulation"][visible_timesteps[0]]["frame_idx"])
     max_frame = total_frames - (n_frames * _FRAME_INTERLEAVE) - 1
 
     if max_frame <= min_frame:
@@ -191,8 +197,13 @@ def F_TEMPORAL_PREDICTION_PREVIOUS_IMAGE(
     assert len(attributes) == 0
     n_frames = 5
 
+    # First we find the pairs of objects visible
+    visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
+        attributes, world_state, min_objects=1
+    )
+
     total_frames = len(world_state["simulation"]) // 3
-    min_frame = 0
+    min_frame = int(world_state["simulation"][visible_timesteps[0]]["frame_idx"])
     max_frame = total_frames - (n_frames * FRAME_INTERLEAVE) - 1
 
     if max_frame <= min_frame:

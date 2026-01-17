@@ -18,18 +18,18 @@ fi
 
 cd answering_questions
 
-GENERAL_RUN_COUNT=21
+GENERAL_RUN_COUNT=23
 
 ####################
 
-# python main_parallel.py --simulation_path "${BASE_PATH}/random/" "${BASE_PATH}/random-cam-stationary/" \
-#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
-#     --run_name "run_${GENERAL_RUN_COUNT}_general" \
-#     --n_scenes 5000 \
-#     --exclude_simulations_file "problematic_paths.txt" \
-#     --n_proc $CPUS \
-#     --timeit \
-#     # --include_categories "mechanics" \
+python main_parallel.py --simulation_path "${BASE_PATH}/random/" "${BASE_PATH}/random-cam-stationary/" \
+    --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
+    --run_name "run_${GENERAL_RUN_COUNT}_general" \
+    --n_scenes 5000 \
+    --exclude_simulations_file "problematic_paths.txt" \
+    --n_proc $CPUS \
+    --timeit \
+    # --include_categories "spatial_reasoning" \
 
 RUN_NAME="run_${GENERAL_RUN_COUNT}_general"
 python ./subsample_questions_percentage.py \

@@ -21,22 +21,23 @@ from typing import (
 import random
 
 from utils.config import get_config
+from utils.geometry import get_camera_OBB
 from utils.all_objects import get_all_objects_names
+
 from utils.my_exception import ImpossibleToAnswer
 
 from utils.helpers import (
     iter_objects,
     fill_questions,
-    distance_between,
+    is_object_visible,
     get_random_timestep_from_list,
+    minimum_distance_between_OBBs,
     resolve_attributes_visible_at_timestep,
     get_visible_timesteps_for_attributes_min_objects,
-    is_object_visible,
 )
 from .spatial_reasoning_helpers import (
     get_position,
-    get_closest_object,
-    get_position_camera,
+    get_closest_visible_object,
     get_spatial_relationship_camera_view,
     get_all_relational_positional_adjectives,
 )
@@ -92,10 +93,10 @@ def F_DISTANCE_OBJECT_OBJECT(
     obj1_id = resolved_attributes["OBJECT_1"]["choice"]["id"]
     obj2_id = resolved_attributes["OBJECT_2"]["choice"]["id"]
 
-    obj1_pos = get_position(world_state, obj1_id, timestep)
-    obj2_pos = get_position(world_state, obj2_id, timestep)
+    obj1_state = world_state["simulation"][timestep]["objects"][obj1_id]
+    obj2_state = world_state["simulation"][timestep]["objects"][obj2_id]
 
-    distance = distance_between(obj1_pos, obj2_pos)
+    distance = minimum_distance_between_OBBs(obj1_state["obb"], obj2_state["obb"])
 
     options, correct_idx = create_mc_options_around_gt(
         distance, num_answers=4, display_decimals=2, lo=0.0
@@ -128,10 +129,13 @@ def F_DISTANCE_OBJECT_CAMERA_DISTANCE(
 
     object_id = resolved_attributes["OBJECT"]["choice"]["id"]
 
-    object_position_at_time = get_position(world_state, object_id, timestep)
-    camera_position_at_time = get_position_camera(world_state, timestep)
+    object_state = world_state["simulation"][timestep]["objects"][object_id]
+    camera_state = world_state["simulation"][timestep]["camera"]
 
-    distance = distance_between(object_position_at_time, camera_position_at_time)
+    camera_OBB = get_camera_OBB(camera_state)
+    object_OBB = object_state["obb"]
+
+    distance = minimum_distance_between_OBBs(object_OBB, camera_OBB)
 
     options, correct_idx = create_mc_options_around_gt(
         distance, num_answers=4, display_decimals=2, lo=0.0
@@ -169,9 +173,18 @@ def F_CLOSEST_OBJECT_CAMERA(
 
     for object in iter_objects(world_state):
         object_id = object["id"]
-        object_position_at_time = get_position(world_state, object_id, timestep)
-        camera_position_at_time = get_position_camera(world_state, timestep)
-        distance = distance_between(object_position_at_time, camera_position_at_time)
+
+        if not is_object_visible(world_state, object_id, timestep):
+            continue
+
+        object_state = world_state["simulation"][timestep]["objects"][object_id]
+        camera_state = world_state["simulation"][timestep]["camera"]
+
+        camera_OBB = get_camera_OBB(camera_state)
+        object_OBB = object_state["obb"]
+
+        distance = minimum_distance_between_OBBs(object_OBB, camera_OBB)
+
         if distance < closest_distance:
             closest_distance = distance
             closest_object = object
@@ -218,7 +231,7 @@ def F_CLOSEST_OBJECT_OBJECT(
     object_id = resolved_attributes["OBJECT"]["choice"]["id"]
 
     object_position_at_time = get_position(world_state, object_id, timestep)
-    closest_object = get_closest_object(
+    closest_object = get_closest_visible_object(
         world_state, object_id, object_position_at_time, timestep
     )
 
@@ -270,7 +283,9 @@ def F_SIZE_OBJECT(
     )
 
     # we need to make better options per extents
-    scales = [float(option) / first_extent for option in options]
+    # we also downsize by (^1/3) to account for the volume scaling to keep
+    # all the confounding linearly distant
+    scales = [(float(option) / first_extent) ** (1 / 3) for option in options]
 
     labels = [
         f"{extents[0] * scale:.2f}m x {extents[1] * scale:.2f}m x {extents[2] * scale:.2f}m"

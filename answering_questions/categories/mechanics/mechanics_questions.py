@@ -36,7 +36,6 @@ from utils.helpers import (
     get_timestep_from_idx,
     is_object_visible,
     get_visibility_mask,
-    get_visibility_mask_soft,
 )
 
 from utils.frames_selection import (
@@ -384,7 +383,7 @@ def F_COLLISION_OBJECT_OBJECT_FRAME_MULTI(
     assert len(attributes) == 1 and "OBJECT" in attributes
 
     collision_mask = get_mask_collisions(world_state)
-    visibility_mask, _ = get_visibility_mask_soft(world_state)
+    visibility_mask, _ = get_visibility_mask(world_state)
 
     # adding ground visibility (always visible)
     visibility_mask_T = np.append(

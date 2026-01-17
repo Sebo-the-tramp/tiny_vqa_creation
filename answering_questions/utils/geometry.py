@@ -1,19 +1,22 @@
 import numpy as np
 from scipy.spatial import ConvexHull
-from shapely.geometry import Polygon
 
 ## Geometry utilities
 
-signs = np.array([
-    [-1, -1, -1],
-    [-1, -1,  1],
-    [-1,  1, -1],
-    [-1,  1,  1],
-    [ 1, -1, -1],
-    [ 1, -1,  1],
-    [ 1,  1, -1],
-    [ 1,  1,  1],
-], dtype=float)
+signs = np.array(
+    [
+        [-1, -1, -1],
+        [-1, -1, 1],
+        [-1, 1, -1],
+        [-1, 1, 1],
+        [1, -1, -1],
+        [1, -1, 1],
+        [1, 1, -1],
+        [1, 1, 1],
+    ],
+    dtype=float,
+)
+
 
 def OBB_to_eight_points(obb):
     """
@@ -30,10 +33,11 @@ def OBB_to_eight_points(obb):
     center = np.array(obb["center"])  # Center of the OBB (3,)
     extents = np.array(obb["extents"])  # Extents along each axis (3,)
 
-    corners = center + (signs * extents/2) @ R.T
+    corners = center + (signs * extents / 2) @ R.T
     corner_points = [corners[i] for i in range(8)]
 
     return corner_points
+
 
 def _norm(v):
     n = np.linalg.norm(v)
@@ -41,34 +45,50 @@ def _norm(v):
         raise ValueError("Zero-length vector")
     return v / n
 
-def get_RT(cam, default_up=(0,0,1)):
+
+def get_RT(cam, default_up=(0, 0, 1)):
     # Build a camera that looks along +Y in world space
     eye = np.asarray(cam["eye"], float)
-    at  = np.asarray(cam["at"], float)
+    at = np.asarray(cam["at"], float)
     upw = np.asarray(cam.get("up", default_up), float)
 
-    f = _norm(at - eye)          # forward (+Y when looking purely along Y)
+    f = _norm(at - eye)  # forward (+Y when looking purely along Y)
     r = _norm(np.cross(f, upw))  # right
-    u = np.cross(r, f)           # true up
+    u = np.cross(r, f)  # true up
 
     # World to this Y-forward camera
-    R_y = np.vstack([r, -u, f])   # rows are camera axes
+    R_y = np.vstack([r, -u, f])  # rows are camera axes
     t_y = -R_y @ eye
 
     return R_y, t_y
 
+
 def project_points(Xw, cam):
     K = np.array(
-        [cam['height'] / (2 * np.tan(cam['fov'] / 2)), 0, cam['width'] / 2,
-         0, cam['height'] / (2 * np.tan(cam['fov'] / 2)), cam['height'] / 2,
-         0, 0, 1]
-    ).reshape(3, 3)    
+        [
+            cam["height"] / (2 * np.tan(cam["fov"] / 2)),
+            0,
+            cam["width"] / 2,
+            0,
+            cam["height"] / (2 * np.tan(cam["fov"] / 2)),
+            cam["height"] / 2,
+            0,
+            0,
+            1,
+        ]
+    ).reshape(3, 3)
     R, t = get_RT(cam)
     Xc = (R @ Xw.T + t[:, None]).T
     z = Xc[:, 2]
     uv = (K @ Xc.T).T
     uv = uv[:, :2] / z[:, None]
     return uv, z
+
+
+def world_to_camera_view(Xw, cam):
+    R, t = get_RT(cam)
+    Xc = (R @ Xw.T + t[:, None]).T
+    return Xc
 
 
 def project_obb(obb, cam):
@@ -80,8 +100,9 @@ def project_obb(obb, cam):
 def polygon_area(poly):
     if len(poly) < 3:
         return 0.0
-    x, y = poly[:,0], poly[:,1]
+    x, y = poly[:, 0], poly[:, 1]
     return 0.5 * abs(np.dot(x, np.roll(y, -1)) - np.dot(y, np.roll(x, -1)))
+
 
 def external_points_2d(points):
     """
@@ -92,3 +113,44 @@ def external_points_2d(points):
         return points  # all points are external if <3
     hull = ConvexHull(points)
     return points[hull.vertices]
+
+
+def get_camera_OBB(camera):
+    """
+    Returns the camera OBB in world coordinates.
+
+    Output:
+        center  : (3,) np.ndarray
+        extents : (3,) np.ndarray   # half-sizes
+        R       : (3,3) np.ndarray  # columns = local axes (right, up, forward)
+    """
+
+    eye = np.array(camera["eye"], dtype=np.float32)
+    at = np.array(camera["at"], dtype=np.float32)
+    up0 = np.array(camera["up"], dtype=np.float32)
+
+    # --- camera frame ---
+    f = _norm(at - eye)  # forward
+    r = _norm(np.cross(f, up0))  # right
+    u = _norm(np.cross(r, f))  # corrected up
+
+    # b = -f
+    R = np.stack([r, -u, f], axis=1)  # columns = axes
+
+    # --- camera body dimensions (meters / world units) ---
+    sx, sy, sz = 0.10, 0.10, 0.10  # width, height, depth
+    # a cube so it doesn't matter how it is rotated (+-90 deg)
+    extents = np.array(
+        [sx, sy, sz]
+    )  # I do not halve them, as they will be halved later
+
+    # --- center ---
+    center = eye + f * extents[2]  # push box slightly forward
+
+    object_obb = {
+        "center": center,
+        "extents": extents,
+        "R": R,
+    }
+
+    return object_obb

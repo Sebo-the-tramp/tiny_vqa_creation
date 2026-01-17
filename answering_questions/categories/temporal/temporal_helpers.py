@@ -1,16 +1,43 @@
+import random
 import cv2
 import torch
-from fused_ssim import fused_ssim
 
 from utils.my_exception import ImpossibleToAnswer
+from utils.config import get_config
 
-def calculate_most_dissimilar_confounding_images(
-    confounding_images, next_image, **kwargs
-):
-    
-    if(len(confounding_images) <=3):
-        raise ImpossibleToAnswer("Not enough confounding images")
+import fused_ssim
 
+
+def _select_by_temporal_distance(confounding_images, target_index):
+    if type(target_index) is not int:
+        target_index = int(target_index)
+
+    min_distance = 4
+    ranked = sorted(
+        confounding_images, key=lambda idx: abs(int(idx) - target_index), reverse=True
+    )
+
+    # return ranked[:3] # this was the original way
+
+    eligible = [
+        idx
+        for idx in confounding_images
+        if abs(int(idx) - target_index) >= min_distance
+    ]
+    if len(eligible) >= 3:
+        return random.sample(eligible, 3)
+
+    selected = list(eligible)
+    for idx in ranked:
+        if idx in selected:
+            continue
+        selected.append(idx)
+        if len(selected) == 3:
+            break
+    return selected
+
+
+def _select_by_fused_ssim(confounding_images, next_image, **kwargs):
     # similar to difficulty in identifying the missing image
     # quite slow can we parallelize this?
     confounding_images_ssim = []
@@ -20,30 +47,67 @@ def calculate_most_dissimilar_confounding_images(
     B = len(confounding_images)
     img_full_path_gt = image_path + f"/{next_image}.png"
     img_gt = cv2.imread(img_full_path_gt, cv2.IMREAD_UNCHANGED)  # reads as BGR or BGRA
-    img_gt_rgb = cv2.cvtColor(img_gt, cv2.COLOR_BGR2RGB)        
-    img_gt_rgb_tensor = torch.from_numpy(img_gt_rgb).permute(2,0,1).repeat(B, 1, 1, 1).float().cuda()  # BxCxHxW
+    img_gt_rgb = cv2.cvtColor(img_gt, cv2.COLOR_BGR2RGB)
+    img_gt_rgb_tensor = (
+        torch.from_numpy(img_gt_rgb).permute(2, 0, 1).repeat(B, 1, 1, 1).float().cuda()
+    )  # BxCxHxW
 
     confounding_images_rgb_tensors = []
 
-    for img_idx in confounding_images:        
+    for img_idx in confounding_images:
         img_full_path_confounding = image_path + f"/{img_idx}.png"
-        img_confounding = cv2.imread(img_full_path_confounding, cv2.IMREAD_UNCHANGED)  # reads as BGR or BGRA
+        img_confounding = cv2.imread(
+            img_full_path_confounding, cv2.IMREAD_UNCHANGED
+        )  # reads as BGR or BGRA
         img_confounding_rgb = cv2.cvtColor(img_confounding, cv2.COLOR_BGR2RGB)
-        img_confounding_rgb_tensor = torch.from_numpy(img_confounding_rgb).permute(2,0,1).unsqueeze(0).float()  # 1xCxHxW
+        img_confounding_rgb_tensor = (
+            torch.from_numpy(img_confounding_rgb).permute(2, 0, 1).unsqueeze(0).float()
+        )  # 1xCxHxW
         confounding_images_rgb_tensors.append(img_confounding_rgb_tensor)
 
-    img_confounding_rgb_tensor = torch.cat(confounding_images_rgb_tensors, dim=0).cuda()  # BxCxHxW
+    img_confounding_rgb_tensor = torch.cat(
+        confounding_images_rgb_tensors, dim=0
+    ).cuda()  # BxCxHxW
 
     confounding_images_ssim = []
     for idx in range(img_confounding_rgb_tensor.shape[0]):
-        confounding_images_ssim.append((idx, fused_ssim(img_gt_rgb_tensor[idx].unsqueeze(0), \
-            img_confounding_rgb_tensor[idx].unsqueeze(0), train=False).cpu().numpy().tolist()))
+        confounding_images_ssim.append(
+            (
+                idx,
+                fused_ssim(
+                    img_gt_rgb_tensor[idx].unsqueeze(0),
+                    img_confounding_rgb_tensor[idx].unsqueeze(0),
+                    train=False,
+                )
+                .cpu()
+                .numpy()
+                .tolist(),
+            )
+        )
 
     del img_confounding_rgb_tensor
     del img_gt_rgb_tensor
-    torch.cuda.empty_cache()     
-    
+    torch.cuda.empty_cache()
+
     confounding_images_ssim.sort(key=lambda x: x[1], reverse=False)
-    confounding_images = [confounding_images[idx] for idx, _ in confounding_images_ssim[:3]]
+    confounding_images = [
+        confounding_images[idx] for idx, _ in confounding_images_ssim[:3]
+    ]
 
     return confounding_images
+
+
+def calculate_most_dissimilar_confounding_images(
+    confounding_images, next_image, **kwargs
+):
+    if len(confounding_images) <= 3:
+        raise ImpossibleToAnswer("Not enough confounding images")
+
+    strategy = kwargs.get("confounding_strategy")
+    if strategy is None:
+        strategy = get_config().get("temporal_confounding_strategy", "ssim_gpu")
+
+    if strategy == "temporal_distance":
+        return _select_by_temporal_distance(confounding_images, next_image)
+    else:
+        return _select_by_fused_ssim(confounding_images, next_image, **kwargs)

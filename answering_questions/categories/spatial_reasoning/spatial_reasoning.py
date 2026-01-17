@@ -1,5 +1,5 @@
-# This module provides access to various force-related functions, both real and mock versions.
-# It's an abstraction layer to easily switch between real and mock implementations based on the context.
+# This module provides access to various force-related functions.
+# It's an abstraction layer to easily switch between factual and counterfactual implementations.
 
 # spatial_router.py
 from importlib import import_module
@@ -14,18 +14,20 @@ Resolver = Callable[[WorldState, QuestionPayload], Answer]
 
 
 @lru_cache
-def _load_impl_module(mock: bool):
-    modname = ".spatial_reasoning_questions" if mock else ".spatial_reasoning_real"
+def _load_impl_module(counterfactual: bool):
+    modname = (
+        ".spatial_reasoning_questions_cf"
+        if counterfactual
+        else ".spatial_reasoning_questions"
+    )
     return import_module(modname, package=__package__)
 
 
-def get_function_by_name_spatial_reasoning(name: str, mock: bool = False) -> Resolver:
-    mod = _load_impl_module(mock)
+def _get_callable_by_name(mod, name: str, prefix: str):
     try:
         fn = getattr(mod, name)
     except AttributeError:
-        # Nice error with suggestions
-        candidates = [n for n in dir(mod) if n.startswith("F_")]
+        candidates = [n for n in dir(mod) if n.startswith(prefix)]
         raise ValueError(
             f"Function '{name}' not found in {mod.__name__}. "
             f"Available: {', '.join(sorted(candidates))}"
@@ -35,23 +37,19 @@ def get_function_by_name_spatial_reasoning(name: str, mock: bool = False) -> Res
     return fn
 
 
-@lru_cache
-def _load_gt_module(mock: bool):
-    modname = ".spatial_reasoning_questions_results"
-    return import_module(modname, package=__package__)
+def _is_counterfactual_name(name: str) -> bool:
+    return name.startswith("CF_")
 
 
-def get_result_by_name_spatial_reasoning(name: str, mock: bool = False) -> Any:
-    mod = _load_gt_module(mock)
-    try:
-        fn = getattr(mod, name)
-    except AttributeError:
-        # Nice error with suggestions
-        candidates = [n for n in dir(mod) if n.startswith("F_")]
-        raise ValueError(
-            f"Function '{name}' not found in {mod.__name__}. "
-            f"Available: {', '.join(sorted(candidates))}"
-        )
-    if not callable(fn):
-        raise TypeError(f"Attribute '{name}' in {mod.__name__} is not callable.")
-    return fn()  # Call the function to get the result
+def _get_function_by_name_spatial_reasoning(
+    name: str, counterfactual: bool
+) -> Resolver:
+    mod = _load_impl_module(counterfactual)
+    prefix = "CF_" if counterfactual else "F_"
+    return _get_callable_by_name(mod, name, prefix)
+
+
+def get_function_by_name_spatial_reasoning(name: str) -> Resolver:
+    return _get_function_by_name_spatial_reasoning(
+        name, counterfactual=_is_counterfactual_name(name)
+    )

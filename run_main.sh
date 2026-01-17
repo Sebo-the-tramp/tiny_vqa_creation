@@ -1,199 +1,338 @@
 #!/bin/bash
 
-if [ -d "/data0/sebastian.cavada/datasets/simulations_v3" ]; then
+# codex resume 019b8e96-5e52-74c2-826d-482eb2baca4c -> tqdm and everything
+
+if [ -d "/data0/sebastian.cavada/datasets/simulations_v4" ]; then
     source "/data0/sebastian.cavada/.telegram_bot.env"
-    BASE_PATH="/data0/sebastian.cavada/datasets/simulations_v3/dl3dv"
+    BASE_PATH="/data0/sebastian.cavada/datasets/simulations_v4/dl3dv"
+    BASE_PATH_CF="/data0/sebastian.cavada/datasets/simulations_v4/dl3dv-counterfact"
     DESTINATION_SIMULATION_PATH="/data0/sebastian.cavada/datasets/physbench/simulations"
+    CPUS="44"
 else
     source "/home/it4i-thvu/seb_dev/.telegram_bot.env"
-    BASE_PATH="/scratch/project/eu-25-92/composite_physics/dataset/simulation_v3/dl3dv"
-    DESTINATION_SIMULATION_PATH="/scratch/project/eu-25-92/composite_physics/dataset/physbench/simulation_v3"
+    BASE_PATH="/scratch/project/eu-25-92/composite_physics/dataset/simulation_v4/dl3dv"
+    BASE_PATH_CF="/scratch/project/eu-25-92/composite_physics/dataset/simulation_v4/dl3dv-counterfact"
+    DESTINATION_SIMULATION_PATH="/scratch/project/eu-25-92/composite_physics/dataset/physbench/simulation_v4"
+    CPUS="128"
 fi
 
 cd answering_questions
 
-# This are the runs I need to create
+GENERAL_RUN_COUNT=22
 
-GENERAL_RUN_COUNT=09
+####################
 
-# # 10K general # text - no circling
-# python main_parallel.py --simulation_path "${BASE_PATH}/random" "${BASE_PATH}/random-cam-stationary" \
+python main_parallel.py --simulation_path "${BASE_PATH}/random/" "${BASE_PATH}/random-cam-stationary/" \
+    --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
+    --run_name "run_${GENERAL_RUN_COUNT}_general" \
+    --n_scenes 5000 \
+    --exclude_simulations_file "problematic_paths.txt" \
+    --n_proc $CPUS \
+    --timeit
+    # --include_categories "spatial_reasoning" \
+
+RUN_NAME="run_${GENERAL_RUN_COUNT}_general"
+python ./subsample_questions_percentage.py \
+    --count 10000 \
+    --input ../output/${RUN_NAME}/test_${RUN_NAME}.json \
+    --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
+    --percentage-map ./balancing_sub_categories.json \
+    --seed 42
+
+cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
+
+RUN_NAME="run_${GENERAL_RUN_COUNT}_general_obj_num"
+python ./subsample_questions_numbers.py \
+    --input ../output/run_${GENERAL_RUN_COUNT}_general/test_run_${GENERAL_RUN_COUNT}_general.json \
+    --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
+    --count 15000 \
+    --seed 42
+
+cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
+
+# -------------------------------------------------------------
+# TEST PA
+# Create 1000 questions with baseline question, then augment for different questions
+
+
+# RUN_NAME="run_${GENERAL_RUN_COUNT}_test_pa_general"
+
+# python main_parallel.py --simulation_path "${BASE_PATH}/random/" "${BASE_PATH}/random-cam-stationary/" \
 #     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
-#     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_general" \
+#     --run_name "$RUN_NAME" \
+#     --n_scenes 1000 \
+#     --include_categories "material_understanding" \
+#     --exclude_question_ids "F_MASS_HEAVIEST_OBJECT" "F_MASS_LIGHTEST_OBJECT" "F_PHYSICS_PROPERTY_DENSITY_OBJECT_RELATIVE" \
+#     "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR" "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR_NON_TECHNICAL" \
+#     "F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST" "F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST_NON_TECHNICAL" "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR" \
+#     "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR_NON_TECHNICAL" "F_MATERIAL_IDENTIFICATION_SIMILAR_OBJECT" \
+#     "F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST" "F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST_NON_TECHNICAL" \
+#     "F_MASS_OBJECT" "F_MATERIAL_IDENTIFICATION_OBJECT_LEVEL_1" "F_MATERIAL_IDENTIFICATION_OBJECT_LEVEL_2" \
+#     "F_MATERIAL_IDENTIFICATION_OBJECT_LEVEL_3" "F_PHYSICS_PROPERTY_DENSITY_OBJECT" \
+#     "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT" "F_PHYSICS_PROPERTY_POISSON_HIGH_LEVEL" \
+#     "F_PHYSICS_PROPERTY_VOLUME_OBJECT" "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_HIGH_LEVEL" \
+#     --exclude_simulations_file "problematic_paths.txt" \
+#     --n_proc $CPUS \
+#     --timeit \
+
+# python create_young_modulus_variants.py \
+#     --input ../output/${RUN_NAME}/test_${RUN_NAME}.json \
+#     --output ../output/${RUN_NAME}/test_${RUN_NAME}_variants.json
+
+# cp ../output/${RUN_NAME}/test_${RUN_NAME}_variants.json \
+#    ../output/${RUN_NAME}/test_${RUN_NAME}_variants_karo_3K.json
+
+
+# -------------------------------------------------------------
+# # 10K general - yms variations 
+# RUN_NAME="run_${GENERAL_RUN_COUNT}_general_yms-variations"
+
+# python main_parallel.py --simulation_path "${BASE_PATH}/yms-variations/" \
+#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
+#     --run_name "run_${GENERAL_RUN_COUNT}_general_yms-variations" \
 #     --n_scenes 2000
 
-# # 1K roi circling - text
-# python main_parallel.py --simulation_path "${BASE_PATH}/random" "${BASE_PATH}/random-cam-stationary" \
+# python ./subsample_questions_yms_variations.py \
+#     --input ../output/run_12_general_yms-variations/test_run_12_general_yms-variations.json \
+#     --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
+#     --subcategory-map ./balancing_sub_categories.json \
+#     --total 10000 \
+
+# cp ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json ../output/${RUN_NAME}/test_${RUN_NAME}_karo_10K.json
+
+
+# -------------------------------------------------------------
+# 10K general 
+# python main_parallel.py --simulation_path "${BASE_PATH}/random-cam-stationary/" \
 #     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
-#     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_roi_circling" \
-#     --augmentation "roi_circling" \
-#     --n_scenes 2000
+#     --run_name "run_${GENERAL_RUN_COUNT}_general_cam-stationary" \
+#     --n_scenes 700
 
-# I need another for no text + just roi circling
-
-# # 1K soft
-# python main_parallel.py --simulation_path ${BASE_PATH}/yms-variations/soft \
-#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
-#     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_soft_testttt"\
-#     --n_scenes 1000
-
-# # 1K medium
-# python main_parallel.py --simulation_path ${BASE_PATH}/yms-variations/medium \
-#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
-#     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_medium" \
-#     --n_scenes 1000
-
-# # 1K stiff
-# python main_parallel.py --simulation_path ${BASE_PATH}/yms-variations/stiff \
-#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
-#     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_stiff" \
-#     --n_scenes 1000
-
-# 
-
-# # 1K contour
-# python main_parallel.py --simulation_path "${BASE_PATH}/random" "${BASE_PATH}/random-cam-stationary" \
-#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
-#     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_contour_full" \
-#     --augmentation "contour" \
-#     --n_scenes 2000
-
-# # 1K scene context
-# python main_parallel.py --simulation_path "${BASE_PATH}/random" "${BASE_PATH}/random-cam-stationary" \
-#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
-#     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_scene_context" \
-#     --augmentation "scene_context" \
-#     --n_scenes 2000
-
-# # 1K textual context
-# python main_parallel.py --simulation_path "${BASE_PATH}/random" "${BASE_PATH}/random-cam-stationary" \
-#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
-#     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_textual_context" \
-#     --augmentation "textual_context" \
-#     --n_scenes 2000
-
-
-### BALANCING THE RUNS ###
-
-# general 10K
 # python ./subsample_questions_percentage.py \
 #     --count 10000 \
-#     --input ../output/run_${GENERAL_RUN_COUNT}_general/test_run_${GENERAL_RUN_COUNT}_general.json \
-#     --output ../output/run_${GENERAL_RUN_COUNT}_general/test_run_${GENERAL_RUN_COUNT}_general_10K.json \
+#     --input ../output/run_${GENERAL_RUN_COUNT}_general/test_run_${GENERAL_RUN_COUNT}_general_cam-stationary.json \
+#     --output ../output/run_${GENERAL_RUN_COUNT}_general/test_run_${GENERAL_RUN_COUNT}_general_cam-stationary_10K.json \
 #     --percentage-map ./balancing_sub_categories.json \
 #     --seed 42
 
-# # 1K roi circling
-# python subsample_questions_percentage.py \
-#     --count 10000 \
-#     --input ../output/run_${GENERAL_RUN_COUNT}_roi_circling/test_run_${GENERAL_RUN_COUNT}_roi_circling.json \
-#     --output ../output/run_${GENERAL_RUN_COUNT}_roi_circling/test_run_${GENERAL_RUN_COUNT}_roi_circling_10K.json \
-#     --percentage-map balancing_sub_categories.json \
-#     --seed 42 \
+# RUN_NAME="run_${GENERAL_RUN_COUNT}_general"
+# cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_cam-stationary_karo_10K.json
+# sed -i "s#/data0/sebastian.cavada/datasets/simulations_v3#/scratch/project/eu-25-92/composite_physics/dataset/simulation_v3#g" ../output/$RUN_NAME/test_${RUN_NAME}_cam-stationary_karo_10K.json
 
 
-# # soft 1K
-# python subsample_questions_percentage.py \
-#     --count 1000 \
-#     --input ../output/run_${GENERAL_RUN_COUNT}_soft/test_run_${GENERAL_RUN_COUNT}_soft.json \
-#     --output ../output/run_${GENERAL_RUN_COUNT}_soft/test_run_${GENERAL_RUN_COUNT}_soft_1K.json \
-#     --percentage-map ./balancing_sub_categories.json \
-#     --seed 42
+# -------------------------------------------------------------
+# rsync -avz -e "ssh -i ~/.ssh/id_rsa_karolina" \
+#   --include="*run_${GENERAL_RUN_COUNT}_*/***" \
+#   --exclude="*" \
+#   ../output/ \
+#   it4i-thvu@login2.karolina.it4i.cz:/mnt/proj1/eu-25-92/tiny_vqa_creation/output/ \
 
+# -------------------------------------------------------------
+# COUNTERFACTUALS 
+# -------------------------------------------------------------
 
-# # 1K_medium
-# python subsample_questions_percentage.py \
-#     --count 1000 \
-#     --input ../output/run_${GENERAL_RUN_COUNT}_medium/test_run_${GENERAL_RUN_COUNT}_medium.json \
-#     --output ../output/run_${GENERAL_RUN_COUNT}_medium/test_run_${GENERAL_RUN_COUNT}_medium_1K.json \
-#     --percentage-map ./balancing_sub_categories.json \
-#     --seed 42
-
-# # 1K stiff
-# python subsample_questions_percentage.py \
-#     --count 1000 \
-#     --input ../output/run_${GENERAL_RUN_COUNT}_stiff/test_run_${GENERAL_RUN_COUNT}_stiff.json \
-#     --output ../output/run_${GENERAL_RUN_COUNT}_stiff/test_run_${GENERAL_RUN_COUNT}_stiff_1K.json \
-#     --percentage-map ./balancing_sub_categories.json \
-#     --seed 42
-
-# # 1K roi circling
-# python subsample_questions_percentage_subset.py \
-#     --count 10000 \
-#     --input ../output/run_${GENERAL_RUN_COUNT}_roi_circling_bigger/test_run_${GENERAL_RUN_COUNT}_roi_circling_bigger.json \
-#     --output ../output/run_${GENERAL_RUN_COUNT}_roi_circling_bigger/test_run_${GENERAL_RUN_COUNT}_roi_circling_bigger_10K.json \
-#     --percentage-map balancing_sub_categories.json \
-#     --seed 42 \
-#     # --subset /data0/sebastian.cavada/compositional-physics/tiny_vqa_deterministic/output/run_08_general/test_run_08_general_10K.json \
-
-# # 1K contour
-# python subsample_questions_percentage_subset.py \
-#     --count 1000 \
-#     --input ../output/run_${GENERAL_RUN_COUNT}_contour/test_run_${GENERAL_RUN_COUNT}_contour.json \
-#     --output ../output/run_${GENERAL_RUN_COUNT}_contour/test_run_${GENERAL_RUN_COUNT}_contour_1K.json \
-#     --percentage-map ./balancing_sub_categories.json \
-#     --seed 42
-
-# 1K scene context
-# python subsample_questions_percentage_subset.py \
-#     --count 1000 \
-#     --input ../output/run_${GENERAL_RUN_COUNT}_scene_context/test_run_${GENERAL_RUN_COUNT}_scene_context.json \
-#     --output ../output/run_${GENERAL_RUN_COUNT}_scene_context/test_run_${GENERAL_RUN_COUNT}_scene_context_1K_test.json \
-#     --percentage-map ./balancing_sub_categories.json \
-#     --seed 42
-
-# python ../utils/check_questions_have_answers.py --question-path ../output/run_${GENERAL_RUN_COUNT}_scene_context/test_run_${GENERAL_RUN_COUNT}_scene_context_1K.json \
-#     --answer-path /data0/sebastian.cavada/compositional-physics/tiny_vqa_deterministic/output/run_08_general/test_run_08_general_10K.json
-
-# # 1K textual context
-# python subsample_questions_percentage_subset.py \
-#     --count 1000 \
-#     --input ../output/run_${GENERAL_RUN_COUNT}_textual_context/test_run_${GENERAL_RUN_COUNT}_textual_context.json \
-#     --output ../output/run_${GENERAL_RUN_COUNT}_textual_context/test_run_${GENERAL_RUN_COUNT}_textual_context_1K.json \
-#     --percentage-map ./balancing_sub_categories.json \
-#     --seed 42
-
-# python ../utils/check_questions_have_answers.py --question-path ../output/run_${GENERAL_RUN_COUNT}_textual_context/test_run_${GENERAL_RUN_COUNT}_textual_context_1K.json \
-#     --answer-path /data0/sebastian.cavada/compositional-physics/tiny_vqa_deterministic/output/run_08_general/test_run_08_general_10K.json
-
-
-## OFFICIAL RUNS DONE
-
-# # 1K slope 1
-# python main_parallel.py --simulation_path ${BASE_PATH} \
+# -------------------------------------------------------------
+# 1K general # text counterfactual shift
+# python main_parallel_counterfactual.py --simulation_path "${BASE_PATH_CF}/shift-x" "${BASE_PATH_CF}/shift-z" \
 #     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
-#     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_1K_slope_1" \
-#     --n_scenes 1000 --slope 1
-
-# # 1K slope 2
-# python main_parallel.py --simulation_path ${BASE_PATH} \
+#     --run_name "run_${GENERAL_RUN_COUNT}_counterfactual_shift" \
+#     --counterfactual_type "shift" \
+#     --timeit \
+#     --n_scenes 2000
+    
+# # -------------------------------------------------------------
+# # # 1K general # text counterfactual gravity
+# python main_parallel_counterfactual.py --simulation_path "${BASE_PATH_CF}/low-gravity" \
 #     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
-#     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_1K_slope_2" \
-#     --n_scenes 1000 --slope 2
+#     --run_name "run_${GENERAL_RUN_COUNT}_counterfactual_gravity" \
+#     --counterfactual_type "gravity" \
+#     --n_scenes 1000
 
-# # 1K slope 4
-# python main_parallel.py --simulation_path ${BASE_PATH} \
+# # # -------------------------------------------------------------
+# # 1K general # text counterfactual volume
+# python main_parallel_counterfactual.py --simulation_path "${BASE_PATH_CF}/2xsmaller" \
 #     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
-#     --export_format json --run_name "run_${GENERAL_RUN_COUNT}_1K_slope_4" \
-#     --n_scenes 1000 --slope 4
+#     --run_name "run_${GENERAL_RUN_COUNT}_counterfactual_smaller" \
+#     --counterfactual_type "volume" \
+#     --n_scenes 1000
 
-# python main.py --simulation_path /data0/sebastian.cavada/datasets/simulations/dl3dv \
-#     --destination_simulation_path /scratch/project/eu-25-92/composite_physics/dataset/physbench/simulation/dl3dv
+# -------------------------------------------------------------
+# ABLATION STUDYs
+# -------------------------------------------------------------
 
-# python main.py --simulation_path /scratch/project/eu-25-92/composite_physics/dataset/simulation_v3 \
-#     --export_format json 
+# -------------------------------------------------------------
+# 1K roi circling - no text
 
-# python main_parallel.py --simulation_path /scratch/project/eu-25-92/composite_physics/dataset/simulation_v3 \
-#     --export_format json --run_name run_test_save_config
+# RUN_NAME="run_${GENERAL_RUN_COUNT}_roi_circling_no_text"
 
-# python main_parallel.py --simulation_path /data0/sebastian.cavada/datasets/simulations_v3 \
-#     --export_format json --run_name test_seed_00
+# python main_parallel.py --simulation_path "${BASE_PATH}/random" \
+#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH}_modified_images \
+#     --run_name "run_${GENERAL_RUN_COUNT}_roi_circling_no_text" \
+#     --augmentation "roi_circling_no_text" \
+#     --include_categories "material_understanding" \
+#     --exclude_question_ids "F_MASS_HEAVIEST_OBJECT" "F_MASS_LIGHTEST_OBJECT" "F_PHYSICS_PROPERTY_DENSITY_OBJECT_RELATIVE" \
+#     "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR" "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR_NON_TECHNICAL" \
+#     "F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST" "F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST_NON_TECHNICAL" "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR" \
+#     "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR_NON_TECHNICAL" "F_MATERIAL_IDENTIFICATION_SIMILAR_OBJECT" \
+#     "F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST" "F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST_NON_TECHNICAL" \
+#     --n_scenes 700
 
-# python main_parallel.py --simulation_path /data0/sebastian.cavada/datasets/simulations_v3 \
-#     --export_format json --run_name test_seed_01
+# python ./subsample_questions_percentage.py \
+#     --count 1000 \
+#     --input ../output/${RUN_NAME}/test_${RUN_NAME}.json \
+#     --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
+#     --percentage-map ./balancing_sub_categories_material_only.json \
+#     --seed 42
 
-# python main.py --simulation_path /data0/sebastian.cavada/datasets/simulations_v3 \
-#     --export_format json
+# cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
+
+
+# # # # -------------------------------------------------------------
+# # # # 1K roi circling - layout position - no text 
+
+# RUN_NAME="run_${GENERAL_RUN_COUNT}_roi_circling_no_text_layout_position"
+
+# python main_parallel.py --simulation_path "${BASE_PATH}/random" \
+#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH}_modified_images \
+#     --run_name "${RUN_NAME}" \
+#     --augmentation "roi_circling_no_text_layout_position" \
+#     --include_categories "material_understanding" \
+#     --exclude_question_ids "F_MASS_HEAVIEST_OBJECT" "F_MASS_LIGHTEST_OBJECT" "F_PHYSICS_PROPERTY_DENSITY_OBJECT_RELATIVE" \
+#     "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR" "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR_NON_TECHNICAL" \
+#     "F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST" "F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST_NON_TECHNICAL" "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR" \
+#     "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR_NON_TECHNICAL" "F_MATERIAL_IDENTIFICATION_SIMILAR_OBJECT" \
+#     "F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST" "F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST_NON_TECHNICAL" \
+#     --n_scenes 700
+
+# python ./subsample_questions_percentage.py \
+#     --count 1000 \
+#     --input ../output/${RUN_NAME}/test_${RUN_NAME}.json \
+#     --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
+#     --percentage-map ./balancing_sub_categories_material_only.json \
+#     --seed 42
+
+# cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
+
+
+# # # -------------------------------------------------------------
+# # # 1K roi circling - text
+
+# RUN_NAME="run_${GENERAL_RUN_COUNT}_roi_circling_text"
+
+# python main_parallel.py --simulation_path "${BASE_PATH}/random" \
+#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH}_modified_images \
+#     --run_name "${RUN_NAME}" \
+#     --augmentation "roi_circling_text" \
+#     --include_categories "material_understanding" \
+#     --exclude_question_ids "F_MASS_HEAVIEST_OBJECT" "F_MASS_LIGHTEST_OBJECT" "F_PHYSICS_PROPERTY_DENSITY_OBJECT_RELATIVE" \
+#     "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR" "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR_NON_TECHNICAL" \
+#     "F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST" "F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST_NON_TECHNICAL" "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR" \
+#     "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR_NON_TECHNICAL" "F_MATERIAL_IDENTIFICATION_SIMILAR_OBJECT" \
+#     "F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST" "F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST_NON_TECHNICAL" \
+#     --n_scenes 700
+
+# python ./subsample_questions_percentage.py \
+#     --count 1000 \
+#     --input ../output/${RUN_NAME}/test_${RUN_NAME}.json \
+#     --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
+#     --percentage-map ./balancing_sub_categories_material_only.json \
+#     --seed 42
+
+# cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
+
+
+# # # # -------------------------------------------------------------
+# # # # 1K roi circling - layout position - text
+
+# RUN_NAME="run_${GENERAL_RUN_COUNT}_roi_circling_text_layout_position"
+
+# python main_parallel.py --simulation_path "${BASE_PATH}/random" \
+#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH}_modified_images \
+#     --run_name "${RUN_NAME}" \
+#     --augmentation "roi_circling_text_layout_position" \
+#     --include_categories "material_understanding" \
+#     --exclude_question_ids "F_MASS_HEAVIEST_OBJECT" "F_MASS_LIGHTEST_OBJECT" "F_PHYSICS_PROPERTY_DENSITY_OBJECT_RELATIVE" \
+#     "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR" "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR_NON_TECHNICAL" \
+#     "F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST" "F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST_NON_TECHNICAL" "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR" \
+#     "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR_NON_TECHNICAL" "F_MATERIAL_IDENTIFICATION_SIMILAR_OBJECT" \
+#     "F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST" "F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST_NON_TECHNICAL" \
+#     --n_scenes 700
+
+# python ./subsample_questions_percentage.py \
+#     --count 1000 \
+#     --input ../output/${RUN_NAME}/test_${RUN_NAME}.json \
+#     --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
+#     --percentage-map ./balancing_sub_categories_material_only.json \
+#     --seed 42
+
+# cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
+
+
+
+# # # -------------------------------------------------------------
+# # # 1K roi circling - BASELINE
+
+# RUN_NAME="run_${GENERAL_RUN_COUNT}_ablation_baseline"
+
+# python main_parallel.py --simulation_path "${BASE_PATH}/random" \
+#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH}_modified_images \
+#     --run_name "${RUN_NAME}" \
+#     --include_categories "material_understanding" \
+#     --augmentation "ablation" \
+#     --exclude_question_ids "F_MASS_HEAVIEST_OBJECT" "F_MASS_LIGHTEST_OBJECT" "F_PHYSICS_PROPERTY_DENSITY_OBJECT_RELATIVE" \
+#     "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR" "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR_NON_TECHNICAL" \
+#     "F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST" "F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST_NON_TECHNICAL" "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR" \
+#     "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR_NON_TECHNICAL" "F_MATERIAL_IDENTIFICATION_SIMILAR_OBJECT" \
+#     "F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST" "F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST_NON_TECHNICAL" \
+#     --n_scenes 700
+
+# python ./subsample_questions_percentage.py \
+#     --count 1000 \
+#     --input ../output/${RUN_NAME}/test_${RUN_NAME}.json \
+#     --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
+#     --percentage-map ./balancing_sub_categories_material_only.json \
+#     --seed 42
+
+# cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
+
+
+
+
+
+
+# python run_parallel.py --model-size "VLMEval" --run-name "run_11_general" --quantity "10K"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# # # -------------------------------------------------------------
+# # # 1K roi circling - layout position - text
+
+# RUN_NAME_PREVIOUS="run_${GENERAL_RUN_COUNT}_roi_circling_no_text"
+# RUN_NAME="run_${GENERAL_RUN_COUNT}_black"
+
+# image_path="/scratch/project/eu-25-92/composite_physics/dataset/simulation_v4/dl3dv/common/black.png"
+
+# mkdir -p ../output/${RUN_NAME}
+# cp ../output/${RUN_NAME_PREVIOUS}/test_${RUN_NAME_PREVIOUS}_10K.json ../output/${RUN_NAME}/test_${RUN_NAME}_1K.json
+# sed -E -i "s|\"[^\"]+\.png\"|\"${image_path}\"|g" ../output/${RUN_NAME}/test_${RUN_NAME}_1K.json
+
+# -------------------------------------------------------------
+# Send Telegram notification when done
 
 # curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage" \
 #      -d chat_id="${TELEGRAM_CHAT_ID}" \

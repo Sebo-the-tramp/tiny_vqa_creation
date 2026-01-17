@@ -72,16 +72,17 @@ resolver = {
 }
 
 
-def get_answer(question_key, question_category, mock=False):
-    return resolver[question_category](question_key, mock=mock)
+def get_answer(question_key, question_category):
+    return resolver[question_category](question_key)
 
 
-def get_gt(question_key, question_category, mock=False):
-    return resolver_gt[question_category](question_key, mock=mock)
+def get_gt(question_key, question_category):
+    return resolver_gt[question_category](question_key)
 
 
 def natural_key(s):
-    return [int(t) if t.isdigit() else t.lower() for t in re.split(r'(\d+)', s)]
+    return [int(t) if t.isdigit() else t.lower() for t in re.split(r"(\d+)", s)]
+
 
 # ----- MAIN VQA CREATION LOGIC
 def create_vqa(
@@ -89,23 +90,18 @@ def create_vqa(
     simulation_steps,
     simulation_id,
     destination_simulation_id_path,
-    arg_mock,
     verbose=False,
 ):
     seed_utils.reseed_for_context(simulation_id)
-    
+
     answered = 0
     failed = 0
-
-    print("Starting VQA creation...")
 
     all_vqa = []
 
     for category_key, category in questions.items():
         # current category dev
-        if (
-            category_key != "spatial_reasoning"
-        ):
+        if category_key != "spatial_reasoning":
             continue
 
         if verbose:
@@ -120,9 +116,7 @@ def create_vqa(
             question_payload["_question_key"] = question_key
             question_payload["_simulation_id"] = simulation_id
 
-            fn_to_answer_question = get_answer(
-                question_key, category_key, mock=arg_mock
-            )
+            fn_to_answer_question = get_answer(question_key, category_key)
 
             try:
                 # answer_list = question, labels, correct_idx, imgs_idx
@@ -154,7 +148,7 @@ def create_vqa(
                         "simulation_id": simulation_id,
                         "question": question,
                         "category": category_key,
-                        "sub_category": question_data['sub_category'],
+                        "sub_category": question_data["sub_category"],
                         "question_key": question_key,
                         "image_paths": file_names,
                         "labels": labels,
@@ -172,7 +166,7 @@ def create_vqa(
                     print(f"  Correct Index: {correct_idx}")
                     print(f"  Images Indexes: {imgs_idx}")
 
-                gt = get_gt(question_key, category_key, mock=arg_mock)
+                gt = get_gt(question_key, category_key)
                 if verbose:
                     print(
                         f"  Answer from function: {labels[correct_idx]}\n  Should match GT: {gt}"
@@ -206,7 +200,6 @@ def create_vqa(
         answered += total_answered
         failed += not_implemented
 
-
     return all_vqa, answered, failed
 
 
@@ -218,7 +211,7 @@ def main(args):
     total_failed = 0
 
     simulation_root = args.simulation_path
-    pattern = os.path.join(simulation_root, '**', 'simulation.json')
+    pattern = os.path.join(simulation_root, "**", "simulation.json")
 
     print("Searching for simulation files with pattern:", pattern)
 
@@ -263,12 +256,11 @@ def main(args):
                 simulation_steps,
                 simulation_id,
                 destination_simulation_id_path,
-                args.mock,
                 verbose=args.verbose,
             )
             all_vqa.extend(simulation_vqa)
             total_answered += answered
-            total_failed += failed 
+            total_failed += failed
 
     print(
         f"Total answered questions: {total_answered}, Total failed questions: {total_failed}"
@@ -345,12 +337,6 @@ if __name__ == "__main__":
         choices=["base64", "path"],
         default="base64",
         help="Select whether exported questions reference images via base64 or filesystem paths (TSV always uses paths).",
-    )
-    parser.add_argument(
-        "--mock",
-        action="store_true",
-        default=True,
-        help="Use mock implementations for testing.",
     )
     parser.add_argument(
         "--verbose",

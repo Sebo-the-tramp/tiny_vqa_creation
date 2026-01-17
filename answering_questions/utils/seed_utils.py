@@ -100,8 +100,7 @@ def temporary_seed(seed: Optional[int] = None):
 
                 torch.random.set_rng_state(state_cpu)
                 if (
-                    state_cuda is not None
-                    and torch.cuda.is_available()  # type: ignore[attr-defined]
+                    state_cuda is not None and torch.cuda.is_available()  # type: ignore[attr-defined]
                 ):
                     torch.cuda.set_rng_state_all(state_cuda)  # type: ignore[attr-defined]
             except Exception:

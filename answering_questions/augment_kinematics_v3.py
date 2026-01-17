@@ -11,7 +11,9 @@ from typing import Iterable, List, Optional, Tuple
 
 def natural_key(path: str) -> List[object]:
     """Natural sort helper that keeps numeric fragments in order."""
-    return [int(txt) if txt.isdigit() else txt.lower() for txt in re.split(r"(\d+)", path)]
+    return [
+        int(txt) if txt.isdigit() else txt.lower() for txt in re.split(r"(\d+)", path)
+    ]
 
 
 def find_simulation_files(simulation_root: str) -> List[str]:
@@ -45,7 +47,19 @@ def augment_single_simulation(in_path: str, out_path: Optional[str] = None) -> s
 
     sim = data["simulation"]
     times = sorted(sim.keys(), key=lambda s: float(s))
-    last_state: dict[str, Tuple[float, float, float, float, Optional[float], Optional[float], Optional[float]]] = {}
+    print(times)
+    last_state: dict[
+        str,
+        Tuple[
+            float,
+            float,
+            float,
+            float,
+            Optional[float],
+            Optional[float],
+            Optional[float],
+        ],
+    ] = {}
 
     for t_str in times:
         t = float(t_str)
@@ -84,7 +98,9 @@ def augment_single_simulation(in_path: str, out_path: Optional[str] = None) -> s
             }
             last_state[oid] = (t, center[0], center[1], center[2], vx, vy, vz)
 
-    destination = out_path or os.path.join(os.path.dirname(in_path), "simulation_kinematics.json")
+    destination = out_path or os.path.join(
+        os.path.dirname(in_path), "simulation_kinematics.json"
+    )
     with open(destination, "w", encoding="utf-8") as fh:
         json.dump(data, fh, indent=2)
     print(f"[{in_path}] wrote kinematics to {destination}")
@@ -118,7 +134,10 @@ def main(argv: Optional[Iterable[str]] = None) -> int:
         return 1
 
     if args.out_path and len(simulation_files) > 1:
-        print("--out-path can only be used when processing a single simulation.", file=sys.stderr)
+        print(
+            "--out-path can only be used when processing a single simulation.",
+            file=sys.stderr,
+        )
         return 2
 
     if len(simulation_files) == 1:
@@ -149,7 +168,10 @@ def main(argv: Optional[Iterable[str]] = None) -> int:
 
     status = 0
     with ProcessPoolExecutor(max_workers=workers) as executor:
-        future_map = {executor.submit(augment_single_simulation, sim_path, None): sim_path for sim_path in simulation_files}
+        future_map = {
+            executor.submit(augment_single_simulation, sim_path, None): sim_path
+            for sim_path in simulation_files
+        }
         for future in as_completed(future_map):
             sim_file = future_map[future]
             try:

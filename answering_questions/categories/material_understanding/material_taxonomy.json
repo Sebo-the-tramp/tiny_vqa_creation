@@ -1,0 +1,111 @@
+{
+  "material_taxonomy": [
+    {
+      "level_1_name": "Inorganic Rigid",
+      "level_1_definition": "Hard, non-living materials that do not decay rapidly, characterized by high stiffness and often brittle or malleable behavior.",
+      "level_2_categories": [
+        {
+          "level_2_name": "Metallics",
+          "level_2_definition": "Materials with high surface specularity (shine), thermal conductivity, and malleability.",
+          "level_3_items": [
+            { "name": "metal", "role": "TARGET" },
+            { "name": "mirror", "role": "CONFOUNDER" },
+            { "name": "glass", "role": "CONFOUNDER" },
+            { "name": "foil/mylar", "role": "CONFOUNDER" }
+          ]
+        },
+        {
+          "level_2_name": "Earthenware and Stone",
+          "level_2_definition": "Hard, brittle materials derived from clay, rock, or minerals, often having a matte or glazed finish.",
+          "level_3_items": [
+            { "name": "ceramic", "role": "TARGET" },
+            { "name": "stone/concrete", "role": "CONFOUNDER" },
+            { "name": "brick", "role": "CONFOUNDER" }
+          ]
+        }
+      ]
+    },
+    {
+      "level_1_name": "Synthetic Polymers",
+      "level_1_definition": "Man-made chemical compounds formed into molded shapes, varying from hard shells to soft elastomers.",
+      "level_2_categories": [
+        {
+          "level_2_name": "Solid Synthetics",
+          "level_2_definition": "Dense, continuous surfaces that are generally smooth and uniform.",
+          "level_3_items": [
+            { "name": "plastic", "role": "TARGET" },
+            { "name": "mixed (paper + plastic)", "role": "TARGET" },
+            { "name": "rubber/latex", "role": "CONFOUNDER" },
+            { "name": "wax", "role": "CONFOUNDER" }
+          ]
+        },
+        {
+          "level_2_name": "Cellular Synthetics",
+          "level_2_definition": "Lightweight polymers expanded with air bubbles, resulting in low density and high compressibility.",
+          "level_3_items": [
+            { "name": "foam", "role": "TARGET" },
+            { "name": "sponge", "role": "CONFOUNDER" },
+            { "name": "polystyrene/styrofoam", "role": "CONFOUNDER" }
+          ]
+        }
+      ]
+    },
+    {
+      "level_1_name": "Vegetal and Cellulosic",
+      "level_1_definition": "Materials derived specifically from plants/trees, composed of cellulose and lignin, characterized by fibrous rigidity.",
+      "level_2_categories": [
+        {
+          "level_2_name": "Ligneous Matter",
+          "level_2_definition": "Rigid plant tissue found in stems and roots, characterized by growth rings or grain.",
+          "level_3_items": [
+            { "name": "wood", "role": "TARGET" },
+            { "name": "cork", "role": "CONFOUNDER" },
+            { "name": "wicker/rattan", "role": "CONFOUNDER" }
+          ]
+        },
+        {
+          "level_2_name": "Processed Cellulose",
+          "level_2_definition": "Plant fibers that have been pulped, pressed, and dried into thin, foldable sheets.",
+          "level_3_items": [
+            { "name": "paper/cardboard", "role": "TARGET" },
+            { "name": "parchment/vellum", "role": "CONFOUNDER" },
+            { "name": "papier-mâché", "role": "CONFOUNDER" }
+          ]
+        }
+      ]
+    },
+    {
+      "level_1_name": "Skins, Textiles and Fibers",
+      "level_1_definition": "Materials that are woven from strands or derived from animal skins, generally exhibiting flexibility and draping.",
+      "level_2_categories": [
+        {
+          "level_2_name": "Woven Textiles",
+          "level_2_definition": "Materials formed by interlacing threads or yarns in a grid pattern.",
+          "level_3_items": [
+            { "name": "fabric/textile", "role": "TARGET" },
+            { "name": "netting/mesh", "role": "CONFOUNDER" },
+            { "name": "felt", "role": "CONFOUNDER" }
+          ]
+        },
+        {
+          "level_2_name": "Skins and Hides",
+          "level_2_definition": "Continuous flexible sheets derived from animals (or synthetic imitation), often textured with visible skin grain.",
+          "level_3_items": [
+            { "name": "leather", "role": "TARGET" },
+            { "name": "vinyl/pvc", "role": "CONFOUNDER" },
+            { "name": "fur", "role": "CONFOUNDER" }
+          ]
+        },
+        {
+          "level_2_name": "Loose Fillings",
+          "level_2_definition": "Unstructured clusters of fibers used for volume and cushioning.",
+          "level_3_items": [
+            { "name": "plush/fiberfill", "role": "TARGET" },
+            { "name": "cotton/wool", "role": "CONFOUNDER" },
+            { "name": "feathers/down", "role": "CONFOUNDER" }
+          ]
+        }
+      ]
+    }
+  ]
+}

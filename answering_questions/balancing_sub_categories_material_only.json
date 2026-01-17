@@ -1,0 +1,7 @@
+{
+    "mass": 0.2,
+    "density": 0.2,
+    "young_modulus": 0.2,
+    "poisson_ratio": 0.2,
+    "material_identification": 0.2
+}

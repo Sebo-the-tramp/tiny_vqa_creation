@@ -1,24 +1,29 @@
 *.pyc
+.DS_Store
 
+.venv/
+.vscode/
+
+tmp/
 data/
-
-.DS_Store/
-.venv
-.vscode
+test/
+submodules/
+newtphys.github.io/
 
 output*/
+analysis_example/
+analysis_v2/
+visualization/
 
-answering_questions/categories_old/
+!analysis_v2/output/
+analysis_v2/output/*
+!analysis_v2/output/run_16_general/
 
-simple_vqa_old.json
-simple_vqa_m_old.json
+main_parallel.dist/
+main_parallel.build/
 
+rsync*
 tmp_parallel.sh
 
-test/
-
-submodules/
-
-analysis_example/*
-
-.vscode/
+analysis_old/*
+analysis/*

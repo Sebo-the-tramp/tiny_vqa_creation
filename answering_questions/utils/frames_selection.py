@@ -1,6 +1,5 @@
 from utils.my_exception import ImpossibleToAnswer
 
-
 MAX_FRAMES = 8
 
 
@@ -30,7 +29,6 @@ def uniformly_sample_frames(world_state):
 
 
 def sample_frames_at_timesteps(world_state, timesteps):
-    total_steps = len(world_state["simulation"])
     imgs_idx = []
     for t in timesteps:
         idx = str(world_state["simulation"][t]["frame_idx"]).zfill(6)

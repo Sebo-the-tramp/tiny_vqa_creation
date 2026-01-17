@@ -480,7 +480,7 @@ def F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR(
     target = similar_objects[0]
 
     visible_objects_names_minus_resolved, all_objects_minus_visible_and_non_visible = (
-        get_objects_present_and_not_present(world_state, timestep, [target["name"]]),
+        get_objects_present_and_not_present(world_state, timestep, [target["name"]])
     )
 
     labels, correct_idx = create_mc_object_names_from_dataset(

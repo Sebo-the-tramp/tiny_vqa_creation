@@ -22,7 +22,6 @@ import random
 
 from utils.config import get_config
 from utils.geometry import get_camera_OBB
-from utils.all_objects import get_all_objects_names
 
 from utils.my_exception import ImpossibleToAnswer
 
@@ -53,10 +52,10 @@ WorldState = Mapping[str, Any]
 QuestionPayload = Mapping[str, Any]
 Answer = Union[str, float, Vector, Mapping[str, Any], Sequence[str]]
 
-VISIBILITY_THRESHOLD = get_config()["visibility_threshold"]
-FRAME_INTERLEAVE = get_config()["frame_interleave"]
 CLIP_LENGTH = get_config()["clip_length"]
+FRAME_INTERLEAVE = get_config()["frame_interleave"]
 MIN_VISIBLE_PIXELS = get_config()["min_pixels_visible"]
+VISIBILITY_THRESHOLD = get_config()["visibility_threshold"]
 
 ## --- Resolver functions -- ##
 ## Assumptions: ##
@@ -348,10 +347,17 @@ def F_SIZE_OBJECT_BIGGER(
     if total_object_seen <= 1:
         raise ImpossibleToAnswer("No visible objects to compare.")
 
-    presents = [obj["name"] for obj in iter_objects(world_state)]
+    visible_objects_names_minus_resolved, all_objects_minus_visible_and_non_visible = (
+        get_objects_present_and_not_present(
+            world_state, timestep, [biggest_object["name"]]
+        )
+    )
 
     labels, correct_idx = create_mc_object_names_from_dataset(
-        biggest_object["name"], presents, get_all_objects_names(), num_answers=4
+        biggest_object["name"],
+        visible_objects_names_minus_resolved,
+        all_objects_minus_visible_and_non_visible,
+        num_answers=4,
     )
 
     return fill_questions(
@@ -404,10 +410,17 @@ def F_SIZE_OBJECT_SMALLER(
     if total_object_seen <= 1:
         raise ImpossibleToAnswer("No visible objects to compare.")
 
-    presents = [obj["name"] for obj in iter_objects(world_state)]
+    visible_objects_names_minus_resolved, all_objects_minus_visible_and_non_visible = (
+        get_objects_present_and_not_present(
+            world_state, timestep, [smallest_object["name"]]
+        )
+    )
 
     labels, correct_idx = create_mc_object_names_from_dataset(
-        smallest_object["name"], presents, get_all_objects_names(), num_answers=4
+        smallest_object["name"],
+        visible_objects_names_minus_resolved,
+        all_objects_minus_visible_and_non_visible,
+        num_answers=4,
     )
 
     return fill_questions(

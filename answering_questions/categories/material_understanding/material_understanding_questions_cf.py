@@ -17,19 +17,18 @@ from typing import (
 )
 
 
+from utils.config import get_config
+
 from utils.my_exception import ImpossibleToAnswer
 
-from utils.all_objects import get_all_objects_names
-
 from utils.helpers import (
-    fill_questions_cf,
     iter_objects,
-    resolve_attributes_visible_at_timestep,
-    get_timestep_from_idx,
+    fill_questions_cf,
     is_object_visible,
+    get_timestep_from_idx,
+    get_objects_present_and_not_present,
+    resolve_attributes_visible_at_timestep,
 )
-
-from utils.config import get_config
 
 from utils.bin_creation import (
     create_mc_options_around_gt,
@@ -46,12 +45,13 @@ Answer = Union[str, float, Vector, Mapping[str, Any], Sequence[str]]
 
 CLIP_LENGTH = get_config()["clip_length"]
 MOVEMENT_TOLERANCE = get_config()["movement_tolerance"]
+MIN_VISIBLE_PIXELS = get_config()["min_pixels_visible"]
 VISIBILITY_THRESHOLD = get_config()["visibility_threshold"]
 THRESHOLD_DIFFERENCE_PERCENTAGE = get_config()["threshold_difference_percentage"]
-MIN_VISIBLE_PIXELS = get_config()["min_pixels_visible"]
 MAX_ALLOWED_DIFFERENCE_POISSON_RATIO = get_config()[
     "max_allowed_difference_poisson_ratio"
 ]
+
 
 ## --- Resolver functions -- ##
 
@@ -167,12 +167,16 @@ def CF_MASS_HEAVIEST_OBJECT(
     ):
         raise ImpossibleToAnswer("No single heaviest object in the scene.")
 
-    presents = [obj["name"] for obj in iter_objects(world_state_mod)]
+    visible_objects_names_minus_resolved, all_objects_minus_visible_and_non_visible = (
+        get_objects_present_and_not_present(
+            world_state_mod, timestep_end, [heaviest_visible_object["name"]]
+        )
+    )
 
     labels, correct_idx = create_mc_object_names_from_dataset(
         heaviest_visible_object["name"],
-        presents,
-        get_all_objects_names(),
+        visible_objects_names_minus_resolved,
+        all_objects_minus_visible_and_non_visible,
         num_answers=4,
     )
 
@@ -241,12 +245,16 @@ def CF_MASS_LIGHTEST_OBJECT(
     ):
         raise ImpossibleToAnswer("No single lightest object in the scene.")
 
-    presents = [obj["name"] for obj in iter_objects(world_state_mod)]
+    visible_objects_names_minus_resolved, all_objects_minus_visible_and_non_visible = (
+        get_objects_present_and_not_present(
+            world_state_mod, timestep_end, [lightest_visible_object["name"]]
+        )
+    )
 
     labels, correct_idx = create_mc_object_names_from_dataset(
         lightest_visible_object["name"],
-        presents,
-        get_all_objects_names(),
+        visible_objects_names_minus_resolved,
+        all_objects_minus_visible_and_non_visible,
         num_answers=4,
     )
 

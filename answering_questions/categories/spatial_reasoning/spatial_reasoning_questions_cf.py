@@ -21,8 +21,8 @@ from typing import (
 )
 
 from utils.my_exception import ImpossibleToAnswer
-from utils.all_objects import get_all_objects_names
 from utils.config import get_config
+
 from utils.helpers import (
     iter_objects,
     distance_between,
@@ -30,6 +30,7 @@ from utils.helpers import (
     get_visibility_mask,
     is_object_visible,
     get_random_timestep_from_list,
+    get_objects_present_and_not_present,
     resolve_attributes_visible_at_timestep,
     get_visible_timesteps_for_attributes_min_objects,
 )
@@ -41,9 +42,9 @@ from .spatial_reasoning_helpers import (
     get_all_relational_positional_adjectives,
 )
 from utils.bin_creation import (
+    uniform_labels,
     create_mc_options_around_gt,
     create_mc_object_names_from_dataset,
-    uniform_labels,
 )
 
 Number = Union[int, float]
@@ -109,17 +110,19 @@ def CF_CLOSEST_OBJECT_OBJECT(
         attributes, world_state_mod, timestep_end
     )
 
-    object_position_at_time = get_position(world_state_og, object_id, timestep_end)
-    closest_object = get_closest_visible_object(
-        world_state_og, object_id, object_position_at_time, timestep_end
+    closest_object = get_closest_visible_object(world_state_og, object_id, timestep_end)
+
+    visible_objects_names_minus_resolved, all_objects_minus_visible_and_non_visible = (
+        get_objects_present_and_not_present(
+            world_state_mod, timestep_end, [closest_object["name"]]
+        )
     )
 
-    presents = [
-        obj["name"] for obj in iter_objects(world_state_og) if obj["id"] != object_id
-    ]
-
     labels, correct_idx = create_mc_object_names_from_dataset(
-        closest_object["name"], presents, get_all_objects_names(), num_answers=4
+        closest_object["name"],
+        visible_objects_names_minus_resolved,
+        all_objects_minus_visible_and_non_visible,
+        num_answers=4,
     )
 
     labels = [str(label) for label in labels]
@@ -174,10 +177,17 @@ def CF_CLOSEST_OBJECT_CAMERA(
             closest_distance = distance
             closest_object = object
 
-    presents = [obj["name"] for obj in iter_objects(world_state_mod)]
+    visible_objects_names_minus_resolved, all_objects_minus_visible_and_non_visible = (
+        get_objects_present_and_not_present(
+            world_state_mod, timestep_end, [closest_object["name"]]
+        )
+    )
 
     labels, correct_idx = create_mc_object_names_from_dataset(
-        closest_object["name"], presents, get_all_objects_names(), num_answers=4
+        closest_object["name"],
+        visible_objects_names_minus_resolved,
+        all_objects_minus_visible_and_non_visible,
+        num_answers=4,
     )
     labels = [str(label) for label in labels]
 
@@ -285,10 +295,17 @@ def CF_SIZE_OBJECT_BIGGER(
             biggest_volume = volume
             biggest_object = obj
 
-    presents = [obj["name"] for obj in iter_objects(world_state_mod)]
+    visible_objects_names_minus_resolved, all_objects_minus_visible_and_non_visible = (
+        get_objects_present_and_not_present(
+            world_state_mod, timestep, [biggest_object["name"]]
+        )
+    )
 
     labels, correct_idx = create_mc_object_names_from_dataset(
-        biggest_object["name"], presents, get_all_objects_names(), num_answers=4
+        biggest_object["name"],
+        visible_objects_names_minus_resolved,
+        all_objects_minus_visible_and_non_visible,
+        num_answers=4,
     )
 
     return fill_questions_cf(

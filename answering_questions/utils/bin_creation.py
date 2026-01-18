@@ -260,7 +260,7 @@ def create_mc_object_names_from_dataset(
         raise ValueError("num_answers must be at least 2")
 
     rng = _select_rng(seed)
-    
+
     if gt in dataset_labels:
         raise ValueError("Ground-truth object name found in dataset labels.")
 

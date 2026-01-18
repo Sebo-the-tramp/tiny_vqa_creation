@@ -55,12 +55,16 @@ def with_resolved_attributes_cf(func):
         timestep_start = list_timesteps[0]
         timestep_end = list_timesteps[-1]
 
+        # object_moved_id
+        object_moved_id = list(world_state_modified['config']['scene']['spawning']['transform_per_object'].keys())[0]
+
         kwargs.update(
             {
                 "timestep_start": timestep_start,
                 "timestep_end": timestep_end,
                 "current_world_number_of_objects": current_world_number_of_objects,
                 "destination_simulation_id_path": destination_simulation_id_path,  # to add /render and get the images directly
+                "object_moved_id": object_moved_id,
             }
         )
 
@@ -72,7 +76,7 @@ def with_resolved_attributes_cf(func):
         # adaptor part to original names format -> also for original even though st should be just for original
         for obj_id, object in world_state_og["objects"].items():
             object["id"] = obj_id
-            object["name"] = gso_mapping[object["model"]]["name"]
+            object["name"] = gso_mapping[object["model"]]["name"]        
 
         # Pass them along so the wrapped function can use them
         return func(

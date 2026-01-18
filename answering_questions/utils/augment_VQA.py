@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 import cv2
 import numpy as np
-import PIL
+import PIL.Image as Image
 import json
 import glob
 from utils.config import get_config
@@ -138,7 +138,7 @@ def augment_roi_circling(
         )
 
     for file in file_names:
-        original_image = np.array(PIL.Image.open(file))
+        original_image = np.array(Image.open(file))
 
         for idx, (resolved_attr, value) in enumerate(resolved_attributes.items()):
             if "OBJECT" in resolved_attr:
@@ -153,7 +153,7 @@ def augment_roi_circling(
                 ]
 
                 visible_object_mask = (
-                    np.array(PIL.Image.open(instance_image_path).convert("RGB"))
+                    np.array(Image.open(instance_image_path).convert("RGB"))
                     == rgb_object_class
                 )
                 visible_object_mask = np.all(visible_object_mask, axis=-1)
@@ -219,7 +219,7 @@ def augment_roi_circling(
         new_file_name = file.replace("render", "render_roi_circled").replace(
             ".png", f"_{question['_question_key']}.png"
         )
-        original_image = PIL.Image.fromarray(original_image)
+        original_image = Image.fromarray(original_image)
         original_image.save(new_file_name)
 
         file_names[file_names.index(file)] = new_file_name
@@ -258,7 +258,7 @@ def augment_ablation(
         )
 
     for file in file_names:
-        original_image = np.array(PIL.Image.open(file))
+        original_image = np.array(Image.open(file))
 
         for idx, (resolved_attr, value) in enumerate(resolved_attributes.items()):
             if "OBJECT" in resolved_attr:
@@ -272,7 +272,7 @@ def augment_ablation(
                 ]
 
                 visible_object_mask = (
-                    np.array(PIL.Image.open(instance_image_path).convert("RGB"))
+                    np.array(Image.open(instance_image_path).convert("RGB"))
                     == rgb_object_class
                 )
                 visible_object_mask = np.all(visible_object_mask, axis=-1)

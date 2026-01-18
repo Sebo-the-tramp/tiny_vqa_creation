@@ -240,23 +240,28 @@ def CF_COLLISION_OBJECT_OBJECT_FRAME_SINGLE(
             )
             if other_object_id != 0:
                 obj_colliding = other_object_id
-            break
-
-    correct_name = world_state_og["objects"][obj_colliding]["name"]
-
-    visible_objects_names_minus_resolved, all_objects_minus_visible_and_non_visible = (
-        get_objects_present_and_not_present(
-            world_state_mod, timestep_end, [correct_name]
-        )
-    )
+            break    
 
     if obj_colliding is not None:
+        correct_name = world_state_og["objects"][obj_colliding]["name"]
+
+        visible_objects_names_minus_resolved, all_objects_minus_visible_and_non_visible = (
+            get_objects_present_and_not_present(
+                world_state_mod, timestep_end, [correct_name]
+            )
+        )
+
         labels, correct_idx = create_mc_object_names_from_dataset(
             correct_name,
             visible_objects_names_minus_resolved,
             all_objects_minus_visible_and_non_visible,
         )
     else:
+        visible_objects_names_minus_resolved, all_objects_minus_visible_and_non_visible = (
+            get_objects_present_and_not_present(
+                world_state_mod, timestep_end, []
+            )
+        )
         labels, correct_idx = create_mc_object_names_from_dataset(
             "No Object",
             visible_objects_names_minus_resolved,

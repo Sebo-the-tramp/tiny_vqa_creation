@@ -5,7 +5,7 @@ import torch
 from utils.my_exception import ImpossibleToAnswer
 from utils.config import get_config
 
-import fused_ssim
+# import fused_ssim
 
 
 def _select_by_temporal_distance(confounding_images, target_index):
@@ -70,20 +70,20 @@ def _select_by_fused_ssim(confounding_images, next_image, **kwargs):
     ).cuda()  # BxCxHxW
 
     confounding_images_ssim = []
-    for idx in range(img_confounding_rgb_tensor.shape[0]):
-        confounding_images_ssim.append(
-            (
-                idx,
-                fused_ssim(
-                    img_gt_rgb_tensor[idx].unsqueeze(0),
-                    img_confounding_rgb_tensor[idx].unsqueeze(0),
-                    train=False,
-                )
-                .cpu()
-                .numpy()
-                .tolist(),
-            )
-        )
+    # for idx in range(img_confounding_rgb_tensor.shape[0]):
+    #     confounding_images_ssim.append(
+    #         (
+    #             idx,
+    #             fused_ssim(
+    #                 img_gt_rgb_tensor[idx].unsqueeze(0),
+    #                 img_confounding_rgb_tensor[idx].unsqueeze(0),
+    #                 train=False,
+    #             )
+    #             .cpu()
+    #             .numpy()
+    #             .tolist(),
+    #         )
+    #     )
 
     del img_confounding_rgb_tensor
     del img_gt_rgb_tensor

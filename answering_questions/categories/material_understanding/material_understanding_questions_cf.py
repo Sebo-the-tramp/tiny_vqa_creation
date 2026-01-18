@@ -82,7 +82,6 @@ def CF_MASS_OBJECT(
         raise ImpossibleToAnswer("Question refers to future timestep.")
 
     object_id = answer_list_original_data_cf[0][5]["OBJECT"]["choice"]["id"]
-
     object = world_state_og["objects"][object_id]
 
     if not is_object_visible(
@@ -141,6 +140,12 @@ def CF_MASS_HEAVIEST_OBJECT(
     # check if the particular question asks something outside of simulation_og
     if timestep_end_index > len(world_state_og["simulation"]) - 1:
         raise ImpossibleToAnswer("Question refers to future timestep.")
+    
+    object_id = answer_list_original_data_cf[0][5]["OBJECT"]["choice"]["id"]
+    if not is_object_visible(
+        world_state=world_state_og, obj_id=object_id, timestep=timestep_end
+    ):
+        raise ImpossibleToAnswer("Object is not visible.")
 
     resolved_attributes = resolve_attributes_visible_at_timestep(
         attributes, world_state_mod, timestep_end

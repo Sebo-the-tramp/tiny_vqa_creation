@@ -250,12 +250,13 @@ def create_vqa(
                 attempted_in_question += 1
                 stats[stats_key]["attempted"] += attempted_in_question
                 continue
-            except Exception:
+            except Exception as e:
                 if getattr(config, "print_errors", False):
                     print(
                         f"{ANSI_RED}Error for question_id {question_key} in "
                         f"{destination_simulation_id_path}{ANSI_RESET}"
                     )
+                    print(e.with_traceback())
                 stats[stats_key]["errors"] += 1
                 attempted_in_question += 1
                 stats[stats_key]["attempted"] += attempted_in_question
@@ -344,12 +345,13 @@ def create_vqa(
                         )
                     attempted_in_question += 1
                     continue
-                except Exception:
+                except Exception as e:
                     if getattr(config, "print_errors", False):
                         print(
                             f"{ANSI_RED}Error for question_id {question_key} in "
                             f"{destination_simulation_id_path}{ANSI_RESET}"
                         )
+                        print(e.with_traceback())
                     stats[stats_key]["errors"] += 1
                     attempted_in_question += 1
                     continue

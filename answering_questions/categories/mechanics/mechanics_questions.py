@@ -355,12 +355,13 @@ def F_COLLISION_OBJECT_OBJECT_FRAME_SINGLE(
     ]
 
     present_and_far_from_collision_minus_collider = [
-        obj_name for obj_name in present_and_far_from_collision if obj_name != collider_object["name"]
+        obj_name for obj_name in present_and_far_from_collision if obj_name != collider_object["name"] 
+        and obj_name != colliding_object["name"]
     ]
 
     labels, correct_idx = create_mc_object_names_from_dataset(
         colliding_object["name"],
-        present_and_far_from_collision,
+        present_and_far_from_collision_minus_collider,
         other_objects_minus_present_and_close,
     )
 

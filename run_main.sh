@@ -12,25 +12,25 @@ else
     source "/home/it4i-thvu/seb_dev/.telegram_bot.env"
     BASE_PATH="/scratch/project/eu-25-92/composite_physics/dataset/simulation_v4/dl3dv"
     BASE_PATH_CF="/scratch/project/eu-25-92/composite_physics/dataset/simulation_v4/dl3dv-counterfact"
-    DESTINATION_SIMULATION_PATH="/scratch/project/eu-25-92/composite_physics/dataset/physbench/simulation_v4"
+    DESTINATION_SIMULATION_PATH="/scratch/project/eu-25-92/composite_physics/dataset/simulation_v4_augmented"
     CPUS="128"
 fi
 
 cd answering_questions
 
-GENERAL_RUN_COUNT=22
+GENERAL_RUN_COUNT=23
 
 ####################
 
-# python main_parallel.py --simulation_path "${BASE_PATH}/random/" "${BASE_PATH}/random-cam-stationary/" \
-#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
-#     --run_name "run_${GENERAL_RUN_COUNT}_general" \
-#     --n_scenes 5000 \
-#     --exclude_simulations_file "problematic_paths.txt" \
-#     --n_proc $CPUS \
-#     --timeit \
-#     --print_errors \
-#     # --include_categories "spatial_reasoning" \
+python main_parallel.py --simulation_path "${BASE_PATH}/random/" "${BASE_PATH}/random-cam-stationary/" \
+    --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
+    --run_name "run_${GENERAL_RUN_COUNT}_general" \
+    --n_scenes 5000 \
+    --exclude_simulations_file "problematic_paths.txt" \
+    --n_proc $CPUS \
+    --timeit \
+    --print_errors \
+    # --include_categories "spatial_reasoning" \
 
 # RUN_NAME="run_${GENERAL_RUN_COUNT}_general"
 # python ./subsample_questions_percentage.py \
@@ -91,10 +91,11 @@ GENERAL_RUN_COUNT=22
 # python main_parallel.py --simulation_path "${BASE_PATH}/yms-variations/" \
 #     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
 #     --run_name "run_${GENERAL_RUN_COUNT}_general_yms-variations" \
-#     --n_scenes 2000
+#     --n_scenes 2000 \
+#     --timeit \
 
 # python ./subsample_questions_yms_variations.py \
-#     --input ../output/run_12_general_yms-variations/test_run_12_general_yms-variations.json \
+#     --input ../output/${RUN_NAME}/${RUN_NAME}.json \
 #     --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
 #     --subcategory-map ./balancing_sub_categories.json \
 #     --total 10000 \
@@ -140,20 +141,20 @@ GENERAL_RUN_COUNT=22
 # -------------------------------------------------------------
 # 1K roi circling - no text
 
-RUN_NAME="run_${GENERAL_RUN_COUNT}_roi_circling_no_text"
+# RUN_NAME="run_${GENERAL_RUN_COUNT}_roi_circling_no_text"
 
-python main_parallel.py --simulation_path "${BASE_PATH}/random" \
-    --destination_simulation_path ${DESTINATION_SIMULATION_PATH}_modified_images \
-    --run_name "run_${GENERAL_RUN_COUNT}_roi_circling_no_text" \
-    --augmentation "roi_circling_no_text" \
-    --include_categories "material_understanding" \
-    --exclude_question_ids "F_MASS_HEAVIEST_OBJECT" "F_MASS_LIGHTEST_OBJECT" "F_PHYSICS_PROPERTY_DENSITY_OBJECT_RELATIVE" \
-    "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR" "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR_NON_TECHNICAL" \
-    "F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST" "F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST_NON_TECHNICAL" "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR" \
-    "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR_NON_TECHNICAL" "F_MATERIAL_IDENTIFICATION_SIMILAR_OBJECT" \
-    "F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST" "F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST_NON_TECHNICAL" \
-    --n_scenes 100 \
-    --print_errors \
+# python main_parallel.py --simulation_path "${BASE_PATH}/random" \
+#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH}_modified_images \
+#     --run_name "run_${GENERAL_RUN_COUNT}_roi_circling_no_text" \
+#     --augmentation "roi_circling_no_text" \
+#     --include_categories "material_understanding" \
+#     --exclude_question_ids "F_MASS_HEAVIEST_OBJECT" "F_MASS_LIGHTEST_OBJECT" "F_PHYSICS_PROPERTY_DENSITY_OBJECT_RELATIVE" \
+#     "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR" "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR_NON_TECHNICAL" \
+#     "F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST" "F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST_NON_TECHNICAL" "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR" \
+#     "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR_NON_TECHNICAL" "F_MATERIAL_IDENTIFICATION_SIMILAR_OBJECT" \
+#     "F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST" "F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST_NON_TECHNICAL" \
+#     --n_scenes 700 \
+#     --print_errors \
 
 # python ./subsample_questions_percentage.py \
 #     --count 1000 \
@@ -165,8 +166,8 @@ python main_parallel.py --simulation_path "${BASE_PATH}/random" \
 # cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
 
 
-# -------------------------------------------------------------
-# 1K roi circling - layout position - no text 
+# # -------------------------------------------------------------
+# # 1K roi circling - layout position - no text 
 
 # RUN_NAME="run_${GENERAL_RUN_COUNT}_roi_circling_no_text_layout_position"
 

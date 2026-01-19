@@ -354,6 +354,10 @@ def F_COLLISION_OBJECT_OBJECT_FRAME_SINGLE(
         and obj_name != collider_object["name"]
     ]
 
+    present_and_far_from_collision_minus_collider = [
+        obj_name for obj_name in present_and_far_from_collision if obj_name != collider_object["name"]
+    ]
+
     labels, correct_idx = create_mc_object_names_from_dataset(
         colliding_object["name"],
         present_and_far_from_collision,
@@ -449,8 +453,11 @@ def F_COLLISION_OBJECT_OBJECT_FRAME_MULTI(
 
     # only for this time because of the multi-frame choice nature of the question
     question["question"] = question["question"].replace(
-        "Consider all frames, but answer only based on the last frame. ", ""
+        "Considering all frames, ", ""
+    ).replace(
+        " in the last frame?", ""
     )
+    question["question"] = question["question"][0].upper() + question["question"][1:] + "?"
 
     # no frames need to be provided as we already have them in the answer choices
     return [[question, labels, correct_idx, [], world_state, resolved_attributes]]
@@ -519,7 +526,11 @@ def F_COLLISION_OBJECT_SCENE_FRAME_MULTI(
 
     # only for this time because of the multi-frame choice nature of the question
     question["question"] = question["question"].replace(
-        "Consider all frames, but answer only based on the last frame. ", ""
+        "Considering all frames, ", ""
+    ).replace(
+        " in the last frame?", ""
     )
+    question["question"] = question["question"][0].upper() + question["question"][1:] + "?"
+
 
     return [[question, labels, correct_idx, [], world_state, resolved_attributes]]

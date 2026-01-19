@@ -10,7 +10,7 @@
             "task_splits": "single+multi",
             "sub_category": "distance",
             "choice": "mcq",
-            "question": "Which object in the image is closest to the <OBJECT>?"
+            "question": "Regardless of any obstacles, which object in the image is closest to the <OBJECT>?"
         },
         "F_DISTANCE_OBJECT_CAMERA_DISTANCE": {
             "task_splits": "single+multi",
@@ -28,7 +28,7 @@
             "task_splits": "single+multi",
             "sub_category": "size",
             "choice": "mcq",
-            "question": "What are the dimensioins of the <OBJECT> in the image?"
+            "question": "What are the dimensions of the <OBJECT> in the image?"
         },
         "F_SIZE_OBJECT_BIGGER": {
             "task_splits": "single+multi",
@@ -243,7 +243,7 @@
             "task_splits": "single+multi",            
             "sub_category": "camera_characteristics",
             "choice": "mcq",
-            "question": "From the camera's perspective, what is the camera's angle of view?"
+            "question": "From the camera’s perspective, what is the viewing direction relative to the horizon?"
         },
         "F_FOCAL_LENGTH_CLASS":{
             "task_splits": "single+multi",            
@@ -257,37 +257,37 @@
             "task_splits": "multi",
             "sub_category": "event_ordering",
             "choice": "mcq",            
-            "question": "Given the sequence of images A. - B. - C. - D. What is the correct rearrangement of images showing the events in the scene?"
+            "question": "Given four unordered images (A, B, C, D) depicting the same scene, what is the correct temporal ordering of the events?"
         },
         "F_TEMPORAL_PREDICTION_NEXT_IMAGE_GRANULARITY_1": {
             "task_splits": "multi",
             "sub_category": "event_ordering",
             "choice": "mcq", 
-            "question": "Which frame is most likely to occur after the last frame in the sequence?"
+            "question": "Which individual frame is most likely to display an event that occurred after the provided image sequence?"
         },
         "F_TEMPORAL_PREDICTION_NEXT_IMAGE_GRANULARITY_2": {
             "task_splits": "multi",
             "sub_category": "event_ordering",
             "choice": "mcq", 
-            "question": "Which frame is most likely to occur after the last frame in the sequence?"
+            "question": "Which individual frame is most likely to display an event that occurred after the provided image sequence?"
         },
         "F_TEMPORAL_PREDICTION_NEXT_IMAGE_GRANULARITY_5": {
             "task_splits": "multi",
             "sub_category": "event_ordering",
             "choice": "mcq", 
-            "question": "Which frame is most likely to occur after the last frame in the sequence?"
+            "question": "Which individual frame is most likely to display an event that occurred after the provided image sequence?"
         },
         "F_TEMPORAL_PREDICTION_PREVIOUS_IMAGE": {
             "task_splits": "multi",
             "sub_category": "event_ordering",
             "choice": "mcq",
-            "question": "Which frame is most likely to have occurred just before the first frame in the sequence?"
+            "question": "Which individual frame is most likely to display an event that occurred after the provided image sequence?"
         },
         "F_TEMPORAL_PREDICTION_MISSING_IMAGE": {
             "task_splits": "multi",
             "sub_category": "event_ordering",
             "choice": "mcq",
-            "question": "What frame is the most likely to have been removed from the scene?"
+            "question": "Which individual frame is most likely to display an event that occurred during the time span of the provided image sequence?"
         },
                 
         "F_CAMERA_MOTION_DIRECTION": {

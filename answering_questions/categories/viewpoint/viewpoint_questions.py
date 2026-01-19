@@ -188,9 +188,11 @@ def F_OCCLUSION_PERCENTAGE_OBJECT(
     resolved_attributes["OBJECT"] = resolved_attributes.pop("OBJECT-RANDOM")
     object_id = resolved_attributes["OBJECT"]["choice"]["id"]
 
-    visibility_object = (
-        visibility_percentage_matrix[int(object_id) - 1, final_timestep_index] / 100.0
-    )
+    # visibility_object = (
+    #     visibility_percentage_matrix[int(object_id) - 1, final_timestep_index] / 100.0
+    # )
+
+    visibility_object = world_state['simulation'][final_timestep]['objects'][object_id]['fov_visibility']
 
     if visibility_object < 0.25:
         correct_idx = 0

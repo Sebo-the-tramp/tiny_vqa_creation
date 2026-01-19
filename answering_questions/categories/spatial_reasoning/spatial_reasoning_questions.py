@@ -235,12 +235,13 @@ def F_CLOSEST_OBJECT_OBJECT(
     )
 
     object_id = resolved_attributes["OBJECT"]["choice"]["id"]
+    object_name = resolved_attributes["OBJECT"]["choice"]["name"]
 
     closest_object = get_closest_visible_object(world_state, object_id, timestep)
 
     visible_objects_names_minus_resolved, all_objects_minus_visible_and_non_visible = (
         get_objects_present_and_not_present(
-            world_state, timestep, [closest_object["name"]]
+            world_state, timestep, [object_name, closest_object["name"]]
         )
     )
 

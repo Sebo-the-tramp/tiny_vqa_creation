@@ -138,14 +138,15 @@ def get_camera_OBB(camera):
     R = np.stack([r, -u, f], axis=1)  # columns = axes
 
     # --- camera body dimensions (meters / world units) ---
-    sx, sy, sz = 0.10, 0.10, 0.10  # width, height, depth
+    sx, sy, sz = 0.01, 0.01, 0.01  # width, height, depth
     # a cube so it doesn't matter how it is rotated (+-90 deg)
     extents = np.array(
         [sx, sy, sz]
     )  # I do not halve them, as they will be halved later
 
     # --- center ---
-    center = eye + f * extents[2]  # push box slightly forward
+    # center = eye + f * extents[2]  # push box slightly forward
+    center = eye
 
     object_obb = {
         "center": center,

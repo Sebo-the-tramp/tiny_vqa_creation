@@ -959,8 +959,9 @@ def fill_template(
     # check if there is a single frame or multi frame task
     if question["task_splits"] == "multi":
         question["question"] = (
-            "Consider all frames, but answer only based on the last frame. "
-            + question["question"]
+            "Considering all frames, "
+            + question["question"][0].lower() + question["question"][1:-1]
+            + " in the last frame?"
         )
 
 
@@ -1008,8 +1009,9 @@ def fill_template_cf(
     # check if there is a single frame or multi frame task
     if question["task_splits"] == "multi":
         question["question"] = (
-            "Consider all frames, but answer only based on the last frame. "
-            + question["question"]
+            "Considering all frames, "
+            + question["question"][0].lower() + question["question"][1:-1]
+            + " in the last frame?"
         )
 
 

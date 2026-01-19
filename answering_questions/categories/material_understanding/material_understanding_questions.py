@@ -405,17 +405,13 @@ def F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_METRIC_PREFIX(
         for label in labels:
             value_str = label.replace(" Pa", "")
             value = float(value_str)
-            if value >= 1e9:
-                new_value = value / 1e9
-                new_label = f"{new_value:.2f} GPa"
-            elif value >= 1e6:
-                new_value = value / 1e6
-                new_label = f"{new_value:.2f} MPa"
-            elif value >= 1e3:
-                new_value = value / 1e3
-                new_label = f"{new_value:.2f} kPa"
+            new_value = value / 1e6
+            if new_value < 1:
+                formatted_value = f"{new_value:.3f}"
             else:
-                new_label = f"{value:.2f} Pa"
+                formatted_value = f"{new_value:.2f}"
+            formatted_value = formatted_value.replace(".", ",")
+            new_label = f"{formatted_value} MPa"
             new_labels.append(new_label)
 
         new_results.append(
@@ -449,6 +445,7 @@ def F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR(
 
     resolved = resolve_attributes_visible_at_timestep(attributes, world_state, timestep)
     ref_obj = resolved["OBJECT"]["choice"]
+    ref_obj_name =  ref_obj['name']
     ref_yms = ref_obj["props"]["yms"]
 
     if ref_yms <= 0:
@@ -480,7 +477,7 @@ def F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR(
     target = similar_objects[0]
 
     visible_objects_names_minus_resolved, all_objects_minus_visible_and_non_visible = (
-        get_objects_present_and_not_present(world_state, timestep, [target["name"]])
+        get_objects_present_and_not_present(world_state, timestep, [target["name"], ref_obj_name])
     )
 
     labels, correct_idx = create_mc_object_names_from_dataset(
@@ -515,7 +512,7 @@ def F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST(
 
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        ["OBJECT"], world_state, min_objects=1
+        ["OBJECT"], world_state, min_objects=2
     )
     # if we are in a multi-image setting, we need to ensure there are enough frames
     timestep = get_random_timestep_from_list(visible_timesteps, question)
@@ -592,51 +589,21 @@ def F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST_NON_TECHNICAL(
     )
 
 
-@with_resolved_attributes
-def F_PHYSICS_PROPERTY_YOUNG_MODULUS_BEHAVIOR(
-    world_state: WorldState, question: QuestionPayload, attributes, **kwargs
-) -> int:
-    assert len(attributes) == 1 and "OBJECT" in attributes
+def is_close_to_edges(E, edges, tol):
+    if E is None or not math.isfinite(E) or E <= 0:
+        return True # treat invalid as ambiguous
 
-    # First we find the pairs of objects visible
-    visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        ["OBJECT"], world_state, min_objects=1
-    )
-    # if we are in a multi-image setting, we need to ensure there are enough frames
-    timestep = get_random_timestep_from_list(visible_timesteps, question)
+    # Convert percentage → log10 tolerance
+    tol = math.log10(1.0 + tol / 100.0)
 
-    resolved_attributes = resolve_attributes_visible_at_timestep(
-        attributes, world_state, timestep
-    )
+    logE = math.log10(E)
+    for edge in edges:
+        if edge <= 0:
+            continue
+            if abs(logE - math.log10(edge)) <= tol:
+                return True
 
-    object = resolved_attributes["OBJECT"]["choice"]
-    youngs_modulus = object["props"]["yms"]
-
-    E = youngs_modulus  # in Pascals
-    E_steel = 200e9
-    r = E / E_steel
-
-    # Revised thresholds for better semantic mapping
-    if r > 0.3:
-        correct_idx = 0  # Metal/Glass Tier (> 60 GPa)
-    elif r > 0.01:
-        correct_idx = 1  # Structural Tier (Wood, Hard Plastic, Bone) (> 2 GPa)
-    elif r > 0.001:
-        correct_idx = 2  # Flexible Plastic Tier (Soft Polyethylene) (> 200 MPa)
-    else:
-        correct_idx = 3  # Soft/Rubbery Tier (< 200 MPa)
-
-    labels = [
-        "It would behave like metal (Extremely Rigid)",
-        "It would behave like wood or hard plastic (Rigid)",
-        "It would behave like flexible plastic (Bendable)",
-        "It would behave like rubber or foam (Squishy)",
-    ]
-
-    return fill_questions(
-        question, labels, correct_idx, world_state, timestep, resolved_attributes
-    )
-
+            return False
 
 @with_resolved_attributes
 def F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_HIGH_LEVEL(
@@ -660,6 +627,9 @@ def F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_HIGH_LEVEL(
     youngs_modulus = object["props"]["yms"]
 
     E = youngs_modulus  # in Pascals
+
+    if is_close_to_edges(E, (1e8, 1e7, 1e5), 0.20):
+        raise ImpossibleToAnswer("Too close to edges!")
 
     # 1. RIGID (The "High" Histogram Bars)
     # > 100 MPa (10^8)
@@ -750,6 +720,7 @@ def F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR(
     )
 
     ref_object = resolved_attributes["OBJECT"]["choice"]
+    ref_object_name = resolved_attributes["OBJECT"]["choice"]['name'] 
     poisson_ratio = ref_object["props"]["prs"]
 
     similar_object = None
@@ -778,7 +749,7 @@ def F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR(
 
     visible_objects_names_minus_resolved, all_objects_minus_visible_and_non_visible = (
         get_objects_present_and_not_present(
-            world_state, timestep, [similar_object["name"]]
+            world_state, timestep, [similar_object["name"], ref_object_name]
         )
     )
 
@@ -814,7 +785,7 @@ def F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST(
 
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        ["OBJECT"], world_state, min_objects=1
+        ["OBJECT"], world_state, min_objects=2
     )
 
     timestep = get_random_timestep_from_list(visible_timesteps, question)
@@ -933,6 +904,7 @@ def F_MATERIAL_IDENTIFICATION_SIMILAR_OBJECT(
     )
 
     object = resolved_attributes["OBJECT"]["choice"]
+    object_name = resolved_attributes["OBJECT"]["choice"]['name'] 
     material = object["description"]["material_group"]
 
     object_similar = None
@@ -958,7 +930,7 @@ def F_MATERIAL_IDENTIFICATION_SIMILAR_OBJECT(
 
     visible_objects_names_minus_resolved, all_objects_minus_visible_and_non_visible = (
         get_objects_present_and_not_present(
-            world_state, timestep, [object_similar["name"]]
+            world_state, timestep, [object_similar["name"], object_name]
         )
     )
 

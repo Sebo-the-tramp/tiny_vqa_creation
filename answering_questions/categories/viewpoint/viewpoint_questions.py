@@ -27,8 +27,7 @@ from utils.my_exception import ImpossibleToAnswer
 
 from utils.helpers import (
     fill_questions,
-    resolve_attributes,
-    get_visibility_mask,
+    resolve_attributes,    
     get_timestep_from_idx,
     get_camera_at_timestep,
     get_random_timestep_from_list,
@@ -165,11 +164,7 @@ def F_OCCLUSION_PERCENTAGE_OBJECT(
     final_timestep = get_random_timestep_from_list(
         list(world_state["simulation"].keys())[CLIP_LENGTH:], question
     )
-    final_timestep_index = world_state["simulation"][final_timestep]["frame_idx"]
-
-    _, visibility_percentage_matrix = get_visibility_mask(
-        world_state, max_timestep=final_timestep
-    )
+    final_timestep_index = world_state["simulation"][final_timestep]["frame_idx"]    
 
     candidates = [
         k for k in (1, 2, 3, 4) if final_timestep_index - (k * (CLIP_LENGTH - 1)) >= 0
@@ -187,12 +182,18 @@ def F_OCCLUSION_PERCENTAGE_OBJECT(
 
     resolved_attributes["OBJECT"] = resolved_attributes.pop("OBJECT-RANDOM")
     object_id = resolved_attributes["OBJECT"]["choice"]["id"]
+    
+    infov_pixels_visible = world_state['simulation'][final_timestep]['objects'][object_id]['infov_pixels_visible']
+    infov_pixels_void = world_state['simulation'][final_timestep]['objects'][object_id]['infov_pixels_void']
+    infov_pixels = world_state['simulation'][final_timestep]['objects'][object_id]['infov_pixels']
 
-    # visibility_object = (
-    #     visibility_percentage_matrix[int(object_id) - 1, final_timestep_index] / 100.0
-    # )
+    if infov_pixels_visible > MIN_VISIBLE_PIXELS:
+        return ImpossibleToAnswer("Object is too visible for occlusion question.")
+    
+    if infov_pixels_void < 0.1 * infov_pixels:
+        return ImpossibleToAnswer("Object is too visible for occlusion question.")
 
-    visibility_object = world_state['simulation'][final_timestep]['objects'][object_id]['fov_visibility']
+    visibility_object = (infov_pixels_visible + infov_pixels_void) / infov_pixels    
 
     if visibility_object < 0.25:
         correct_idx = 0

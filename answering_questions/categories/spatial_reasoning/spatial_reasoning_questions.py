@@ -154,6 +154,8 @@ def F_CLOSEST_OBJECT_CAMERA(
     """Question: Which object in the image is the closest to the camera?"""
     assert len(attributes) == 0
 
+    MARGIN_DISTANCE = 0.2
+
     # we need this cause else there cannot be a comparison
     if kwargs["current_world_number_of_objects"] < 2:
         raise ImpossibleToAnswer(
@@ -184,9 +186,14 @@ def F_CLOSEST_OBJECT_CAMERA(
 
         distance = minimum_distance_between_OBBs(object_OBB, camera_OBB)
 
-        if distance < closest_distance:
+        if distance + MARGIN_DISTANCE < closest_distance:
             closest_distance = distance
             closest_object = object
+
+        if abs(distance - closest_distance) < MARGIN_DISTANCE:            
+            raise ImpossibleToAnswer(
+                "Multiple objects are too close to the closest distance."
+            )
 
     visible_objects_names_minus_resolved, all_objects_minus_visible_and_non_visible = (
         get_objects_present_and_not_present(

@@ -33,7 +33,7 @@
                 // "--include_categories", "viewpoint",
                 "--print_errors", 
                 // "--include_categories", "persistence",
-                // "--augmentation", "roi_circling_no_text",
+                // "--augmentation", "roi_circling_text",
                 "--n_proc", "1",
                 "--exclude_simulations_file", "/data0/sebastian.cavada/compositional-physics/tiny_vqa_deterministic/answering_questions/problematic_paths.txt"
             ]

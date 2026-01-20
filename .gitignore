@@ -13,7 +13,6 @@ newtphys.github.io/
 output*/
 analysis_example/
 analysis_v2/
-visualization/
 
 !analysis_v2/output/
 analysis_v2/output/*

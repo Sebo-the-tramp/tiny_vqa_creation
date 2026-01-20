@@ -1,0 +1,1183 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Run 16 General - Question Viewer</title>
+  <style>
+    :root {
+      --bg: #f1efe7;
+      --bg-accent: #d9d6c9;
+      --ink: #222222;
+      --muted: #5c5c5c;
+      --card: #ffffff;
+      --accent: #b96b2f;
+      --accent-2: #2c6f7b;
+      --border: #d0c7b8;
+      --shadow: rgba(0, 0, 0, 0.08);
+      --answer-a: #2563eb;
+      --answer-b: #d97706;
+      --answer-c: #0f766e;
+      --answer-d: #db2777;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Trebuchet MS", "Lucida Grande", "Tahoma", sans-serif;
+      color: var(--ink);
+      background: radial-gradient(circle at top left, #fefcf5 0%, #f1efe7 35%, #e7e1d5 100%);
+      min-height: 100vh;
+    }
+
+    header {
+      padding: 32px 24px 12px;
+    }
+
+    h1 {
+      font-family: "Georgia", "Times New Roman", serif;
+      font-size: 28px;
+      margin: 0 0 6px;
+      letter-spacing: 0.2px;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      margin: 0;
+      font-size: 14px;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      padding: 16px 24px 24px;
+    }
+
+    .control-block {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      box-shadow: 0 8px 18px var(--shadow);
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    select, input {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      font-size: 14px;
+      background: #fff;
+    }
+
+    .status {
+      padding: 0 24px 8px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .table {
+      padding: 0 24px 32px;
+    }
+
+    .row {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 10px 20px var(--shadow);
+      display: grid;
+      gap: 12px;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .row-head {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      align-items: center;
+      font-size: 13px;
+    }
+
+    .badge {
+      background: var(--bg-accent);
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-weight: 600;
+      color: #3a362b;
+    }
+
+    .question {
+      white-space: pre-wrap;
+      line-height: 1.4;
+      font-size: 15px;
+      background: #faf8f2;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px dashed var(--border);
+    }
+
+    .row-main {
+      display: grid;
+      gap: 12px;
+    }
+
+    .row-main.single {
+      grid-template-columns: minmax(320px, 50%) 1fr;
+      align-items: stretch;
+    }
+
+    .row-main.carousel-layout {
+      grid-template-columns: minmax(320px, 50%) 1fr;
+      align-items: stretch;
+    }
+
+    .images {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+    }
+
+    .images.quad {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .images.carousel {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .image-card {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .image-card img {
+      width: 100%;
+      display: block;
+      height: 120px;
+      object-fit: cover;
+    }
+
+    .row-main.single .images {
+      align-self: stretch;
+    }
+
+    .row-main.single .image-card {
+      height: 100%;
+      min-height: 320px;
+    }
+
+    .row-main.single .image-card img {
+      flex: 1;
+      height: 100%;
+      object-fit: contain;
+      background: #f6f1e7;
+    }
+
+    .row-main.carousel-layout .image-card {
+      height: 100%;
+      min-height: 360px;
+    }
+
+    .row-main.carousel-layout .image-card img {
+      flex: 1;
+      height: 100%;
+      object-fit: contain;
+      background: #f6f1e7;
+    }
+
+    .images.quad .image-card img {
+      /* height: 320px; */
+      object-fit: contain;
+      background: #f6f1e7;
+    }
+
+    .carousel-thumbs {
+      display: flex;
+      object-fit: contain;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .image-path-list {
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.4;
+      word-break: break-all;
+    }
+
+    .carousel-thumb {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: #fff;
+      width: 86px;
+      height: 64px;
+      object-fit: cover;
+      cursor: pointer;
+      flex: 0 0 auto;
+    }
+
+    .carousel-thumb.active {
+      outline: 2px solid var(--accent-2);
+    }
+
+    .image-path {
+      font-size: 11px;
+      padding: 6px 8px 8px;
+      color: var(--muted);
+      word-break: break-all;
+    }
+
+    details {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      background: #fff;
+    }
+
+    summary {
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--accent-2);
+    }
+
+    .answers {
+      margin-top: 8px;
+      display: grid;
+      gap: 6px;
+      font-size: 13px;
+    }
+
+    .answer-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 1px dashed var(--border);
+      padding-bottom: 4px;
+    }
+
+    .answer-row.correct {
+      font-weight: 700;
+    }
+
+    .answer-row:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .answer-A {
+      color: var(--answer-a);
+    }
+
+    .answer-B {
+      color: var(--answer-b);
+    }
+
+    .answer-C {
+      color: var(--answer-c);
+    }
+
+    .answer-D {
+      color: var(--answer-d);
+    }
+
+    .answer-label {
+      font-weight: 700;
+    }
+
+    .badge.answer-A {
+      background: color-mix(in srgb, var(--answer-a) 18%, var(--bg-accent));
+    }
+
+    .badge.answer-B {
+      background: color-mix(in srgb, var(--answer-b) 18%, var(--bg-accent));
+    }
+
+    .badge.answer-C {
+      background: color-mix(in srgb, var(--answer-c) 18%, var(--bg-accent));
+    }
+
+    .badge.answer-D {
+      background: color-mix(in srgb, var(--answer-d) 18%, var(--bg-accent));
+    }
+
+    .pager {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      padding: 0 24px 32px;
+    }
+
+    .pager button {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .pager button[disabled] {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .hint {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1 id="title">Question Viewer</h1>
+    <p class="subtitle">Each row is one question with inputs and model answers. Click to expand the full model list.</p>
+  </header>
+
+  <section class="controls">
+    <div class="control-block">
+      <label for="runSelect">Run</label>
+      <select id="runSelect"></select>
+    </div>
+    <div class="control-block">
+      <label for="questionIdFilter">Question ID Filter</label>
+      <select id="questionIdFilter">
+        <option value="">All question_id</option>
+      </select>
+    </div>
+    <div class="control-block">
+      <label for="objectCountFilter">Object count</label>
+      <select id="objectCountFilter">
+        <option value="">All</option>
+      </select>
+    </div>
+    <div class="control-block">
+      <label for="searchInput">Search (idx or text)</label>
+      <input id="searchInput" placeholder="Type idx or question text" />
+    </div>
+    <div class="control-block">
+      <label for="pageSize">Rows per page</label>
+      <select id="pageSize">
+        <option value="25">25</option>
+        <option value="50" selected>50</option>
+        <option value="100">100</option>
+      </select>
+    </div>
+    <div class="control-block">
+      <label for="imageTypeFilter">Image type</label>
+      <select id="imageTypeFilter">
+        <option value="">All</option>
+        <option value="single">Single image (_i)</option>
+        <option value="multi">Multi image (_g)</option>
+      </select>
+    </div>
+  </section>
+
+  <div class="status" id="status">Loading data...</div>
+  <div class="status" id="diagnostics"></div>
+  <div class="status" id="summary"></div>
+  <div class="table" id="table"></div>
+  <div class="pager" id="pager"></div>
+
+  <script>
+    const baseOutputRoots = [
+      "../output"
+    ];
+    const fallbackRuns = [
+      "run_06_contour",
+      "run_06_general",
+      "run_06_masking",
+      "run_06_medium",
+      "run_06_roi_circling",
+      "run_06_scene_context",
+      "run_06_soft",
+      "run_06_stiff",
+      "run_06_textual_context",
+      "run_07_contour",
+      "run_07_general",
+      "run_07_general_karo",
+      "run_07_masking",
+      "run_07_medium",
+      "run_07_roi_circling",
+      "run_07_scene_context",
+      "run_07_soft",
+      "run_07_stiff",
+      "run_07_textual_context",
+      "run_08_contour",
+      "run_08_general",
+      "run_08_roi_circling",
+      "run_08_scene_context",
+      "run_08_textual_context",
+      "run_09_general",
+      "run_09_roi_circling_no_text",
+      "run_09_roi_circling_yes_text",
+      "run_09_soft_testttt",
+      "run_10_general",
+      "run_10_general_cam-stationary",
+      "run_10_general_roi_circling",
+      "run_10_general_test_persistance",
+      "run_10_general_yms-variations",
+      "run_10_roi_circling",
+      "run_11_ablation_baseline",
+      "run_11_black",
+      "run_11_counterfactual_gravity",
+      "run_11_counterfactual_shift",
+      "run_11_counterfactual_smaller",
+      "run_11_general",
+      "run_11_general_levels",
+      "run_11_general_old",
+      "run_11_general_yms-variations",
+      "run_11_roi_circling_no_text",
+      "run_11_roi_circling_no_text_layout_position",
+      "run_11_roi_circling_text",
+      "run_11_roi_circling_text_layout_position",
+      "run_12_ablation_baseline",
+      "run_12_counterfactual_gravity",
+      "run_12_counterfactual_shift",
+      "run_12_counterfactual_smaller",
+      "run_12_general",
+      "run_12_general_yms-variations",
+      "run_12_roi_circling_no_text",
+      "run_12_roi_circling_no_text_layout_position",
+      "run_12_roi_circling_text",
+      "run_12_roi_circling_text_layout_position",
+      "run_13_counterfactual_gravity",
+      "run_13_counterfactual_shift",
+      "run_13_counterfactual_smaller",
+      "run_13_general",
+      "run_13_general_obj_num",
+      "run_13_general_yms-variations",
+      "run_14_general",
+      "run_14_general_obj_num",
+      "run_15_general",
+      "run_15_general_obj_num",
+      "run_16_counterfactual_gravity",
+      "run_16_counterfactual_shift",
+      "run_16_counterfactual_smaller",
+      "run_16_general",
+      "run_16_general_obj_num",
+      "run_16_test_general",
+      "run_16_test_general_obj_num"
+    ];
+    const defaultRun = "run_16_general";
+    const modelFiles = [
+      "Aquila-VL-2B_val.json",
+      "InternVL-Chat-V1-5-quantable_val.json",
+      "InternVL2-1B_val.json",
+      "InternVL2-2B_val.json",
+      "InternVL2-4B_val.json",
+      "InternVL2-8B_val.json",
+      "InternVL2_5-1B_val.json",
+      "InternVL2_5-2B_val.json",
+      "InternVL2_5-4B_val.json",
+      "InternVL2_5-8B_val.json",
+      "LLaVA-NeXT-Video-7B-DPO-hf_val.json",
+      "LLaVA-NeXT-Video-7B-hf_val.json",
+      "Mantis-8B-Idefics2_val.json",
+      "Mantis-8B-clip-llama3_val.json",
+      "Mantis-8B-siglip-llama3_val.json",
+      "Mantis-llava-7b_val.json",
+      "MiniCPM-V2.5_val.json",
+      "MiniCPM-V2.6_val.json",
+      "MiniCPM-V2_val.json",
+      "MolmoE-1B_val.json",
+      "MolmoE-7B-D_val.json",
+      "MolmoE-7B-O_val.json",
+      "Phi-3-vision-128k-instruct_val.json",
+      "Phi-3.5V_val.json",
+      "Qwen-VL-Chat_val.json",
+      "blip2-flant5xxl_val.json",
+      "cambrian-8b_val.json",
+      "deepseek1B_val.json",
+      "deepseek7B_val.json",
+      "instructblip-flan-t5-xl_val.json",
+      "instructblip-flan-t5-xxl_val.json",
+      "instructblip-vicuna-13b_val.json",
+      "instructblip-vicuna-7b_val.json",
+      "llava-1.5-13b-hf_val.json",
+      "llava-1.5-7b-hf_val.json",
+      "llava-interleave-qwen-7b-dpo-hf_val.json",
+      "llava-interleave-qwen-7b-hf_val.json",
+      "llava-v1.6-mistral-7b-hf_val.json",
+      "llava-v1.6-vicuna-7b-hf_val.json",
+      "mPLUG-Owl3-2B-241014_val.json",
+      "mPLUG-Owl3-7B-241101_val.json",
+      "paligemma2-10b_val.json",
+      "paligemma2-3b_val.json",
+      "vila-1.5-13b_val.json",
+      "vila-1.5-3b-s2_val.json",
+      "vila-1.5-8b_val.json"
+    ];
+
+    const state = {
+      runName: defaultRun,
+      questions: [],
+      answersByIdx: new Map(),
+      correctByIdx: new Map(),
+      filtered: [],
+      page: 1,
+      pageSize: 50,
+      filterId: "",
+      searchText: "",
+      imageType: "",
+      objectCount: ""
+    };
+
+    const elements = {
+      title: document.getElementById("title"),
+      status: document.getElementById("status"),
+      diagnostics: document.getElementById("diagnostics"),
+      summary: document.getElementById("summary"),
+      table: document.getElementById("table"),
+      pager: document.getElementById("pager"),
+      runSelect: document.getElementById("runSelect"),
+      questionIdFilter: document.getElementById("questionIdFilter"),
+      objectCountFilter: document.getElementById("objectCountFilter"),
+      searchInput: document.getElementById("searchInput"),
+      pageSize: document.getElementById("pageSize"),
+      imageTypeFilter: document.getElementById("imageTypeFilter")
+    };
+
+    function updateStatus(text) {
+      elements.status.textContent = text;
+    }
+
+    function updateDiagnostics(lines) {
+      elements.diagnostics.textContent = lines.join(" | ");
+    }
+
+    function updateSummary(text) {
+      elements.summary.innerHTML = text;
+    }
+
+    function setTitle(runName) {
+      elements.title.textContent = `${runName} - Question Viewer`;
+    }
+
+    function withCacheBust(url) {
+      const sep = url.includes("?") ? "&" : "?";
+      return `${url}${sep}ts=${Date.now()}`;
+    }
+
+    function normalize(text) {
+      return text.toLowerCase();
+    }
+
+    function buildPaths(runName) {
+      return {
+        questionFiles: [`test_${runName}_10K.json`, `test_${runName}.json`],
+        resultsDir: `results_${runName}`,
+        correctAnswersFile: `val_answer_${runName}.json`
+      };
+    }
+
+    function getObjectCount(item) {
+      const sourcePath = String(item.simulation_id || "");
+      const match = sourcePath.match(/\/(random|random-cam-stationary)\/([^\/]+)/);
+      return match ? match[2] : "";
+    }
+
+    async function loadRunList() {
+      const result = await tryFetchJson(`runs.json?ts=${Date.now()}`);
+      if (result.ok && Array.isArray(result.data) && result.data.length > 0) {
+        return result.data;
+      }
+      return fallbackRuns;
+    }
+
+    const SCRATCH_PREFIX = "/scratch/project/eu-25-92/composite_physics/dataset/simulation_v4/dl3dv/";
+    const DATA_PREFIX = "/data0/sebastian.cavada/datasets/simulations_v4/dl3dv/";
+    const WEB_LIGHT_PREFIX = "/data0/sebastian.cavada/datasets/simulations_web_light/dl3dv/";
+    const FALLBACK_PREFIX = "/home/cavadahub/scsv/dataset-server/dl3dv/";
+
+    function toWebLightPath(path) {
+      if (path.startsWith(WEB_LIGHT_PREFIX)) {
+        return path;
+      }
+      if (path.startsWith(SCRATCH_PREFIX)) {
+        return WEB_LIGHT_PREFIX + path.slice(SCRATCH_PREFIX.length);
+      }
+      if (path.startsWith(DATA_PREFIX)) {
+        return WEB_LIGHT_PREFIX + path.slice(DATA_PREFIX.length);
+      }
+      const marker = "/dl3dv/";
+      const markerIndex = path.indexOf(marker);
+      if (markerIndex !== -1) {
+        return WEB_LIGHT_PREFIX + path.slice(markerIndex + marker.length);
+      }
+      return path;
+    }
+
+    function buildPngCandidates(path) {
+      if (!path) return [];
+      if (path.endsWith(".png.webp")) {
+        const pngPath = path.slice(0, -5);
+        return [pngPath, path];
+      }
+      if (path.endsWith(".png")) {
+        return [path, `${path}.webp`];
+      }
+      if (path.endsWith(".webp")) {
+        const pngPath = path.slice(0, -5);
+        return [pngPath, path];
+      }
+      return [path, `${path}.webp`];
+    }
+
+    function buildImageCandidates(path) {
+      if (!path) return [];
+      const candidates = [];
+      const rewritten = toWebLightPath(path);
+      const pushCandidates = candidatePath => {
+        if (!candidatePath) return;
+        if (candidatePath.startsWith("/")) {
+          buildPngCandidates(candidatePath).forEach(candidate => {
+            candidates.push(`${window.location.origin}${candidate}`);
+          });
+        } else {
+          buildPngCandidates(candidatePath).forEach(candidate => {
+            candidates.push(candidate);
+          });
+        }
+      };
+
+      pushCandidates(path);
+      if (rewritten !== path) {
+        pushCandidates(rewritten);
+      }
+
+      if (path.startsWith(SCRATCH_PREFIX)) {
+        const fallbackPath = FALLBACK_PREFIX + path.slice(SCRATCH_PREFIX.length);
+        pushCandidates(fallbackPath);
+      }
+
+      return Array.from(new Set(candidates));
+    }
+
+    function primaryImageUrl(path) {
+      const candidates = buildImageCandidates(path);
+      return candidates[0] || "";
+    }
+
+    function setNextImageSource(img) {
+      const candidates = JSON.parse(img.dataset.candidates || "[]");
+      let index = Number(img.dataset.candidateIndex || 0);
+      index += 1;
+      if (index >= candidates.length) return;
+      img.dataset.candidateIndex = String(index);
+      img.src = candidates[index];
+    }
+
+    function createImageCard(path) {
+      const card = document.createElement("div");
+      card.className = "image-card";
+
+      const img = document.createElement("img");
+      const candidates = buildImageCandidates(path);
+      img.dataset.candidates = JSON.stringify(candidates);
+      img.dataset.candidateIndex = "0";
+      img.src = candidates[0] || "";
+      img.alt = path;
+      img.loading = "lazy";
+      img.addEventListener("error", () => setNextImageSource(img));
+      card.appendChild(img);
+
+      const label = document.createElement("div");
+      label.className = "image-path";
+      label.textContent = path;
+      card.appendChild(label);
+
+      return { card, img };
+    }
+
+    function buildCarousel(container, paths, showPaths = false) {
+      if (!paths.length) return;
+      container.classList.add("carousel");
+      const main = createImageCard(paths[0]);
+      container.appendChild(main.card);
+
+      const thumbs = document.createElement("div");
+      thumbs.className = "carousel-thumbs";
+      paths.forEach((path, index) => {
+        const thumb = document.createElement("img");
+        thumb.className = `carousel-thumb${index === 0 ? " active" : ""}`;
+        thumb.src = primaryImageUrl(path);
+        thumb.alt = path;
+        thumb.addEventListener("click", () => {
+          const candidates = buildImageCandidates(path);
+          main.img.dataset.candidates = JSON.stringify(candidates);
+          main.img.dataset.candidateIndex = "0";
+          main.img.src = candidates[0] || "";
+          main.img.alt = path;
+          thumbs.querySelectorAll(".carousel-thumb").forEach(el => el.classList.remove("active"));
+          thumb.classList.add("active");
+        });
+        thumbs.appendChild(thumb);
+      });
+      container.appendChild(thumbs);
+      if (showPaths) {
+        const pathList = document.createElement("div");
+        pathList.className = "image-path-list";
+        pathList.innerHTML = paths.map(path => escapeHtml(path)).join("<br>");
+        container.appendChild(pathList);
+      }
+    }
+
+    function modelNameFromFile(file) {
+      return file.replace(/_val\.json$/, "");
+    }
+
+    function escapeHtml(text) {
+      return String(text)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll("\"", "&quot;")
+        .replaceAll("'", "&#39;");
+    }
+
+    function formatQuestion(questionText, correctAnswer) {
+      if (!questionText) return "";
+      const lines = String(questionText).split("\n");
+      const highlighted = lines.map(line => {
+        const trimmed = line.trim();
+        const optionMatch = trimmed.match(/^([ABCD])\\.(.*)$/);
+        let lineHtml = "";
+        if (optionMatch) {
+          const letter = optionMatch[1];
+          const restRaw = optionMatch[2];
+          const spacer = restRaw.startsWith(" ") ? "&nbsp;" : "";
+          lineHtml = `<span class="answer-label answer-${letter}">${letter}.</span>${spacer}${escapeHtml(restRaw.trimStart())}`;
+        } else {
+          lineHtml = escapeHtml(line);
+        }
+        if (correctAnswer && trimmed.startsWith(`${correctAnswer}.`)) {
+          return `<strong>${lineHtml}</strong>`;
+        }
+        return lineHtml;
+      });
+      return highlighted.join("<br>");
+    }
+
+    function filterQuestions() {
+      const search = normalize(state.searchText.trim());
+      state.filtered = state.questions.filter(item => {
+        if (state.filterId && item.question_id !== state.filterId) return false;
+        if (state.imageType) {
+          const idx = String(item.idx || "");
+          if (state.imageType === "single" && !idx.endsWith("_i")) return false;
+          if (state.imageType === "multi" && !idx.endsWith("_g")) return false;
+        }
+        if (state.objectCount) {
+          if (getObjectCount(item) !== state.objectCount) return false;
+        }
+        if (!search) return true;
+        const haystack = `${item.idx} ${item.question} ${item.question_id}`.toLowerCase();
+        return haystack.includes(search);
+      });
+      state.page = 1;
+      render();
+    }
+
+    function render() {
+      const total = state.filtered.length;
+      const pageCount = Math.max(1, Math.ceil(total / state.pageSize));
+      if (state.page > pageCount) state.page = pageCount;
+
+      const start = (state.page - 1) * state.pageSize;
+      const pageItems = state.filtered.slice(start, start + state.pageSize);
+
+      elements.table.innerHTML = "";
+      const fragment = document.createDocumentFragment();
+
+      pageItems.forEach(item => {
+        const row = document.createElement("div");
+        row.className = "row";
+
+        const head = document.createElement("div");
+        head.className = "row-head";
+        const correctAnswer = state.correctByIdx.get(item.idx);
+        const answersForScore = state.answersByIdx.get(item.idx) || [];
+        const correctCount = correctAnswer ? answersForScore.filter(entry => entry.answer === correctAnswer).length : 0;
+        const correctness = answersForScore.length > 0 ? ((correctCount / answersForScore.length) * 100).toFixed(1) : null;
+        const objectCount = getObjectCount(item);
+        head.innerHTML = `
+          <span class="badge">${item.question_id}</span>
+          <span class="badge">idx: ${item.idx}</span>
+          <span class="badge">${item.choice_type || ""}</span>
+          <span class="badge">${item.mode || ""}</span>
+          <span class="badge">${item.source || ""}</span>
+          ${objectCount ? `<span class="badge">objects: ${objectCount}</span>` : ""}
+          ${correctAnswer ? `<span class="badge answer-${correctAnswer}">correct: ${correctAnswer}</span>` : ""}
+        `;
+
+        const question = document.createElement("div");
+        question.className = "question";
+        question.innerHTML = formatQuestion(item.question, correctAnswer);
+
+        const rowMain = document.createElement("div");
+        const isSingle = String(item.idx || "").endsWith("_i");
+
+        const images = document.createElement("div");
+        images.className = "images";
+        const fileNames = Array.isArray(item.file_name) ? item.file_name : (item.file_name ? [item.file_name] : []);
+        const tagCount = (item.question || "").split("<image>").length - 1;
+        const isCarousel = tagCount >= 8 && fileNames.length >= 8;
+        const isQuadCarousel = tagCount === 4 && fileNames.length >= 4;
+        rowMain.className = `row-main${isSingle ? " single" : ""}${(isCarousel || isQuadCarousel) ? " carousel-layout" : ""}`;
+        if (fileNames.length === 0) {
+          const empty = document.createElement("div");
+          empty.className = "hint";
+          empty.textContent = "No images found.";
+          images.appendChild(empty);
+        } else {
+          if (isCarousel) {
+            buildCarousel(images, fileNames.slice(0, 8), true);
+          } else if (tagCount === 4 && fileNames.length >= 4) {
+            buildCarousel(images, fileNames.slice(0, 4), true);
+          } else {
+            fileNames.forEach(path => {
+              const { card } = createImageCard(path);
+              images.appendChild(card);
+            });
+          }
+        }
+
+        if (isSingle || isCarousel || isQuadCarousel) {
+          rowMain.appendChild(images);
+          rowMain.appendChild(question);
+        } else {
+          rowMain.appendChild(question);
+          rowMain.appendChild(images);
+        }
+
+        const answerImages = document.createElement("div");
+        answerImages.className = "images";
+        if (tagCount === 4 && fileNames.length >= 8) {
+          buildCarousel(answerImages, fileNames.slice(4, 8), true);
+        }
+
+        const details = document.createElement("details");
+        const answers = state.answersByIdx.get(item.idx) || [];
+        const answeredCount = answers.length;
+
+        details.innerHTML = `
+          <summary>Models answered: ${answeredCount}${correctness ? ` | avg correct: ${correctness}%` : ""}</summary>
+        `;
+        const answersWrap = document.createElement("div");
+        answersWrap.className = "answers";
+        if (answeredCount === 0) {
+          const none = document.createElement("div");
+          none.className = "hint";
+          none.textContent = "No model answers available.";
+          answersWrap.appendChild(none);
+        } else {
+          answers.forEach(entry => {
+            const rowEl = document.createElement("div");
+            const isCorrect = correctAnswer && entry.answer === correctAnswer;
+            const answerClass = ["A", "B", "C", "D"].includes(entry.answer) ? ` answer-${entry.answer}` : "";
+            rowEl.className = `answer-row${answerClass}${isCorrect ? " correct" : ""}`;
+            rowEl.innerHTML = `<span>${entry.model}</span><span>${entry.answer}</span>`;
+            answersWrap.appendChild(rowEl);
+          });
+        }
+        details.appendChild(answersWrap);
+
+        row.appendChild(head);
+        row.appendChild(rowMain);
+        if (answerImages.childElementCount > 0) {
+          row.appendChild(answerImages);
+        }
+        row.appendChild(details);
+        fragment.appendChild(row);
+      });
+
+      elements.table.appendChild(fragment);
+      renderPager(total, pageCount);
+      updateStatus(`Run ${state.runName}: loaded ${state.questions.length} questions, ${modelFiles.length} models. Showing ${total} filtered results.`);
+      renderSummary();
+    }
+
+    function renderSummary() {
+      const counts = { A: 0, B: 0, C: 0, D: 0 };
+      let total = 0;
+      state.filtered.forEach(item => {
+        const answer = state.correctByIdx.get(item.idx);
+        if (answer && counts.hasOwnProperty(answer)) {
+          counts[answer] += 1;
+          total += 1;
+        }
+      });
+      if (total === 0) {
+        updateSummary("Answer distribution: no correct answers found for this filter.");
+        return;
+      }
+      const parts = ["A", "B", "C", "D"].map(key => {
+        const pct = ((counts[key] / total) * 100).toFixed(1);
+        return `<span class=\"answer-${key}\">${key}</span>: ${counts[key]} (${pct}%)`;
+      });
+      updateSummary(`Answer distribution (correct, filtered): ${parts.join(" | ")}`);
+    }
+
+    function renderPager(total, pageCount) {
+      elements.pager.innerHTML = "";
+      const prev = document.createElement("button");
+      prev.textContent = "Prev";
+      prev.disabled = state.page <= 1;
+      prev.addEventListener("click", () => {
+        state.page = Math.max(1, state.page - 1);
+        render();
+      });
+
+      const next = document.createElement("button");
+      next.textContent = "Next";
+      next.disabled = state.page >= pageCount;
+      next.addEventListener("click", () => {
+        state.page = Math.min(pageCount, state.page + 1);
+        render();
+      });
+
+      const meta = document.createElement("div");
+      meta.className = "hint";
+      const start = total === 0 ? 0 : (state.page - 1) * state.pageSize + 1;
+      const end = Math.min(total, state.page * state.pageSize);
+      meta.textContent = `Page ${state.page}/${pageCount} (rows ${start}-${end} of ${total})`;
+
+      elements.pager.appendChild(prev);
+      elements.pager.appendChild(next);
+      elements.pager.appendChild(meta);
+    }
+
+    async function tryFetchJson(url) {
+      try {
+        const response = await fetch(url);
+        if (!response.ok) {
+          return { ok: false, url, status: response.status };
+        }
+        return { ok: true, url, data: await response.json() };
+      } catch (err) {
+        return { ok: false, url, status: "network-error", error: err };
+      }
+    }
+
+    async function loadAnswers(dataRoot, resultsDir, diagnostics) {
+      const answersByIdx = new Map();
+      let loaded = 0;
+      let missingCount = 0;
+
+      for (const file of modelFiles) {
+        updateStatus(`Loading model answers (${loaded + 1}/${modelFiles.length})...`);
+        const url = `${dataRoot}/${resultsDir}/${file}`;
+        const result = await tryFetchJson(withCacheBust(url));
+        if (!result.ok) {
+          missingCount += 1;
+          loaded += 1;
+          continue;
+        }
+        const data = result.data;
+        const model = modelNameFromFile(file);
+
+        data.forEach(entry => {
+          if (!answersByIdx.has(entry.idx)) {
+            answersByIdx.set(entry.idx, []);
+          }
+          answersByIdx.get(entry.idx).push({ model, answer: entry.answer });
+        });
+        loaded += 1;
+      }
+
+      if (missingCount > 0) {
+        diagnostics.push(`missing results files: ${missingCount}`);
+        updateDiagnostics(diagnostics);
+      }
+      state.answersByIdx = answersByIdx;
+    }
+
+    async function loadCorrectAnswers(dataRoot, correctAnswersFile, diagnostics) {
+      const correctByIdx = new Map();
+      const url = `${dataRoot}/${correctAnswersFile}`;
+      const result = await tryFetchJson(withCacheBust(url));
+      if (!result.ok) {
+        diagnostics.push(`missing ${url} (${result.status})`);
+        updateDiagnostics(diagnostics);
+        return;
+      }
+      result.data.forEach(entry => {
+        if (entry && entry.idx) {
+          correctByIdx.set(entry.idx, entry.answer);
+        }
+      });
+      state.correctByIdx = correctByIdx;
+    }
+
+    async function loadRun(runName) {
+      state.runName = runName;
+      setTitle(runName);
+      elements.runSelect.value = runName;
+      state.questions = [];
+      state.answersByIdx = new Map();
+      state.correctByIdx = new Map();
+      state.filtered = [];
+      state.page = 1;
+      state.filterId = "";
+      state.searchText = "";
+      state.imageType = "";
+      state.objectCount = "";
+
+      elements.searchInput.value = "";
+      elements.imageTypeFilter.value = "";
+      elements.questionIdFilter.innerHTML = "<option value=\"\">All question_id</option>";
+      elements.objectCountFilter.innerHTML = "<option value=\"\">All</option>";
+
+      updateSummary("");
+      updateStatus(`Loading questions for ${runName}...`);
+      const diagnostics = [];
+      let activeRoot = null;
+      let questionsUsed = null;
+      const paths = buildPaths(runName);
+
+      for (const root of baseOutputRoots) {
+        for (const file of paths.questionFiles) {
+          const questionsUrl = `${root}/${runName}/${file}`;
+          const result = await tryFetchJson(withCacheBust(questionsUrl));
+          if (result.ok) {
+            activeRoot = root;
+            questionsUsed = questionsUrl;
+            state.questions = result.data;
+            break;
+          }
+          diagnostics.push(`missing ${questionsUrl} (${result.status})`);
+          updateDiagnostics(diagnostics);
+        }
+        if (activeRoot) break;
+      }
+
+      if (!activeRoot) {
+        throw new Error("Failed to load questions from any output root.");
+      }
+
+      diagnostics.push(`using ${questionsUsed}`);
+      updateDiagnostics(diagnostics);
+
+      const questionIds = Array.from(new Set(state.questions.map(q => q.question_id))).sort();
+      questionIds.forEach(id => {
+        const option = document.createElement("option");
+        option.value = id;
+        option.textContent = id;
+        elements.questionIdFilter.appendChild(option);
+      });
+
+      const objectCounts = Array.from(new Set(state.questions.map(getObjectCount).filter(Boolean))).sort((a, b) => Number(a) - Number(b));
+      objectCounts.forEach(count => {
+        const option = document.createElement("option");
+        option.value = count;
+        option.textContent = count;
+        elements.objectCountFilter.appendChild(option);
+      });
+
+      const dataRoot = `${activeRoot}/${runName}`;
+      await loadAnswers(dataRoot, paths.resultsDir, diagnostics);
+      await loadCorrectAnswers(dataRoot, paths.correctAnswersFile, diagnostics);
+      state.filtered = state.questions.slice();
+      try {
+        render();
+      } catch (err) {
+        console.error(err);
+        diagnostics.push(`render-error: ${err && err.message ? err.message : err}`);
+        updateDiagnostics(diagnostics);
+        updateStatus("Loaded data but failed to render. Check diagnostics for the error.");
+      }
+    }
+
+    function populateRunSelect(runs) {
+      elements.runSelect.innerHTML = "";
+      runs.forEach(run => {
+        const option = document.createElement("option");
+        option.value = run;
+        option.textContent = run;
+        elements.runSelect.appendChild(option);
+      });
+    }
+
+    async function init() {
+      try {
+        const runs = await loadRunList();
+        populateRunSelect(runs);
+        const initialRun = runs.includes(defaultRun) ? defaultRun : (runs[0] || "");
+        if (!initialRun) {
+          throw new Error("No runs available.");
+        }
+        await loadRun(initialRun);
+      } catch (err) {
+        console.error(err);
+        updateStatus("Failed to load data. Check the diagnostics line for missing URLs or network errors.");
+      }
+    }
+
+    elements.questionIdFilter.addEventListener("change", event => {
+      state.filterId = event.target.value;
+      filterQuestions();
+    });
+
+    elements.runSelect.addEventListener("change", event => {
+      const runName = event.target.value;
+      if (runName) {
+        loadRun(runName).catch(err => {
+          console.error(err);
+          updateStatus("Failed to load data. Check the diagnostics line for missing URLs or network errors.");
+        });
+      }
+    });
+
+    elements.objectCountFilter.addEventListener("change", event => {
+      state.objectCount = event.target.value;
+      filterQuestions();
+    });
+
+    elements.searchInput.addEventListener("input", event => {
+      state.searchText = event.target.value;
+      filterQuestions();
+    });
+
+    elements.pageSize.addEventListener("change", event => {
+      state.pageSize = Number(event.target.value) || 50;
+      filterQuestions();
+    });
+
+    elements.imageTypeFilter.addEventListener("change", event => {
+      state.imageType = event.target.value;
+      filterQuestions();
+    });
+
+    init();
+  </script>
+</body>
+</html>

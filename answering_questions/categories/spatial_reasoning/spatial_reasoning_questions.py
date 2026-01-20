@@ -171,29 +171,32 @@ def F_CLOSEST_OBJECT_CAMERA(
 
     closest_object = None
     closest_distance = float("inf")
+    second_closest_distance = float("inf")
 
-    for object in iter_objects(world_state):
-        object_id = object["id"]
+    for obj in iter_objects(world_state):
+        obj_id = obj["id"]
 
-        if not is_object_visible(world_state, object_id, timestep):
+        if not is_object_visible(world_state, obj_id, timestep):
             continue
 
-        object_state = world_state["simulation"][timestep]["objects"][object_id]
+        obj_state = world_state["simulation"][timestep]["objects"][obj_id]
         camera_state = world_state["simulation"][timestep]["camera"]
 
         camera_OBB = get_camera_OBB(camera_state)
-        object_OBB = object_state["obb"]
+        object_OBB = obj_state["obb"]
 
-        distance = minimum_distance_between_OBBs(object_OBB, camera_OBB)
+        d = minimum_distance_between_OBBs(object_OBB, camera_OBB)
 
-        if distance + MARGIN_DISTANCE < closest_distance:
-            closest_distance = distance
-            closest_object = object
+        if d < closest_distance:
+            second_closest_distance = closest_distance
+            closest_distance = d
+            closest_object = obj
+        elif d < second_closest_distance:
+            second_closest_distance = d
 
-        if abs(distance - closest_distance) < MARGIN_DISTANCE:            
-            raise ImpossibleToAnswer(
-                "Multiple objects are too close to the closest distance."
-            )
+    # final disambiguation check
+    if second_closest_distance - closest_distance < MARGIN_DISTANCE:
+        raise ImpossibleToAnswer("Closest object is ambiguous.")
 
     visible_objects_names_minus_resolved, all_objects_minus_visible_and_non_visible = (
         get_objects_present_and_not_present(

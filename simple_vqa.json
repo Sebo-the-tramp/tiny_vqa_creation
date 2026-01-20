@@ -116,7 +116,7 @@
             "choice": "mcq",
             "question": "<OBJECT>",
             "question_single": "What is the mass of the <OBJECT> visible in the frame?",
-            "question_multi": "Considering all frames, what is the mass of the <OBJECTS> visible in the last frame?"
+            "question_multi": "Considering all frames, what is the mass of the <OBJECT> visible in the last frame?"
         },
         "F_MASS_HEAVIEST_OBJECT": {
             "task_splits": "single+multi",

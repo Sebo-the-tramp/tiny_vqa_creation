@@ -34,6 +34,7 @@ from utils.bin_creation import create_mc_object_names_from_dataset
 from categories.persistence.persistence_helpers import (
     get_maximum_windows_for_each_object,
     choose_best_window_object_id,
+    has_min_consecutive_visibility,
 )
 
 
@@ -48,6 +49,17 @@ RENDER_STEP = 1.0 / SAMPLING_RATE
 FRAME_INTERLEAVE = 2  # custom only for temporal questions (heuristic)
 MIN_PIXELS_VISIBLE = get_config()["min_pixels_visible"]
 CLIP_LENGTH = get_config()["clip_length"]
+
+
+def _count_objects_with_min_consecutive_visibility(
+    visibility_mask_window: np.ndarray,
+) -> int:
+    return int(
+        sum(
+            has_min_consecutive_visibility(row, 0, len(row) - 1)
+            for row in visibility_mask_window
+        )
+    )
 
 
 @with_resolved_attributes
@@ -148,10 +160,11 @@ def F_PERSISTENCE_OBJECT_TOTAL_COUNT(
     curr_frame_interleave = ((final_timestep_index) - initial_timestep_index) // (
         CLIP_LENGTH - 1
     )  # there seems to be a problem here
-    total_unique_objects_seen = np.sum(
-        visibility_mask[:, initial_timestep_index : final_timestep_index + 1][
-            :, ::curr_frame_interleave
-        ].any(axis=1)
+    visibility_objects_window = visibility_mask[
+        :, initial_timestep_index : final_timestep_index + 1
+    ][:, ::curr_frame_interleave]
+    total_unique_objects_seen = _count_objects_with_min_consecutive_visibility(
+        visibility_objects_window
     )
 
     # balanced options around the initial count
@@ -219,7 +232,9 @@ def F_PERSISTENCE_OBJECT_TOTAL_COUNT_HIDDEN(
     visibility_objecst_window = visibility_mask[
         :, initial_timestep_index : final_timestep_index + 1
     ][:, ::curr_frame_interleave]
-    total_unique_objects_seen = np.sum(visibility_objecst_window.any(axis=1))
+    total_unique_objects_seen = _count_objects_with_min_consecutive_visibility(
+        visibility_objecst_window
+    )
     count_objects_final = visibility_objecst_window[:, -1].sum()
 
     hidden = total_unique_objects_seen - count_objects_final

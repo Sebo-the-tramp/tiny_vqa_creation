@@ -185,7 +185,7 @@ def augment_roi_circling(
                 )
 
                 object_name = value["choice"]["name"]
-                pattern = re.compile(re.escape(object_name), re.IGNORECASE)
+                pattern = re.compile(re.escape('\"'+object_name+'\"'), re.IGNORECASE)
                 if text:
                     # modify the question such that the name of the object is removed and replaced with "the circled object"
                     if layout_position:
@@ -193,12 +193,12 @@ def augment_roi_circling(
                             world_state, object_id, int(render_name.replace(".png", ""))
                         )
                         new_question = pattern.sub(
-                            f"{object_name} (circled in red and located at the {zone_to_focus})",
+                            f"\"{object_name}\" (circled in red and located at the {zone_to_focus})",
                             question["question"],
                         )
                     else:
                         new_question = pattern.sub(
-                            f"{object_name} (circled in red)", question["question"]
+                            f"\"{object_name}\" (circled in red)", question["question"]
                         )
                 else:
                     if layout_position:

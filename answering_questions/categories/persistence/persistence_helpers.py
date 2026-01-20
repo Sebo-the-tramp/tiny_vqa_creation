@@ -17,6 +17,24 @@ MIN_PIXELS_VISIBLE = 300
 VISIBILITY_THRESHOLD = 0.3
 CLIP_LENGTH = get_config()["clip_length"]
 HIGH_PIXEL_COUNT_THRESHOLD = 2000  # heuristic for occluded but distinct objects
+MIN_CONSECUTIVE_VISIBLE = 3
+
+
+def has_min_consecutive_visibility(
+    visibility_mask_row: np.ndarray,
+    start_idx: int,
+    end_idx: int,
+    min_consecutive: int = MIN_CONSECUTIVE_VISIBLE,
+) -> bool:
+    if start_idx < 0 or end_idx < 0 or end_idx < start_idx:
+        return False
+
+    run = 0
+    for bit in visibility_mask_row[start_idx : end_idx + 1]:
+        run = run + 1 if bit else 0
+        if run >= min_consecutive:
+            return True
+    return False
 
 
 def choose_best_window_object_id(world_state, object_proposed):
@@ -63,7 +81,9 @@ def get_maximum_windows_for_each_object(world_state: WorldState):
     """This function returns for each object the best start and end timestep
     where the object is highly visible at the start and not visible at the end."""
 
-    _, visibility_percentage_matrix = get_visibility_mask_soft(world_state)
+    visibility_mask, visibility_percentage_matrix = get_visibility_mask_soft(
+        world_state
+    )
 
     object_proposed = {}
 
@@ -127,6 +147,16 @@ def get_maximum_windows_for_each_object(world_state: WorldState):
                             and best_current_object_min < 0.01 * 100
                         ):
                             break
+
+        if not has_min_consecutive_visibility(
+            visibility_mask[idx],
+            best_current_object_max_index,
+            best_current_object_min_index,
+        ):
+            best_current_object_max = 0
+            best_current_object_min = 100
+            best_current_object_max_index = -1
+            best_current_object_min_index = -1
 
         object_proposed[str(idx + 1)] = (
             int(best_current_object_max),

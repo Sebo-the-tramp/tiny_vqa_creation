@@ -4,7 +4,6 @@ from utils.helpers import extract_attributes
 
 
 gso_mapping = get_gso_mapping()
-MIN_PIXELS_VISIBLE = get_config()["min_pixels_visible"]
 
 
 def with_resolved_attributes(func):

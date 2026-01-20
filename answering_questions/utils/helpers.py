@@ -115,8 +115,10 @@ def fill_questions(
         q_copy["task_splits"] = (
             split  # keep type consistent with your downstream expectations
         )
-        # q_copy.pop("_question_key", None)
-        # q_copy.pop("_simulation_id", None)
+        
+        # here I decide which task split to use. Therefore
+        q_copy['question'] = question[f'question_{split}']
+
         fill_template(q_copy, resolved_attributes)
 
         if split == "single":
@@ -954,15 +956,7 @@ def fill_template(
                 f"<{attribute}>",
                 str(resolved_attributes[attribute]["choice"])
                 + resolve_units(attribute),
-            )
-
-    # check if there is a single frame or multi frame task
-    if question["task_splits"] == "multi":
-        question["question"] = (
-            "Considering all frames, "
-            + question["question"][0].lower() + question["question"][1:-1]
-            + " in the last frame?"
-        )
+            )   
 
 
 def fill_template_cf(
@@ -970,7 +964,8 @@ def fill_template_cf(
     resolved_attributes: Mapping[str, Any],
     counterfact: str,
 ) -> None:
-    # Adding counterfactual at the end of the question
+    # Adding counterfactual at the end of the question --> check this
+    
     question["question"] = (
         counterfact + question["question"][0].lower() + question["question"][1:]
         if question["question"]
@@ -1004,15 +999,7 @@ def fill_template_cf(
                 f"<{attribute}>",
                 str(resolved_attributes[attribute]["choice"])
                 + resolve_units(attribute),
-            )
-
-    # check if there is a single frame or multi frame task
-    if question["task_splits"] == "multi":
-        question["question"] = (
-            "Considering all frames, "
-            + question["question"][0].lower() + question["question"][1:-1]
-            + " in the last frame?"
-        )
+            )    
 
 
 def get_camera(world_state: Mapping[str, Any]) -> Mapping[str, Any]:
@@ -1050,34 +1037,25 @@ def get_random_object_and_remove(
     visible_at_timestep: str = None,
 ) -> Mapping[str, Any]:
     objects = world_state["objects"]
-    if visible_at_timestep is not None:
-        visible_objects = []
-        visible_objects_ids = []
-        for obj_id, object in objects.items():
-            # better visibility check
-            if is_object_visible(world_state, obj_id, visible_at_timestep):
-                obj_copy = object.copy()
-                obj_copy["id"] = obj_id
-                visible_objects.append(obj_copy)
-                visible_objects_ids.append(obj_id)
-
-        list_of_duplicate_object_models = get_list_model_of_duplicate_objects(
-            world_state, visible_objects_ids
-        )
-        # remove duplicate objects by name
-        visible_objects = [
-            obj
-            for obj in visible_objects
-            if obj["model"] not in list_of_duplicate_object_models
-        ]
-
-        objects = {obj["id"]: obj for obj in visible_objects}
 
     # also if no visible objects found, we raise an error
     if not objects:
         raise ImpossibleToAnswer(f"No objects found of type '{OBJECT_CATEGORY}'")
+    
+    duplicates = get_list_model_of_duplicate_objects(
+        world_state, list(objects.keys())
+    )
+    list_of_objects_minus_duplicates = list(set([obj['model'] for obj in objects.values()]) - set(duplicates))
 
-    object_chosen = random.choice(list(objects.values()))
+    if list_of_objects_minus_duplicates == []:
+        raise ImpossibleToAnswer(f"No non-duplicate objects found of type '{OBJECT_CATEGORY}'")
+
+    object_chosen_model = random.choice(list_of_objects_minus_duplicates)
+    
+    object_chosen = next(
+        (o for o in world_state["objects"].values() if o["model"] == object_chosen_model),
+        None,
+    )
 
     del world_state["objects"][object_chosen["id"]]
 

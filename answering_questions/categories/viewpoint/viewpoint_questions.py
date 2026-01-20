@@ -187,11 +187,11 @@ def F_OCCLUSION_PERCENTAGE_OBJECT(
     infov_pixels_void = world_state['simulation'][final_timestep]['objects'][object_id]['infov_pixels_void']
     infov_pixels = world_state['simulation'][final_timestep]['objects'][object_id]['infov_pixels']
 
-    if infov_pixels_visible > MIN_VISIBLE_PIXELS:
-        return ImpossibleToAnswer("Object is too visible for occlusion question.")
+    if infov_pixels_visible < MIN_VISIBLE_PIXELS:
+        raise ImpossibleToAnswer("Object is too visible for occlusion question.")
     
-    if infov_pixels_void < 0.1 * infov_pixels:
-        return ImpossibleToAnswer("Object is too visible for occlusion question.")
+    if infov_pixels_void > 0.1 * infov_pixels:
+        raise ImpossibleToAnswer("Object is too visible for occlusion question.")
 
     visibility_object = (infov_pixels_visible + infov_pixels_void) / infov_pixels    
 

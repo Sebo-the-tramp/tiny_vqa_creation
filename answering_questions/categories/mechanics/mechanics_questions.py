@@ -450,15 +450,7 @@ def F_COLLISION_OBJECT_OBJECT_FRAME_MULTI(
 
     correct_idx = labels.index(correct_frame)
 
-    fill_template(question, resolved_attributes)
-
-    # only for this time because of the multi-frame choice nature of the question
-    question["question"] = question["question"].replace(
-        "Considering all frames, ", ""
-    ).replace(
-        " in the last frame?", ""
-    )
-    question["question"] = question["question"][0].upper() + question["question"][1:] + "?"
+    fill_template(question, resolved_attributes)    
 
     # no frames need to be provided as we already have them in the answer choices
     return [[question, labels, correct_idx, [], world_state, resolved_attributes]]
@@ -523,15 +515,6 @@ def F_COLLISION_OBJECT_SCENE_FRAME_MULTI(
     collider_object = world_state["objects"][str(collision_object_id)]
     resolved_attributes = {"OBJECT": {"choice": collider_object, "category": "OBJECT"}}
 
-    fill_template(question, resolved_attributes)
-
-    # only for this time because of the multi-frame choice nature of the question
-    question["question"] = question["question"].replace(
-        "Considering all frames, ", ""
-    ).replace(
-        " in the last frame?", ""
-    )
-    question["question"] = question["question"][0].upper() + question["question"][1:] + "?"
-
+    fill_template(question, resolved_attributes)    
 
     return [[question, labels, correct_idx, [], world_state, resolved_attributes]]

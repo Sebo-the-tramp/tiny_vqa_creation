@@ -54,7 +54,7 @@
             "task_splits": "multi",
             "sub_category": "kinematics",
             "choice": "mcq",
-            "question": "What is the magnitude of acceleration or deceleration of the <OBJECT> in the frame?"
+            "question": "What is the magnitude of acceleration of the <OBJECT> in the frame?"
         },
         "F_KINEMATICS_DISTANCE_TRAVELED_INTERVAL": {
             "task_splits": "multi",

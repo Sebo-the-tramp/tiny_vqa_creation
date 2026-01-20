@@ -5,56 +5,56 @@
             "sub_category": "distance",
             "choice": "mcq",
             "question": "<OBJECT_1> <OBJECT_2>",
-            "question_single": "What is the distance between <OBJECT_1> and the <OBJECT_2> in the frame?",
-            "question_multi": "Considering all frames, what is the distance between <OBJECT_1> and the <OBJECT_2>, in the last frame?"
+            "question_single": "Based on the image, what is the real-world distance between <OBJECT_1> and the <OBJECT_2>?",
+            "question_multi": "Considering all frames, what is the real-world distance between <OBJECT_1> and the <OBJECT_2> in the last frame?"
         },
          "F_CLOSEST_OBJECT_OBJECT": {
             "task_splits": "single+multi",
             "sub_category": "distance",
             "choice": "mcq",
             "question": "<OBJECT>",
-            "question_single": "Regardless of any obstacles, which object is the closest to the <OBJECT> in the frame?",
-            "question_multi": "Considering all frames, regardless of any obstacles, which object is the closest to the <OBJECT> in the last frame?"
+            "question_single": "Based on the image, which object is closest to the <OBJECT> in real-world distance?",
+            "question_multi": "Considering all frames, which object is closest to the <OBJECT> in real-world distance in the last frame?"
         },
         "F_DISTANCE_OBJECT_CAMERA_DISTANCE": {
             "task_splits": "single+multi",
             "sub_category": "distance",
             "choice": "mcq",
             "question": "<OBJECT>",
-            "question_single": "What is the distance between the <OBJECT> and the camera in the frame?",
-            "question_multi": "Considering all frames, what is the distance between the <OBJECT> and the camera in the last frame?"            
+            "question_single": "Based on the image, what is the real-world distance between the <OBJECT> and the camera?",
+            "question_multi": "Considering all frames, what is the real-world distance between the <OBJECT> and the camera in the last frame?"            
         },
         "F_CLOSEST_OBJECT_CAMERA": {
             "task_splits": "single+multi",
             "sub_category": "distance",
             "choice": "mcq",
             "question": "",
-            "question_single": "Which object is the closest to the camera in the frame?",
-            "question_multi": "Considering all frames, which object is the closest to the camera in the last frame?"
+            "question_single": "Based on the image, which object is the closest to the camera in real-world distance?",
+            "question_multi": "Considering all frames, which object is the closest to the camera in real-world distance in the last frame?"
         },
         "F_SIZE_OBJECT": {
             "task_splits": "single+multi",
             "sub_category": "size",
             "choice": "mcq",
             "question": "<OBJECT>",
-            "question_single": "What are the dimensions of the <OBJECT> in the frame?",
-            "question_multi": "Considering all frames, what are the dimensions of the <OBJECT> in the last frame?"
+            "question_single": "Based on the image, what are the real-world dimensions of the <OBJECT>?",
+            "question_multi": "Considering all frames, what are the real-world dimensions of the <OBJECT> in the last frame?"
         },
         "F_SIZE_OBJECT_BIGGER": {
             "task_splits": "single+multi",
             "sub_category": "size",
             "choice": "mcq",
             "question": "",
-            "question_single": "Which single object has the biggest volume in the frame?",
-            "question_multi": "Considering all frames, which single object has the biggest volume in the last frame?"
+            "question_single": "Based on the image, which single object has the biggest real-world volume?",
+            "question_multi": "Considering all frames, which single object, visible in the last frame, has the biggest real-world volume?"
         },
         "F_LAYOUT_POSITION_OBJECT_OBJECT":{
             "task_splits": "single+multi",
             "sub_category": "layout",
             "choice": "mcq",
             "question": "<OBJECT_1> <OBJECT_2>",
-            "question_single": "From the camera’s perspective, where is the <OBJECT_1> relative to the <OBJECT_2> in the frame?",
-            "question_multi": "Given all frames, from the camera’s perspective, where is the <OBJECT_1> relative to the <OBJECT_2> in the last frame?"
+            "question_single": "From the camera’s perspective, where is the <OBJECT_1> relative to the <OBJECT_2> in the image?",
+            "question_multi": "Considering all frames, from the camera’s perspective, where is the <OBJECT_1> relative to the <OBJECT_2> in the last frame?"
         }
     },
     "mechanics": {
@@ -63,28 +63,28 @@
             "sub_category": "kinematics",
             "choice": "mcq",
             "question": "<OBJECT>",
-            "question_multi": "Considering all frames, what is the speed of the <OBJECT> visible in the last frame?"
+            "question_multi": "Considering all frames, what is the real-world speed of the <OBJECT> at the time of the last frame?"
         },
         "F_KINEMATICS_ACCEL_OBJECT": {
             "task_splits": "multi",
             "sub_category": "kinematics",
             "choice": "mcq",
             "question": "<OBJECT>",
-            "question_multi": "Considering all frames, what is the magnitude of acceleration of the <OBJECT> in the last frame?"
+            "question_multi": "Considering all frames, what is the real-world magnitude of acceleration of the <OBJECT> at the time of the last frame?"
         },
         "F_KINEMATICS_DISTANCE_TRAVELED_INTERVAL": {
             "task_splits": "multi",
             "sub_category": "kinematics",
             "choice": "mcq",
             "question": "<OBJECT>",
-            "question_multi": "What is the net displacement of the centroid of the <OBJECT> from the first to the last frame?"
+            "question_multi": "Considering all frames, what is the real-world displacement of the centroid of the <OBJECT> from the first to the last frame?"
         },
         "F_KINEMATICS_SYSTEM_STABILITY": {
             "task_splits": "multi",
             "sub_category": "kinematics",
             "choice": "mcq",
             "question": "",
-            "question_multi": "Analyzing the motion trend across the 8-frame sequence, which statement best describes the system's state at the final frame?"
+            "question_multi": "Analyzing the motion trend across the sequence, which statement best describes the system's state at the final frame?"
         },
         
         "F_COLLISION_OBJECT_OBJECT_FRAME_SINGLE":{
@@ -92,7 +92,7 @@
             "sub_category": "collision",
             "choice": "mcq",
             "question": "<OBJECT>",
-            "question_single": "Which object is the <OBJECT> colliding with in the frame?"
+            "question_single": "Based on the image, which visible object is the <OBJECT> colliding with?"
         },
         "F_COLLISION_OBJECT_OBJECT_FRAME_MULTI":{
             "task_splits": "multi",
@@ -115,16 +115,16 @@
             "sub_category": "mass",
             "choice": "mcq",
             "question": "<OBJECT>",
-            "question_single": "What is the mass of the <OBJECT> visible in the frame?",
-            "question_multi": "Considering all frames, what is the mass of the <OBJECT> visible in the last frame?"
+            "question_single": "Based on the image, what is the mass of the <OBJECT>?",
+            "question_multi": "Considering all frames, what is the mass of the <OBJECT>?"
         },
         "F_MASS_HEAVIEST_OBJECT": {
             "task_splits": "single+multi",
             "sub_category": "mass",
             "choice": "mcq",
             "question": "",
-            "question_single": "Which single object visible in the frame has the greatest mass?",
-            "question_multi": "Considering all frames, which single object visible in the last frame has the greatest mass?"
+            "question_single": "Based on the image, which visible single object has the greatest mass?",
+            "question_multi": "Considering all frames, which single object, visible in the last frame, has the greatest mass?"
 
         },
         "F_MASS_LIGHTEST_OBJECT": {
@@ -132,8 +132,8 @@
             "sub_category": "mass",
             "choice": "mcq",
             "question": "",
-            "question_single": "Which single object visible in the frame has the least mass?",
-            "question_multi": "Considering all frames, which single object visible in the last frame has the least mass?"
+            "question_single": "Based on the image, which visible single object has the least mass?",
+            "question_multi": "Considering all frames, which single object, visible in the last frame, has the least mass?"
         },
 
         "F_PHYSICS_PROPERTY_DENSITY_OBJECT": {
@@ -141,16 +141,16 @@
             "sub_category": "density",
             "choice": "mcq",
             "question": "<OBJECT>",
-            "question_single": "What is the estimated mean density of the <OBJECT> seen in the frame?",
-            "question_multi": "Considering all frames, what is the estimated mean density of the <OBJECT> seen in the last frame?"
+            "question_single": "Based on the image, what is the estimated mean density of the <OBJECT>?",
+            "question_multi": "Considering all frames, what is the estimated mean density of the <OBJECT>?"
         },
         "F_PHYSICS_PROPERTY_DENSITY_OBJECT_RELATIVE": {
             "task_splits": "single+multi",
             "sub_category": "density",
             "choice": "mcq",
             "question": "",
-            "question_single": "Which object visible in the frame has the highest effective density?",
-            "question_multi": "Considering all frames, which object visible in the last frame has the highest effective density?"
+            "question_single": "Based on the image, which visible object has the highest effective density?",
+            "question_multi": "Considering all frames, which object, visible in the last frame, has the highest effective density?"
         },
         
         "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_METRIC_PREFIX": {
@@ -158,40 +158,40 @@
             "sub_category": "young_modulus",
             "choice": "mcq",
             "question": "<OBJECT>",
-            "question_single": "What is the Young's modulus of the <OBJECT> visible in the frame?",
-            "question_multi": "Considering all frames, what is the Young's modulus of the <OBJECT> visible in the last frame?"
+            "question_single": "Based on the image, what is the Young's modulus of the <OBJECT>?",
+            "question_multi": "Considering all frames, what is the Young's modulus of the <OBJECT>?"
         },
         "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR":{
             "task_splits": "single+multi",
             "sub_category": "young_modulus",
             "choice": "mcq",
             "question": "<OBJECT>",
-            "question_single": "Which object visible in the frame has a Young's Modulus most similar to that of the <OBJECT>?",
-            "question_multi": "Considerin all frames, which object visible in the last frame has a Young's Modulus most similar to that of the <OBJECT>?"
+            "question_single": "Based on the image, which visible object has a Young's Modulus most similar to that of the <OBJECT>?",
+            "question_multi": "Considering all frames, which object, visible in the last frame, has a Young's Modulus most similar to that of the <OBJECT>?"
         },
         "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR_NON_TECHNICAL":{
             "task_splits": "single+multi",
             "sub_category": "young_modulus",
             "choice": "mcq",
             "question": "<OBJECT>",
-            "question_single": "Which object visible in the frame has a softness most similar to that of the <OBJECT>?",
-            "question_multi": "Considering all frames, which object visible in the last frame has a softness most similar to that of the <OBJECT>?"
+            "question_single": "Based on the image, which visible object has a softness most similar to that of the <OBJECT>?",
+            "question_multi": "Considering all frames, which object, visible in the last frame, has a softness most similar to that of the <OBJECT>?"
         },
         "F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST": {
             "task_splits": "single+multi",
             "sub_category": "young_modulus",
             "choice": "mcq",
             "question": "",
-            "question_single": "Which object visible in the frame exhibits the highest Young's Modulus?",
-            "question_multi": "Considering all frames, which object visible in the last frame exhibits the highest Young's Modulus?"
+            "question_single": "Based on the image, which visible object exhibits the highest Young's Modulus?",
+            "question_multi": "Considering all frames, which object, visible in the last frame, exhibits the highest Young's Modulus?"
         },
         "F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST_NON_TECHNICAL": {
             "task_splits": "single+multi",
             "sub_category": "young_modulus",
             "choice": "mcq",
             "question": "",
-            "question_single": "Which object visible in the frame is the stiffest?",
-            "question_multi": "Considering all frames, which object visible in the last frame is the stiffest?"
+            "question_single": "Based on the image, which visible object is the stiffest?",
+            "question_multi": "Considering all frames, which object, visible in the last frame, is the stiffest?"
 
         }, 
         "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_HIGH_LEVEL": {
@@ -199,8 +199,8 @@
             "sub_category": "young_modulus",
             "choice": "mcq",
             "question": "<OBJECT>",
-            "question_single": "Which attribute best describes the <OBJECT> visible in the frame in terms of deformability?",
-            "question_multi": "Considering all frames, which attribute best describes the <OBJECT> visible in the last frame in terms of deformability?"
+            "question_single": "Based on the image, which attribute best describes the <OBJECT> in terms of deformability?",
+            "question_multi": "Considering all frames, which attribute best describes the <OBJECT>, visible in the last frame, in terms of deformability?"
         },
 
         "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT": {
@@ -208,48 +208,48 @@
             "sub_category": "poisson_ratio",
             "choice": "mcq",
             "question": "<OBJECT>",
-            "question_single": "What is the Poisson ratio of the <OBJECT> visible in the frame?",
-            "question_multi": "Considering all frames, what is the Poisson ratio of the <OBJECT> visible in the last frame?"
+            "question_single": "Based on the image, what is the Poisson ratio of the <OBJECT>?",
+            "question_multi": "Considering all frames, what is the Poisson ratio of the <OBJECT>?"
         },
         "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR":{
             "task_splits": "single+multi",
             "sub_category": "poisson_ratio",
             "choice": "mcq",
             "question": "<OBJECT>",
-            "question_single": "Which object has a Poisson ratio most similar to that of the <OBJECT> visible in the frame?",
-            "question_multi": "Considering all frames, which object has a Poisson ratio most similar to that of the <OBJECT> visible in the last frame?"
+            "question_single": "Based on the image, which visible object has a Poisson ratio most similar to that of the <OBJECT>?",
+            "question_multi": "Considering all frames, which visible object has a Poisson ratio most similar to that of the <OBJECT> visible in the last frame?"
         },
         "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR_NON_TECHNICAL":{
             "task_splits": "single+multi",
             "sub_category": "poisson_ratio",
             "choice": "mcq",
             "question": "<OBJECT>",
-            "question_single": "Which object acts most like the <OBJECT> visible in the frame in terms of how it bulges sideways when squeezed?",
-            "question_multi": "Which object acts most like the <OBJECT> visible in the last frame in terms of how it bulges sideways when squeezed?"
+            "question_single": "Based on the image, which visible object acts most like the <OBJECT> in terms of how it bulges sideways when squeezed?",
+            "question_multi": "Considering all frames, which visible object acts most like the <OBJECT>, visible in the last frame, in terms of how it bulges sideways when squeezed?"
         },
         "F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST": {
             "task_splits": "single+multi",
             "sub_category": "poisson_ratio",
             "choice": "mcq",
             "question": "",
-            "question_single": "Which object visible in the frame exhibits the largest Poisson ratio?",
-            "question_multi": "Considering all frames, which object visible in the last frame exhibits the largest Poisson ratio?"
+            "question_single": "Based on the image, which visible object exhibits the largest Poisson ratio?",
+            "question_multi": "Considering all frames, which object, visible in the last frame, exhibits the largest Poisson ratio?"
         },
         "F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST_NON_TECHNICAL": {
             "task_splits": "single+multi",
             "sub_category": "poisson_ratio",
             "choice": "mcq",
             "question": "",
-            "question_single": "Which object visible in the frame bulges out the most when you press on it?",
-            "question_multi": "Considering all frames, which object visible in the last frame bulges out the most when you press on it?"
+            "question_single": "Based on the image, which visible object bulges out the most when you press on it?",
+            "question_multi": "Considering all frames, which object, visible in the last frame, bulges out the most when you press on it?"
         },
         "F_PHYSICS_PROPERTY_POISSON_HIGH_LEVEL": {
             "task_splits": "single+multi",
             "sub_category": "poisson_ratio",
             "choice": "mcq",
             "question": "<OBJECT>",
-            "question_single": "If the <OBJECT> visible in the frame were compressed vertically, how would its horizontal dimensions change?",
-            "question_multi": "If the <OBJECT> visible in the last frame were compressed vertically, how would its horizontal dimensions change?"
+            "question_single": "Based on the image, if the <OBJECT> were compressed vertically, how would its horizontal dimensions change?",
+            "question_multi": "Considering all frames, if the <OBJECT>, visible in the last frame, were compressed vertically, how would its horizontal dimensions change?"
         },
 
         "F_MATERIAL_IDENTIFICATION_SIMILAR_OBJECT": {
@@ -257,16 +257,16 @@
             "sub_category": "material_identification",
             "choice": "mcq",
             "question": "<OBJECT>",
-            "question_single": "Which object visible in the frame is made of a material most similar to that of the <OBJECT>?",
-            "question_multi": "Considering all frames, which object visible in the last frame is made of a material most similar to that of the <OBJECT>?"
+            "question_single": "Based on the image, which visible object is made of a material most similar to that of the <OBJECT>?",
+            "question_multi": "Considering all frames, which visible object is made of a material most similar to that of the <OBJECT>?"
         },
         "F_MATERIAL_IDENTIFICATION_OBJECT_LEVEL_1": {
             "task_splits": "single+multi",
             "sub_category": "material_identification",
             "choice": "mcq",
             "question": "<OBJECT>",
-            "question_single": "What material is the <OBJECT> visible in the frame made of?",
-            "question_multi": "Considering all frames, what material is the <OBJECT> visible in the last frame made of?"
+            "question_single": "Based on the image, what material is the <OBJECT> made of?",
+            "question_multi": "Considering all frames, what material is the <OBJECT> made of?"
 
         },
         "F_MATERIAL_IDENTIFICATION_OBJECT_LEVEL_2": {
@@ -274,16 +274,16 @@
             "sub_category": "material_identification",
             "choice": "mcq",
             "question": "<OBJECT>",
-            "question_single": "What material is the <OBJECT> visible in the frame made of?",
-            "question_multi": "Considering all frames, what material is the <OBJECT> visible in the last frame made of?"
+            "question_single": "Based on the image, what material is the <OBJECT> made of?",
+            "question_multi": "Considering all frames, what material is the <OBJECT> made of?"
         },
         "F_MATERIAL_IDENTIFICATION_OBJECT_LEVEL_3": {
             "task_splits": "single+multi",
             "sub_category": "material_identification",
             "choice": "mcq",
             "question": "<OBJECT>",
-            "question_single": "What material is the <OBJECT> visible in the frame made of?",
-            "question_multi": "Considering all frames, what material is the <OBJECT> visible in the last frame made of?"
+            "question_single": "Based on the image, what material is the <OBJECT> made of?",
+            "question_multi": "Considering all frames, what material is the <OBJECT> made of?"
         }
     },
     "view_point": {
@@ -292,7 +292,7 @@
             "sub_category": "visibility",
             "choice": "mcq",
             "question": "",
-            "question_single": "Which of these objects is visible in the frame?",
+            "question_single": "Based on the image, which of these objects is visible?",
             "question_multi": "Considering all frames, which of these objects is visible in the last frame?"
         },
         "F_OCCLUSION_PERCENTAGE_OBJECT": {
@@ -300,7 +300,7 @@
             "sub_category": "visibility",
             "choice": "mcq",
             "question": "<OBJECT>",
-            "question_single": "How much of the <OBJECT> is occluded in the frame?",
+            "question_single": "Based on the image, how much of the <OBJECT> is occluded?",
             "question_multi": "Considering all frames, how much of the <OBJECT> is occluded in the last frame?"
         },
         "F_VISIBILITY_OBJECT_COUNT": {
@@ -308,7 +308,7 @@
             "sub_category": "visibility",
             "choice": "mcq",
             "question": "",
-            "question_single": "How many objects are visible in the frame?",
+            "question_single": "Based on the image, how many objects are visible?",
             "question_multi": "Considering all frames, how many objects are visible in the last frame?"
         },
         "F_VIEWPOINT_CAMERA_ANGLE": {
@@ -316,7 +316,7 @@
             "sub_category": "camera_characteristics",
             "choice": "mcq",
             "question": "",
-            "question_single": "From the camera’s perspective, what is the viewing direction relative to the horizon in the frame?",
+            "question_single": "From the camera’s perspective, what is the viewing direction relative to the horizon?",
             "question_multi": "Considering all frames, from the camera’s perspective, what is the viewing direction relative to the horizon in the last frame?"
         },
         "F_FOCAL_LENGTH_CLASS":{
@@ -324,8 +324,8 @@
             "sub_category": "camera_characteristics",
             "choice": "mcq",
             "question": "",            
-            "question_single": "Which focal‑length class best matches the perspective in the frame?",
-            "question_multi": "Considering all frames, which focal‑length class best matches the perspective in the last frame?"
+            "question_single": "Based on the image, which focal‑length class best matches the perspective observed?",
+            "question_multi": "Considering all frames, which focal‑length class best matches the perspective observed?"
         }
     },
     "temporal": {
@@ -334,42 +334,42 @@
             "sub_category": "event_ordering",
             "choice": "mcq",            
             "question": "",
-            "question_multi": "Given four unordered frames (A, B, C, D) depicting the same scene, what is the correct temporal ordering of the events?"
+            "question_multi": "Given the four unordered frames (A, B, C, D) of the same scene, what is the correct temporal ordering of the events?"
         },
         "F_TEMPORAL_PREDICTION_NEXT_IMAGE_GRANULARITY_1": {
             "task_splits": "multi",
             "sub_category": "event_ordering",
             "choice": "mcq", 
             "question": "",
-            "question_multi": "Which individual frame is most likely to display an event that occurred after the provided frame sequence?"
+            "question_multi": "Which individual frame (A, B, C, or D) is most likely to display an event that occurred after the provided frame sequence?"
         },
         "F_TEMPORAL_PREDICTION_NEXT_IMAGE_GRANULARITY_2": {
             "task_splits": "multi",
             "sub_category": "event_ordering",
             "choice": "mcq", 
             "question": "",
-            "question_multi": "Which individual frame is most likely to display an event that occurred after the provided frame sequence?"
+            "question_multi": "Which individual frame (A, B, C, or D) is most likely to display an event that occurred after the provided frame sequence?"
         },
         "F_TEMPORAL_PREDICTION_NEXT_IMAGE_GRANULARITY_5": {
             "task_splits": "multi",
             "sub_category": "event_ordering",
             "choice": "mcq", 
             "question": "",
-            "question_multi": "Which individual frame is most likely to display an event that occurred after the provided frame sequence?"
+            "question_multi": "Which individual frame (A, B, C, or D) is most likely to display an event that occurred after the provided frame sequence?"
         },
         "F_TEMPORAL_PREDICTION_PREVIOUS_IMAGE": {
             "task_splits": "multi",
             "sub_category": "event_ordering",
             "choice": "mcq",
             "question": "",
-            "question_multi": "Which individual frame is most likely to display an event that occurred after the provided frame sequence?"
+            "question_multi": "Which individual frame (A, B, C, or D) is most likely to display an event that occurred before the provided frame sequence?"
         },
         "F_TEMPORAL_PREDICTION_MISSING_IMAGE": {
             "task_splits": "multi",
             "sub_category": "event_ordering",
             "choice": "mcq",
             "question": "",
-            "question_multi": "Which individual frame is most likely to display an event that occurred during the time span of the provided frame sequence?"
+            "question_multi": "Which individual frame (A, B, C, or D) is most likely to display an event that occurred during the time span of the provided frame sequence?"
         },
                 
         "F_CAMERA_MOTION_DIRECTION": {
@@ -377,14 +377,14 @@
             "sub_category": "camera_motion",
             "choice": "mcq",
             "question": "",
-            "question_multi": "What is the predominant direction of the camera’s motion across the sequence?"
+            "question_multi": "Across the frame sequence, what is the predominant direction of the camera’s motion?"
         },
         "F_CAMERA_ZOOM_BEHAVIOR": {
             "task_splits": "multi",
             "sub_category": "camera_motion",
             "choice": "mcq",
             "question": "",
-            "question_multi": "How does the camera’s zoom level change across the sequence?"
+            "question_multi": "Across the frame sequence, how does the camera’s zoom level change?"
         }
     },
 
@@ -394,14 +394,14 @@
             "sub_category": "object_persistence",
             "choice": "mcq",
             "question": "",
-            "question_multi": "Which object is visible during the frames, but not visible in the last frame?"
+            "question_multi": "Considering all frames, which object was visible but disappeared in the last frame?"
         },
         "F_PERSISTENCE_OBJECT_DISAPPEAR": {
             "task_splits": "multi",
             "sub_category": "object_persistence",
             "choice": "mcq",
             "question": "",
-            "question_multi": "Which object disappears and does not reappear in the last frame?"
+            "question_multi": "Considering all frames, which visible object disappeared and does not reappear in the last frame?"
         },
 
         "F_PERSISTENCE_OBJECT_TOTAL_COUNT": {
@@ -409,14 +409,14 @@
             "sub_category": "object_persistence",
             "choice": "mcq",
             "question": "",
-            "question_multi": "How many objects are there in the last frame in total, including those currently hidden and/or out of frame?"
+            "question_multi": "Considering all frames, how many objects are present at the time of the last frame, including those currently hidden or out of frame?"
         },
         "F_PERSISTENCE_OBJECT_TOTAL_COUNT_HIDDEN": {
             "task_splits": "multi",
             "sub_category": "object_persistence",
             "choice": "mcq",
             "question": "",
-            "question_multi": "How many objects are present but not visible in the last frame?"
+            "question_multi": "Considering all frames, how many objects are present at the time of the last frame, but not visible?"
         }        
     }
 }

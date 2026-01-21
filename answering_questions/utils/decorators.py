@@ -5,7 +5,6 @@ from utils.helpers import extract_attributes
 
 gso_mapping = get_gso_mapping()
 
-
 def with_resolved_attributes(func):
     def wrapper(world_state, question, destination_simulation_id_path, *args, **kwargs):
         attributes = extract_attributes(question)

@@ -86,23 +86,24 @@ def _process_one(sim_file, args):
         simulation_id_path = sim_file.replace("simulation.json", "")
         destination_simulation_id_path = os.path.join(DEST_ROOT, simulation_id_path)
         simulation_steps_modified = read_simulation(
-            os.path.join(simulation_id_path, "simulation_kinematics.json")
+            os.path.join(simulation_id_path, "simulation_kinematics_min.json")
         )
 
         simulation_id_path_og = re.sub(
             r"/dl3dv-counterfact/[^/]+/", "/dl3dv/", simulation_id_path
         )
         # I need to check the folder that contains the original simulation
-        base_dir = simulation_id_path_og.split("seed-")[0]
+        base_dir = simulation_id_path_og.split("random/")[0] + "random/"
+        num_objects = simulation_id_path_og.split("random/")[1].split("/")[0]
         seed = simulation_id_path_og.split("seed-")[1].split("_")[0]
 
-        matches = glob.glob(base_dir + "seed-" + seed + "_*")
+        matches = glob.glob(base_dir + f"{num_objects}/c-*_d-*_s-*_seed-{seed}_*/")
         if len(matches) == 0:
             return [], {}, 1
         simulation_id_path_og = matches[0]
 
         simulation_steps_og = read_simulation(
-            os.path.join(simulation_id_path_og, "simulation_kinematics.json")
+            os.path.join(simulation_id_path_og, "simulation_kinematics_min.json")
         )
 
         return create_vqa(
@@ -173,15 +174,7 @@ def create_vqa(
     all_vqa = []
     stats = {}
 
-    for category_key, category in questions.items():
-        # current category development
-        # if (
-        #     category_key != "mechanics"
-        #     # category_key != "material_understanding"
-        #     # category_key != "persistence"
-        #     # category_key != "view_point"
-        # ):
-        #     continue
+    for category_key, category in questions.items():   
 
         if verbose:
             print("###" * 10, f"Processing category: {category_key}", "###" * 10)

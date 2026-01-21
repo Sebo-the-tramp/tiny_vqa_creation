@@ -16,12 +16,15 @@ def with_resolved_attributes(func):
         timestep_start = list_timesteps[0]
         timestep_end = list_timesteps[-1]
 
+        raise Exception("Change me the counterfactual pleaseee")
+
         kwargs.update(
             {
                 "timestep_start": timestep_start,
                 "timestep_end": timestep_end,
                 "current_world_number_of_objects": current_world_number_of_objects,
                 "destination_simulation_id_path": destination_simulation_id_path,  # to add /render and get the images directly
+                "counter_factual": True #TODO change me and fix me
             }
         )
 

@@ -58,7 +58,6 @@ from utils.bin_creation import (
     uniform_labels,
 )
 
-
 Number = Union[int, float]
 Vector = Tuple[float, float, float]
 WorldState = Mapping[str, Any]
@@ -89,8 +88,15 @@ def F_KINEMATICS_SPEED_OBJECT(
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
         attributes, world_state, min_objects=1
     )
-
-    timestep = get_random_timestep_from_list(visible_timesteps, question)
+    
+    if kwargs['counter_factual']:
+        # this is something highly experimental -> we chose among the visible indexes where the first is visible t=0 and we
+        # only allow 
+        if visible_timesteps[0] != '0':
+            raise ImpossibleToAnswer("The first frame needs to contain the object else is impossible to wnaswer")
+        visible_timesteps = [timestep for timestep in visible_timesteps if timestep in ['8', '16', '24']]
+    
+    timestep = get_random_timestep_from_list(visible_timesteps, question) # This we can modify to return always a 
 
     resolved_attributes = resolve_attributes_visible_at_timestep(
         attributes, world_state, timestep
@@ -124,7 +130,14 @@ def F_KINEMATICS_ACCEL_OBJECT(
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
         attributes, world_state, min_objects=1
     )
-    # if we are in a multi-image setting, we need to ensure there are enough frames
+
+    if kwargs['counter_factual']:
+        # this is something highly experimental -> we chose among the visible indexes where the first is visible t=0 and we
+        # only allow
+        if visible_timesteps[0] != '0':
+            raise ImpossibleToAnswer("The first frame needs to contain the object else is impossible to wnaswer")
+        visible_timesteps = [timestep for timestep in visible_timesteps if timestep in ['8', '16', '24']]
+    
     timestep = get_random_timestep_from_list(visible_timesteps, question)
 
     resolved_attributes = resolve_attributes_visible_at_timestep(
@@ -164,6 +177,13 @@ def F_KINEMATICS_DISTANCE_TRAVELED_INTERVAL(
     )
 
     visible_timesteps = random.choice(continuous_subsequences)
+
+    if kwargs['counter_factual']:
+        # this is something highly experimental -> we chose among the visible indexes where the first is visible t=0 and we
+        # only allow 
+        if visible_timesteps[0] != '0':
+            raise ImpossibleToAnswer("The first frame needs to contain the object else is impossible to wnaswer")
+        visible_timesteps = [timestep for timestep in visible_timesteps if timestep in ['8', '16', '24']]
 
     final_timestep = get_random_timestep_from_list(visible_timesteps, question)
     final_timestep_index = world_state["simulation"][final_timestep]["frame_idx"]

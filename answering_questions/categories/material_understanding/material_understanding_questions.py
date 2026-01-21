@@ -76,6 +76,13 @@ def F_MASS_OBJECT(
         attributes, world_state, min_objects=1
     )
 
+    if kwargs['counter_factual']:
+        # this is something highly experimental -> we chose among the visible indexes where the first is visible t=0 and we
+        # only allow 
+        if visible_timesteps[0] != '0':
+            raise ImpossibleToAnswer("The first frame needs to contain the object else is impossible to wnaswer")
+        visible_timesteps = [timestep for timestep in visible_timesteps if timestep in ['8', '16', '24']]
+
     timestep = get_random_timestep_from_list(visible_timesteps, question)
 
     resolved_attributes = resolve_attributes_visible_at_timestep(
@@ -113,6 +120,13 @@ def F_MASS_HEAVIEST_OBJECT(
         world_state,
         min_objects=min(kwargs["current_world_number_of_objects"], 3),
     )
+
+    if kwargs['counter_factual']:
+        # this is something highly experimental -> we chose among the visible indexes where the first is visible t=0 and we
+        # only allow 
+        if visible_timesteps[0] != '0':
+            raise ImpossibleToAnswer("The first frame needs to contain the object else is impossible to wnaswer")
+        visible_timesteps = [timestep for timestep in visible_timesteps if timestep in ['8', '16', '24']]
 
     timestep = get_random_timestep_from_list(visible_timesteps, question)
 
@@ -173,6 +187,13 @@ def F_MASS_LIGHTEST_OBJECT(
         world_state,
         min_objects=min(kwargs["current_world_number_of_objects"], 3),
     )
+
+    if kwargs['counter_factual']:
+        # this is something highly experimental -> we chose among the visible indexes where the first is visible t=0 and we
+        # only allow 
+        if visible_timesteps[0] != '0':
+            raise ImpossibleToAnswer("The first frame needs to contain the object else is impossible to wnaswer")
+        visible_timesteps = [timestep for timestep in visible_timesteps if timestep in ['8', '16', '24']]
 
     timestep = get_random_timestep_from_list(visible_timesteps, question)
 

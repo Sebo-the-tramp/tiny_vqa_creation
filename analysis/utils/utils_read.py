@@ -222,7 +222,7 @@ def read_simulation_metadata(
     simulation_json_path: str | Path, verbose: bool = False
 ) -> dict:
     simulation_json_path = Path(
-        simulation_json_path.replace("simulation.json", "simulation_min.json")
+        simulation_json_path.replace("simulation.json", "simulation_kinematics_min.json")
     )
     cache_key = str(simulation_json_path)
     cached = _SIM_METADATA_CACHE.get(cache_key)
@@ -260,7 +260,7 @@ def find_insterted_object_pixels_count(
     final_timestep = get_timestep_from_idx(int(render_name))
 
     simulation_json_path = Path(
-        simulation_json_path.replace("simulation.json", "simulation_min.json")
+        simulation_json_path.replace("simulation.json", "simulation_kinematics_min.json")
     )
     cache_key = str(simulation_json_path)
     cached = _SIM_METADATA_CACHE.get(cache_key)

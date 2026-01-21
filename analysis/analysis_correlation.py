@@ -14,7 +14,6 @@ from utils.utils_graph_correlation import (
 
 # from utils.utils_paper import print_heatmap_table_latex
 
-
 def build_eval_df(base_path: str | Path) -> pd.DataFrame:
     base = Path(base_path)
 
@@ -85,9 +84,9 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--base-path",
-        default="/data0/sebastian.cavada/compositional-physics/tiny_vqa_deterministic/output/",
+        default="/data0/sebastian.cavada/compositional-physics/tiny_vqa_creation/output/",
     )
-    parser.add_argument("--run-name", default="run_20_general_obj_num")
+    parser.add_argument("--run-name", default="run_23_general")
     args = parser.parse_args()
 
     utils_graph.RUN_NAME = args.run_name

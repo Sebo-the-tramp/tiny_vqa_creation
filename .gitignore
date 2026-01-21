@@ -11,12 +11,11 @@ submodules/
 newtphys.github.io/
 
 output*/
-analysis_example/
-analysis_v2/
 
-!analysis_v2/output/
-analysis_v2/output/*
-!analysis_v2/output/run_16_general/
+analysis/output/*
+!analysis/output/
+!analysis/output/run_23_general/
+!analysis/output/run_23_general/**
 
 main_parallel.dist/
 main_parallel.build/
@@ -24,5 +23,3 @@ main_parallel.build/
 rsync*
 tmp_parallel.sh
 
-analysis_old/*
-analysis/*

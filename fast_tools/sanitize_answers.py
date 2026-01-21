@@ -69,3 +69,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+# python fast_tools/sanitize_answers.py /data0/sebastian.cavada/compositional-physics/tiny_vqa_creation/output/run_23_general/results_run_23_general /data0/sebastian.cavada/compositional-physics/tiny_vqa_creation/output/run_23_general/results_run_23_general_sanitized --max-prefix-chars -1

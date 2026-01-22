@@ -11,5 +11,8 @@
   "run_22_roi_circling_text_layout_position",
   "run_22_roi_circling_no_text_layout_position",
 
-  "run_23_general"
+  "run_23_general",
+  "run_23_counterfactual_gravity",
+  "run_23_counterfactual_shift",
+  "run_23_counterfactual_smaller"
 ]

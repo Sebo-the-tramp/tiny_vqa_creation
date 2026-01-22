@@ -4,13 +4,17 @@
             "task_splits": "single+multi",
             "sub_category": "size",
             "choice": "mcq",
-            "question": "What is the volume of the <OBJECT>?"
+            "question": "<OBJECT>",
+            "question_single": "what would be the new volume of the <OBJECT> visible in the frame?",
+            "question_multi": "considering all frames, what would be the new volume of the <OBJECT> in the last frame?"
         },
         "CF_SIZE_OBJECT_BIGGER": {
             "task_splits": "single+multi",
             "sub_category": "size",
             "choice": "mcq",
-            "question": "Which single object would have the biggest volume?"
+            "question": "",
+            "question_single": "which single object would have the biggest volume?",
+            "question_multi": "considering all frames, which single object, visible in the last frame, would have the biggest volume?"
         }
     },
 
@@ -19,7 +23,8 @@
             "task_splits": "single",
             "sub_category": "visibility",
             "choice": "mcq",
-            "question": "How many objects would be visible in the image/frame?"
+            "question": "",
+            "question_single": "Based on the image, how many objects would be visible in the image/frame?"
         }
     },
 
@@ -28,25 +33,29 @@
             "task_splits": "multi",
             "sub_category": "kinematics",
             "choice": "mcq",
-            "question": "What would be the speed of the <OBJECT>?"
+            "question": "<OBJECT>",
+            "question_multi": "Considering all frames, what would be the speed of the <OBJECT> at the time of the last frame?"
         },
         "CF_KINEMATICS_ACCEL_OBJECT": {
             "task_splits": "multi",
             "sub_category": "kinematics",
             "choice": "mcq",
-            "question": "What would be the magnitude of acceleration of the <OBJECT>?"
+            "question": "<OBJECT>",
+            "question_multi": "Considering all frames, what would be the magnitude of acceleration of the <OBJECT> at the time of the last frame?"
         },
         "CF_KINEMATICS_DISTANCE_TRAVELED_INTERVAL": {
             "task_splits": "multi",
             "sub_category": "kinematics",
             "choice": "mcq",
-            "question": "Considering the geometrical center of <OBJECT>, what would be the straight-line distance it has traveled during the sequence?"
+            "question": "<OBJECT>",
+            "question_multi": "Considering all frames, what would be the straight-line distance the geometrical center of <OBJECT> has traveled during the sequence?"
         },        
         "CF_COLLISION_OBJECT_OBJECT_FRAME_SINGLE":{
             "task_splits": "single",
             "sub_category": "collision",
             "choice": "mcq",
-            "question": "Which object would be the <OBJECT> colliding with in the frame?"
+            "question": "<OBJECT>",
+            "question_single": "Based on the image, which object would be the <OBJECT> colliding with in the frame?"
         }
     },
 
@@ -55,21 +64,22 @@
             "task_splits": "multi",
             "sub_category": "mass",
             "choice": "mcq",
-            "question": "What is the mass of the <OBJECT> visible in the last frame?"
+            "question": "<OBJECT>",
+            "question_multi": "Considering all frames, what would be the mass of the <OBJECT> visible in the last frame?"
         },
         "CF_MASS_HEAVIEST_OBJECT": {
             "task_splits": "multi",
             "sub_category": "mass",
             "choice": "mcq",
-            "question": "Which single object has the greatest mass?",
-            "question_multi": "Which single object visible in the last frame has the greatest mass?"
+            "question": "",
+            "question_multi": "Considering all frames, which single object visible in the last frame would have the greatest mass?"
         },
         "CF_MASS_LIGHTEST_OBJECT": {
             "task_splits": "multi",
             "sub_category": "mass",
             "choice": "mcq",
-            "question": "Which single object has the least mass in the last frame?",
-            "question_multi": "Which single object visible in the last has the least mass?"
+            "question": "",
+            "question_multi": "Considering all frames, which single object visible in the last frame would have the least mass?"
         }
     },
 
@@ -78,8 +88,8 @@
             "task_splits": "multi",
             "sub_category": "object_persistence",
             "choice": "mcq",
-            "question": "How many objects would be present but not visible in the last frame?",
-            "question_multi": "How many objects would be present but not visible in the last frame?"
+            "question": "",
+            "question_multi": "Considering all frames, how many objects would be present but not visible in the last frame?"
         }
     }
 }

@@ -51,13 +51,14 @@ def save_questions_answers_json(
 
     counter = 0
 
-    for idx, entry in enumerate(all_vqa):
-        if idx > 0:
-            question_id_previous = all_vqa[idx - 1]["question_key"]
-            question_id_current = entry["question_key"]
+    for counter, entry in enumerate(all_vqa):
+        # THIS IS WEIRD I DON'T KNOW WHY I DID IT BEFORE
+        # if idx > 0:
+        #     question_id_previous = all_vqa[idx - 1]["question_key"]
+        #     question_id_current = entry["question_key"]
 
-            if question_id_previous != question_id_current:
-                counter += 1
+        #     if question_id_previous != question_id_current:
+        #         counter += 1
 
         mode = entry["mode"]
         question_idx = f"{counter}_{mode[0]}"

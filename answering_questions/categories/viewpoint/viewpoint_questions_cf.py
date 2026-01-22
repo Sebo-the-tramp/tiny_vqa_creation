@@ -50,12 +50,7 @@ def CF_VISIBILITY_OBJECT_COUNT(
     question: QuestionPayload,
     attributes,
     **kwargs,
-) -> int:
-    # we do not have corresponding data for the modified simulation to compare against
-    if len(world_state_og["simulation"]) < len(world_state_mod["simulation"]):
-        raise ImpossibleToAnswer(
-            "Modified simulation has fewer timesteps than original; cannot compare."
-        )
+) -> int:        
 
     assert len(attributes) == 0
 
@@ -65,6 +60,11 @@ def CF_VISIBILITY_OBJECT_COUNT(
         answer_list_original_data_cf[3][0]
     )  # this has to be the image to get the question
     timestep = f"{TIMESTART + float(timestep_index) * RENDER_STEP:08.3f}"
+
+    if timestep_index > len(world_state_og["simulation"]) -1:
+        raise ImpossibleToAnswer(
+            "Timestep index exceeds the number of timesteps in the original simulation."
+        )
 
     total_visible_objects = get_number_of_visible_objects(world_state_og, timestep)
 

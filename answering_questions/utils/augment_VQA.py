@@ -22,20 +22,20 @@ with open(scene_description_path, "r") as f:
 
 
 def get_counterfactual_image_paths(file_names):
-    patterns = ["shift-x", "shift-z", "low-gravity", "2xsmaller"]
+    patterns = ["jitter-xy", "jitter-z", "low-gravity", "rescale"]
     pattern_re = re.compile(r"/(" + "|".join(map(re.escape, patterns)) + r")(?=/|$)")
 
     counterfactual_image_paths = []
 
     for file in file_names:
         new_file_name = pattern_re.sub("", file).replace("//", "/")
-        simulation_id_path_og = new_file_name.replace("dl3dv-counterfact", "dl3dv")
+        simulation_id_path_og = new_file_name.replace("dl3dv-counterfact", "dl3dv")        
 
-        # I need to check the folder that contains the original simulation
-        base_dir = simulation_id_path_og.split("seed-")[0]
+        num_objects = simulation_id_path_og.split("random/")[1].split("/")[0]
+        base_dir = simulation_id_path_og.split("random/")[0] + "random/" + num_objects + "/"
         seed = simulation_id_path_og.split("seed-")[1].split("_")[0]
 
-        matches = glob.glob(base_dir + "seed-" + seed + "_*")
+        matches = glob.glob(base_dir + "*seed-" + seed + "_*")
         if len(matches) == 0:
             raise FileNotFoundError(
                 f"Original simulation folder not found for {simulation_id_path_og}"

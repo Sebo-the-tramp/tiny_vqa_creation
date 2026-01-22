@@ -165,14 +165,27 @@ def fill_questions(
 def compute_counterfactual_string(
     question, resolved_attributes, world_state_og, world_state_modified, timestep
 ):
-    # timestep = "0000.010"  # for test only
-    transform_per_object = world_state_modified["config"]["scene"]["spawning"][
-        "transform_per_object"
-    ]
+    
+    if question['task_splits'] == 'multi':
+        timestep = '0000.010' # for multi we always consider the first frame as reference
 
-    object_id = list(transform_per_object.keys())[0]  # only one object changed
+    transform_per_object_mod = {
+        k: {"translation": v["initial_condition"]["translation"], "rotation": v["initial_condition"]["rotation"], "scale": v["scale"]}
+        for k, v in world_state_modified["objects"].items()
+    }
 
-    real_object_id = str(int(object_id) + 1)
+    transform_per_object_og = {
+        k: {"translation": v["initial_condition"]["translation"], "rotation": v["initial_condition"]["rotation"], "scale": v["scale"]}
+        for k, v in world_state_og["objects"].items()
+    }
+
+    modified_object_id = None
+    for object_id in transform_per_object_mod.keys():
+        if not np.allclose(transform_per_object_mod[object_id]['translation'], transform_per_object_og[object_id]['translation']):
+            modified_object_id = object_id
+            break    
+
+    real_object_id = modified_object_id
     object_name = world_state_modified["objects"][real_object_id]["name"]
     object_pos_og = get_position(world_state_og, real_object_id, timestep)
     object_pos_mod = get_position(world_state_modified, real_object_id, timestep)
@@ -216,10 +229,13 @@ def compute_counterfactual_string(
             return " and ".join(items)
         return ", ".join(items[:-1]) + ", and " + items[-1]
 
-    counterfact_phrase = f"Assume the {object_name} is moved"
+    if(question['task_splits'] == 'single'):
+        counterfact_phrase = f"Assuming that the \"{object_name}\" is moved"
+    else:
+        counterfact_phrase = f"Assuming that the \"{object_name}\" at the time of the first frame is moved"
     if parts:
         counterfact_phrase += " " + english_join(parts)
-    counterfact_phrase += ". Under this new condition, "
+    counterfact_phrase += " in the camera reference system. How would the answer to the following question change? "
 
     # print(counterfact_phrase)
 
@@ -267,10 +283,28 @@ def fill_questions_cf(
     timestep,
     resolved_attributes,
     initial_timestep=None,
+    k_options=(1, 2, 3, 4),
 ) -> List:
     questions = []
     # 1) Keep the correct label before shuffling
     correct_label = labels[correct_idx]
+
+    # there's a problem now with frame interleave we are allowing
+    # dynamic frame interleave based on initial and final timestep
+    if initial_timestep is None:
+        final_timestep_index = world_state_modified["simulation"][timestep]["frame_idx"]
+        # we need to compute the closest initial timestep based the current timestep
+        candidates = [
+            k for k in k_options if final_timestep_index - (k * (CLIP_LENGTH - 1)) >= 0
+        ]
+        if len(candidates) == 0:
+            raise ImpossibleToAnswer(
+                "Not enough previous frames to determine visibility."
+            )
+
+        max_k = max(candidates)
+        initial_timestep_index = final_timestep_index - (max_k * (CLIP_LENGTH - 1))
+        initial_timestep = get_timestep_from_idx(initial_timestep_index)
 
     seed_material = "::".join(
         [
@@ -295,20 +329,16 @@ def fill_questions_cf(
         q_copy["task_splits"] = (
             split  # keep type consistent with your downstream expectations
         )
-        # check if spawning is present in the modified world state
-        world_state_modified_spawning = (
-            world_state_modified.get("config", {}).get("scene", {}).get("spawning", {})
-        )
 
-        if world_state_modified_spawning == {}:
+        # here I decide which task split to use. Therefore
+        q_copy['question'] = question[f'question_{split}']
+
+        if 'low-gravity' in question['_simulation_id']:
             diff = "gravity"  # default
+        elif 'rescale' in question['_simulation_id']:
+            diff = "2xsmaller"  # default
         else:
-            if "metricscale" in world_state_modified_spawning.get(
-                "transform_per_object", {}
-            ).get("0", {}):
-                diff = "2xsmaller"
-            else:
-                diff = "shift"
+            diff = "shift"
 
         if diff == "shift":
             counterfact = compute_counterfactual_string(
@@ -318,10 +348,10 @@ def fill_questions_cf(
                 world_state_modified,
                 timestep,
             )
-        elif diff == "2xsmaller":
-            counterfact = "How would the answer change if the object is scaled down to half of its original size."
+        elif diff == "2xsmaller":            
+            counterfact = "In a counterfactual scenario where the dimensions of the <OBJECT> are scaled by 0.5, "
         elif diff == "gravity":
-            counterfact = "How would the answer change if the gravity is reduced to 10% of its original value."
+            counterfact = "Under a counterfactual scenario where the gravitational constant is reduced to g/10, "
 
         fill_template_cf(q_copy, resolved_attributes, counterfact)
 
@@ -677,11 +707,17 @@ def is_object_visible_soft(world_state, obj_id, timestep):
     )
 
 
-def get_random_timestep_from_list(visible_timesteps: List[str], question: Any) -> str:
+def get_random_timestep_from_list(visible_timesteps: List[str], question: Any, is_counterfactual: bool = False) -> str:
     # MAX_TIMESTEP = len(visible_timesteps) - 1
     MAX_TIMESTEP = min(
         len(visible_timesteps), 30
     )  # usually most things happen before 2 second/50 frames
+
+    if is_counterfactual:
+        # for counterfactual we have a list of 3 items
+        # this is a monkey patch but it works for now
+        # else I might break everything else
+        return random.choice(visible_timesteps)
 
     if "multi" in question.get("task_splits", ""):
         if len(visible_timesteps) < (CLIP_LENGTH):
@@ -774,6 +810,7 @@ def get_visible_timesteps_for_attributes_min_objects(
     min_objects=1,
     min_n_frames=8,
     remove_last_n_frames=10,  # this is to avoid that the last frames, where everything is static, are considered
+    is_counterfactual=False,
 ) -> List[str]:
     # I think attributes is not needed I just need to check that more than min_objects with
     # different models are visible at the same time
@@ -815,14 +852,25 @@ def get_visible_timesteps_for_attributes_min_objects(
         raise ImpossibleToAnswer(
             "No timesteps found where the required objects are visible."
         )
+    # this has prior
+    if is_counterfactual:
+        if visible_timesteps[0] != '0000.010':
+            raise ImpossibleToAnswer("The first frame needs to contain the object else is impossible to wnaswer")
+        visible_timesteps = [timestep for timestep in visible_timesteps if str(world_state['simulation'][timestep]['frame_idx']) in ['7', '15', '23']]
+        if visible_timesteps == []:
+            raise ImpossibleToAnswer(
+                "No timesteps found where the required objects are visible for counterfactual."
+            )
+        return visible_timesteps
+    
     if remove_last_n_frames >= len(visible_timesteps):
         raise ImpossibleToAnswer(
             "Not enough timesteps to remove the last frames where everything is static."
-        )
+        )    
     if remove_last_n_frames > 0:
         return visible_timesteps[
             :-remove_last_n_frames
-        ]  # remove the last frames where everything is static
+        ]  # remove the last frames where everything is static   
     else:
         return visible_timesteps
 
@@ -967,7 +1015,7 @@ def fill_template_cf(
     # Adding counterfactual at the end of the question --> check this
     
     question["question"] = (
-        counterfact + question["question"][0].lower() + question["question"][1:]
+        counterfact + question["question"]
         if question["question"]
         else counterfact
     )
@@ -986,10 +1034,8 @@ def fill_template_cf(
             question["question"] = question["question"].replace(
                 f"<{attribute}>", mapped_name
             )
-        elif "OBJECT" in attribute:
-            mapped_name = gso_mapping[
-                resolved_attributes[attribute]["choice"]["model"]
-            ]["name"]
+        elif "OBJECT" in attribute:            
+            mapped_name = f'"{gso_mapping[resolved_attributes[attribute]["choice"]["model"]]["name"]}"'
             # mapped_name = resolved_attributes[attribute]["choice"]["name"] OLD way
             question["question"] = question["question"].replace(
                 f"<{attribute}>", mapped_name

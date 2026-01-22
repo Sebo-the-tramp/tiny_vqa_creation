@@ -542,6 +542,7 @@
       questions: [],
       answersByIdx: new Map(),
       correctByIdx: new Map(),
+      idxCounts: new Map(),
       filtered: [],
       page: 1,
       pageSize: 50,
@@ -787,6 +788,25 @@
       return highlighted.join("<br>");
     }
 
+    function annotateIdxOccurrences(questions) {
+      const idxCounts = new Map();
+      questions.forEach(item => {
+        const idx = item.idx;
+        const next = idxCounts.get(idx) || 0;
+        item._idxOccurrence = next;
+        idxCounts.set(idx, next + 1);
+      });
+      state.idxCounts = idxCounts;
+    }
+
+    function getCorrectAnswerForItem(item) {
+      const answers = state.correctByIdx.get(item.idx);
+      if (!answers || answers.length === 0) return null;
+      if (answers.length === 1) return answers[0];
+      const occurrence = typeof item._idxOccurrence === "number" ? item._idxOccurrence : 0;
+      return answers[occurrence] || answers[answers.length - 1];
+    }
+
     function filterQuestions() {
       const search = normalize(state.searchText.trim());
       state.filtered = state.questions.filter(item => {
@@ -824,7 +844,7 @@
 
         const head = document.createElement("div");
         head.className = "row-head";
-        const correctAnswer = state.correctByIdx.get(item.idx);
+        const correctAnswer = getCorrectAnswerForItem(item);
         const answersForScore = state.answersByIdx.get(item.idx) || [];
         const correctCount = correctAnswer ? answersForScore.filter(entry => entry.answer === correctAnswer).length : 0;
         const correctness = answersForScore.length > 0 ? ((correctCount / answersForScore.length) * 100).toFixed(1) : null;
@@ -930,7 +950,7 @@
       const counts = { A: 0, B: 0, C: 0, D: 0 };
       let total = 0;
       state.filtered.forEach(item => {
-        const answer = state.correctByIdx.get(item.idx);
+        const answer = getCorrectAnswerForItem(item);
         if (answer && counts.hasOwnProperty(answer)) {
           counts[answer] += 1;
           total += 1;
@@ -1032,7 +1052,10 @@
       }
       result.data.forEach(entry => {
         if (entry && entry.idx) {
-          correctByIdx.set(entry.idx, entry.answer);
+          if (!correctByIdx.has(entry.idx)) {
+            correctByIdx.set(entry.idx, []);
+          }
+          correctByIdx.get(entry.idx).push(entry.answer);
         }
       });
       state.correctByIdx = correctByIdx;
@@ -1045,6 +1068,7 @@
       state.questions = [];
       state.answersByIdx = new Map();
       state.correctByIdx = new Map();
+      state.idxCounts = new Map();
       state.filtered = [];
       state.page = 1;
       state.filterId = "";
@@ -1072,6 +1096,7 @@
             activeRoot = root;
             questionsUsed = questionsUrl;
             state.questions = result.data;
+            annotateIdxOccurrences(state.questions);
             break;
           }
           diagnostics.push(`missing ${questionsUrl} (${result.status})`);
@@ -1106,6 +1131,19 @@
       const dataRoot = `${activeRoot}/${runName}`;
       await loadAnswers(dataRoot, paths.resultsDir, diagnostics);
       await loadCorrectAnswers(dataRoot, paths.correctAnswersFile, diagnostics);
+      const mismatchIdx = [];
+      if (state.idxCounts && state.idxCounts.size > 0) {
+        state.idxCounts.forEach((count, idx) => {
+          const answers = state.correctByIdx.get(idx);
+          if (answers && answers.length !== count) {
+            mismatchIdx.push(idx);
+          }
+        });
+      }
+      if (mismatchIdx.length > 0) {
+        diagnostics.push(`idx mismatch for ${mismatchIdx.length} entries (answers vs questions)`);
+        updateDiagnostics(diagnostics);
+      }
       state.filtered = state.questions.slice();
       try {
         render();

@@ -31,10 +31,11 @@ from utils.helpers import (
 )
 
 from utils.bin_creation import create_mc_object_names_from_dataset
-from categories.persistence.persistence_helpers import (
-    get_maximum_windows_for_each_object,
+
+from categories.persistence.persistence_helpers import (    
     choose_best_window_object_id,
     has_min_consecutive_visibility,
+    get_maximum_windows_for_each_object,
 )
 
 

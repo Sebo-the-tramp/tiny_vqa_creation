@@ -21,12 +21,16 @@ from typing import (
 from utils.config import get_config
 from utils.helpers import (
     fill_questions_cf,
+    get_visibility_mask_soft,
     resolve_attributes_visible_at_timestep,
-    get_visibility_mask,
 )
 from utils.decorators import with_resolved_attributes_cf
 from utils.my_exception import ImpossibleToAnswer
 from utils.bin_creation import create_mc_object_names_from_dataset
+
+from categories.persistence.persistence_helpers import (
+    has_min_consecutive_visibility,    
+)
 
 Number = Union[int, float]
 Vector = Tuple[float, float, float]
@@ -41,6 +45,15 @@ MIN_PIXELS_VISIBLE = get_config()["min_pixels_visible"]
 CLIP_LENGTH = get_config()["clip_length"]
 TIMESTART = 0.01
 
+def _count_objects_with_min_consecutive_visibility(
+    visibility_mask_window: np.ndarray,
+) -> int:
+    return int(
+        sum(
+            has_min_consecutive_visibility(row, 0, len(row) - 1)
+            for row in visibility_mask_window
+        )
+    )
 
 @with_resolved_attributes_cf
 def CF_PERSISTENCE_OBJECT_TOTAL_COUNT(
@@ -67,7 +80,7 @@ def CF_PERSISTENCE_OBJECT_TOTAL_COUNT(
         f"{TIMESTART + float(x) * RENDER_STEP:08.3f}" for x in frames_int
     ]
 
-    visibility_mask, _ = get_visibility_mask(world_state_og)
+    visibility_mask, _ = get_visibility_mask_soft(world_state_og)
     total_visible_objects = np.sum(visibility_mask, axis=0)
 
     final_timestep = timestep_strings[-1]
@@ -121,10 +134,12 @@ def CF_PERSISTENCE_OBJECT_TOTAL_COUNT_HIDDEN(
 
     # note -> if the simulation timestep length is longer in the modified than in the og, then
     # we do not have corresponding data for the modified simulation to compare against
-    if len(world_state_og["simulation"]) < len(world_state_mod["simulation"]):
-        raise ImpossibleToAnswer(
-            "Modified simulation has fewer timesteps than original; cannot compare."
-        )
+
+    # I don't think this holds any longer as long as there are at least 16 frames
+    # if len(world_state_og["simulation"]) < len(world_state_mod["simulation"]):
+    #     raise ImpossibleToAnswer(
+    #         "Modified simulation has fewer timesteps than original; cannot compare."
+    #     )
 
     assert len(attributes) == 0
 
@@ -134,17 +149,25 @@ def CF_PERSISTENCE_OBJECT_TOTAL_COUNT_HIDDEN(
         f"{TIMESTART + float(x) * RENDER_STEP:08.3f}" for x in frames_int
     ]
 
-    visibility_mask, _ = get_visibility_mask(world_state_og)
-    total_visible_objects = np.sum(visibility_mask, axis=0)
+    visibility_mask, _ = get_visibility_mask_soft(world_state_og)
 
     final_timestep = timestep_strings[-1]
+    final_timestep_index = frames_int[-1]
     initial_timestep = timestep_strings[0]
+    initial_timestep_index = frames_int[0]
 
-    # this is not the initial count, but the count at the timestep before disappearing
-    count_objects_initial = total_visible_objects[frames_int[0]]
-    count_objects_final = total_visible_objects[frames_int[-1]]
+    curr_frame_interleave = ((final_timestep_index) - initial_timestep_index) // (
+        CLIP_LENGTH - 1
+    )  # there seems to be a problem here
+    visibility_objecst_window = visibility_mask[
+        :, initial_timestep_index : final_timestep_index + 1
+    ][:, ::curr_frame_interleave]  
+    total_unique_objects_seen = _count_objects_with_min_consecutive_visibility(
+        visibility_objecst_window
+    )
+    count_objects_final = visibility_objecst_window[:, -1].sum()
 
-    hidden = count_objects_initial - count_objects_final
+    hidden = total_unique_objects_seen - count_objects_final
 
     # balanced options around the initial count
     start = max(0, hidden - 2)
@@ -159,7 +182,7 @@ def CF_PERSISTENCE_OBJECT_TOTAL_COUNT_HIDDEN(
     )
 
     resolved_attributes = resolve_attributes_visible_at_timestep(
-        ["OBJECT"], world_state_og, final_timestep
+        [], world_state_og, final_timestep
     )
 
     return fill_questions_cf(

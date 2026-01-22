@@ -4,19 +4,25 @@
             "task_splits": "single+multi",
             "sub_category": "distance",
             "choice": "mcq",
-            "question": "Which object would be the closest to the geometrical center of the <OBJECT>?"
+            "question": "<OBJECT>",
+            "question_single": "Based on the image, which object would be the closest to the geometrical center of the <OBJECT>?",
+            "question_multi": "Considering all frames, which object would be the closest to the geometrical center of the <OBJECT> in the last frame?"
         },
         "CF_CLOSEST_OBJECT_CAMERA": {
             "task_splits": "single+multi",
             "sub_category": "distance",
             "choice": "mcq",
-            "question": "Which object would be the closest to the camera?"
+            "question": "",
+            "question_single": "Based on the image, which object would be the closest to the camera?",
+            "question_multi": "Considering all frames, which object would be the closest to the camera in the last frame?"
         },
         "CF_LAYOUT_POSITION_OBJECT_OBJECT":{
             "task_splits": "single+multi",
             "sub_category": "layout",
             "choice": "mcq",
-            "question": "From the camera’s perspective, where is the <OBJECT_1> relative to the <OBJECT_2>?"
+            "question": "<OBJECT_1> <OBJECT_2>",
+            "question_single": "From the camera’s perspective, where would the <OBJECT_1> be relative to the <OBJECT_2> in the image?",
+            "question_multi": "Considering all frames, from the camera’s perspective, where would the <OBJECT_1> be relative to the <OBJECT_2> in the last frame?"
         }
     },
 
@@ -25,7 +31,8 @@
             "task_splits": "single",
             "sub_category": "visibility",
             "choice": "mcq",
-            "question": "How many objects would be visible in the image/frame?"
+            "question": "",
+            "question_single": "Based on the image, how many objects would be visible in the image/frame?"
         }
     },
     "mechanics": {
@@ -33,25 +40,29 @@
             "task_splits": "multi",
             "sub_category": "kinematics",
             "choice": "mcq",
-            "question": "What would be the speed of the <OBJECT>?"
+            "question": "<OBJECT>",
+            "question_multi": "Considering all frames, what would be the speed of the <OBJECT> at the time of the last frame?"
         },
         "CF_KINEMATICS_ACCEL_OBJECT": {
             "task_splits": "multi",
             "sub_category": "kinematics",
             "choice": "mcq",
-            "question": "What would be the magnitude of acceleration of the <OBJECT>?"
+            "question": "<OBJECT>",
+            "question_multi": "Considering all frames, what would be the magnitude of acceleration of the <OBJECT> at the time of the last frame?"
         },
         "CF_KINEMATICS_DISTANCE_TRAVELED_INTERVAL": {
             "task_splits": "multi",
             "sub_category": "kinematics",
             "choice": "mcq",
-            "question": "Considering the geometrical center of <OBJECT>, what would be the straight-line distance it has traveled during the sequence?"
+            "question": "<OBJECT>",
+            "question_multi": "Considering all frames, what would be the straight-line distance the geometrical center of <OBJECT> has traveled during the sequence?"
         },        
         "CF_COLLISION_OBJECT_OBJECT_FRAME_SINGLE":{
             "task_splits": "single",
             "sub_category": "collision",
             "choice": "mcq",
-            "question": "Which object would be the <OBJECT> colliding with in the frame?"
+            "question": "<OBJECT>",
+            "question_single": "Based on the image, which object would be the <OBJECT> colliding with in the frame?"
         }
     },
     "persistence":{
@@ -59,7 +70,8 @@
             "task_splits": "multi",
             "sub_category": "object_persistence",
             "choice": "mcq",
-            "question": "How many objects would be present but not visible in the last frame?"
+            "question": "",
+            "question_multi": "Considering all frames, how many objects would be present but not visible in the last frame?"
         }
     }
 }

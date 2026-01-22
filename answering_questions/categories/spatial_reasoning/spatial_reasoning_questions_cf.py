@@ -221,7 +221,7 @@ def CF_SIZE_OBJECT(
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
         attributes,
         world_state_mod,
-        min_objects=kwargs["current_world_number_of_objects"],
+        min_objects=1,
     )
 
     timestep = get_random_timestep_from_list(visible_timesteps, question)

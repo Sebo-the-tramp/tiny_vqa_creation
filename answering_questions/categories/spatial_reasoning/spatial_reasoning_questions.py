@@ -165,7 +165,7 @@ def F_CLOSEST_OBJECT_CAMERA(
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
         attributes, world_state, min_objects=2
-    )
+    )    
 
     timestep = get_random_timestep_from_list(visible_timesteps, question)
 
@@ -278,10 +278,10 @@ def F_SIZE_OBJECT(
 
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        attributes, world_state, min_objects=1
+        attributes, world_state, min_objects=1, is_counterfactual=kwargs["counter_factual"]
     )
 
-    timestep = get_random_timestep_from_list(visible_timesteps, question)
+    timestep = get_random_timestep_from_list(visible_timesteps, question, is_counterfactual=kwargs["counter_factual"])
 
     resolved_attributes = resolve_attributes_visible_at_timestep(
         attributes, world_state, timestep
@@ -333,9 +333,10 @@ def F_SIZE_OBJECT_BIGGER(
         ["OBJECT"],
         world_state,
         min_objects=2,
+        is_counterfactual=kwargs["counter_factual"]
     )
 
-    timestep = get_random_timestep_from_list(visible_timesteps, question)
+    timestep = get_random_timestep_from_list(visible_timesteps, question, is_counterfactual=kwargs["counter_factual"])
 
     resolved_attributes = resolve_attributes_visible_at_timestep(
         attributes, world_state, timestep

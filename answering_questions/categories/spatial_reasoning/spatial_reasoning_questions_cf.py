@@ -23,20 +23,20 @@ from typing import (
 from utils.my_exception import ImpossibleToAnswer
 from utils.config import get_config
 
+from utils.geometry import get_camera_OBB
+
 from utils.helpers import (
-    iter_objects,
-    distance_between,
+    iter_objects,    
     fill_questions_cf,
-    get_visibility_mask,
     is_object_visible,
+    get_visibility_mask,    
+    minimum_distance_between_OBBs,
     get_random_timestep_from_list,
     get_objects_present_and_not_present,
     resolve_attributes_visible_at_timestep,
     get_visible_timesteps_for_attributes_min_objects,
 )
-from .spatial_reasoning_helpers import (
-    get_position,
-    get_position_camera,
+from .spatial_reasoning_helpers import (    
     get_closest_visible_object,
     get_spatial_relationship_camera_view,
     get_all_relational_positional_adjectives,
@@ -146,11 +146,16 @@ def CF_CLOSEST_OBJECT_CAMERA(
     question: QuestionPayload,
     attributes,
     **kwargs,
-) -> int:
+) -> int:    
+    """Question: Which object in the image is the closest to the camera?"""
+    assert len(attributes) == 0
+
+    MARGIN_DISTANCE = 0.2  # meters
+
     if kwargs["current_world_number_of_objects"] < 2:
         raise ImpossibleToAnswer(
             "Not enough objects in the scene to answer the question."
-        )
+        )        
 
     answer_list_original_data_cf = answer_list_original_data_cf[
         1
@@ -167,15 +172,32 @@ def CF_CLOSEST_OBJECT_CAMERA(
 
     closest_object = None
     closest_distance = float("inf")
+    second_closest_distance = float("inf")
 
-    for object in iter_objects(world_state_mod):
-        object_id = object["id"]
-        object_position_at_time = get_position(world_state_mod, object_id, timestep_end)
-        camera_position_at_time = get_position_camera(world_state_mod, timestep_end)
-        distance = distance_between(object_position_at_time, camera_position_at_time)
-        if distance < closest_distance:
-            closest_distance = distance
-            closest_object = object
+    for obj in iter_objects(world_state_og):
+        obj_id = obj["id"]
+
+        if not is_object_visible(world_state_og, obj_id, timestep_end):
+            continue
+
+        obj_state = world_state_og["simulation"][timestep_end]["objects"][obj_id]
+        camera_state = world_state_og["simulation"][timestep_end]["camera"]
+
+        camera_OBB = get_camera_OBB(camera_state)
+        object_OBB = obj_state["obb"]
+
+        d = minimum_distance_between_OBBs(object_OBB, camera_OBB)
+
+        if d < closest_distance:
+            second_closest_distance = closest_distance
+            closest_distance = d
+            closest_object = obj
+        elif d < second_closest_distance:
+            second_closest_distance = d
+
+    # final disambiguation check
+    if second_closest_distance - closest_distance < MARGIN_DISTANCE:
+        raise ImpossibleToAnswer("Closest object is ambiguous.")
 
     visible_objects_names_minus_resolved, all_objects_minus_visible_and_non_visible = (
         get_objects_present_and_not_present(
@@ -345,8 +367,8 @@ def CF_LAYOUT_POSITION_OBJECT_OBJECT(
         raise ImpossibleToAnswer("Question refers to future timestep.")
 
     # is just the opposite in the question so trick to make it work
-    object_2 = answer_list_original_data_cf[5]["OBJECT_2"]["choice"]
-    object_1 = answer_list_original_data_cf[5]["OBJECT_1"]["choice"]
+    object_2 = answer_list_original_data_cf[5]["OBJECT_1"]["choice"]
+    object_1 = answer_list_original_data_cf[5]["OBJECT_2"]["choice"]
 
     horizontal, vertical, depth, max_movement_adj = (
         get_spatial_relationship_camera_view(

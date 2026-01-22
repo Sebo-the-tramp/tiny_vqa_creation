@@ -209,7 +209,7 @@ def CF_KINEMATICS_DISTANCE_TRAVELED_INTERVAL(
 
 ## --- COLLISION RESOLVERS --- ##
 @with_resolved_attributes_cf
-def CF_COLLISION_OBJECT_OBJECT_FRAME_SINGLE(
+def CF_COLLISION_OBJECT_OBJECT_FRAME_SINGLE_WRONG(
     world_state_og: WorldState,
     world_state_mod: WorldState,
     answer_list_original_data_cf: dict,
@@ -267,6 +267,65 @@ def CF_COLLISION_OBJECT_OBJECT_FRAME_SINGLE(
             visible_objects_names_minus_resolved,
             all_objects_minus_visible_and_non_visible,
         )
+
+    resolved_attributes = resolve_attributes_visible_at_timestep(
+        ["OBJECT"], world_state_og, timestep_end
+    )
+
+    return fill_questions_cf(
+        question,
+        labels,
+        correct_idx,
+        world_state_og,
+        world_state_mod,
+        timestep_end,
+        resolved_attributes,
+    )
+
+
+
+## --- COLLISION RESOLVERS --- ##
+@with_resolved_attributes_cf
+def CF_COLLISION_OBJECT_OBJECT_FRAME_SINGLE(
+    world_state_og: WorldState,
+    world_state_mod: WorldState,
+    answer_list_original_data_cf: dict,
+    question: QuestionPayload,
+    attributes,
+    **kwargs,
+) -> int:
+    assert len(attributes) == 1 and "OBJECT" in attributes
+
+    timestep_end_index = int(
+        answer_list_original_data_cf[0][3][-1]
+    )  # this has to be the image to get the question
+    timestep_end = get_timestep_from_idx(timestep_end_index)
+
+    # check if the particular question asks something outside of simulation_og
+    if timestep_end_index > len(world_state_og["simulation"]) - 1:
+        raise ImpossibleToAnswer("Question refers to future timestep.")
+
+    object_id = answer_list_original_data_cf[0][5]["OBJECT"]["choice"]["id"]
+
+    collisions_timestep_obj = world_state_og["simulation"][timestep_end]["collisions"]
+
+    is_object_colliding = any(int(object_id) in pair for pair in collisions_timestep_obj)
+
+    if is_object_colliding:
+        raise ImpossibleToAnswer(
+            "Nothing interesting, the object still colliding at the final timestep." 
+        )
+
+    visible_objects_names_minus_resolved, all_objects_minus_visible_and_non_visible = (
+        get_objects_present_and_not_present(
+            world_state_mod, timestep_end, []
+        )
+    )
+    labels, correct_idx = create_mc_object_names_from_dataset(
+        "No Object",
+        visible_objects_names_minus_resolved,
+        all_objects_minus_visible_and_non_visible,
+    )
 
     resolved_attributes = resolve_attributes_visible_at_timestep(
         ["OBJECT"], world_state_og, timestep_end

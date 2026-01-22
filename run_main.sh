@@ -258,6 +258,9 @@ cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_
 # -------------------------------------------------------------
 
 
+# 5 levelsss of difficulty for physics questions
+
+
 # # # -------------------------------------------------------------
 # # # 1K roi circling - layout position - text
 

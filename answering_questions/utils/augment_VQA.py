@@ -216,10 +216,18 @@ def augment_roi_circling(
                             "object circled in red", question["question"]
                         )
 
-        new_file_name = file.replace("render", "render_roi_circled").replace(
+        
+        string_text = "text" if text else "no_text"
+        layout_text = "layout_position" if layout_position else "no_layout_position"
+
+        new_file_name = file.replace("render", f"render_circling_{string_text}_{layout_text}").replace(
             ".png", f"_{question['_question_key']}.png"
-        )
+        ).replace("simulations_v4", "simulations_v4_augmented")
         original_image = Image.fromarray(original_image)
+
+        #check for folder creation
+        path = Path(new_file_name)
+        path.parent.mkdir(parents=True, exist_ok=True)
         original_image.save(new_file_name)
 
         file_names[file_names.index(file)] = new_file_name

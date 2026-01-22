@@ -5,6 +5,7 @@ import glob
 import argparse
 import time
 import resource
+import random
 from tqdm import tqdm
 
 import multiprocessing
@@ -57,6 +58,7 @@ ANSI_GREY = "\033[90m"
 ANSI_BLUE = "\033[94m"
 ANSI_PURPLE = "\033[95m"
 ANSI_RESET = "\033[0m"
+NUM_OBJECTS_PATTERN = re.compile(r"_no-(\d+)")
 
 
 def _init_worker(vqa_path, questions_file, dest_root, verbose, base_seed):
@@ -166,6 +168,53 @@ def get_answer(question_key, question_category):
 
 def natural_key(s):
     return [int(t) if t.isdigit() else t.lower() for t in re.split(r"(\d+)", s)]
+
+
+def _extract_num_objects(sim_path):
+    match = NUM_OBJECTS_PATTERN.search(sim_path)
+    if not match:
+        return None
+    try:
+        value = int(match.group(1))
+    except ValueError:
+        return None
+    if value <= 0:
+        return None
+    return value
+
+
+def _select_simulations_by_num_objects(sim_paths, per_count, seed, verbose=False):
+    if per_count is None or per_count <= 0:
+        return sim_paths
+    grouped = {}
+    missing = 0
+    for sim_path in sim_paths:
+        num_objects = _extract_num_objects(sim_path)
+        if num_objects is None:
+            missing += 1
+            continue
+        grouped.setdefault(num_objects, []).append(sim_path)
+    if not grouped:
+        if missing:
+            print(
+                "No '_no-<count>' patterns found in simulation paths; "
+                "falling back to full list."
+            )
+        return sim_paths
+    rng = random.Random(seed)
+    selected = []
+    for num_objects in sorted(grouped.keys()):
+        candidates = grouped[num_objects]
+        if len(candidates) > per_count:
+            rng.shuffle(candidates)
+            candidates = candidates[:per_count]
+        selected.extend(candidates)
+        if verbose:
+            print(f"Selected {len(candidates)} simulations for num_objects={num_objects}")
+    if missing:
+        print(f"Skipped {missing} simulations without '_no-<count>' in the path.")
+    selected.sort(key=natural_key)
+    return selected
 
 
 # ----- MAIN VQA CREATION LOGIC
@@ -649,6 +698,13 @@ def main(args):
             list_simulations.append(sim_file)
 
     list_simulations.sort(key=natural_key)
+    if getattr(args, "per_object_count", None):
+        list_simulations = _select_simulations_by_num_objects(
+            list_simulations,
+            args.per_object_count,
+            args.seed,
+            verbose=args.verbose,
+        )
 
     # Parallel execution across simulations
     if not list_simulations:
@@ -671,7 +727,11 @@ def main(args):
         ),
         mp_context=ctx,
     ) as ex:
-        max_simulations = min(number_simulations, len(list_simulations))
+        if getattr(args, "per_object_count", None):
+            max_simulations = len(list_simulations)
+            print("Per-object-count sampling enabled; ignoring --n_scenes cap.")
+        else:
+            max_simulations = min(number_simulations, len(list_simulations))
         print(f"Processing {max_simulations} simulations...")
         for sim_vqa, sim_stats in tqdm(
             ex.map(
@@ -794,6 +854,15 @@ if __name__ == "__main__":
         type=int,
         default=4000,
         help="Number of scenes to process.",
+    )
+    parser.add_argument(
+        "--per_object_count",
+        type=int,
+        default=None,
+        help=(
+            "If set, sample up to this many simulations per num_objects "
+            "derived from '_no-<count>' in the path and ignore --n_scenes."
+        ),
     )
     parser.add_argument(
         "--n_proc",

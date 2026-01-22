@@ -20,6 +20,13 @@ cd answering_questions
 
 GENERAL_RUN_COUNT=23
 
+# -------------------------------------------------------------
+# Send Telegram notification when STARTING
+
+curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage" \
+     -d chat_id="${TELEGRAM_CHAT_ID}" \
+     --data-urlencode text="VQA creation_started" >/dev/null &
+
 ####################
 
 # python main_parallel.py --simulation_path "${BASE_PATH}/random/" "${BASE_PATH}/random-cam-stationary/" \

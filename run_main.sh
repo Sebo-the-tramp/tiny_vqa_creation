@@ -68,6 +68,7 @@ python main_parallel.py --simulation_path "${BASE_PATH}/yms-variations/" \
     --run_name "run_${GENERAL_RUN_COUNT}_general_yms-variations" \
     --n_scenes 3000 \
     --per_object_count 200 \
+    --n_proc $CPUS \
     --timeit \
 
 python ./subsample_questions_yms_variations.py \

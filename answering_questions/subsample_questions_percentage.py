@@ -95,7 +95,8 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help=(
             "Apply percentage sampling independently within each num_objects bucket, capped by "
-            "--objects-per-count. This makes percentage targets respect per-object-count totals."
+            "--objects-per-count. This makes percentage targets respect per-object-count totals. "
+            "When combined with --count, the per-object cap is scaled down to fit the global total."
         ),
     )
     parser.add_argument(
@@ -621,10 +622,6 @@ def main() -> None:
             raise SystemExit(
                 "--percentages-within-objects requires --objects-per-count."
             )
-        if args.count is not None:
-            raise SystemExit(
-                "--percentages-within-objects cannot be combined with --count."
-            )
 
     rng = random.Random(args.seed)
     balance_fields: Sequence[str] = args.balance_on
@@ -635,19 +632,51 @@ def main() -> None:
             buckets[_resolve_num_objects(record)].append(record)
 
         idx_lookup = group_by_index_suffix(questions) if args.group_by_idx else {}
+        bucket_keys = sorted(buckets)
+        if not bucket_keys:
+            sampled = []
+        else:
+            per_bucket_targets: Dict[int, int] = {}
+            if args.count is None:
+                for key in bucket_keys:
+                    per_bucket_targets[key] = args.objects_per_count
+            else:
+                total_buckets = len(bucket_keys)
+                base = min(args.objects_per_count, args.count // total_buckets)
+                remainder = max(args.count - base * total_buckets, 0)
+                eligible = [key for key in bucket_keys if len(buckets[key]) > base]
+                rng.shuffle(eligible)
+                for key in bucket_keys:
+                    per_bucket_targets[key] = base
+                for key in eligible[:remainder]:
+                    per_bucket_targets[key] += 1
+                if remainder > len(eligible):
+                    print(
+                        f"Warning: requested --count {args.count} cannot be reached because "
+                        "some num_objects buckets do not have enough available questions. "
+                        "Targets were reduced accordingly.",
+                        file=sys.stderr,
+                    )
+
         sampled: List[dict[str, Any]] = []
-        for num_objects, records in buckets.items():
+        for num_objects in bucket_keys:
+            records = buckets[num_objects]
+            target_for_bucket = (
+                per_bucket_targets[num_objects]
+                if args.count is not None
+                else args.objects_per_count
+            )
             available = len(records)
-            if available < args.objects_per_count:
+            if available < target_for_bucket:
                 if args.soft_objects_per_count:
                     print(
-                        f"Warning: cannot enforce {args.objects_per_count} questions for num_objects={num_objects}: "
+                        f"Warning: cannot enforce {target_for_bucket} questions for num_objects={num_objects}: "
                         f"only {available} available. Keeping all available for this num_objects value.",
                         file=sys.stderr,
                     )
                 else:
                     raise SystemExit(
-                        f"Cannot enforce {args.objects_per_count} questions for num_objects={num_objects}: "
+                        f"Cannot enforce {target_for_bucket} questions for num_objects={num_objects}: "
                         f"only {available} available."
                     )
 
@@ -657,33 +686,33 @@ def main() -> None:
                 percentages,
                 default_percentage,
                 rng,
-                args.objects_per_count,
+                target_for_bucket,
             )
 
             if args.group_by_idx:
                 bucket_sampled = enforce_idx_grouping(
                     bucket_sampled,
                     idx_lookup,
-                    args.objects_per_count,
+                    target_for_bucket,
                     rng,
                     balance_fields,
                     bucket_targets,
                 )
 
             if (
-                len(bucket_sampled) < args.objects_per_count
-                and available >= args.objects_per_count
+                len(bucket_sampled) < target_for_bucket
+                and available >= target_for_bucket
             ):
                 if args.soft_objects_per_count:
                     print(
-                        f"Warning: unable to allocate exactly {args.objects_per_count} questions for num_objects={num_objects} "
+                        f"Warning: unable to allocate exactly {target_for_bucket} questions for num_objects={num_objects} "
                         "while preserving idx grouping and percentage targets. "
                         f"Keeping {len(bucket_sampled)} for this num_objects value.",
                         file=sys.stderr,
                     )
                 else:
                     raise SystemExit(
-                        f"Unable to allocate exactly {args.objects_per_count} questions for num_objects={num_objects} "
+                        f"Unable to allocate exactly {target_for_bucket} questions for num_objects={num_objects} "
                         "while preserving idx grouping and percentage targets. "
                         "Consider --no-group-by-idx or different percentages."
                     )

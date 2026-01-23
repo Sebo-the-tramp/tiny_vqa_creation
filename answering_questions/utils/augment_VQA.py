@@ -221,8 +221,10 @@ def augment_roi_circling(
         layout_text = "layout_position" if layout_position else "no_layout_position"
 
         new_file_name = file.replace("render", f"render_circling_{string_text}_{layout_text}").replace(
-            ".png", f"_{question['_question_key']}.png"
-        ).replace("simulations_v4", "simulations_v4_augmented")
+            ".png", f"_{question['_question_key']}_{object_name}.png"
+        ).replace("simulations_v4", "simulations_v4_augmented"
+        ).replace("simulation_v4", "simulation_v4_augmented") # this is to account for Karolina and local path
+
         original_image = Image.fromarray(original_image)
 
         #check for folder creation

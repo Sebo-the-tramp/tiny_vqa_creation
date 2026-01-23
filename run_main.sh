@@ -62,7 +62,7 @@ GENERAL_RUN_COUNT=23
 
 
 # -------------------------------------------------------------
-# 10K general - yms variations 
+# 10K general - yms variations
 RUN_NAME="run_${GENERAL_RUN_COUNT}_general_yms-variations"
 
 # python main_parallel.py --simulation_path "${BASE_PATH}/yms-variations/" \
@@ -74,7 +74,7 @@ RUN_NAME="run_${GENERAL_RUN_COUNT}_general_yms-variations"
 #     --timeit \
 
 python ./subsample_questions_yms_variations.py \
-    --input ../output/${RUN_NAME}/${RUN_NAME}.json \
+    --input ../output/${RUN_NAME}/test_${RUN_NAME}.json \
     --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
     --subcategory-map ./balancing_sub_categories.json \
     --total 10000 \

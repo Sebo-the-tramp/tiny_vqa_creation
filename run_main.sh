@@ -110,6 +110,7 @@ python ./subsample_questions_percentage.py \
     --percentage-map ./balancing_sub_categories_material_only.json \
     --objects-per-count 100 \
     --soft-objects-per-count \
+    --percentages-within-objects \
     --seed 42
 
 cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
@@ -139,6 +140,7 @@ python ./subsample_questions_percentage.py \
     --percentage-map ./balancing_sub_categories_material_only.json \
     --objects-per-count 100 \
     --soft-objects-per-count \
+    --percentages-within-objects \
     --seed 42
 
 cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
@@ -168,6 +170,7 @@ python ./subsample_questions_percentage.py \
     --percentage-map ./balancing_sub_categories_material_only.json \
     --objects-per-count 100 \
     --soft-objects-per-count \
+    --percentages-within-objects \
     --seed 42
 
 cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
@@ -197,6 +200,7 @@ python ./subsample_questions_percentage.py \
     --percentage-map ./balancing_sub_categories_material_only.json \
     --objects-per-count 100 \
     --soft-objects-per-count \
+    --percentages-within-objects \
     --seed 42
 
 cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
@@ -225,6 +229,7 @@ python ./subsample_questions_percentage.py \
     --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
     --percentage-map ./balancing_sub_categories_material_only.json \
     --objects-per-count 100 \
+    --percentages-within-objects \
     --soft-objects-per-count \
     --seed 42
 

@@ -91,6 +91,14 @@ def parse_args() -> argparse.Namespace:
         ),
     )
     parser.add_argument(
+        "--percentages-within-objects",
+        action="store_true",
+        help=(
+            "Apply percentage sampling independently within each num_objects bucket, capped by "
+            "--objects-per-count. This makes percentage targets respect per-object-count totals."
+        ),
+    )
+    parser.add_argument(
         "--soft-objects-per-count",
         action="store_true",
         help=(
@@ -608,36 +616,110 @@ def main() -> None:
         )
     )
 
+    if args.percentages_within_objects:
+        if args.objects_per_count is None:
+            raise SystemExit(
+                "--percentages-within-objects requires --objects-per-count."
+            )
+        if args.count is not None:
+            raise SystemExit(
+                "--percentages-within-objects cannot be combined with --count."
+            )
+
     rng = random.Random(args.seed)
     balance_fields: Sequence[str] = args.balance_on
-    grouped = make_balance_groups(questions, balance_fields)
-    sampled, targets = allocate_from_percentages(
-        grouped,
-        percentages,
-        default_percentage,
-        rng,
-        args.count,
-    )
 
-    if args.group_by_idx:
-        idx_lookup = group_by_index_suffix(questions)
-        sampled = enforce_idx_grouping(
-            sampled,
-            idx_lookup,
+    if args.percentages_within_objects and args.objects_per_count is not None:
+        buckets: DefaultDict[int, List[dict[str, Any]]] = defaultdict(list)
+        for record in questions:
+            buckets[_resolve_num_objects(record)].append(record)
+
+        idx_lookup = group_by_index_suffix(questions) if args.group_by_idx else {}
+        sampled: List[dict[str, Any]] = []
+        for num_objects, records in buckets.items():
+            available = len(records)
+            if available < args.objects_per_count:
+                if args.soft_objects_per_count:
+                    print(
+                        f"Warning: cannot enforce {args.objects_per_count} questions for num_objects={num_objects}: "
+                        f"only {available} available. Keeping all available for this num_objects value.",
+                        file=sys.stderr,
+                    )
+                else:
+                    raise SystemExit(
+                        f"Cannot enforce {args.objects_per_count} questions for num_objects={num_objects}: "
+                        f"only {available} available."
+                    )
+
+            grouped = make_balance_groups(records, balance_fields)
+            bucket_sampled, bucket_targets = allocate_from_percentages(
+                grouped,
+                percentages,
+                default_percentage,
+                rng,
+                args.objects_per_count,
+            )
+
+            if args.group_by_idx:
+                bucket_sampled = enforce_idx_grouping(
+                    bucket_sampled,
+                    idx_lookup,
+                    args.objects_per_count,
+                    rng,
+                    balance_fields,
+                    bucket_targets,
+                )
+
+            if (
+                len(bucket_sampled) < args.objects_per_count
+                and available >= args.objects_per_count
+            ):
+                if args.soft_objects_per_count:
+                    print(
+                        f"Warning: unable to allocate exactly {args.objects_per_count} questions for num_objects={num_objects} "
+                        "while preserving idx grouping and percentage targets. "
+                        f"Keeping {len(bucket_sampled)} for this num_objects value.",
+                        file=sys.stderr,
+                    )
+                else:
+                    raise SystemExit(
+                        f"Unable to allocate exactly {args.objects_per_count} questions for num_objects={num_objects} "
+                        "while preserving idx grouping and percentage targets. "
+                        "Consider --no-group-by-idx or different percentages."
+                    )
+
+            sampled.extend(bucket_sampled)
+
+        rng.shuffle(sampled)
+    else:
+        grouped = make_balance_groups(questions, balance_fields)
+        sampled, targets = allocate_from_percentages(
+            grouped,
+            percentages,
+            default_percentage,
+            rng,
             args.count,
-            rng,
-            balance_fields,
-            targets,
         )
 
-    if args.objects_per_count is not None:
-        sampled = enforce_object_quota(
-            sampled,
-            args.objects_per_count,
-            rng,
-            args.group_by_idx,
-            args.soft_objects_per_count,
-        )
+        if args.group_by_idx:
+            idx_lookup = group_by_index_suffix(questions)
+            sampled = enforce_idx_grouping(
+                sampled,
+                idx_lookup,
+                args.count,
+                rng,
+                balance_fields,
+                targets,
+            )
+
+        if args.objects_per_count is not None:
+            sampled = enforce_object_quota(
+                sampled,
+                args.objects_per_count,
+                rng,
+                args.group_by_idx,
+                args.soft_objects_per_count,
+            )
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
     with args.output.open("w", encoding="utf-8") as handle:

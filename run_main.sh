@@ -59,7 +59,6 @@ python ./subsample_questions_numbers.py \
     --seed 42
 
 cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
-also copy the val
 cp ../output/${RUN_NAME}/val_answer_${RUN_NAME}.json ../output/${RUN_NAME_OBJ}/val_answer_${RUN_NAME_OBJ}.json
 
 

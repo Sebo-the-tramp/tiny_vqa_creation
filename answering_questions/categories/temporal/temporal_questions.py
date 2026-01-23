@@ -110,7 +110,7 @@ def F_TEMPORAL_SEQUENCE_IMAGES(
         correct_index,
         world_state,
         final_timestep,
-        [],
+        {},
     )
 
     # I don't need to provide twice the images
@@ -183,7 +183,7 @@ def F_TEMPORAL_PREDICTION_NEXT_IMAGE(
         correct_index,
         world_state,
         final_timestep,
-        [],
+        {},
     )
 
     # I don't need to provide twice the images
@@ -283,7 +283,7 @@ def F_TEMPORAL_PREDICTION_PREVIOUS_IMAGE(
         correct_index,
         world_state,
         final_timestep,
-        [],
+        {},
     )
 
     # I don't need to provide twice the images
@@ -358,7 +358,7 @@ def F_TEMPORAL_PREDICTION_MISSING_IMAGE(
         correct_index,
         world_state,
         final_timestep,
-        [],
+        {},
     )
 
     # I don't need to provide twice the images
@@ -521,7 +521,7 @@ def F_CAMERA_MOTION_DIRECTION(
         correct_index,
         world_state,
         timestep_final,
-        [],
+        {},
     )
 
     # I don't need to provide twice the images
@@ -612,7 +612,7 @@ def F_CAMERA_ZOOM_BEHAVIOR(
         correct_index,
         world_state,
         timestep_final,
-        [],
+        {},
     )
 
     # I don't need to provide twice the images

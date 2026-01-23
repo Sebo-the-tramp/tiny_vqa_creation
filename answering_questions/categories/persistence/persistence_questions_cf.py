@@ -64,16 +64,19 @@ def CF_PERSISTENCE_OBJECT_TOTAL_COUNT(
     attributes,
     **kwargs,
 ) -> Sequence[str]:
-    """How many objects are there in the last frame in total, including those currently hidden and/or out of frame?"""
+    """How many objects are present but not visible in the last frame?"""
 
     # note -> if the simulation timestep length is longer in the modified than in the og, then
     # we do not have corresponding data for the modified simulation to compare against
-    if len(world_state_og["simulation"]) < len(world_state_mod["simulation"]):
-        raise ImpossibleToAnswer(
-            "Modified simulation has fewer timesteps than original; cannot compare."
-        )
 
-    # this could be a list of things no? only if there are single and multi images though which we will not have here
+    # I don't think this holds any longer as long as there are at least 16 frames
+    # if len(world_state_og["simulation"]) < len(world_state_mod["simulation"]):
+    #     raise ImpossibleToAnswer(
+    #         "Modified simulation has fewer timesteps than original; cannot compare."
+    #     )
+
+    assert len(attributes) == 0
+
     frames_images = answer_list_original_data_cf[0][3]
     frames_int = [int(x) for x in frames_images]
     timestep_strings = [
@@ -81,32 +84,36 @@ def CF_PERSISTENCE_OBJECT_TOTAL_COUNT(
     ]
 
     visibility_mask, _ = get_visibility_mask_soft(world_state_og)
-    total_visible_objects = np.sum(visibility_mask, axis=0)
 
     final_timestep = timestep_strings[-1]
+    final_timestep_index = frames_int[-1]
     initial_timestep = timestep_strings[0]
+    initial_timestep_index = frames_int[0]
 
-    # this is not the initial count, but the count at the timestep before disappearing
-    count_objects_initial = total_visible_objects[frames_int[0]]
+    curr_frame_interleave = ((final_timestep_index) - initial_timestep_index) // (
+        CLIP_LENGTH - 1
+    )  # there seems to be a problem here
+    visibility_objecst_window = visibility_mask[
+        :, initial_timestep_index : final_timestep_index + 1
+    ][:, ::curr_frame_interleave]  
+    total_unique_objects_seen = _count_objects_with_min_consecutive_visibility(
+        visibility_objecst_window
+    )
 
     # balanced options around the initial count
-    start = max(0, count_objects_initial - 2)
-    shift = abs(count_objects_initial - 2) if count_objects_initial < 2 else 0
-    balanced_bins = [
-        str(i)
-        for i in range(start, count_objects_initial + 2 + shift)
-        if i != count_objects_initial
-    ]
+    start = max(0, total_unique_objects_seen - 2)
+    shift = abs(total_unique_objects_seen - 2) if total_unique_objects_seen < 2 else 0
+    balanced_bins = [str(i) for i in range(start, total_unique_objects_seen + 2 + shift) if i != total_unique_objects_seen]
 
     labels, correct_idx = create_mc_object_names_from_dataset(
-        str(count_objects_initial),
+        str(total_unique_objects_seen),
         [],
         balanced_bins,
         num_answers=4,
     )
 
     resolved_attributes = resolve_attributes_visible_at_timestep(
-        ["OBJECT"], world_state_og, final_timestep
+        [], world_state_og, final_timestep
     )
 
     return fill_questions_cf(

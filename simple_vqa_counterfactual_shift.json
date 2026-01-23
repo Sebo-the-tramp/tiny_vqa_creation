@@ -35,21 +35,8 @@
             "question_single": "Based on the image, how many objects would be visible in the image/frame?"
         }
     },
-    "mechanics": {
-        "CF_KINEMATICS_SPEED_OBJECT": {
-            "task_splits": "multi",
-            "sub_category": "kinematics",
-            "choice": "mcq",
-            "question": "<OBJECT>",
-            "question_multi": "Considering all frames, what would be the speed of the <OBJECT> at the time of the last frame?"
-        },
-        "CF_KINEMATICS_ACCEL_OBJECT": {
-            "task_splits": "multi",
-            "sub_category": "kinematics",
-            "choice": "mcq",
-            "question": "<OBJECT>",
-            "question_multi": "Considering all frames, what would be the magnitude of acceleration of the <OBJECT> at the time of the last frame?"
-        },
+    
+    "mechanics": { 
         "CF_KINEMATICS_DISTANCE_TRAVELED_INTERVAL": {
             "task_splits": "multi",
             "sub_category": "kinematics",
@@ -67,6 +54,13 @@
     },
 
     "persistence": {
+         "CF_PERSISTENCE_OBJECT_TOTAL_COUNT": {
+            "task_splits": "multi",
+            "sub_category": "object_persistence",
+            "choice": "mcq",
+            "question": "",
+            "question_multi": "Considering all frames, how many objects are present at the time of the last frame, including those currently hidden or out of frame?"
+        }, 
         "CF_PERSISTENCE_OBJECT_TOTAL_COUNT_HIDDEN": {
             "task_splits": "multi",
             "sub_category": "object_persistence",

@@ -164,7 +164,7 @@ def F_CLOSEST_OBJECT_CAMERA(
 
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        attributes, world_state, min_objects=2
+        attributes, world_state, min_objects=2, is_counterfactual=kwargs['counter_factual']
     )    
 
     timestep = get_random_timestep_from_list(visible_timesteps, question)
@@ -235,7 +235,7 @@ def F_CLOSEST_OBJECT_OBJECT(
 
     # First we find the pairs of objects visible
     visible_timesteps = get_visible_timesteps_for_attributes_min_objects(
-        attributes, world_state, min_objects=2
+        attributes, world_state, min_objects=2, is_counterfactual=kwargs['counter_factual']
     )
 
     timestep = get_random_timestep_from_list(visible_timesteps, question)

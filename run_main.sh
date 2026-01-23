@@ -101,7 +101,7 @@ python main_parallel.py --simulation_path "${BASE_PATH}/random" \
     "F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST" "F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST_NON_TECHNICAL" "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR" \
     "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR_NON_TECHNICAL" "F_MATERIAL_IDENTIFICATION_SIMILAR_OBJECT" \
     "F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST" "F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST_NON_TECHNICAL" \
-    --n_proc $CPUS \    
+    --n_proc $CPUS
 
 python ./subsample_questions_percentage.py \
     --count 1000 \
@@ -109,6 +109,7 @@ python ./subsample_questions_percentage.py \
     --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
     --percentage-map ./balancing_sub_categories_material_only.json \
     --objects-per-count 100 \
+    --soft-objects-per-count \
     --seed 42
 
 cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
@@ -137,6 +138,7 @@ python ./subsample_questions_percentage.py \
     --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
     --percentage-map ./balancing_sub_categories_material_only.json \
     --objects-per-count 100 \
+    --soft-objects-per-count \
     --seed 42
 
 cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
@@ -165,6 +167,7 @@ python ./subsample_questions_percentage.py \
     --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
     --percentage-map ./balancing_sub_categories_material_only.json \
     --objects-per-count 100 \
+    --soft-objects-per-count \
     --seed 42
 
 cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
@@ -194,6 +197,7 @@ python ./subsample_questions_percentage.py \
     --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
     --percentage-map ./balancing_sub_categories_material_only.json \
     --objects-per-count 100 \
+    --soft-objects-per-count \
     --seed 42
 
 cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
@@ -222,6 +226,7 @@ python ./subsample_questions_percentage.py \
     --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
     --percentage-map ./balancing_sub_categories_material_only.json \
     --objects-per-count 100 \
+    --soft-objects-per-count \
     --seed 42
 
 cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json

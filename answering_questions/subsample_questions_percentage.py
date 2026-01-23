@@ -8,6 +8,7 @@ import json
 import math
 import random
 import re
+import sys
 from collections import defaultdict
 from pathlib import Path
 from typing import Any, DefaultDict, Dict, List, Mapping, Sequence, Tuple
@@ -87,6 +88,14 @@ def parse_args() -> argparse.Namespace:
         help=(
             "If provided, enforce that exactly COUNT questions are kept for each num_objects value. "
             "Requires enough questions per object count and may fail if idx grouping prevents an exact fit."
+        ),
+    )
+    parser.add_argument(
+        "--soft-objects-per-count",
+        action="store_true",
+        help=(
+            "When enforcing --objects-per-count, keep all available questions for a num_objects "
+            "value and emit a warning instead of exiting if the exact quota cannot be met."
         ),
     )
     group = parser.add_mutually_exclusive_group()
@@ -504,6 +513,7 @@ def enforce_object_quota(
     target_per_count: int,
     rng: random.Random,
     respect_idx_groups: bool,
+    soft: bool,
 ) -> List[dict[str, Any]]:
     if target_per_count <= 0:
         raise SystemExit(
@@ -524,12 +534,31 @@ def enforce_object_quota(
         for num_objects, groups in grouped_by_objects.items():
             available = sum(len(records) for _, records in groups)
             if available < target_per_count:
+                if soft:
+                    print(
+                        f"Warning: cannot enforce {target_per_count} questions for num_objects={num_objects}: "
+                        f"only {available} available while preserving idx grouping. "
+                        "Keeping all available for this num_objects value.",
+                        file=sys.stderr,
+                    )
+                    for _, records in groups:
+                        trimmed.extend(records)
+                    continue
                 raise SystemExit(
                     f"Cannot enforce {target_per_count} questions for num_objects={num_objects}: "
                     f"only {available} available while preserving idx grouping."
                 )
             selected = _select_idx_groups_for_quota(groups, target_per_count, rng)
             if not selected:
+                if soft:
+                    print(
+                        f"Warning: unable to allocate exactly {target_per_count} questions for num_objects={num_objects} "
+                        "while preserving idx grouping. Keeping all available for this num_objects value.",
+                        file=sys.stderr,
+                    )
+                    for _, records in groups:
+                        trimmed.extend(records)
+                    continue
                 raise SystemExit(
                     f"Unable to allocate exactly {target_per_count} questions for num_objects={num_objects} "
                     "while preserving idx grouping. Consider --no-group-by-idx or a different target."
@@ -546,6 +575,14 @@ def enforce_object_quota(
     trimmed: List[dict[str, Any]] = []
     for num_objects, records in buckets.items():
         if len(records) < target_per_count:
+            if soft:
+                print(
+                    f"Warning: cannot enforce {target_per_count} questions for num_objects={num_objects}: "
+                    f"only {len(records)} available. Keeping all available for this num_objects value.",
+                    file=sys.stderr,
+                )
+                trimmed.extend(records)
+                continue
             raise SystemExit(
                 f"Cannot enforce {target_per_count} questions for num_objects={num_objects}: "
                 f"only {len(records)} available."
@@ -599,6 +636,7 @@ def main() -> None:
             args.objects_per_count,
             rng,
             args.group_by_idx,
+            args.soft_objects_per_count,
         )
 
     args.output.parent.mkdir(parents=True, exist_ok=True)

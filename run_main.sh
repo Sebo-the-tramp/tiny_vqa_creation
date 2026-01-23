@@ -63,7 +63,7 @@ GENERAL_RUN_COUNT=23
 
 # -------------------------------------------------------------
 # 10K general - yms variations 
-# RUN_NAME="run_${GENERAL_RUN_COUNT}_general_yms-variations"
+RUN_NAME="run_${GENERAL_RUN_COUNT}_general_yms-variations"
 
 # python main_parallel.py --simulation_path "${BASE_PATH}/yms-variations/" \
 #     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \

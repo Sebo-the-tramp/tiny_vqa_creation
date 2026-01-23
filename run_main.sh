@@ -73,13 +73,13 @@ GENERAL_RUN_COUNT=23
 #     --n_proc $CPUS \
 #     --timeit \
 
-# python ./subsample_questions_yms_variations.py \
-#     --input ../output/${RUN_NAME}/${RUN_NAME}.json \
-#     --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
-#     --subcategory-map ./balancing_sub_categories.json \
-#     --total 10000 \
+python ./subsample_questions_yms_variations.py \
+    --input ../output/${RUN_NAME}/${RUN_NAME}.json \
+    --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
+    --subcategory-map ./balancing_sub_categories.json \
+    --total 10000 \
 
-# cp ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json ../output/${RUN_NAME}/test_${RUN_NAME}_karo_10K.json
+cp ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json ../output/${RUN_NAME}/test_${RUN_NAME}_karo_10K.json
 
 
 # -------------------------------------------------------------
@@ -103,17 +103,17 @@ RUN_NAME="run_${GENERAL_RUN_COUNT}_roi_circling_no_text"
 #     "F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST" "F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST_NON_TECHNICAL" \
 #     --n_proc $CPUS
 
-python ./subsample_questions_percentage.py \
-    --count 1000 \
-    --input ../output/${RUN_NAME}/test_${RUN_NAME}.json \
-    --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
-    --percentage-map ./balancing_sub_categories_material_only.json \
-    --objects-per-count 100 \
-    --soft-objects-per-count \
-    --percentages-within-objects \
-    --seed 42
+# python ./subsample_questions_percentage.py \
+#     --count 1000 \
+#     --input ../output/${RUN_NAME}/test_${RUN_NAME}.json \
+#     --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
+#     --percentage-map ./balancing_sub_categories_material_only.json \
+#     --objects-per-count 100 \
+#     --soft-objects-per-count \
+#     --percentages-within-objects \
+#     --seed 42
 
-cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
+# cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
 
 
 # -------------------------------------------------------------
@@ -133,17 +133,17 @@ RUN_NAME="run_${GENERAL_RUN_COUNT}_roi_circling_no_text_layout_position"
 #     "F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST" "F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST_NON_TECHNICAL" \
 #     --n_proc $CPUS
 
-python ./subsample_questions_percentage.py \
-    --count 1000 \
-    --input ../output/${RUN_NAME}/test_${RUN_NAME}.json \
-    --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
-    --percentage-map ./balancing_sub_categories_material_only.json \
-    --objects-per-count 100 \
-    --soft-objects-per-count \
-    --percentages-within-objects \
-    --seed 42
+# python ./subsample_questions_percentage.py \
+#     --count 1000 \
+#     --input ../output/${RUN_NAME}/test_${RUN_NAME}.json \
+#     --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
+#     --percentage-map ./balancing_sub_categories_material_only.json \
+#     --objects-per-count 100 \
+#     --soft-objects-per-count \
+#     --percentages-within-objects \
+#     --seed 42
 
-cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
+# cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
 
 
 # -------------------------------------------------------------
@@ -163,17 +163,17 @@ RUN_NAME="run_${GENERAL_RUN_COUNT}_roi_circling_text"
 #     "F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST" "F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST_NON_TECHNICAL" \
 #     --n_proc $CPUS
 
-python ./subsample_questions_percentage.py \
-    --count 1000 \
-    --input ../output/${RUN_NAME}/test_${RUN_NAME}.json \
-    --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
-    --percentage-map ./balancing_sub_categories_material_only.json \
-    --objects-per-count 100 \
-    --soft-objects-per-count \
-    --percentages-within-objects \
-    --seed 42
+# python ./subsample_questions_percentage.py \
+#     --count 1000 \
+#     --input ../output/${RUN_NAME}/test_${RUN_NAME}.json \
+#     --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
+#     --percentage-map ./balancing_sub_categories_material_only.json \
+#     --objects-per-count 100 \
+#     --soft-objects-per-count \
+#     --percentages-within-objects \
+#     --seed 42
 
-cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
+# cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
 
 
 # -------------------------------------------------------------
@@ -193,17 +193,17 @@ RUN_NAME="run_${GENERAL_RUN_COUNT}_roi_circling_text_layout_position"
 #     "F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST" "F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST_NON_TECHNICAL" \
 #     --n_proc $CPUS    
 
-python ./subsample_questions_percentage.py \
-    --count 1000 \
-    --input ../output/${RUN_NAME}/test_${RUN_NAME}.json \
-    --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
-    --percentage-map ./balancing_sub_categories_material_only.json \
-    --objects-per-count 100 \
-    --soft-objects-per-count \
-    --percentages-within-objects \
-    --seed 42
+# python ./subsample_questions_percentage.py \
+#     --count 1000 \
+#     --input ../output/${RUN_NAME}/test_${RUN_NAME}.json \
+#     --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
+#     --percentage-map ./balancing_sub_categories_material_only.json \
+#     --objects-per-count 100 \
+#     --soft-objects-per-count \
+#     --percentages-within-objects \
+#     --seed 42
 
-cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
+# cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
 
 
 # # -------------------------------------------------------------
@@ -223,17 +223,17 @@ RUN_NAME="run_${GENERAL_RUN_COUNT}_roi_ablation_baseline"
 #     "F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST" "F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST_NON_TECHNICAL" \
 #     --n_proc $CPUS
 
-python ./subsample_questions_percentage.py \
-    --count 1000 \
-    --input ../output/${RUN_NAME}/test_${RUN_NAME}.json \
-    --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
-    --percentage-map ./balancing_sub_categories_material_only.json \
-    --objects-per-count 100 \
-    --percentages-within-objects \
-    --soft-objects-per-count \
-    --seed 42
+# python ./subsample_questions_percentage.py \
+#     --count 1000 \
+#     --input ../output/${RUN_NAME}/test_${RUN_NAME}.json \
+#     --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
+#     --percentage-map ./balancing_sub_categories_material_only.json \
+#     --objects-per-count 100 \
+#     --percentages-within-objects \
+#     --soft-objects-per-count \
+#     --seed 42
 
-cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
+# cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
 
 
 

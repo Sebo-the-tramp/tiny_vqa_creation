@@ -25,7 +25,9 @@ from typing import (
 )
 
 from utils.helpers import (
+    fill_questions,
     get_random_integer,
+    get_timestep_from_idx,
     get_visible_timesteps_for_attributes_min_objects,
 )
 
@@ -99,8 +101,24 @@ def F_TEMPORAL_SEQUENCE_IMAGES(
         + [choices_correct_order]
         + wrong_labels[correct_index:]
     )
+    
+    final_timestep = get_timestep_from_idx(end_frame) # this is just dummy to make the rest work
 
-    return [[question, labels, correct_index, imgs_idx_shuffled, world_state, {}]]
+    return_array = fill_questions(
+        question,
+        labels,
+        correct_index,
+        world_state,
+        final_timestep,
+        [],
+    )
+
+    # I don't need to provide twice the images
+    return_array[0][3] = imgs_idx_shuffled    
+
+    return return_array
+
+    # return [[question, labels, correct_index, imgs_idx_shuffled, world_state, {}]]
 
 
 def F_TEMPORAL_PREDICTION_NEXT_IMAGE(
@@ -157,7 +175,23 @@ def F_TEMPORAL_PREDICTION_NEXT_IMAGE(
         + confounding_images[correct_index:]
     )
 
-    return [[question, labels, correct_index, given_sequence, world_state, {}]]
+    final_timestep = get_timestep_from_idx(end_frame) # this is just dummy to make the rest work
+
+    return_array = fill_questions(
+        question,
+        labels,
+        correct_index,
+        world_state,
+        final_timestep,
+        [],
+    )
+
+    # I don't need to provide twice the images
+    return_array[0][3] = given_sequence    
+
+    return return_array
+
+    # return [[question, labels, correct_index, given_sequence, world_state, {}]]
 
 
 @with_resolved_attributes
@@ -240,8 +274,24 @@ def F_TEMPORAL_PREDICTION_PREVIOUS_IMAGE(
         + [previous_image]
         + confounding_images[correct_index:]
     )
+    
+    final_timestep = get_timestep_from_idx(end_frame) # this is just dummy to make the rest work
 
-    return [[question, labels, correct_index, given_sequence, world_state, {}]]
+    return_array = fill_questions(
+        question,
+        labels,
+        correct_index,
+        world_state,
+        final_timestep,
+        [],
+    )
+
+    # I don't need to provide twice the images
+    return_array[0][3] = given_sequence    
+
+    return return_array
+
+    # return [[question, labels, correct_index, given_sequence, world_state, {}]]
 
 
 @with_resolved_attributes
@@ -300,7 +350,23 @@ def F_TEMPORAL_PREDICTION_MISSING_IMAGE(
         + confounding_images[correct_index:]
     )
 
-    return [[question, labels, correct_index, given_sequence, world_state, {}]]
+    final_timestep = get_timestep_from_idx(end_frame) # this is just dummy to make the rest work
+
+    return_array = fill_questions(
+        question,
+        labels,
+        correct_index,
+        world_state,
+        final_timestep,
+        [],
+    )
+
+    # I don't need to provide twice the images
+    return_array[0][3] = given_sequence    
+
+    return return_array
+
+    # return [[question, labels, correct_index, given_sequence, world_state, {}]]
 
 
 @with_resolved_attributes
@@ -447,8 +513,23 @@ def F_CAMERA_MOTION_DIRECTION(
     random.shuffle(other_answers)
     other_answers = other_answers[:3]
     correct_index = get_random_integer(0, 3)
-    labels = other_answers[:correct_index] + [answer] + other_answers[correct_index:]
-    return [[question, labels, correct_index, given_sequence, world_state, {}]]
+    labels = other_answers[:correct_index] + [answer] + other_answers[correct_index:]    
+
+    return_array = fill_questions(
+        question,
+        labels,
+        correct_index,
+        world_state,
+        timestep_final,
+        [],
+    )
+
+    # I don't need to provide twice the images
+    return_array[0][3] = given_sequence    
+
+    return return_array
+
+    # return [[question, labels, correct_index, given_sequence, world_state, {}]]
 
 
 @with_resolved_attributes
@@ -523,6 +604,20 @@ def F_CAMERA_ZOOM_BEHAVIOR(
     random.shuffle(other_answers)
     other_answers = other_answers[:3]
     correct_index = get_random_integer(0, 3)
-    labels = other_answers[:correct_index] + [answer] + other_answers[correct_index:]
+    labels = other_answers[:correct_index] + [answer] + other_answers[correct_index:]    
 
-    return [[question, labels, correct_index, given_sequence, world_state, {}]]
+    return_array = fill_questions(
+        question,
+        labels,
+        correct_index,
+        world_state,
+        timestep_final,
+        [],
+    )
+
+    # I don't need to provide twice the images
+    return_array[0][3] = given_sequence    
+
+    return return_array
+
+    # return [[question, labels, correct_index, given_sequence, world_state, {}]]

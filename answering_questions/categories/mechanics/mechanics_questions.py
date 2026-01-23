@@ -450,10 +450,24 @@ def F_COLLISION_OBJECT_OBJECT_FRAME_MULTI(
 
     correct_idx = labels.index(correct_frame)
 
-    fill_template(question, resolved_attributes)    
+    return_array = fill_questions(
+        question,
+        labels,
+        correct_idx,
+        world_state,
+        collision_timestep,
+        resolved_attributes,
+    )
 
-    # no frames need to be provided as we already have them in the answer choices
-    return [[question, labels, correct_idx, [], world_state, resolved_attributes]]
+    # I don't need to provide twice the images
+    return_array[0][3] = []
+
+    return return_array
+
+    # fill_template(question, resolved_attributes)    
+
+    # # no frames need to be provided as we already have them in the answer choices
+    # return [[question, labels, correct_idx, [], world_state, resolved_attributes]]
 
 
 # assumption that the object is not colliding at the start, falling and the colliding with the scene
@@ -513,8 +527,20 @@ def F_COLLISION_OBJECT_SCENE_FRAME_MULTI(
     correct_idx = labels.index(correct_frame)
 
     collider_object = world_state["objects"][str(collision_object_id)]
-    resolved_attributes = {"OBJECT": {"choice": collider_object, "category": "OBJECT"}}
+    resolved_attributes = {"OBJECT": {"choice": collider_object, "category": "OBJECT"}}    
+    
+    return_array = fill_questions(
+        question,
+        labels,
+        correct_idx,
+        world_state,
+        collision_timestep,
+        resolved_attributes,
+    )
 
-    fill_template(question, resolved_attributes)    
+    # I don't need to provide twice the images
+    return_array[0][3] = []
 
-    return [[question, labels, correct_idx, [], world_state, resolved_attributes]]
+    return return_array
+
+    # return [[question, labels, correct_idx, [], world_state, resolved_attributes]]

@@ -86,7 +86,7 @@ def main() -> None:
         "--base-path",
         default="/data0/sebastian.cavada/compositional-physics/tiny_vqa_creation/output/",
     )
-    parser.add_argument("--run-name", default="run_23_general")
+    parser.add_argument("--run-name", default="run_23_general_obj_num")
     args = parser.parse_args()
 
     utils_graph.RUN_NAME = args.run_name

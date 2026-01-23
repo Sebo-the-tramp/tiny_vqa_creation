@@ -14,18 +14,20 @@ else
     BASE_PATH_CF="/scratch/project/eu-25-92/composite_physics/dataset/simulation_v4/dl3dv-counterfact"
     DESTINATION_SIMULATION_PATH="/scratch/project/eu-25-92/composite_physics/dataset/simulation_v4_augmented"
     CPUS="128"
+
+    # -------------------------------------------------------------
+    # Send Telegram notification when STARTING on Karolina
+
+    curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage" \
+        -d chat_id="${TELEGRAM_CHAT_ID}" \
+        --data-urlencode text="VQA creation_started" >/dev/null &
+
 fi
 
 cd answering_questions
 
 GENERAL_RUN_COUNT=23
 
-# -------------------------------------------------------------
-# Send Telegram notification when STARTING
-
-curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage" \
-     -d chat_id="${TELEGRAM_CHAT_ID}" \
-     --data-urlencode text="VQA creation_started" >/dev/null &
 
 ####################
 
@@ -61,23 +63,23 @@ curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage" \
 
 # -------------------------------------------------------------
 # 10K general - yms variations 
-RUN_NAME="run_${GENERAL_RUN_COUNT}_general_yms-variations"
+# RUN_NAME="run_${GENERAL_RUN_COUNT}_general_yms-variations"
 
-python main_parallel.py --simulation_path "${BASE_PATH}/yms-variations/" \
-    --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
-    --run_name "run_${GENERAL_RUN_COUNT}_general_yms-variations" \
-    --n_scenes 3000 \
-    --per_object_count 200 \
-    --n_proc $CPUS \
-    --timeit \
+# python main_parallel.py --simulation_path "${BASE_PATH}/yms-variations/" \
+#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
+#     --run_name "run_${GENERAL_RUN_COUNT}_general_yms-variations" \
+#     --n_scenes 3000 \
+#     --per_object_count 200 \
+#     --n_proc $CPUS \
+#     --timeit \
 
-python ./subsample_questions_yms_variations.py \
-    --input ../output/${RUN_NAME}/${RUN_NAME}.json \
-    --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
-    --subcategory-map ./balancing_sub_categories.json \
-    --total 10000 \
+# python ./subsample_questions_yms_variations.py \
+#     --input ../output/${RUN_NAME}/${RUN_NAME}.json \
+#     --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
+#     --subcategory-map ./balancing_sub_categories.json \
+#     --total 10000 \
 
-cp ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json ../output/${RUN_NAME}/test_${RUN_NAME}_karo_10K.json
+# cp ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json ../output/${RUN_NAME}/test_${RUN_NAME}_karo_10K.json
 
 
 # -------------------------------------------------------------

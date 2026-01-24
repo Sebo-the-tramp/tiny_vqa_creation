@@ -290,7 +290,8 @@ def augment_ablation(
 
         for idx, (resolved_attr, value) in enumerate(resolved_attributes.items()):
             if "OBJECT" in resolved_attr:
-                object_id = value["choice"]["id"]
+                object_id = value["choice"]["id"]                
+                render_name = file.split("/")[-1]
                 instance_image_path = file.replace("render", "instances")
 
                 # print(world_state["encoding"])
@@ -330,6 +331,41 @@ def augment_ablation(
                 original_image = draw_roi_circle(
                     original_image, center, radius * 1.5, idx
                 )
+
+                object_name = value["choice"]["name"]
+                pattern = re.compile(re.escape('\"'+object_name+'\"'), re.IGNORECASE)
+                if text:
+                    # modify the question such that the name of the object is removed and replaced with "the circled object"
+                    if layout_position:
+                        zone_to_focus = get_object_zone(
+                            world_state, object_id, int(render_name.replace(".png", ""))
+                        )
+                        new_question = pattern.sub(
+                            f"\"{object_name}\" (located at the {zone_to_focus})",
+                            question["question"],
+                        )
+                    # else:
+                    #     new_question = pattern.sub(
+                    #         f"\"{object_name}\" (circled in red)", question["question"]
+                    #     )
+                # else:
+                #     if layout_position:
+                #         # append after the name of the object that it is circled in the image
+                #         zone_to_focus = get_object_zone(
+                #             world_state, object_id, int(render_name.replace(".png", ""))
+                #         )
+                #         new_question = pattern.sub(
+                #             f"object circled in red (located at the {zone_to_focus})",
+                #             question["question"],
+                #         )
+                #     else:
+                #         # append after the name of the object that it is circled in the image
+                #         new_question = pattern.sub(
+                #             "object circled in red", question["question"]
+                #         )
+
+    if len(resolved_attributes) > 0:
+        question["question"] = new_question
 
     return file_names
 

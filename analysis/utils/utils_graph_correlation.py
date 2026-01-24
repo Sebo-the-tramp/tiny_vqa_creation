@@ -101,6 +101,7 @@ def _build_model_style(
         group_ids = pd.unique(eval_df["model_id"])
 
     unique_families = list(dict.fromkeys(families)) if families else ["Other"]
+    unique_families = sorted(unique_families)
     palette = sns.color_palette("tab20", len(group_ids))
     markers = list(_DEFAULT_MARKERS)
     for marker in list(mmarkers.MarkerStyle.markers.keys()):

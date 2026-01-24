@@ -15,6 +15,43 @@ from utils.utils_graph_correlation import (
 # from utils.utils_paper import print_heatmap_table_latex
 
 
+def add_model_mode(
+    eval_df: pd.DataFrame, metadata_path: str | Path = "utils/metadata.json"
+) -> pd.DataFrame:
+    path = Path(metadata_path)
+    if not path.exists():
+        eval_df["model_mode"] = pd.NA
+        return eval_df
+
+    metadata_df = pd.read_json(path)
+    if "id" in metadata_df.columns and "model_id" not in metadata_df.columns:
+        metadata_df = metadata_df.rename(columns={"id": "model_id"})
+    mode_map = (
+        metadata_df.dropna(subset=["model_id"])
+        .set_index("model_id")["mode"]
+        .to_dict()
+    )
+    eval_df["model_mode"] = eval_df["model_id"].map(mode_map).fillna("unknown")
+    return eval_df
+
+
+def iter_mode_slices(eval_df: pd.DataFrame) -> list[tuple[str, pd.DataFrame]]:
+    if "model_mode" not in eval_df.columns:
+        return [("all", eval_df)]
+
+    slices = []
+    for mode in ("image-only", "general"):
+        subset = eval_df[eval_df["model_mode"] == mode]
+        if not subset.empty:
+            slices.append((mode, subset))
+
+    unknown = eval_df[eval_df["model_mode"] == "unknown"]
+    if not unknown.empty:
+        slices.append(("unknown", unknown))
+
+    return slices or [("all", eval_df)]
+
+
 def build_eval_df(base_path: str | Path) -> pd.DataFrame:
     base = Path(base_path)
 
@@ -95,13 +132,15 @@ def main() -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
 
     eval_df = build_eval_df(args.base_path)
+    eval_df = add_model_mode(eval_df)
 
-    create_num_objects_violin_per_question_id(
-        eval_df,
-        group_by="model_id",
-        per_question_dirname="num_objects_per_question",
-        y_limit_mode="fixed",
-    )
+    for mode_label, mode_df in iter_mode_slices(eval_df):
+        create_num_objects_violin_per_question_id(
+            mode_df,
+            group_by="model_id",
+            per_question_dirname=f"num_objects_per_question_{mode_label}",
+            y_limit_mode="fixed",
+        )
 
 
 if __name__ == "__main__":

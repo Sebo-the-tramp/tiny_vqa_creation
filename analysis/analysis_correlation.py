@@ -14,6 +14,55 @@ from utils.utils_graph_correlation import (
 
 # from utils.utils_paper import print_heatmap_table_latex
 
+
+def add_model_mode(
+    eval_df: pd.DataFrame, metadata_path: str | Path = "utils/metadata.json"
+) -> pd.DataFrame:
+    path = Path(metadata_path)
+    if not path.exists():
+        eval_df["model_mode"] = pd.NA
+        return eval_df
+
+    metadata_df = pd.read_json(path)
+    if "id" in metadata_df.columns and "model_id" not in metadata_df.columns:
+        metadata_df = metadata_df.rename(columns={"id": "model_id"})
+    mode_map = (
+        metadata_df.dropna(subset=["model_id"])
+        .set_index("model_id")["mode"]
+        .to_dict()
+    )
+    eval_df["model_mode"] = eval_df["model_id"].map(mode_map).fillna("unknown")
+    return eval_df
+
+
+def iter_mode_slices(eval_df: pd.DataFrame) -> list[tuple[str, pd.DataFrame]]:
+    if "model_mode" not in eval_df.columns:
+        return [("all", eval_df)]
+
+    slices = []
+    for mode in ("image-only", "general"):
+        subset = eval_df[eval_df["model_mode"] == mode]
+        if not subset.empty:
+            slices.append((mode, subset))
+
+    unknown = eval_df[eval_df["model_mode"] == "unknown"]
+    if not unknown.empty:
+        slices.append(("unknown", unknown))
+
+    return slices or [("all", eval_df)]
+
+
+def select_eval_df(
+    eval_df: pd.DataFrame, *, mode: str, split_by_mode: bool
+) -> list[tuple[str, pd.DataFrame]]:
+    if mode != "mixed":
+        subset = eval_df[eval_df["model_mode"] == mode]
+        return [(mode, subset)]
+    if split_by_mode:
+        return iter_mode_slices(eval_df)
+    return [("mixed", eval_df)]
+
+
 def build_eval_df(base_path: str | Path) -> pd.DataFrame:
     base = Path(base_path)
 
@@ -87,6 +136,17 @@ def main() -> None:
         default="/data0/sebastian.cavada/compositional-physics/tiny_vqa_creation/output/",
     )
     parser.add_argument("--run-name", default="run_23_general_obj_num")
+    parser.add_argument(
+        "--mode",
+        choices=["mixed", "general", "image-only"],
+        default="mixed",
+        help="Filter by model mode; mixed keeps all models.",
+    )
+    parser.add_argument(
+        "--split-by-mode",
+        action="store_true",
+        help="Generate separate outputs per model mode when --mode=mixed.",
+    )
     args = parser.parse_args()
 
     utils_graph.RUN_NAME = args.run_name
@@ -96,33 +156,37 @@ def main() -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
 
     eval_df = build_eval_df(args.base_path)
+    eval_df = add_model_mode(eval_df)
 
-    for x in range(1, 1):
+    for mode_label, mode_df in select_eval_df(
+        eval_df, mode=args.mode, split_by_mode=args.split_by_mode
+    ):
+        for x in range(1):
+            create_num_objects_violin_grid(
+                mode_df,
+                group_by="model_id",
+                save_per_category=True,
+                per_category_dirname=f"num_objects_per_model_{mode_label}",
+                save_grid=True,
+                save_legend=True,
+                legend_filename=f"num_objects_legend_models_{mode_label}.png",
+                legend_cols=6,
+                sample_frac=0.8,
+                sample_seed=x,
+                y_limit_mode="fixed",
+            )
+
         create_num_objects_violin_grid(
-            eval_df,
-            group_by="model_id",
+            mode_df,
+            group_by="family",
             save_per_category=True,
-            per_category_dirname="num_objects_per_model",
-            save_grid=True,
+            per_category_dirname=f"num_objects_per_family_{mode_label}",
+            save_grid=False,
             save_legend=True,
-            legend_filename="num_objects_legend_models.png",
-            legend_cols=6,
+            legend_filename=f"num_objects_legend_families_{mode_label}.png",
+            legend_cols=4,
             sample_frac=0.8,
-            sample_seed=x,
-            y_limit_mode="fixed",
         )
-
-    create_num_objects_violin_grid(
-        eval_df,
-        group_by="family",
-        save_per_category=True,
-        per_category_dirname="num_objects_per_family",
-        save_grid=False,
-        save_legend=True,
-        legend_filename="num_objects_legend_families.png",
-        legend_cols=4,
-        sample_frac=0.8,
-    )
 
 
 if __name__ == "__main__":

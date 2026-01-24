@@ -14,12 +14,13 @@ output*/
 
 analysis/output/*
 !analysis/output/
-!analysis/output/run_23_general/
-!analysis/output/run_23_general/**
+!analysis/output/run_23*/
+!analysis/output/run_23*/**
+!analysis/output/run_24*/
+!analysis/output/run_24*/**
 
 main_parallel.dist/
 main_parallel.build/
 
 rsync*
 tmp_parallel.sh
-

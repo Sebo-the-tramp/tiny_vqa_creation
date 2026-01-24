@@ -1,0 +1,29 @@
+\begin{table}[t]
+    \centering
+    % IMPORTANT: Requires \\usepackage[table]{xcolor} in preamble
+    \resizebox{\linewidth}{!}{%
+    \begin{tabular}{cccc|c|ccccc}
+         \toprule
+         Image & Text & ROI & Layout & Acc. (\%) & Mass & Density & Young Modulus & Poisson Ratio & Mat. ID \\
+         \midrule          
+         % VQA Baseline
+         \checkmark & \checkmark & $\times$ & $\times$ & -- & -- & -- & -- & -- & -- \\
+         \midrule
+         % Visual Only (ROI)
+         \checkmark & $\times$ & \checkmark & $\times$ & \cellcolor[HTML]{FFAF66}{24.0 $\pm$ 6.0} & \cellcolor[HTML]{FFAA66}{22.5 $\pm$ 7.5} & \cellcolor[HTML]{FF8966}{11.6 $\pm$ 7.8} & \cellcolor[HTML]{FFB266}{25.1 $\pm$ 7.1} & \cellcolor[HTML]{FFA966}{22.3 $\pm$ 15.2} & \cellcolor[HTML]{FFDC66}{38.7 $\pm$ 9.8} \\
+         % Visual Only (ROI + Layout)
+         \checkmark & $\times$ & \checkmark & \checkmark & \cellcolor[HTML]{FFAF66}{24.2 $\pm$ 5.8} & \cellcolor[HTML]{FFAE66}{23.6 $\pm$ 7.3} & \cellcolor[HTML]{FF8A66}{12.1 $\pm$ 7.2} & \cellcolor[HTML]{FFB166}{24.6 $\pm$ 6.6} & \cellcolor[HTML]{FFA866}{21.6 $\pm$ 15.7} & \cellcolor[HTML]{FFDD66}{39.2 $\pm$ 9.8} \\
+         \midrule
+         % Visual + Text (ROI)
+         \checkmark & \checkmark & \checkmark & $\times$ & \cellcolor[HTML]{FFB466}{25.6 $\pm$ 5.8} & \cellcolor[HTML]{FFB066}{24.5 $\pm$ 7.0} & \cellcolor[HTML]{FF8766}{11.1 $\pm$ 7.3} & \cellcolor[HTML]{FFB366}{25.4 $\pm$ 6.5} & \cellcolor[HTML]{FFA666}{21.1 $\pm$ 14.1} & \cellcolor[HTML]{FFF166}{45.8 $\pm$ 10.8} \\
+         % Visual + Text (ROI + Layout)
+         \checkmark & \checkmark & \checkmark & \checkmark & \cellcolor[HTML]{FFB466}{25.7 $\pm$ 5.8} & \cellcolor[HTML]{FFB066}{24.4 $\pm$ 7.4} & \cellcolor[HTML]{FF8866}{11.2 $\pm$ 7.2} & \cellcolor[HTML]{FFB466}{25.5 $\pm$ 6.8} & \cellcolor[HTML]{FFA666}{21.2 $\pm$ 14.6} & \cellcolor[HTML]{FFF366}{46.2 $\pm$ 11.0} \\
+         \midrule
+         % No Cue
+         $\times$ & $\times$ & $\times$ & $\times$ & -- & -- & -- & -- & -- & -- \\
+         \bottomrule
+    \end{tabular}%
+    }
+    \caption{Ablation matrix. Ablation matrix of grounding cues on Physics Properties questions, divided by sub-categories. Main accuracy reported as mean $\pm$ std. Colors indicate performance (Red=Low, Green=High).}
+    \label{tab:grounding_matrix}
+\end{table}

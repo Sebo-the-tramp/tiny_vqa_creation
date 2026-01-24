@@ -6,12 +6,18 @@ import json
 def print_summary_models_used(eval_df):
     # here we define Models_IDs and their definition
 
-    eval_df_single_image_models_unique = eval_df[eval_df["idx"].str.contains("_i")][
-        "model_id"
-    ].unique()
-    eval_df_multi_image_models_unique = eval_df[eval_df["idx"].str.contains("_g")][
-        "model_id"
-    ].unique()
+    idx_series = eval_df["idx"].astype(str)
+    if "model_answer" in eval_df.columns:
+        answered = eval_df["model_answer"].notna()
+    else:
+        answered = pd.Series(True, index=eval_df.index)
+
+    eval_df_single_image_models_unique = eval_df[
+        idx_series.str.contains("_i") & answered
+    ]["model_id"].unique()
+    eval_df_multi_image_models_unique = eval_df[
+        idx_series.str.contains("_g") & answered
+    ]["model_id"].unique()
 
     single_images = np.setdiff1d(
         eval_df_single_image_models_unique, eval_df_multi_image_models_unique

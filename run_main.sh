@@ -63,7 +63,7 @@ cp ../output/${RUN_NAME}/val_answer_${RUN_NAME}.json ../output/${RUN_NAME_OBJ}/v
 
 
 # -------------------------------------------------------------
-10K general - yms variations
+# 10K general - yms variations
 RUN_NAME="run_${GENERAL_RUN_COUNT}_general_yms-variations"
 
 python main_parallel.py --simulation_path "${BASE_PATH}/yms-variations/" \

@@ -92,6 +92,24 @@ def augment_image_VQA_with_context(
             text=False,
             layout_position=True,
         )
+    if augmentation == "no_roi_circling_no_text_layout_position":
+        file_names = augment_ablation(
+            question,
+            world_state,
+            resolved_attributes,
+            file_names,
+            text=False,
+            layout_position=True,
+        )    
+    if augmentation == "no_roi_circling_yes_text_no_layout_position":
+        file_names = augment_ablation(
+            question,
+            world_state,
+            resolved_attributes,
+            file_names,
+            text=True,
+            layout_position=True,
+        )
 
     # this is just to add same pathwas but with NO AUGMENTATIONs
     if augmentation == "ablation":

@@ -52,6 +52,17 @@ def iter_mode_slices(eval_df: pd.DataFrame) -> list[tuple[str, pd.DataFrame]]:
     return slices or [("all", eval_df)]
 
 
+def select_eval_df(
+    eval_df: pd.DataFrame, *, mode: str, split_by_mode: bool
+) -> list[tuple[str, pd.DataFrame]]:
+    if mode != "mixed":
+        subset = eval_df[eval_df["model_mode"] == mode]
+        return [(mode, subset)]
+    if split_by_mode:
+        return iter_mode_slices(eval_df)
+    return [("mixed", eval_df)]
+
+
 def build_eval_df(base_path: str | Path) -> pd.DataFrame:
     base = Path(base_path)
 
@@ -123,6 +134,17 @@ def main() -> None:
         default="/data0/sebastian.cavada/compositional-physics/tiny_vqa_creation/output/",
     )
     parser.add_argument("--run-name", default="run_23_general_obj_num")
+    parser.add_argument(
+        "--mode",
+        choices=["mixed", "general", "image-only"],
+        default="mixed",
+        help="Filter by model mode; mixed keeps all models.",
+    )
+    parser.add_argument(
+        "--split-by-mode",
+        action="store_true",
+        help="Generate separate outputs per model mode when --mode=mixed.",
+    )
     args = parser.parse_args()
 
     utils_graph.RUN_NAME = args.run_name
@@ -134,11 +156,15 @@ def main() -> None:
     eval_df = build_eval_df(args.base_path)
     eval_df = add_model_mode(eval_df)
 
-    for mode_label, mode_df in iter_mode_slices(eval_df):
+    for mode_label, mode_df in select_eval_df(
+        eval_df, mode=args.mode, split_by_mode=args.split_by_mode
+    ):
         create_num_objects_violin_per_question_id(
             mode_df,
             group_by="model_id",
             per_question_dirname=f"num_objects_per_question_{mode_label}",
+            save_legend=True,
+            legend_filename=f"num_objects_legend_question_{mode_label}.png",
             y_limit_mode="fixed",
         )
 

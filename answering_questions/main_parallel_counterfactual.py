@@ -173,6 +173,7 @@ def create_vqa(
 
     all_vqa = []
     stats = {}
+    selected_question_id = getattr(config, "question_id", None)
 
     for category_key, category in questions.items():   
 
@@ -182,6 +183,8 @@ def create_vqa(
             print("###" * 20)
 
         for question_key, question_data in category.items():
+            if selected_question_id and question_key != selected_question_id:
+                continue
             question_payload = deepcopy(question_data)
             question_payload["_question_key"] = question_key
             question_payload["_simulation_id"] = simulation_id
@@ -768,6 +771,12 @@ if __name__ == "__main__":
         "--timeit",
         action="store_true",
         help="Measure per-question execution time and report averages in the summary.",
+    )
+    parser.add_argument(
+        "--question_id",
+        type=str,
+        default=None,
+        help="Only process a specific question_id from the VQA template file.",
     )
 
     args = parser.parse_args()

@@ -27,12 +27,21 @@
     },
 
     "view_point": {
-        "CF_VISIBILITY_OBJECT_COUNT": {
-            "task_splits": "single",
+        "F_OCCLUSION_PERCENTAGE_OBJECT": {
+            "task_splits": "single+multi",
+            "sub_category": "visibility",
+            "choice": "mcq",
+            "question": "<OBJECT>",
+            "question_single": "Based on the image, how much of the <OBJECT> is occluded?",
+            "question_multi": "Considering all frames, how much of the <OBJECT> is occluded in the last frame?"
+        },
+        "F_VISIBILITY_OBJECT_COUNT": {
+            "task_splits": "single+multi",
             "sub_category": "visibility",
             "choice": "mcq",
             "question": "",
-            "question_single": "Based on the image, how many objects would be visible in the image/frame?"
+            "question_single": "Based on the image, how many objects are visible?",
+            "question_multi": "Considering all frames, how many objects are visible in the last frame?"
         }
     },
     
@@ -54,7 +63,7 @@
     },
 
     "persistence": {
-         "CF_PERSISTENCE_OBJECT_TOTAL_COUNT": {
+        "CF_PERSISTENCE_OBJECT_TOTAL_COUNT": {
             "task_splits": "multi",
             "sub_category": "object_persistence",
             "choice": "mcq",

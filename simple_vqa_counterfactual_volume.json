@@ -18,7 +18,16 @@
         }
     },
 
+    // PROBLEM HERE CAUSE IT WORKS IF IT's JUST SHIFTED, but if it is SCALED and we don't give the initial info from the image, then it's impossible
+    // FOR the model to answer 1) give the shift as well 2) provide all frames (probably 1 is better)
     "view_point":{
+         "F_OCCLUSION_PERCENTAGE_OBJECT": {
+            "task_splits": "single",
+            "sub_category": "visibility",
+            "choice": "mcq",
+            "question": "<OBJECT>",
+            "question_single": "Based on the image, how much of the <OBJECT> is occluded?"
+        },
         "CF_VISIBILITY_OBJECT_COUNT": {
             "task_splits": "single",
             "sub_category": "visibility",
@@ -28,34 +37,13 @@
         }
     },
 
-    "mechanics": {
-        "CF_KINEMATICS_SPEED_OBJECT": {
-            "task_splits": "multi",
-            "sub_category": "kinematics",
-            "choice": "mcq",
-            "question": "<OBJECT>",
-            "question_multi": "Considering all frames, what would be the speed of the <OBJECT> at the time of the last frame?"
-        },
-        "CF_KINEMATICS_ACCEL_OBJECT": {
-            "task_splits": "multi",
-            "sub_category": "kinematics",
-            "choice": "mcq",
-            "question": "<OBJECT>",
-            "question_multi": "Considering all frames, what would be the magnitude of acceleration of the <OBJECT> at the time of the last frame?"
-        },
+    "mechanics": { 
         "CF_KINEMATICS_DISTANCE_TRAVELED_INTERVAL": {
             "task_splits": "multi",
             "sub_category": "kinematics",
             "choice": "mcq",
             "question": "<OBJECT>",
             "question_multi": "Considering all frames, what would be the straight-line distance the geometrical center of <OBJECT> has traveled during the sequence?"
-        },        
-        "CF_COLLISION_OBJECT_OBJECT_FRAME_SINGLE":{
-            "task_splits": "single",
-            "sub_category": "collision",
-            "choice": "mcq",
-            "question": "<OBJECT>",
-            "question_single": "Based on the image, which object would be the <OBJECT> colliding with in the frame?"
         }
     },
 

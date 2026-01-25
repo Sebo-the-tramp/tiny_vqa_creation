@@ -46,6 +46,27 @@ def compute_output_path(input_path: Path, override: Path | None) -> Path:
     output_name = f"{base_name}_levels_difficulty{suffix}"
     return input_path.with_name(output_name)
 
+def filter_per_template(
+    entries: Iterable[dict],
+    templates: Dict[str, Dict[str, str]],
+) -> List[dict]:
+     
+    filtered: List[dict] = []
+    
+    for entry in entries:
+        question_id = entry.get("question_id")
+        question_idx = entry.get("idx")
+        template = templates.get(question_id)
+        if not template:            
+            continue
+
+        #filter non _general questions
+        if question_idx is not None and not str(question_idx).endswith("_g"):
+            continue        
+
+        filtered.append(entry)
+
+    return filtered
 
 def expand_questions(
     entries: Iterable[dict],
@@ -56,13 +77,20 @@ def expand_questions(
     expanded: List[dict] = []
     missing_templates = 0
     generated_questions = 0
+
+    
     for entry in entries:
         question_id = entry.get("question_id")
+        question_idx = entry.get("idx")
         template = templates.get(question_id)
         if not template:
             if keep_original:
                 expanded.append(entry)
             missing_templates += 1
+            continue
+
+        #filter non _general questions
+        if question_idx is not None and not str(question_idx).endswith("_g"):
             continue
 
         if max_questions is not None and generated_questions >= max_questions:
@@ -99,6 +127,27 @@ def expand_questions(
     if max_questions is not None:
         print(f"Generated leveled variants for {generated_questions} questions.")
     return expanded
+
+def balance_entries(entries: List[dict], templates) -> List[dict]:
+    max_per_question = 100
+
+    balanced: List[dict] = []
+    list_questions = list(templates.keys())
+    print(f"Balancing entries for {len(list_questions)} question IDs.")
+
+    for question_id in list_questions:
+        filtered = [x for x in entries if question_id in x["question_id"]]
+        len_unfiltered = len(filtered)        
+
+        uniform_distribution_step = max(1, len_unfiltered // max_per_question)
+        # print(f"Using uniform distribution step of {uniform_distribution_step} for question ID {question_id}.")
+        to_add = filtered[::uniform_distribution_step][:max_per_question]
+        print(f"After balancing, question ID {question_id} has {len(to_add)} entries.")
+        balanced.extend(to_add)
+
+    print(f"Total balanced entries: {len(balanced)}")
+
+    return balanced
 
 
 def parse_args() -> argparse.Namespace:
@@ -150,9 +199,16 @@ def main() -> None:
         raise ValueError(f"{input_path} does not contain a JSON array.")
 
     templates = load_questions(questions_path)
+
+    filtered = filter_per_template(entries, templates)
+    print(f"Filtered entries to {len(filtered)} based on available templates.")
+
+    balanced_entries = balance_entries(filtered, templates)
+    print(f"Balanced entries to {len(balanced_entries)} total.")
+
     expanded_entries = expand_questions(
-        entries, templates, args.keep_original, args.max_questions
-    )
+        balanced_entries, templates, args.keep_original, args.max_questions
+    )    
 
     output_path = compute_output_path(input_path, args.output)
     output_path.parent.mkdir(parents=True, exist_ok=True)

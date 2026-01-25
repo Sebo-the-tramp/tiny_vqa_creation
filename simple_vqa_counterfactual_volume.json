@@ -17,23 +17,23 @@
             "question_multi": "considering all frames, which single object, visible in the last frame, would have the biggest volume?"
         }
     },
-
-    // PROBLEM HERE CAUSE IT WORKS IF IT's JUST SHIFTED, but if it is SCALED and we don't give the initial info from the image, then it's impossible
-    // FOR the model to answer 1) give the shift as well 2) provide all frames (probably 1 is better)
+    
     "view_point":{
-         "F_OCCLUSION_PERCENTAGE_OBJECT": {
-            "task_splits": "single",
+        "CF_OCCLUSION_PERCENTAGE_OBJECT": {
+            "task_splits": "multi",
             "sub_category": "visibility",
             "choice": "mcq",
             "question": "<OBJECT>",
-            "question_single": "Based on the image, how much of the <OBJECT> is occluded?"
+            "question_single": ", how much of the <OBJECT> is occluded?",
+            "question_multi": ", how much of the <OBJECT> is occluded in the last frame?"
         },
         "CF_VISIBILITY_OBJECT_COUNT": {
-            "task_splits": "single",
+            "task_splits": "multi",
             "sub_category": "visibility",
             "choice": "mcq",
             "question": "",
-            "question_single": "Based on the image, how many objects would be visible in the image/frame?"
+            "question_single": ", how many objects are visible?",
+            "question_multi": ", how many objects are visible in the last frame?"
         }
     },
 
@@ -44,6 +44,13 @@
             "choice": "mcq",
             "question": "<OBJECT>",
             "question_multi": "Considering all frames, what would be the straight-line distance the geometrical center of <OBJECT> has traveled during the sequence?"
+        },
+        "CF_COLLISION_OBJECT_OBJECT_FRAME_SINGLE": {
+            "task_splits": "single",
+            "sub_category": "collision",
+            "choice": "mcq",
+            "question": "<OBJECT>",
+            "question_single": ", which object would be the <OBJECT> colliding with in the frame?"
         }
     },
 
@@ -61,13 +68,6 @@
             "choice": "mcq",
             "question": "",
             "question_multi": "Considering all frames, which single object visible in the last frame would have the greatest mass?"
-        },
-        "CF_MASS_LIGHTEST_OBJECT": {
-            "task_splits": "multi",
-            "sub_category": "mass",
-            "choice": "mcq",
-            "question": "",
-            "question_multi": "Considering all frames, which single object visible in the last frame would have the least mass?"
         }
     },
 

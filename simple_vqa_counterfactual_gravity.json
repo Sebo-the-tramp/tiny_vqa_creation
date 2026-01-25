@@ -1,11 +1,20 @@
 {    
     "view_point":{
+         "CF_OCCLUSION_PERCENTAGE_OBJECT": {
+            "task_splits": "single+multi",
+            "sub_category": "visibility",
+            "choice": "mcq",
+            "question": "<OBJECT>",
+            "question_single": ", how much of the <OBJECT> is occluded?",
+            "question_multi": ", how much of the <OBJECT> is occluded in the last frame?"
+        },
         "CF_VISIBILITY_OBJECT_COUNT": {
-            "task_splits": "multi",
+            "task_splits": "single+multi",
             "sub_category": "visibility",
             "choice": "mcq",
             "question": "",
-            "question_multi": "Considering all frames, how many objects would be visible in the last frame?"
+            "question_single": ", how many objects are visible?",
+            "question_multi": ", how many objects are visible in the last frame?"
         }
     },
 
@@ -15,25 +24,25 @@
             "sub_category": "kinematics",
             "choice": "mcq",
             "question": "<OBJECT>",
-            "question_multi": "Considering all frames, what would be the speed of the <OBJECT> at the time of the last frame?"
+            "question_multi": ", what would be the speed of the <OBJECT> at the time of the last frame?"
         },
         "CF_KINEMATICS_ACCEL_OBJECT": {
             "task_splits": "multi",
             "sub_category": "kinematics",
             "choice": "mcq",
             "question": "<OBJECT>",
-            "question_multi": "Considering all frames, what would be the magnitude of acceleration of the <OBJECT> at the time of the last frame?"
+            "question_multi": ", what would be the magnitude of acceleration of the <OBJECT> at the time of the last frame?"
         },
         "CF_KINEMATICS_DISTANCE_TRAVELED_INTERVAL": {
             "task_splits": "multi",
             "sub_category": "kinematics",
             "choice": "mcq",
             "question": "<OBJECT>",
-            "question_multi": "Considering all frames, what would be the straight-line distance the geometrical center of <OBJECT> has traveled during the sequence?"
+            "question_multi": ", what would be the straight-line distance the geometrical center of <OBJECT> has traveled during the sequence?"
         }
     },
     
-    "persistence":{
+    "persistence":{   
         "CF_PERSISTENCE_OBJECT_TOTAL_COUNT_HIDDEN": {
             "task_splits": "multi",
             "sub_category": "object_persistence",

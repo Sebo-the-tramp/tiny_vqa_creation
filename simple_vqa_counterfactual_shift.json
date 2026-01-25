@@ -5,43 +5,43 @@
             "sub_category": "distance",
             "choice": "mcq",
             "question": "<OBJECT>",
-            "question_single": "Based on the image, which object would be the closest to the geometrical center of the <OBJECT>?",
-            "question_multi": "Considering all frames, which object would be the closest to the geometrical center of the <OBJECT> in the last frame?"
+            "question_single": ", which object would be the closest to the geometrical center of the <OBJECT>?",
+            "question_multi": ", which object would be the closest to the geometrical center of the <OBJECT> in the last frame?"
         },
         "CF_CLOSEST_OBJECT_CAMERA": {
             "task_splits": "single+multi",
             "sub_category": "distance",
             "choice": "mcq",
             "question": "",
-            "question_single": "Based on the image, which object would be the closest to the camera?",
-            "question_multi": "Considering all frames, which object would be the closest to the camera in the last frame?"
+            "question_single": ", which object would be the closest to the camera?",
+            "question_multi": ", which object would be the closest to the camera in the last frame?"
         },
         "CF_LAYOUT_POSITION_OBJECT_OBJECT": {
             "task_splits": "single+multi",
             "sub_category": "layout",
             "choice": "mcq",
             "question": "<OBJECT_1> <OBJECT_2>",
-            "question_single": "From the camera’s perspective, where would the <OBJECT_1> be relative to the <OBJECT_2> in the image?",
-            "question_multi": "Considering all frames, from the camera’s perspective, where would the <OBJECT_1> be relative to the <OBJECT_2> in the last frame?"
+            "question_single": ", from the camera’s perspective, where would the <OBJECT_1> be relative to the <OBJECT_2> in the image?",
+            "question_multi": ", from the camera’s perspective, where would the <OBJECT_1> be relative to the <OBJECT_2> in the last frame?"
         }
     },
 
     "view_point": {
-        "F_OCCLUSION_PERCENTAGE_OBJECT": {
+        "CF_OCCLUSION_PERCENTAGE_OBJECT": {
             "task_splits": "single+multi",
             "sub_category": "visibility",
             "choice": "mcq",
             "question": "<OBJECT>",
-            "question_single": "Based on the image, how much of the <OBJECT> is occluded?",
-            "question_multi": "Considering all frames, how much of the <OBJECT> is occluded in the last frame?"
+            "question_single": ", how much of the <OBJECT> is occluded?",
+            "question_multi": ", how much of the <OBJECT> is occluded in the last frame?"
         },
-        "F_VISIBILITY_OBJECT_COUNT": {
+        "CF_VISIBILITY_OBJECT_COUNT": {
             "task_splits": "single+multi",
             "sub_category": "visibility",
             "choice": "mcq",
             "question": "",
-            "question_single": "Based on the image, how many objects are visible?",
-            "question_multi": "Considering all frames, how many objects are visible in the last frame?"
+            "question_single": ", how many objects are visible?",
+            "question_multi": ", how many objects are visible in the last frame?"
         }
     },
     
@@ -51,25 +51,18 @@
             "sub_category": "kinematics",
             "choice": "mcq",
             "question": "<OBJECT>",
-            "question_multi": "Considering all frames, what would be the straight-line distance the geometrical center of <OBJECT> has traveled during the sequence?"
+            "question_multi": ", what would be the straight-line distance the geometrical center of <OBJECT> has traveled during the sequence?"
         },
         "CF_COLLISION_OBJECT_OBJECT_FRAME_SINGLE": {
             "task_splits": "single",
             "sub_category": "collision",
             "choice": "mcq",
             "question": "<OBJECT>",
-            "question_single": "Based on the image, which object would be the <OBJECT> colliding with in the frame?"
+            "question_single": ", which object would be the <OBJECT> colliding with in the frame?"
         }
     },
 
     "persistence": {
-        "CF_PERSISTENCE_OBJECT_TOTAL_COUNT": {
-            "task_splits": "multi",
-            "sub_category": "object_persistence",
-            "choice": "mcq",
-            "question": "",
-            "question_multi": "Considering all frames, how many objects are present at the time of the last frame, including those currently hidden or out of frame?"
-        }, 
         "CF_PERSISTENCE_OBJECT_TOTAL_COUNT_HIDDEN": {
             "task_splits": "multi",
             "sub_category": "object_persistence",

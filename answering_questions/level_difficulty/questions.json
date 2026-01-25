@@ -1,14 +1,14 @@
 {
     "questions":{
         "F_PHYSICS_PROPERTY_DENSITY_OBJECT_RELATIVE": {
-            "og": "Which object seen in the image has the highest effective density?",
-            "child": "Which one of these things is the heaviest for its size?",
-            "teen": "Which object has the most mass packed into the space it takes up?",
-            "undegrad": "Which object has the highest average density (\\rho = m/V)?",
-            "graduate": "Which body exhibits the highest effective mass-density, accounting for internal porosity?",
-            "expert": "Which object represents the highest energy-density component (\\rho_{0}) of the stress-energy tensor?"
+            "og": "Considering all frames, which object, visible in the last frame, has the highest effective density?",
+            "child": "Looking at all the pictures, if all the visible objects had the same size which one would be the heaviest?",
+            "teen": "Looking at all the pictures, which object visible in the last frame do you think is the heaviest compared to how big it looks?",
+            "undegrad": "Considering the full image sequence, which object visible in the last frame would have the highest mass relative to its volume?",
+            "graduate": "Based on the entire frame sequence, which object visible in the final frame is likely to have the highest effective density (mass per unit volume)?",
+            "expert": "Considering the entire temporal frame sequence, which visible object visible in the final frame has the highest effective density?"
         },
-        "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT": {
+        "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT": { # Does it make sense ?
             "og": "What is the Young's modulus of the <OBJECT> seen in the image?",
             "child": "How hard is it to stretch or squish the <OBJECT>?",
             "teen": "How do you measure the stiffness or stretchiness of the <OBJECT>?",
@@ -17,38 +17,38 @@
             "expert": "Determine the Young's Modulus tensor component for the <OBJECT> based on its stress-strain response."
         },
         "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR": {
-            "og": "Which object seen in the image has a Young's Modulus most similar to that of the <OBJECT>?",
-            "child": "Which other thing is just as hard to bend or pull as the <OBJECT>?",
-            "teen": "Which object has a stiffness level most like the <OBJECT>?",
-            "undegrad": "Which object possesses a Young's Modulus closest to that of the <OBJECT>?",
-            "graduate": "Which material in the scene exhibits an elastic modulus nearly identical to the <OBJECT>?",
-            "expert": "Which entity demonstrates a longitudinal elasticity coefficient most congruent with that of the <OBJECT>?"
+            "og": "Considering all frames, which object, visible in the last frame, has a Young's Modulus most similar to that of the <OBJECT>?",
+            "child": "Looking at all the pictures, which object you can still see at the end is just as hard to bend or squishe as the <OBJECT>?",
+            "teen": "Looking at all the pictures, which object visible in the last frame would feel about as stiff or stretchy as the <OBJECT> if you tried to bend it?",
+            "undegrad": "Considering the full image sequence, which object visible in the last frame appearas to have a similar stiffness (Young’s modulus) to the <OBJECT>?",
+            "graduate": "Based on the entire frame sequence, which object visible in the final frame would you expect to have a Young’s modulus closest to that of the <OBJECT>?",
+            "expert": "Considering the entire temporal frame sequence, which visible object visible in the final frame would you infer to have a Young’s modulus most similar to that of the <OBJECT>?"
         },
         "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR_NON_TECHNICAL": {
-            "og": "Which object seen in the image has a softness most similar to that of the <OBJECT>?",            
-            "child": "Which thing feels as squishy as the <OBJECT>?",
-            "teen": "Which object has the same amount of flexibility or \"give\" as the <OBJECT>?",
-            "undegrad": "Which object has a mechanical compliance most similar to the <OBJECT>?",
-            "graduate": "Which body demonstrates a deformation profile under load matching the <OBJECT>?",
-            "expert": "Which object possesses an equivalent elastic compliance to the <OBJECT> in the low-strain limit?"
+            "og": "Considering all frames, which object, visible in the last frame, has a softness most similar to that of the <OBJECT>?",            
+            "child": "Looking at all the pictures, which object you can still see at the end feels squishy or hard in the same way as the <OBJECT>?",
+            "teen": "Looking at all the pictures, which object visible in the last frame would feel about as soft or hard as the <OBJECT>?",
+            "undegrad": "Considering the full image sequence, which object visible in the last frame appears to have a similar softness to the <OBJECT>?",
+            "graduate": "Based on the entire frame sequence, which object visible in the final frame would you expect to have a softness most similar to that of the <OBJECT>?",
+            "expert": "Considering the entire temporal frame sequence, which object visible in the final frame would you infer to have a comparable effective softness to the <OBJECT>, based on its deformation or response to interaction?"
         },
         "F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST":{
-            "og": "Which object seen in the image exhibits the highest Young's Modulus?",
-            "child": "Which thing is the very hardest to stretch or change shape?",
-            "teen": "Which object is the most \"un-stretchy\" when you apply force?",
-            "undegrad": "Which object in the image has the highest Young's Modulus?",
-            "graduate": "Which material exhibits the greatest coefficient of elasticity (E)?",
-            "expert": "Which constituent in the frame maximizes the Young's Modulus (E) within the linear elastic region?"
+            "og": "Considering all frames, which object, visible in the last frame, exhibits the highest Young's Modulus?",
+            "child": "Looking at all the pictures, which object you can still see at the end is the hardest and least bendy?",
+            "teen": "After watching all the frames, which object visible in the last frame seems the stiffest or hardest to bend?",
+            "undegrad": "Considering the full image sequence, which object visible in the last frame appears to be the stiffest?",
+            "graduate": "Based on the entire frame sequence, which object visible in the final frame would you expect to have the highest Young’s modulus?",
+            "expert": "Considering the entire temporal frame sequence, which object visible in the final frame would you infer to exhibit the highest Young’s modulus, assuming linear elastic behavior under comparable loading?"
         },
-        "F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST_NON_TECHNICAL":{
-            "og": "Which object seen in the image is the stiffest?",
-            "child": "Which thing is the most solid and acts like a rock?",
-            "teen": "Which object is the most rigid and refuses to bend?",
-            "undegrad": "Which object exhibits the highest structural stiffness?",
-            "graduate": "Which object possesses the highest spring constant (k) relative to its geometry?",
-            "expert": "Which body demonstrates the highest flexural rigidity under the observed loading conditions?"
+        "F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST_NON_TECHNICAL":{  # Does it make sense as it is similar to F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST in the 5L context
+            "og": "Considering all frames, which object, visible in the last frame, is the stiffest?",
+            "child": "Looking at all the pictures, which object you can still see at the end is the hardest and least bendy?",
+            "teen": "After watching all the frames, which object visible in the last frame seems the hardest to bend?",
+            "undegrad": "Considering the full image sequence, which object visible in the last frame appears to be the stiffest?",
+            "graduate": "Based on the entire frame sequence, which object visible in the final frame would you expect to be the stiffest?",
+            "expert": "Considering the entire temporal frame sequence, which object visible in the final frame would you infer to have the greatest stiffness, assuming comparable loading and linear elastic response?"
         },
-        "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT":{
+        "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT":{  # Does it make sense ?
             "og": "What is the Poisson ratio of the <OBJECT> seen in the image?",
             "child": "When you squeeze the <OBJECT>, how much does its middle poke out?",
             "teen": "What is the ratio of how much the <OBJECT> gets wider versus how much it gets shorter?",
@@ -57,14 +57,14 @@
             "expert": "Calculate the Poisson ratio (\\nu) for the <OBJECT>, identifying its proximity to the incompressible limit."
         },
         "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR":{
-            "og": "Which object has a Poisson ratio most similar to that of the <OBJECT> seen in the image?",
-            "child": "Which other thing gets fat in the middle just like the <OBJECT> when you squash it?",
-            "teen": "Which object widens at the same rate as the <OBJECT> when you crush it?",
-            "undegrad": "Which object has a Poisson's ratio closest to that of the <OBJECT>?",
-            "graduate": "Which material exhibits a transverse-to-axial strain ratio comparable to the <OBJECT>?",
-            "expert": "Which body displays transverse deformation characteristics isomorphic to the <OBJECT>'s Poisson effect?"
+            "og": "Considering all frames, which visible object has a Poisson ratio most similar to that of the <OBJECT> visible in the last frame?",
+            "child": "Looking at all the pictures, which object you can still see at the end is as elastic as the <OBJECT> you see at the end?",
+            "teen": "After watching all the frames, which object visible in the last frame changes its width in a similar way to the <OBJECT> in the last frame when it is squeezed or stretched?",
+            "undegrad": "Considering the full image sequence, which object visible in the last frame shows a similar width change under stretching or compression as the <OBJECT> in the last frame?",
+            "graduate": "Based on the entire frame sequence, which object visible in the final frame would you expect to have a Poisson ratio closest to that of the <OBJECT> visible in the final frame?",
+            "expert": "Considering the entire temporal frame sequence, which object visible in the final frame would you infer to have a Poisson ratio most similar to that of the <OBJECT> visible in the final frame, based on comparable transverse-to-axial strain behavior?"
         },
-        "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR_NON_TECHNICAL":{
+        "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR_NON_TECHNICAL":{  # Does it make sense as it is similar to F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR
             "og": "Which object acts most like the <OBJECT> seen in the image in terms of how it bulges sideways when squeezed?",
             "child": "Which thing changes shape just like the <OBJECT> when you press on it?",
             "teen": "Which object bulges out to the sides in the same way the <OBJECT> does?",
@@ -73,20 +73,20 @@
             "expert": "Which entity exhibits a Poisson-induced lateral displacement most similar to the <OBJECT>?"
         },
         "F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST":{
-            "og": "Which object seen in the image exhibits the largest Poisson ratio?",
-            "child": "Which thing gets the widest when you step on it?",
-            "teen": "Which object spreads out sideways the most when it is crushed?",
-            "undegrad": "Which object in the image has the highest Poisson's ratio?",
-            "graduate": "Which material in the scene is closest to being perfectly incompressible (\\nu \\approx 0.5)?",
-            "expert": "Which object maximizes the Poisson ratio (\\nu), indicating the highest degree of lateral strain per unit of axial strain?"
+            "og": "Considering all frames, which object, visible in the last frame, exhibits the largest Poisson ratio?",
+            "child": "Looking at all the pictures, which object you can still see at the end spreads out the most on the sides when it is squished?",
+            "teen": "After watching all the frames, which object visible in the last frame gets the widest on the sides when it is squeezed?",
+            "undergrad": "Considering the full image sequence, which object visible in the last frame shows the greatest sideways expansion when compressed?",
+            "graduate": "Based on the entire frame sequence, which object visible in the final frame would you expect to have the largest Poisson ratio?",
+            "expert": "Considering the entire temporal frame sequence, which object visible in the final frame would you infer to exhibit the largest Poisson ratio, based on maximal transverse strain relative to axial strain?"
         },
         "F_PHYSICS_PROPERTY_POISSON_HIGH_LEVEL":{
-            "og": "If the <OBJECT> seen in the image were compressed vertically, how would its horizontal dimensions change?",
-            "child": "If you push down on the <OBJECT>, will it get wider or stay the same?",
-            "teen": "If you squash the <OBJECT> from top to bottom, what happens to its width?",
-            "undegrad": "How will the lateral dimensions of the <OBJECT> change if it undergoes axial compression?",
-            "graduate": "Describe the transverse strain response of the <OBJECT> under a vertical compressive load.",
-            "expert": "Characterize the deformation tensor for the <OBJECT> given a primary vertical compressive stress \\sigma_{zz}."
+            "og": "Considering all frames, if the <OBJECT>, visible in the last frame, were compressed vertically, how would its horizontal dimensions change?",
+            "child": "Looking at all the pictures, if you squish the <OBJECT> you see at the end from top to bottom, how would it change?",
+            "teen": "After watching all the frames, if the <OBJECT> in the last frame were pressed down, how would its width change?",
+            "undergrad": "Considering the full image sequence, if the <OBJECT> visible in the last frame were compressed vertically, how would its horizontal size change?",
+            "graduate": "Based on the entire frame sequence, if the <OBJECT> visible in the final frame were subjected to vertical compression, how would its horizontal dimensions be expected to respond?",
+            "physicist": "Given the full temporal sequence, if the <OBJECT> visible in the final frame were compressed along the vertical axis, how would its transverse (horizontal) dimensions change as dictated by its Poisson response?"
         }
     }
 }

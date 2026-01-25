@@ -277,7 +277,7 @@ RUN_NAME="run_${GENERAL_RUN_COUNT}_general"
 
 RUN_NAME="run_${GENERAL_RUN_COUNT}_roi_ablation_baseline"
 
-python main_parallel.py --simulation_path "${BASE_PATH}/random" \
+python main_parallel.py --simulation_paths "${BASE_PATH}/random" \
     --per_object_count 100 \
     --destination_simulation_path ${DESTINATION_SIMULATION_PATH}_modified_images \
     --run_name "${RUN_NAME}" \

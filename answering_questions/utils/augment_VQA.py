@@ -92,6 +92,15 @@ def augment_image_VQA_with_context(
             text=False,
             layout_position=True,
         )
+    if augmentation == "no_roi_circling_yes_text_layout_position":
+        file_names = augment_ablation(
+            question,
+            world_state,
+            resolved_attributes,
+            file_names,
+            text=True,
+            layout_position=True,
+        )    
     if augmentation == "no_roi_circling_no_text_layout_position":
         file_names = augment_ablation(
             question,
@@ -99,15 +108,6 @@ def augment_image_VQA_with_context(
             resolved_attributes,
             file_names,
             text=False,
-            layout_position=True,
-        )    
-    if augmentation == "no_roi_circling_yes_text_no_layout_position":
-        file_names = augment_ablation(
-            question,
-            world_state,
-            resolved_attributes,
-            file_names,
-            text=True,
             layout_position=True,
         )
 
@@ -348,23 +348,25 @@ def augment_ablation(
                     #     new_question = pattern.sub(
                     #         f"\"{object_name}\" (circled in red)", question["question"]
                     #     )
-                # else:
-                #     if layout_position:
-                #         # append after the name of the object that it is circled in the image
-                #         zone_to_focus = get_object_zone(
-                #             world_state, object_id, int(render_name.replace(".png", ""))
-                #         )
-                #         new_question = pattern.sub(
-                #             f"object circled in red (located at the {zone_to_focus})",
-                #             question["question"],
-                #         )
-                #     else:
-                #         # append after the name of the object that it is circled in the image
-                #         new_question = pattern.sub(
-                #             "object circled in red", question["question"]
-                #         )
+                else:
+                    if layout_position:
+                        # append after the name of the object that it is circled in the image
+                        zone_to_focus = get_object_zone(
+                            world_state, object_id, int(render_name.replace(".png", ""))
+                        )
+                        new_question = pattern.sub(
+                            f"object located at the {zone_to_focus}",
+                            question["question"],
+                        )
+                    # else:
+                    #     # append after the name of the object that it is circled in the image
+                    #     new_question = pattern.sub(
+                    #         "object circled in red", question["question"]
+                    #     )
 
-    if len(resolved_attributes) > 0:
+                
+
+    if len(resolved_attributes) and (text or layout_position) > 0:
         question["question"] = new_question
 
     return file_names

@@ -95,7 +95,6 @@ def with_resolved_attributes_cf(func):
                 object_moved_id = object_id
                 break
 
-
         # Also here we need to do a big check before accepting the counterfactual        
         # 1) there should not be any other object with the same name as the moved one that could create ambiguity
         # 2) Visibility check at start and end timesteps        
@@ -123,7 +122,10 @@ def with_resolved_attributes_cf(func):
         )
 
         chosen_object = world_state_modified["objects"][object_moved_id]        
-        resolved_attributes = {"OBJECT": {"choice": chosen_object, "category": "OBJECT"}}
+        resolved_attributes = {
+            "OBJECT-CF": {"choice": chosen_object, "category": "OBJECT"},
+            "OBJECT": {"choice": chosen_object, "category": "OBJECT"}
+            }
 
         if scale_ratio != -1.0:
             resolved_attributes["SCALE"] = {"choice": round(float(scale_ratio),2), "category": "SCALE"}

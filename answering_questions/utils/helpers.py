@@ -350,7 +350,7 @@ def fill_questions_cf(
                 final_timestep,
             )
         elif diff == "2xsmaller":            
-            counterfact = "In a counterfactual scenario where the dimensions of the <OBJECT> are scaled by <SCALE>x,"
+            counterfact = "In a counterfactual scenario where the dimensions of the <OBJECT-CF> are scaled by <SCALE>x"
         elif diff == "gravity":
             counterfact = "Under a counterfactual scenario where the gravitational constant is reduced to g/10"
 
@@ -394,7 +394,7 @@ def fill_questions_cf(
     if "multi" in question["task_splits"]:
 
         # before building the multi question we need to check that the object moved is visible at the start timestep
-        key = "OBJECT" if "OBJECT" in resolved_attributes else "OBJECT_2"
+        key = "OBJECT-CF" if "OBJECT-CF" in resolved_attributes else "OBJECT_2"
         object_moved_id = resolved_attributes[key]['choice']['id']
         if not is_object_visible(world_state_og, object_moved_id, initial_timestep):
             pass  #
@@ -1039,9 +1039,7 @@ def fill_template_cf(
                 resolved_attributes[attribute]["choice"],
             )
         elif "OBJECT-CF" in attribute:
-            mapped_name = gso_mapping[
-                resolved_attributes[attribute]["choice"]["model"]
-            ]["name"]
+            mapped_name = f'"{gso_mapping[resolved_attributes[attribute]["choice"]["model"]]["name"]}"'
             # mapped_name = resolved_attributes[attribute]["choice"]["name"] OLD way
             question["question"] = question["question"].replace(
                 f"<{attribute}>", mapped_name

@@ -109,16 +109,16 @@ GENERAL_RUN_COUNT=25
 
 # -------------------------------------------------------------
 # 1K general # text counterfactual shift
-# python main_parallel_counterfactual_new.py --simulation_path "${BASE_PATH_CF}/jitter-xy" "${BASE_PATH_CF}/jitter-z" \
-#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
-#     --run_name "run_${GENERAL_RUN_COUNT}_counterfactual_shift" \
-#     --counterfactual_type "shift" \
-#     --question_id "CF_CLOSEST_OBJECT_OBJECT" "CF_CLOSEST_OBJECT_CAMERA" "CF_LAYOUT_POSITION_OBJECT_OBJECT" \
-#     "CF_VISIBILITY_OBJECT_COUNT" "CF_OCCLUSION_PERCENTAGE_OBJECT" "CF_KINEMATICS_DISTANCE_TRAVELED_INTERVAL" \
-#     "CF_COLLISION_OBJECT_OBJECT_FRAME_SINGLE" "CF_PERSISTENCE_OBJECT_TOTAL_COUNT_HIDDEN" \
-#     --timeit \
-#     --n_scenes 2000 \
-#     --n_proc $CPUS \
+python main_parallel_counterfactual_new.py --simulation_path "${BASE_PATH_CF}/jitter-xy" "${BASE_PATH_CF}/jitter-z" \
+    --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
+    --run_name "run_${GENERAL_RUN_COUNT}_counterfactual_shift" \
+    --counterfactual_type "shift" \
+    --question_id "CF_CLOSEST_OBJECT_OBJECT" "CF_CLOSEST_OBJECT_CAMERA" "CF_LAYOUT_POSITION_OBJECT_OBJECT" \
+    "CF_VISIBILITY_OBJECT_COUNT" "CF_OCCLUSION_PERCENTAGE_OBJECT" "CF_KINEMATICS_DISTANCE_TRAVELED_INTERVAL" \
+    "CF_COLLISION_OBJECT_OBJECT_FRAME_SINGLE" "CF_PERSISTENCE_OBJECT_TOTAL_COUNT_HIDDEN" \
+    --timeit \
+    --n_scenes 2000 \
+    --n_proc $CPUS \
     
 # -------------------------------------------------------------
 # 1K general # text counterfactual gravity
@@ -135,17 +135,17 @@ python main_parallel_counterfactual_new.py --simulation_path "${BASE_PATH_CF}/lo
 
 # -------------------------------------------------------------
 # 1K general # text counterfactual volume
-# python main_parallel_counterfactual_new.py --simulation_path "${BASE_PATH_CF}/rescale" \
-#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
-#     --run_name "run_${GENERAL_RUN_COUNT}_counterfactual_smaller" \
-#     --counterfactual_type "volume" \
-#     --question_id "CF_SIZE_OBJECT" "CF_SIZE_OBJECT_BIGGER" \
-#     "CF_VISIBILITY_OBJECT_COUNT" "CF_OCCLUSION_PERCENTAGE_OBJECT" \
-#     "CF_KINEMATICS_DISTANCE_TRAVELED_INTERVAL" "CF_COLLISION_OBJECT_OBJECT_FRAME_SINGLE" \
-#     "CF_PERSISTENCE_OBJECT_TOTAL_COUNT_HIDDEN" "CF_MASS_OBJECT" "CF_MASS_HEAVIEST_OBJECT" \
-#     --timeit \
-#     --n_scenes 2000 \
-#     --n_proc $CPUS \
+python main_parallel_counterfactual_new.py --simulation_path "${BASE_PATH_CF}/rescale" \
+    --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
+    --run_name "run_${GENERAL_RUN_COUNT}_counterfactual_smaller" \
+    --counterfactual_type "volume" \
+    --question_id "CF_SIZE_OBJECT" "CF_SIZE_OBJECT_BIGGER" \
+    "CF_VISIBILITY_OBJECT_COUNT" "CF_OCCLUSION_PERCENTAGE_OBJECT" \
+    "CF_KINEMATICS_DISTANCE_TRAVELED_INTERVAL" "CF_COLLISION_OBJECT_OBJECT_FRAME_SINGLE" \
+    "CF_PERSISTENCE_OBJECT_TOTAL_COUNT_HIDDEN" "CF_MASS_OBJECT" "CF_MASS_HEAVIEST_OBJECT" \
+    --timeit \
+    --n_scenes 2000 \
+    --n_proc $CPUS \
 
 
 # -------------------------------------------------------------

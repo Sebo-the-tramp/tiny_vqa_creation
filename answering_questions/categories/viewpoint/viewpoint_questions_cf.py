@@ -180,7 +180,7 @@ def CF_OCCLUSION_PERCENTAGE_OBJECT(
     if answer_string_og == asnwer_string_mod:
         raise ImpossibleToAnswer("No change in occlusion percentage between original and modified world.")
 
-    resolved_attributes['OBJECT'] = world_state_og['objects'][chosen_object_id]['name']
+    resolved_attributes["OBJECT"] = {"choice": world_state_mod["objects"][chosen_object_id], "category": "OBJECT"}     
 
     return fill_questions_cf(
         question,

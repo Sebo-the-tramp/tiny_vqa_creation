@@ -3,7 +3,7 @@
 #SBATCH -p qgpu
 #SBATCH --nodes=1
 #SBATCH --gpus-per-node=1
-#SBATCH -t 1:00:00
+#SBATCH -t 0:30:00
 #SBATCH -J interactive_gpu
 
 source "/home/it4i-thvu/seb_dev/.telegram_bot.env"

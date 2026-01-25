@@ -1,18 +1,5 @@
 [  
-  "run_21_general",
-  "run_22_general",
-  
-  "run_22_counterfactual_gravity",
-  "run_22_counterfactual_shift",
-  "run_22_counterfactual_smaller",
-
-  "run_22_roi_circling_text",
-  "run_22_roi_circling_no_text",
-  "run_22_roi_circling_text_layout_position",
-  "run_22_roi_circling_no_text_layout_position",
-
-  "run_23_general",
-  "run_23_counterfactual_gravity",
-  "run_23_counterfactual_shift",
-  "run_23_counterfactual_smaller"
+  "run_25_counterfactual_shift",
+  "run_25_counterfactual_gravity",
+  "run_25_counterfactual_smaller"
 ]

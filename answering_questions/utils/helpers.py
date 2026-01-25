@@ -167,8 +167,9 @@ def compute_counterfactual_string(
 ):
     
     if question['task_splits'] == 'multi':
-        timestep = '0000.010' # for multi we always consider the first frame as reference
+        timestep = '0000.010' # for multi we always consider the first frame as reference    
 
+    # probably we can remove those if the resolved attribute is always the object that moved
     transform_per_object_mod = {
         k: {"translation": v["initial_condition"]["translation"], "rotation": v["initial_condition"]["rotation"], "scale": v["scale"]}
         for k, v in world_state_modified["objects"].items()
@@ -183,7 +184,7 @@ def compute_counterfactual_string(
     for object_id in transform_per_object_mod.keys():
         if not np.allclose(transform_per_object_mod[object_id]['translation'], transform_per_object_og[object_id]['translation']):
             modified_object_id = object_id
-            break    
+            break
 
     real_object_id = modified_object_id
     object_name = world_state_modified["objects"][real_object_id]["name"]
@@ -208,7 +209,7 @@ def compute_counterfactual_string(
     dz = z_mod - z_og
 
     horizontal_movement = "right" if dx > 0 else "left"
-    vertical_movement = "down" if dy < 0 else "up"
+    vertical_movement = "down" if dy > 0 else "up"
     depth_movement = "closer to the camera" if dz < 0 else "further from the camera"
 
     parts = []
@@ -235,7 +236,7 @@ def compute_counterfactual_string(
         counterfact_phrase = f"Assuming that the \"{object_name}\" at the time of the first frame is moved"
     if parts:
         counterfact_phrase += " " + english_join(parts)
-    counterfact_phrase += " in the camera reference system. How would the answer to the following question change? "
+    counterfact_phrase += " in the camera reference system"
 
     # print(counterfact_phrase)
 
@@ -280,7 +281,7 @@ def fill_questions_cf(
     correct_idx,
     world_state_og,
     world_state_modified,
-    timestep,
+    final_timestep,
     resolved_attributes,
     initial_timestep=None,
     k_options=(1, 2, 3, 4),
@@ -292,7 +293,7 @@ def fill_questions_cf(
     # there's a problem now with frame interleave we are allowing
     # dynamic frame interleave based on initial and final timestep
     if initial_timestep is None:
-        final_timestep_index = world_state_modified["simulation"][timestep]["frame_idx"]
+        final_timestep_index = world_state_modified["simulation"][final_timestep]["frame_idx"]
         # we need to compute the closest initial timestep based the current timestep
         candidates = [
             k for k in k_options if final_timestep_index - (k * (CLIP_LENGTH - 1)) >= 0
@@ -310,7 +311,7 @@ def fill_questions_cf(
         [
             str(question.get("_simulation_id", "")),
             str(question.get("_question_key", "")),
-            str(timestep),
+            str(final_timestep),
         ]
     )
     local_seed = seed_utils.seed_from_material(seed_material)
@@ -342,33 +343,37 @@ def fill_questions_cf(
 
         if diff == "shift":
             counterfact = compute_counterfactual_string(
-                question,
+                q_copy,
                 resolved_attributes,
                 world_state_og,
                 world_state_modified,
-                timestep,
+                final_timestep,
             )
         elif diff == "2xsmaller":            
-            counterfact = "In a counterfactual scenario where the dimensions of the <OBJECT> are scaled by 0.5, "
+            counterfact = "In a counterfactual scenario where the dimensions of the <OBJECT> are scaled by <SCALE>x,"
         elif diff == "gravity":
-            counterfact = "Under a counterfactual scenario where the gravitational constant is reduced to g/10, "
+            counterfact = "Under a counterfactual scenario where the gravitational constant is reduced to g/10"
 
         fill_template_cf(q_copy, resolved_attributes, counterfact)
 
         if split == "single":
-            frames = sample_frames_at_timesteps(world_state_modified, [timestep])
+            frames = sample_frames_at_timesteps(world_state_modified, [final_timestep])
         else:  # "multi"
-            if initial_timestep is not None:
-                initial_ts_float = float(initial_timestep)
-                ts_float = float(timestep)
-                effective_frame_interleave = int(
-                    (ts_float - initial_ts_float) * SAMPLING_RATE // (CLIP_LENGTH - 1)
-                )
+            if initial_timestep is not None:                
+                initial_timestep_index = world_state_og["simulation"][initial_timestep][
+                    "frame_idx"
+                ]
+                final_timestep_index = world_state_og["simulation"][final_timestep][
+                    "frame_idx"
+                ]
+                effective_frame_interleave = (
+                    final_timestep_index - initial_timestep_index
+                ) // (CLIP_LENGTH - 1)
             else:
                 effective_frame_interleave = FRAME_INTERLEAVE
             frames = sample_frames_before_timestep(
                 world_state_modified,
-                timestep,
+                final_timestep,
                 num_frames=CLIP_LENGTH,
                 frame_interleave=effective_frame_interleave,
             )
@@ -387,7 +392,14 @@ def fill_questions_cf(
         questions.append(build_item("single"))
 
     if "multi" in question["task_splits"]:
-        questions.append(build_item("multi"))
+
+        # before building the multi question we need to check that the object moved is visible at the start timestep
+        key = "OBJECT" if "OBJECT" in resolved_attributes else "OBJECT_2"
+        object_moved_id = resolved_attributes[key]['choice']['id']
+        if not is_object_visible(world_state_og, object_moved_id, initial_timestep):
+            pass  #
+        else:
+            questions.append(build_item("multi"))
 
     return questions
 
@@ -1017,8 +1029,8 @@ def fill_template_cf(
     question["question"] = (
         counterfact + question["question"]
         if question["question"]
-        else counterfact
-    )
+        else counterfact and counterfact != [] 
+    )    
 
     for attribute in resolved_attributes:
         if "OBJECT-CATEGORY" in attribute:
@@ -1039,6 +1051,11 @@ def fill_template_cf(
             # mapped_name = resolved_attributes[attribute]["choice"]["name"] OLD way
             question["question"] = question["question"].replace(
                 f"<{attribute}>", mapped_name
+            )
+        elif "SCALE" in attribute:
+            scale_value = resolved_attributes[attribute]["choice"]
+            question["question"] = question["question"].replace(
+                f"<{attribute}>", str(scale_value)
             )
         else:
             question["question"] = question["question"].replace(

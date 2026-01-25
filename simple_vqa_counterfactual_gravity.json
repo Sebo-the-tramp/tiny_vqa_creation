@@ -1,7 +1,7 @@
 {    
     "view_point":{
          "CF_OCCLUSION_PERCENTAGE_OBJECT": {
-            "task_splits": "single+multi",
+            "task_splits": "multi",
             "sub_category": "visibility",
             "choice": "mcq",
             "question": "<OBJECT>",
@@ -9,7 +9,7 @@
             "question_multi": ", how much of the <OBJECT> is occluded in the last frame?"
         },
         "CF_VISIBILITY_OBJECT_COUNT": {
-            "task_splits": "single+multi",
+            "task_splits": "multi",
             "sub_category": "visibility",
             "choice": "mcq",
             "question": "",

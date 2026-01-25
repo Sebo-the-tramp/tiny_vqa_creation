@@ -5,16 +5,16 @@
             "sub_category": "size",
             "choice": "mcq",
             "question": "<OBJECT>",
-            "question_single": "what would be the new volume of the <OBJECT> visible in the frame?",
-            "question_multi": "considering all frames, what would be the new volume of the <OBJECT> in the last frame?"
+            "question_single": " what would be the new volume of the <OBJECT> visible in the frame?",
+            "question_multi": " what would be the new volume of the <OBJECT> in the last frame?"
         },
         "CF_SIZE_OBJECT_BIGGER": {
             "task_splits": "single+multi",
             "sub_category": "size",
             "choice": "mcq",
             "question": "",
-            "question_single": "which single object would have the biggest volume?",
-            "question_multi": "considering all frames, which single object, visible in the last frame, would have the biggest volume?"
+            "question_single": " which single object would have the biggest volume?",
+            "question_multi": " which single object, visible in the last frame, would have the biggest volume?"
         }
     },
     
@@ -24,16 +24,16 @@
             "sub_category": "visibility",
             "choice": "mcq",
             "question": "<OBJECT>",
-            "question_single": ", how much of the <OBJECT> is occluded?",
-            "question_multi": ", how much of the <OBJECT> is occluded in the last frame?"
+            "question_single": " how much of the <OBJECT> is occluded?",
+            "question_multi": " how much of the <OBJECT> is occluded in the last frame?"
         },
         "CF_VISIBILITY_OBJECT_COUNT": {
             "task_splits": "multi",
             "sub_category": "visibility",
             "choice": "mcq",
             "question": "",
-            "question_single": ", how many objects are visible?",
-            "question_multi": ", how many objects are visible in the last frame?"
+            "question_single": " how many objects are visible?",
+            "question_multi": " how many objects are visible in the last frame?"
         }
     },
 
@@ -43,14 +43,14 @@
             "sub_category": "kinematics",
             "choice": "mcq",
             "question": "<OBJECT>",
-            "question_multi": "Considering all frames, what would be the straight-line distance the geometrical center of <OBJECT> has traveled during the sequence?"
+            "question_multi": " what would be the straight-line distance the geometrical center of <OBJECT> has traveled during the sequence?"
         },
         "CF_COLLISION_OBJECT_OBJECT_FRAME_SINGLE": {
             "task_splits": "single",
             "sub_category": "collision",
             "choice": "mcq",
             "question": "<OBJECT>",
-            "question_single": ", which object would be the <OBJECT> colliding with in the frame?"
+            "question_single": " which object would be the <OBJECT> colliding with in the frame?"
         }
     },
 
@@ -60,14 +60,14 @@
             "sub_category": "mass",
             "choice": "mcq",
             "question": "<OBJECT>",
-            "question_multi": "Considering all frames, what would be the mass of the <OBJECT> visible in the last frame?"
+            "question_multi": " what would be the mass of the <OBJECT> visible in the last frame?"
         },
         "CF_MASS_HEAVIEST_OBJECT": {
             "task_splits": "multi",
             "sub_category": "mass",
             "choice": "mcq",
             "question": "",
-            "question_multi": "Considering all frames, which single object visible in the last frame would have the greatest mass?"
+            "question_multi": " which single object visible in the last frame would have the greatest mass?"
         }
     },
 
@@ -77,7 +77,7 @@
             "sub_category": "object_persistence",
             "choice": "mcq",
             "question": "",
-            "question_multi": "Considering all frames, how many objects would be present but not visible in the last frame?"
+            "question_multi": " how many objects would be present but not visible in the last frame?"
         }
     }
 }

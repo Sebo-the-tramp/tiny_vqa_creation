@@ -15,6 +15,8 @@ from utils.geometry import (
     external_points_2d,
 )
 
+# from PIL import Image
+
 Number = Union[int, float]
 WorldState = Mapping[str, Any]
 QuestionPayload = Mapping[str, Any]
@@ -177,7 +179,7 @@ def get_spatial_relationship_camera_view(
     # This was for debugging purposes only
     # use fake photo to load and check projection correcteness
     # fake_photo = Image.open(
-    #     f"/data0/sebastian.cavada/datasets/simulations_v3/dl3dv/random/3/c-1_no-3_d-4_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-9_20251102_063341/render/{str(timestep).zfill(6)}.png"
+    #     f"/data0/sebastian.cavada/datasets/simulations_v4/dl3dv/random/3/c-1_no-3_d-10_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-2_20251212_033848/render/000007.png"
     # )  # dummy image just to get width and height
     # numpy_image = np.array(fake_photo)
 
@@ -222,7 +224,7 @@ def get_spatial_relationship_camera_view(
     depth = ""
     combined = ""
 
-    if iou > 0.0:
+    if iou > 10.0: # probably this is quite wrong cause if it is overlapping less than 10% is it in front?
         if z1 > z2:
             depth = "in front"
         else:

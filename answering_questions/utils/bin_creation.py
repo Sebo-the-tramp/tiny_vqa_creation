@@ -82,7 +82,7 @@ def create_mc_options_around_gt(
         material=f"slope_bin::{gt}:{num_answers}:{lo}:{hi}:{display_decimals}",
     )
 
-    if abs(gt) < 1.0:
+    if abs(gt) < 0.9:
         current_slope_bin = 0.4
 
     gt = round(gt, display_decimals) if display_decimals is not None else gt

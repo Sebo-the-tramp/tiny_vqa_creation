@@ -36,6 +36,10 @@ from utils.bin_creation import (
     create_mc_object_names_from_dataset,
 )
 
+from utils.helpers_cf import (
+    get_start_end_timesteps_visible_end    
+)
+
 
 Number = Union[int, float]
 Vector = Tuple[float, float, float]
@@ -52,54 +56,39 @@ MAX_ALLOWED_DIFFERENCE_POISSON_RATIO = get_config()[
     "max_allowed_difference_poisson_ratio"
 ]
 
-
 ## --- Resolver functions -- ##
-
 
 @with_resolved_attributes_cf
 def CF_MASS_OBJECT(
     world_state_og: WorldState,
-    world_state_mod: WorldState,
-    answer_list_original_data_cf: dict,
+    world_state_mod: WorldState,    
     question: QuestionPayload,
     attributes,
+    resolved_attributes,
     **kwargs,
 ) -> int:
     assert len(attributes) == 1 and "OBJECT" in attributes
 
-    timestep_end_index = int(
-        answer_list_original_data_cf[0][3][-1]
-    )  # this has to be the image to get the question
-    timestep_end = get_timestep_from_idx(timestep_end_index)
+    counterfactual_object_id = kwargs['object_moved_id']
+    
+    # checking if is just visibility at the end timestep
+    # cause we have both multi and single object movement counterfactuals
+    # multi will check start visibility after else no question will be generated    
 
-    timestep_start_index = int(
-        answer_list_original_data_cf[0][3][0]
-    )  # this has to be the image to get the question
-    timestep_start = get_timestep_from_idx(timestep_start_index)
+    _, timestep_end = \
+        get_start_end_timesteps_visible_end(world_state_og, world_state_mod, counterfactual_object_id)    
 
-    # check if the particular question asks something outside of simulation_og
-    if timestep_end_index > len(world_state_og["simulation"]) - 1:
-        raise ImpossibleToAnswer("Question refers to future timestep.")
+    mass_obj_og = world_state_og["objects"][counterfactual_object_id]["mass"]
+    mass_obj_mod = world_state_mod["objects"][counterfactual_object_id]["mass"]
 
-    object_id = answer_list_original_data_cf[0][5]["OBJECT"]["choice"]["id"]
-    object = world_state_og["objects"][object_id]
-
-    if not is_object_visible(
-        world_state=world_state_og, obj_id=object_id, timestep=timestep_end
-    ):
-        raise ImpossibleToAnswer("Object is not visible.")
-
-    resolved_attributes = resolve_attributes_visible_at_timestep(
-        attributes, world_state_mod, timestep_end
-    )
-
-    mass = object["mass"]
-
+    if mass_obj_og == mass_obj_mod:
+        raise ImpossibleToAnswer("Mass did not change in the counterfactual.")    
+    
     options, correct_idx = create_mc_options_around_gt(
-        mass, num_answers=4, display_decimals=2, lo=0.0
+        mass_obj_mod, num_answers=4, display_decimals=2, lo=0.0
     )
     labels = uniform_labels(options, integer=False, decimals=2)
-    labels = [str(label) + " kgs" for label in labels]
+    labels = [str(label) + " kgs" for label in labels]    
 
     return fill_questions_cf(
         question,
@@ -108,55 +97,18 @@ def CF_MASS_OBJECT(
         world_state_og,
         world_state_mod,
         timestep_end,
-        resolved_attributes,
-        initial_timestep=timestep_start,
+        resolved_attributes,        
     )
 
 
-@with_resolved_attributes_cf
-def CF_MASS_HEAVIEST_OBJECT(
-    world_state_og: WorldState,
-    world_state_mod: WorldState,
-    answer_list_original_data_cf: dict,
-    question: QuestionPayload,
-    attributes,
-    **kwargs,
-) -> int:
-    assert len(attributes) == 0
-
-    if kwargs["current_world_number_of_objects"] < 2:
-        raise ImpossibleToAnswer("Not enough objects in the scene.")
-
-    timestep_end_index = int(
-        answer_list_original_data_cf[0][3][-1]
-    )  # this has to be the image to get the question
-    timestep_end = get_timestep_from_idx(timestep_end_index)
-
-    timestep_start_index = int(
-        answer_list_original_data_cf[0][3][0]
-    )  # this has to be the image to get the question
-    timestep_start = get_timestep_from_idx(timestep_start_index)
-
-    # check if the particular question asks something outside of simulation_og
-    if timestep_end_index > len(world_state_og["simulation"]) - 1:
-        raise ImpossibleToAnswer("Question refers to future timestep.")
-    
-    object_id = answer_list_original_data_cf[0][5]["OBJECT"]["choice"]["id"]
-    if not is_object_visible(
-        world_state=world_state_og, obj_id=object_id, timestep=timestep_end
-    ):
-        raise ImpossibleToAnswer("Object is not visible.")
-
-    resolved_attributes = resolve_attributes_visible_at_timestep(
-        attributes, world_state_mod, timestep_end
-    )
-
+def get_heaviest_object_at_timestep(
+    world_state: WorldState,
+    timestep: int,
+) -> Tuple[Number, Mapping[str, Any]]:
     objects_masses = []
 
-    for obj in iter_objects(world_state_mod):
-        if is_object_visible(
-            world_state=world_state_mod, obj_id=obj["id"], timestep=timestep_end
-        ):
+    for obj in iter_objects(world_state):
+        if is_object_visible(world_state, obj["id"], timestep):
             objects_masses.append((obj["mass"], obj))
 
     if len(objects_masses) < 2:
@@ -172,96 +124,65 @@ def CF_MASS_HEAVIEST_OBJECT(
     ):
         raise ImpossibleToAnswer("No single heaviest object in the scene.")
 
-    visible_objects_names_minus_resolved, all_objects_minus_visible_and_non_visible = (
-        get_objects_present_and_not_present(
-            world_state_mod, timestep_end, [heaviest_visible_object["name"]]
-        )
-    )
-
-    labels, correct_idx = create_mc_object_names_from_dataset(
-        heaviest_visible_object["name"],
-        visible_objects_names_minus_resolved,
-        all_objects_minus_visible_and_non_visible,
-        num_answers=4,
-    )
-
-    return fill_questions_cf(
-        question,
-        labels,
-        correct_idx,
-        world_state_og,
-        world_state_mod,
-        timestep_end,
-        resolved_attributes,
-        initial_timestep=timestep_start,
-    )
+    return heaviest_object_mass, heaviest_visible_object
 
 
 @with_resolved_attributes_cf
-def CF_MASS_LIGHTEST_OBJECT(
+def CF_MASS_HEAVIEST_OBJECT(
     world_state_og: WorldState,
-    world_state_mod: WorldState,
-    answer_list_original_data_cf: dict,
+    world_state_mod: WorldState,    
     question: QuestionPayload,
     attributes,
+    resolved_attributes,
     **kwargs,
 ) -> int:
-    assert len(attributes) == 0
+    assert len(attributes) == 0       
 
-    if kwargs["current_world_number_of_objects"] < 2:
-        raise ImpossibleToAnswer("Not enough objects in the scene.")
+    counterfactual_object_id = kwargs['object_moved_id']
+    
+    # checking if is just visibility at the end timestep
+    # cause we have both multi and single object movement counterfactuals
+    # multi will check start visibility after else no question will be generated    
 
-    timestep_end_index = int(
-        answer_list_original_data_cf[0][3][-1]
-    )  # this has to be the image to get the question
-    timestep_end = get_timestep_from_idx(timestep_end_index)
+    _, timestep_end = \
+        get_start_end_timesteps_visible_end(world_state_og, world_state_mod, counterfactual_object_id)    
 
-    timestep_start_index = int(
-        answer_list_original_data_cf[0][3][0]
-    )  # this has to be the image to get the question
-    timestep_start = get_timestep_from_idx(timestep_start_index)
-
-    # check if the particular question asks something outside of simulation_og
-    if timestep_end_index > len(world_state_og["simulation"]) - 1:
-        raise ImpossibleToAnswer("Question refers to future timestep.")
-
-    resolved_attributes = resolve_attributes_visible_at_timestep(
-        attributes, world_state_mod, timestep_end
+    _, heaviest_object_og = get_heaviest_object_at_timestep(
+        world_state_og,
+        timestep_end,
     )
 
-    objects_masses = []
+    _, heaviest_object_mod = get_heaviest_object_at_timestep(
+        world_state_mod,
+        timestep_end,
+    )
 
-    for obj in iter_objects(world_state_mod):
-        if is_object_visible(
-            world_state=world_state_mod, obj_id=obj["id"], timestep=timestep_end
+    # if there is no change in which is the heaviest okay
+    # but if the heaviest in both is the one that changed mass then we can consider it valid
+
+    if heaviest_object_og["id"] != heaviest_object_mod["id"]:
+        if (
+            heaviest_object_og["id"] != counterfactual_object_id
+            and heaviest_object_mod["id"] != counterfactual_object_id
         ):
-            objects_masses.append((obj["mass"], obj))
-
-    if len(objects_masses) < 2:
-        raise ImpossibleToAnswer("Not enough visible objects in the scene.")
-
-    object_ordered_by_mass = sorted(objects_masses, key=lambda x: x[0], reverse=True)
-    lightest_object_mass, lightest_visible_object = object_ordered_by_mass[-1]
-    second_lightest_object_mass, _ = object_ordered_by_mass[-2]
-
-    if (
-        second_lightest_object_mass - lightest_object_mass
-        < THRESHOLD_DIFFERENCE_PERCENTAGE * second_lightest_object_mass
-    ):
-        raise ImpossibleToAnswer("No single lightest object in the scene.")
-
+            raise ImpossibleToAnswer(
+                " 2 - Heaviest object did not change in the counterfactual."
+            )
+        
     visible_objects_names_minus_resolved, all_objects_minus_visible_and_non_visible = (
         get_objects_present_and_not_present(
-            world_state_mod, timestep_end, [lightest_visible_object["name"]]
+            world_state_mod, timestep_end, [heaviest_object_mod["name"]]
         )
     )
 
+    resolved_attributes['OBJECT'] = {"choice": heaviest_object_mod, "category": "OBJECT"}    
+
     labels, correct_idx = create_mc_object_names_from_dataset(
-        lightest_visible_object["name"],
+        heaviest_object_mod["name"],
         visible_objects_names_minus_resolved,
         all_objects_minus_visible_and_non_visible,
         num_answers=4,
-    )
+    )    
 
     return fill_questions_cf(
         question,
@@ -270,6 +191,5 @@ def CF_MASS_LIGHTEST_OBJECT(
         world_state_og,
         world_state_mod,
         timestep_end,
-        resolved_attributes,
-        initial_timestep=timestep_start,
+        resolved_attributes
     )

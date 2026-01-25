@@ -1164,35 +1164,40 @@
       });
     }
 
+    function enrichItemWithAnswers(item) {
+      const enrichedItem = { ...item };
+      const correctAnswer = state.correctByIdx.get(item.idx);
+      if (correctAnswer) {
+        enrichedItem.correct_answer = correctAnswer;
+      }
+      const modelAnswers = state.answersByIdx.get(item.idx);
+      if (modelAnswers) {
+        enrichedItem.model_answers = modelAnswers;
+      }
+      return enrichedItem;
+    }
+
+    function downloadBlob(blob, filename) {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
     function downloadFilteredJSON() {
       if (!state.filtered || state.filtered.length === 0) {
         alert("No data to download. Please load a run first.");
         return;
       }
       
-      const dataToDownload = state.filtered.map(item => {
-        const enrichedItem = { ...item };
-        const correctAnswer = state.correctByIdx.get(item.idx);
-        if (correctAnswer) {
-          enrichedItem.correct_answer = correctAnswer;
-        }
-        const modelAnswers = state.answersByIdx.get(item.idx);
-        if (modelAnswers) {
-          enrichedItem.model_answers = modelAnswers;
-        }
-        return enrichedItem;
-      });
-
+      const dataToDownload = state.filtered.map(enrichItemWithAnswers);
       const jsonStr = JSON.stringify(dataToDownload, null, 2);
       const blob = new Blob([jsonStr], { type: "application/json" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `${state.runName}_filtered_${state.filtered.length}_questions.json`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+      downloadBlob(blob, `${state.runName}_filtered_${state.filtered.length}_questions.json`);
     }
 
     function downloadAllJSON() {
@@ -1201,29 +1206,10 @@
         return;
       }
       
-      const dataToDownload = state.questions.map(item => {
-        const enrichedItem = { ...item };
-        const correctAnswer = state.correctByIdx.get(item.idx);
-        if (correctAnswer) {
-          enrichedItem.correct_answer = correctAnswer;
-        }
-        const modelAnswers = state.answersByIdx.get(item.idx);
-        if (modelAnswers) {
-          enrichedItem.model_answers = modelAnswers;
-        }
-        return enrichedItem;
-      });
-
+      const dataToDownload = state.questions.map(enrichItemWithAnswers);
       const jsonStr = JSON.stringify(dataToDownload, null, 2);
       const blob = new Blob([jsonStr], { type: "application/json" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `${state.runName}_all_${state.questions.length}_questions.json`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+      downloadBlob(blob, `${state.runName}_all_${state.questions.length}_questions.json`);
     }
 
     function downloadFilteredCSV() {
@@ -1244,7 +1230,7 @@
       ];
 
       // Add model columns dynamically
-      const modelNames = modelFiles.map(f => f.replace(".json", ""));
+      const modelNames = modelFiles.map(f => f.replace(/\.json$/, ""));
       modelNames.forEach(modelName => {
         headers.push(`model_${modelName}`);
       });
@@ -1277,14 +1263,7 @@
 
       const csvStr = rows.join("\n");
       const blob = new Blob([csvStr], { type: "text/csv" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `${state.runName}_filtered_${state.filtered.length}_questions.csv`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+      downloadBlob(blob, `${state.runName}_filtered_${state.filtered.length}_questions.csv`);
     }
 
     function escapeCSV(value) {

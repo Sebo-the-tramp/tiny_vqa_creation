@@ -393,11 +393,13 @@ def create_num_objects_violin_grid(
     seed_tag = f"_seed_{sample_seed}" if sample_seed is not None else ""
     out_dir.mkdir(parents=True, exist_ok=True)
     if save_grid:
+        f_out = out_dir / f"{Path(filename).stem}{seed_tag}{Path(filename).suffix}"
         fig.savefig(
-            out_dir / f"{Path(filename).stem}{seed_tag}{Path(filename).suffix}",
+            f_out,
             dpi=300,
             bbox_inches="tight",
         )
+        print("Plot saved to:", f_out)
 
     if save_legend:
         fig_legend = plt.figure(figsize=legend_figsize or (5 * legend_cols, 1.0))
@@ -411,11 +413,13 @@ def create_num_objects_violin_grid(
         )
         fig_legend.tight_layout()
         legend_name = legend_filename or filename.replace(".png", "_legend.png")
+        f_out = f"{Path(legend_name).stem}{seed_tag}{Path(legend_name).suffix}"
         fig_legend.savefig(
-            out_dir / f"{Path(legend_name).stem}{seed_tag}{Path(legend_name).suffix}",
+            out_dir / f_out,
             dpi=300,
             bbox_inches="tight",
         )
+        print("Plot saved to:", f_out)
         plt.close(fig_legend)
 
     if save_per_category:
@@ -544,11 +548,13 @@ def create_num_objects_violin_grid(
 
             fig_cat.tight_layout()
             safe_cat = _safe_filename(str(cat))
+            f_out = per_cat_dir / f"num_objects_{safe_cat}{seed_tag}.png"
             fig_cat.savefig(
-                per_cat_dir / f"num_objects_{safe_cat}{seed_tag}.png",
+                f_out,
                 dpi=300,
                 bbox_inches="tight",
             )
+            print("Plot saved to:", f_out)
             plt.close(fig_cat)
 
     if show:
@@ -675,7 +681,9 @@ def create_num_objects_violin_per_question_id(
         )
         fig_legend.tight_layout()
         legend_name = legend_filename or "num_objects_legend_question_id.png"
-        fig_legend.savefig(out_dir / legend_name, dpi=300, bbox_inches="tight")
+        f_out = out_dir / legend_name
+        fig_legend.savefig(f_out, dpi=300, bbox_inches="tight")
+        print("Plot saved to:", f_out)
         plt.close(fig_legend)
 
     for qid in question_ids:
@@ -800,9 +808,11 @@ def create_num_objects_violin_per_question_id(
 
         fig_q.tight_layout()
         safe_qid = _safe_filename(str(qid))
+        f_out = per_q_dir / f"num_objects_{safe_qid}.png"
         fig_q.savefig(
-            per_q_dir / f"num_objects_{safe_qid}.png", dpi=300, bbox_inches="tight"
+            f_out, dpi=300, bbox_inches="tight"
         )
+        print("Plot saved to:", f_out)
         if show:
             plt.show()
         else:

@@ -5,6 +5,11 @@ from pathlib import Path
 
 import pandas as pd
 
+import utils.utils_read
+
+if not Path("/scratch/project/eu-25-92/composite_physics/dataset/simulation_v4/").exists():
+    utils.utils_read.sim_path_fct = lambda x: x.replace("/scratch/project/eu-25-92/composite_physics/dataset/simulation_v4/", "/nfs/data/workspaces/rdechare/codes/physics-sim/output/sims/v4/")
+
 from utils.utils_read import load_results, _sanitize_answer
 import utils.utils_graph as utils_graph
 import utils.utils_graph_correlation as utils_graph_correlation
@@ -152,7 +157,7 @@ def main() -> None:
     utils_graph.RUN_NAME = args.run_name
     utils_graph_correlation.RUN_NAME = args.run_name
 
-    output_dir = Path("output") / args.run_name
+    output_dir = Path("analysis/output") / args.run_name
     output_dir.mkdir(parents=True, exist_ok=True)
 
     eval_df = build_eval_df(args.base_path)

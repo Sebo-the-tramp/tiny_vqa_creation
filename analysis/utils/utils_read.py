@@ -1,6 +1,7 @@
 from pathlib import Path
 import re
 from typing import List
+import tqdm
 
 import pandas as pd
 
@@ -84,8 +85,15 @@ def load_results(
     if add_sim_metadata:
         if sim_path_col not in df.columns:
             raise KeyError(f"Column '{sim_path_col}' not found in merged DataFrame.")
+        
+        pbar = tqdm.tqdm(print("Reading scenes simulation..."), total=len(df))
+            
+        def read_scene_metadata(p):
+            pbar.update(1)
+            return read_simulation_metadata(str(p))
+        
         df["object_count"] = df[sim_path_col].apply(
-            lambda p: read_simulation_metadata(str(p))["object_count"]
+            lambda p: read_scene_metadata(p)["object_count"]
         )
 
         # if the interested objects are 2  we take the average of the visible pixels
@@ -218,12 +226,12 @@ def load_results_levels(
     return df
 
 
+sim_path_fct = lambda x: x.replace("simulation.json", "simulation_kinematics_min.json")
 def read_simulation_metadata(
     simulation_json_path: str | Path, verbose: bool = False
 ) -> dict:
-    simulation_json_path = Path(
-        simulation_json_path.replace("simulation.json", "simulation_kinematics_min.json")
-    )
+    simulation_json_path = Path(sim_path_fct(simulation_json_path))
+    
     cache_key = str(simulation_json_path)
     cached = _SIM_METADATA_CACHE.get(cache_key)
     if cached is not None:
@@ -259,9 +267,7 @@ def find_insterted_object_pixels_count(
     render_name = last_file_name.split("/")[-1].replace(".png", "")
     final_timestep = get_timestep_from_idx(int(render_name))
 
-    simulation_json_path = Path(
-        simulation_json_path.replace("simulation.json", "simulation_kinematics_min.json")
-    )
+    simulation_json_path = Path(sim_path_fct(simulation_json_path))
     cache_key = str(simulation_json_path)
     cached = _SIM_METADATA_CACHE.get(cache_key)
     if cached is not None:

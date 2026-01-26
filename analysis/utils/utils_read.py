@@ -61,8 +61,15 @@ def load_results(
             required_cols.extend(
                 p.stem.replace("_val", "") for p in results_dir.glob("*_val.json")
             )
-        if all(col in df_cached.columns for col in required_cols):
+        missing = [col for col in required_cols if col not in df_cached.columns]
+        if len(missing) == 0:
             return df_cached
+        else:
+            print("Cache is missing required columns:", missing)
+
+            reply = input("There are missing columns in the cache. Proceed or reload? (y=use cache, n=reload): ").strip().lower()
+            if reply == "y":
+                return df_cached
 
     df_test = _read_json_dataframe(test_path)
     df_val = _read_json_dataframe(val_path)

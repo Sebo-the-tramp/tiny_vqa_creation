@@ -179,6 +179,7 @@ def main() -> None:
                 sample_frac=0.8,
                 sample_seed=x,
                 y_limit_mode="fixed",
+                output_dir=output_dir,
             )
 
         create_num_objects_violin_grid(
@@ -191,6 +192,7 @@ def main() -> None:
             legend_filename=f"num_objects_legend_families_{mode_label}.png",
             legend_cols=4,
             sample_frac=0.8,
+            output_dir=output_dir,
         )
 
 

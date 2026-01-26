@@ -1,5 +1,8 @@
-opencv-python
+opencv
 tqdm
 pandas
 numpy
 scikit-learn
+seaborn
+matplotlib
+orjson

@@ -140,7 +140,7 @@ def main() -> None:
         "--base-path",
         default="/data0/sebastian.cavada/compositional-physics/tiny_vqa_creation/output/",
     )
-    parser.add_argument("--run-name", default="run_23_general_obj_num")
+    parser.add_argument("--run-name", default="run_24_general_obj_num")
     parser.add_argument(
         "--mode",
         choices=["mixed", "general", "image-only"],
@@ -151,6 +151,17 @@ def main() -> None:
         "--split-by-mode",
         action="store_true",
         help="Generate separate outputs per model mode when --mode=mixed.",
+    )
+    parser.add_argument(
+        "--family-marker-mode",
+        choices=["distinct", "rotated"],
+        default="distinct",
+        help="Use distinct shapes per family or rotate a base shape per family.",
+    )
+    parser.add_argument(
+        "--family-marker-base",
+        default="^",
+        help="Base marker to rotate when --family-marker-mode=rotated.",
     )
     args = parser.parse_args()
 
@@ -180,6 +191,8 @@ def main() -> None:
                 sample_seed=x,
                 y_limit_mode="fixed",
                 output_dir=output_dir,
+                family_marker_mode=args.family_marker_mode,
+                family_marker_base=args.family_marker_base,
             )
 
         create_num_objects_violin_grid(
@@ -193,6 +206,8 @@ def main() -> None:
             legend_cols=4,
             sample_frac=0.8,
             output_dir=output_dir,
+            family_marker_mode=args.family_marker_mode,
+            family_marker_base=args.family_marker_base,
         )
 
 

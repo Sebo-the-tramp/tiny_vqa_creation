@@ -96,6 +96,13 @@ def load_results(
             lambda p: read_scene_metadata(p)["object_count"]
         )
 
+        # here we can add the material of the simulation too
+        df['object-yms'] = df[sim_path_col].apply(
+            lambda s: re.search(r'(?<!\w)(stiff|soft|medium)(?!\w)', s).group(1)
+            if re.search(r'(?<!\w)(stiff|soft|medium)(?!\w)', s)
+            else "mixed"
+        )
+
         # if the interested objects are 2  we take the average of the visible pixels
         df["visible_pixels_interested_object"] = df.apply(
             lambda row: find_insterted_object_pixels_count(

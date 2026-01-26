@@ -28,6 +28,7 @@ def build_eval_df(base_path: str | Path) -> pd.DataFrame:
         merge_model_answers=True,
         model_answers_wide=True,
         cache=True,
+        add_sim_metadata=True
     )
 
     results_dir = base / run_folder / f"results_{run_folder}_sanitized"
@@ -100,66 +101,7 @@ def main() -> None:
 
     # print(eval_df.head().to_string())
 
-    eval_df_single_image = eval_df[eval_df["idx"].astype(str).str.contains("_i")]
-    acc_mat_single, _ = create_graph_from_eval_balanced(
-        eval_base=eval_df_single_image,
-        index_to_use="question_id",
-        title="Balanced accuracy by question_id and general models - single-image task",
-        color_by_mode=True,
-        show=False,
-        include_counts=True,
-        color_question_id_by_subcategory=True,
-    )
-
-    eval_df_multi_image = eval_df[eval_df["idx"].astype(str).str.contains("_g")]
-    eval_df_multi_image = eval_df_multi_image.groupby("model_id").filter(
-        lambda g: g["model_answer"].notna().any()
-    )
-    acc_mat_multi, _ = create_graph_from_eval_balanced(
-        eval_base=eval_df_multi_image,  # your row-level eval with is_correct
-        index_to_use="question_id",
-        title="Balanced accuracy by question_id and general models - multi-image task",
-        color_by_mode=True,
-        show=False,
-        include_counts=True,
-        color_question_id_by_subcategory=True,
-    )
-
-    print_heatmap_table_latex(
-        acc_mat_single, output_path=str(output_dir / "heatmap_table_single.txt")
-    )
-    print_heatmap_table_latex(
-        acc_mat_multi, output_path=str(output_dir / "heatmap_table_multi.txt")
-    )
-
-    # eval_df_all = eval_df
-    eval_df_multi_image = eval_df
-
-    acc_mat, _ = create_graph_from_eval_balanced(
-        eval_base=eval_df_multi_image,
-        index_to_use="sub_category",
-        title="Balanced accuracy by sub_category and model - single-image",
-        color_by_mode=True,
-        show=False,
-    )
-
-    create_sub_categories_summary(
-        acc_mat=acc_mat,
-        title="Sub-category accuracy summary - all",
-        show=False,
-    )
-
-    create_correlation_common_sense(
-        eval_df,
-        acc_mat,
-        title="Correlation common sense",
-        show=False,
-    )
-
-    create_accuracy_bench_vs_common_sense(
-        eval_df,
-        acc_mat,
-    )
+    eval_df.to_json(output_dir / "eval_df.json", orient="records", lines=True)  
 
 
 if __name__ == "__main__":

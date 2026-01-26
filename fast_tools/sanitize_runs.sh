@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-PREFIX="${1:-run_23_}"
+PREFIX="${1:-run_24_}"
 MAX_PREFIX_CHARS="${2:--1}"
 OUTPUT_ROOT="/data0/sebastian.cavada/compositional-physics/tiny_vqa_creation/output"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -11,8 +11,8 @@ run_dirs=("${OUTPUT_ROOT}/${PREFIX}"*)
 shopt -u nullglob
 
 if [ ${#run_dirs[@]} -eq 0 ]; then
-  echo "No run folders found for prefix '${PREFIX}' in ${OUTPUT_ROOT}" >&2
-  exit 1
+  echo "Warning: no run folders found for prefix '${PREFIX}' in ${OUTPUT_ROOT}" >&2
+  exit 0
 fi
 
 for run_dir in "${run_dirs[@]}"; do
@@ -29,8 +29,11 @@ for run_dir in "${run_dirs[@]}"; do
   fi
 
   echo "Sanitizing ${run_name}"
-  python "${SCRIPT_DIR}/sanitize_answers.py" \
+  if ! python "${SCRIPT_DIR}/sanitize_answers.py" \
     "${input_dir}" \
     "${output_dir}" \
-    --max-prefix-chars "${MAX_PREFIX_CHARS}"
+    --max-prefix-chars "${MAX_PREFIX_CHARS}"; then
+    echo "Warning: sanitize failed for ${run_name}; continuing" >&2
+    continue
+  fi
 done

@@ -4,18 +4,21 @@ import argparse
 from pathlib import Path
 
 import pandas as pd
+from matplotlib.colors import LinearSegmentedColormap
 
 from utils.utils_read import load_results, _sanitize_answer
 import utils.utils_graph as utils_graph
 from utils.utils_graph import create_graph_from_eval_balanced
 
+run = "23"
+
 DEFAULT_ABLATIONS = [
-    "run_23_ablation_baseline",
-    "run_23_roi_circling_no_text",
-    "run_23_roi_circling_no_text_layout_position",
-    "run_23_roi_circling_text",
-    "run_23_roi_circling_text_layout_position",
-    "run_23_black",
+    f"run_{run}_roi_ablation_baseline",
+    f"run_{run}_roi_circling_no_text",
+    f"run_{run}_roi_circling_no_text_layout_position",
+    f"run_{run}_roi_circling_text",
+    f"run_{run}_roi_circling_text_layout_position",
+    f"run_{run}_no_roi_circling_yes_text_no_layout_position",
 ]
 
 TARGET_CATEGORIES = [
@@ -30,48 +33,12 @@ DISPLAY_NAMES = ["Mass", "Density", "Young Modulus", "Poisson Ratio", "Mat. ID"]
 EXCLUDE_MODELS: list[str] = []
 
 TABLE_ROWS = [
-    (
-        "run_23_ablation_baseline",
-        "\\checkmark",
-        "\\checkmark",
-        "$\\times$",
-        "$\\times$",
-    ),
-    (
-        "run_23_roi_circling_no_text",
-        "\\checkmark",
-        "$\\times$",
-        "\\checkmark",
-        "$\\times$",
-    ),
-    (
-        "run_23_roi_circling_no_text_layout_position",
-        "\\checkmark",
-        "$\\times$",
-        "\\checkmark",
-        "\\checkmark",
-    ),
-    (
-        "run_23_roi_circling_text",
-        "\\checkmark",
-        "\\checkmark",
-        "\\checkmark",
-        "$\\times$",
-    ),
-    (
-        "run_23_roi_circling_text_layout_position",
-        "\\checkmark",
-        "\\checkmark",
-        "\\checkmark",
-        "\\checkmark",
-    ),
-    (
-        "run_23_black",
-        "$\\times$",
-        "$\\times$",
-        "$\\times$",
-        "$\\times$",
-    ),
+    (f"run_{run}_roi_ablation_baseline", "\\checkmark", "-", "-"),
+    # (f"run_{run}_no_roi_circling_yes_text_no_layout_position", "\\checkmark", "\\checkmark", "-",), # -> this is fundamentally the ablation    
+    (f"run_{run}_roi_circling_text_layout_position", "\\checkmark", "\\checkmark", "\\checkmark"),
+    (f"run_{run}_roi_circling_text", "\\checkmark", "-", "\\checkmark"),
+    (f"run_{run}_roi_circling_no_text_layout_position", "-", "\\checkmark", "\\checkmark"),
+    (f"run_{run}_roi_circling_no_text", "-", "-", "\\checkmark"),
 ]
 
 
@@ -79,7 +46,9 @@ def _get_results_dir(base: Path, run_name: str) -> Path:
     sanitized = base / run_name / f"results_{run_name}_sanitized"
     if sanitized.exists():
         return sanitized
-    return base / run_name / f"results_{run_name}"
+    raise FileNotFoundError(
+        f"Missing sanitized results dir: {sanitized}. Please generate sanitized outputs."
+    )
 
 
 def build_eval_df(base_path: str | Path, run_name: str) -> pd.DataFrame | None:
@@ -172,16 +141,16 @@ def main() -> None:
     acc_mats: dict[str, pd.DataFrame] = {}
     acc_mats_sub: dict[str, pd.DataFrame] = {}
     for run_name, eval_df in zip(run_names, eval_dfs):
-        eval_df_single_image = eval_df[eval_df["idx"].astype(str).str.contains("_i")]
-        print("number of questions:", len(eval_df_single_image))
+        eval_df_multi_frame = eval_df[eval_df["idx"].astype(str).str.contains("_g")]
+        print("number of questions:", len(eval_df_multi_frame))
         print(run_name)
 
         acc_mat, _ = create_graph_from_eval_balanced(
-            eval_base=eval_df_single_image,
+            eval_base=eval_df_multi_frame,
             index_to_use="question_id",
             title=(
                 "Balanced accuracy by question_id and general models - "
-                f"single-image - {run_name}"
+                f"multi-frame - {run_name}"
             ),
             color_by_mode=True,
         )
@@ -189,11 +158,11 @@ def main() -> None:
         acc_mats[run_name] = acc_mat
 
         acc_mat_sub, _ = create_graph_from_eval_balanced(
-            eval_base=eval_df_single_image,
+            eval_base=eval_df_multi_frame,
             index_to_use="sub_category",
             title=(
                 "Balanced accuracy by sub_category and general models - "
-                f"single-image - {run_name}"
+                f"multi-frame - {run_name}"
             ),
             color_by_mode=True,
         )
@@ -213,24 +182,23 @@ def main() -> None:
         std_val = series.std(ddof=1) if len(series) > 1 else 0.0
         return mean_val, std_val, f"{mean_val:.1f} $\\pm$ {std_val:.1f}"
 
-    def _get_heatmap_color(val: float) -> str:
-        val = max(0.0, min(100.0, val))
-        if val < 50:
-            norm = val / 50.0
-            r, g, b = 255, int(255 * norm), 0
+    colors_balanced = ["#E57373", "#F6E6B3", "#8BC87A"]
+    cmap_balanced = LinearSegmentedColormap.from_list("soft_r2g", colors_balanced)
+
+    def _get_heatmap_color(val: float, min_val: float, max_val: float) -> str:
+        if max_val <= min_val:
+            norm = 0.0
         else:
-            norm = (val - 50.0) / 50.0
-            r, g, b = int(255 * (1 - norm)), 255, 0
-        mix_white = 0.4
-        r = int(r * (1 - mix_white) + 255 * mix_white)
-        g = int(g * (1 - mix_white) + 255 * mix_white)
-        b = int(b * (1 - mix_white) + 255 * mix_white)
+            norm = (val - min_val) / (max_val - min_val)
+        norm = max(0.0, min(1.0, norm))
+        r_f, g_f, b_f, _ = cmap_balanced(norm)
+        r, g, b = int(r_f * 255), int(g_f * 255), int(b_f * 255)
         return f"{r:02X}{g:02X}{b:02X}"
 
-    def _colorize(mean_val: float, std_val: float) -> str:
+    def _colorize(mean_val: float, std_val: float, min_val: float, max_val: float) -> str:
         if pd.isna(mean_val):
             return "--"
-        color_hex = _get_heatmap_color(mean_val)
+        color_hex = _get_heatmap_color(mean_val, min_val, max_val)
         return f"\\cellcolor[HTML]{{{color_hex}}}{{{mean_val:.1f} $\\pm$ {std_val:.1f}}}"
 
     table_data: dict[str, dict[str, object]] = {}
@@ -245,84 +213,65 @@ def main() -> None:
             try:
                 row = acc_mats_sub[run_name].loc[cat]
                 mean_cat, std_cat, _ = _format_mean_std(row[1:] * 100)
-                sub_cat_values.append(_colorize(mean_cat, std_cat))
                 sub_cat_means.append(mean_cat)
                 sub_cat_stds.append(std_cat)
             except KeyError:
-                sub_cat_values.append("--")
                 sub_cat_means.append(float("nan"))
                 sub_cat_stds.append(float("nan"))
             except Exception as exc:
                 print(f"Error processing {cat} for {run_name}: {exc}")
-                sub_cat_values.append("err")
                 sub_cat_means.append(float("nan"))
                 sub_cat_stds.append(float("nan"))
 
         table_data[run_name] = {
-            "main_res": _colorize(mean_acc, std_acc),
-            "subs": sub_cat_values,
             "main_mean": mean_acc,
             "main_std": std_acc,
             "sub_means": sub_cat_means,
             "sub_stds": sub_cat_stds,
         }
 
-    overall_main_vals = pd.Series(
-        [table_data[run]["main_mean"] for run in run_names], dtype="float64"
-    )
-    overall_main_mean = overall_main_vals.mean()
-    overall_main_std = overall_main_vals.std(ddof=1) if len(overall_main_vals) > 1 else 0.0
-    overall_main_str = f"{overall_main_mean:.1f} $\\pm$ {overall_main_std:.1f}"
-
-    overall_subs = []
-    for idx in range(len(TARGET_CATEGORIES)):
-        vals = pd.Series(
-            [table_data[run]["sub_means"][idx] for run in run_names],
-            dtype="float64",
+    all_vals = []
+    for run_name in run_names:
+        data = table_data.get(run_name, {})
+        all_vals.extend(
+            v for v in [data.get("main_mean")] + list(data.get("sub_means", []))
+            if v is not None and not pd.isna(v)
         )
-        mean_val = vals.mean()
-        std_val = vals.std(ddof=1) if len(vals) > 1 else 0.0
-        overall_subs.append(f"{mean_val:.1f} $\\pm$ {std_val:.1f}")
+    min_val = min(all_vals) if all_vals else 0.0
+    max_val = max(all_vals) if all_vals else 100.0
 
-    latex_header_subs = " & ".join(DISPLAY_NAMES)
-    latex_col_def = "cccc|c|" + ("c" * len(DISPLAY_NAMES))
+    def _row_values(run_key: str) -> list[str]:
+        data = table_data.get(run_key)
+        if not data:
+            return ["--"] * (len(TARGET_CATEGORIES) + 1)
+        subs = [
+            _colorize(m, s, min_val, max_val)
+            for m, s in zip(data["sub_means"], data["sub_stds"])
+        ]
+        main_val = _colorize(data["main_mean"], data["main_std"], min_val, max_val)
+        return subs + [main_val]
 
-    def get_subs_latex(run_key: str) -> str:
-        return " & ".join(table_data.get(run_key, {}).get("subs", ["--"] * len(DISPLAY_NAMES)))
-
-    def get_main_latex(run_key: str) -> str:
-        return table_data.get(run_key, {}).get("main_res", "--")
+    row_lines = []
+    for idx, (run_key, obj_name, location, circling) in enumerate(TABLE_ROWS):
+        row_vals = " & ".join(_row_values(run_key))
+        row_lines.append(
+            f"         {obj_name} & {location} & {circling} & {row_vals} \\\\"
+        )
+        if idx == 2:
+            row_lines.append("         \\midrule")
 
     latex_table = (
-        "\\begin{table}[t]\n"
-        "    \\centering\n"
-        "    % IMPORTANT: Requires \\\\usepackage[table]{xcolor} in preamble\n"
         "    \\resizebox{\\linewidth}{!}{%\n"
-        f"    \\begin{{tabular}}{{{latex_col_def}}}\n"
+        "    \\begin{tabular}{cc|c|ccccc|c}\n"
         "         \\toprule\n"
-        f"         Image & Text & ROI & Layout & Acc. (\\%) & {latex_header_subs} \\\\\n"
+        "         \\multicolumn{2}{c|}{\\textit{Textual cues}} & \\textit{Visual cues} \\\\\n"
+        "         Obj. name & Location & Circling & Mass & Density & Young Modulus & Poisson Ratio & Mat. ID & Avg. (\\%)\\\\\n"
         "         \\midrule          \n"
-        f"         % VQA Baseline\n"
-        f"         {TABLE_ROWS[0][1]} & {TABLE_ROWS[0][2]} & {TABLE_ROWS[0][3]} & {TABLE_ROWS[0][4]} & {get_main_latex(TABLE_ROWS[0][0])} & {get_subs_latex(TABLE_ROWS[0][0])} \\\\\n"
-        "         \\midrule\n"
-        f"         % Visual Only (ROI)\n"
-        f"         {TABLE_ROWS[1][1]} & {TABLE_ROWS[1][2]} & {TABLE_ROWS[1][3]} & {TABLE_ROWS[1][4]} & {get_main_latex(TABLE_ROWS[1][0])} & {get_subs_latex(TABLE_ROWS[1][0])} \\\\\n"
-        f"         % Visual Only (ROI + Layout)\n"
-        f"         {TABLE_ROWS[2][1]} & {TABLE_ROWS[2][2]} & {TABLE_ROWS[2][3]} & {TABLE_ROWS[2][4]} & {get_main_latex(TABLE_ROWS[2][0])} & {get_subs_latex(TABLE_ROWS[2][0])} \\\\\n"
-        "         \\midrule\n"
-        f"         % Visual + Text (ROI)\n"
-        f"         {TABLE_ROWS[3][1]} & {TABLE_ROWS[3][2]} & {TABLE_ROWS[3][3]} & {TABLE_ROWS[3][4]} & {get_main_latex(TABLE_ROWS[3][0])} & {get_subs_latex(TABLE_ROWS[3][0])} \\\\\n"
-        f"         % Visual + Text (ROI + Layout)\n"
-        f"         {TABLE_ROWS[4][1]} & {TABLE_ROWS[4][2]} & {TABLE_ROWS[4][3]} & {TABLE_ROWS[4][4]} & {get_main_latex(TABLE_ROWS[4][0])} & {get_subs_latex(TABLE_ROWS[4][0])} \\\\\n"
-        "         \\midrule\n"
-        f"         % No Cue\n"
-        f"         {TABLE_ROWS[5][1]} & {TABLE_ROWS[5][2]} & {TABLE_ROWS[5][3]} & {TABLE_ROWS[5][4]} & {get_main_latex(TABLE_ROWS[5][0])} & {get_subs_latex(TABLE_ROWS[5][0])} \\\\\n"
+        + "\n".join(row_lines)
+        + "\n"
         "         \\bottomrule\n"
         "    \\end{tabular}%\n"
-        "    }\n"
-        "    \\caption{Ablation matrix. Ablation matrix of grounding cues on Physics Properties questions, divided by sub-categories. Main accuracy reported as mean $\\pm$ std. Colors indicate performance (Red=Low, Green=High).}\n"
-        "    \\label{tab:grounding_matrix}\n"
-        "\\end{table}\n"
+        "    }"
     )
 
     output_dir = Path("output") / args.output_run_name
@@ -334,7 +283,7 @@ def main() -> None:
     line = "  ".join(h.ljust(w) for h, w in zip(header, widths))
     print(line)
     print("-" * len(line))
-    for run_key, _, _, _, _ in TABLE_ROWS:
+    for run_key, _, _, _ in TABLE_ROWS:
         data = table_data.get(run_key)
         if not data:
             row = [run_key, "--"] + ["--"] * len(DISPLAY_NAMES)

@@ -30,25 +30,25 @@ GENERAL_RUN_COUNT=25
 
 ####################
 
-python main_parallel.py --simulation_path "${BASE_PATH}/random/" "${BASE_PATH}/random-cam-stationary/" \
-    --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
-    --run_name "run_${GENERAL_RUN_COUNT}_general" \
-    --n_scenes 5000 \
-    --exclude_simulations_file "problematic_paths.txt" \
-    --n_proc $CPUS \
-    --timeit \
-    --print_errors \
-    # --include_categories "spatial_reasoning" \
+# python main_parallel.py --simulation_path "${BASE_PATH}/random/" "${BASE_PATH}/random-cam-stationary/" \
+#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
+#     --run_name "run_${GENERAL_RUN_COUNT}_general" \
+#     --n_scenes 5000 \
+#     --exclude_simulations_file "problematic_paths.txt" \
+#     --n_proc $CPUS \
+#     --timeit \
+#     --print_errors \
+#     # --include_categories "spatial_reasoning" \
 
-RUN_NAME="run_${GENERAL_RUN_COUNT}_general"
-python ./subsample_questions_percentage.py \
-    --count 10000 \
-    --input ../output/${RUN_NAME}/test_${RUN_NAME}.json \
-    --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
-    --percentage-map ./balancing_sub_categories.json \
-    --seed 42
+# RUN_NAME="run_${GENERAL_RUN_COUNT}_general"
+# python ./subsample_questions_percentage.py \
+#     --count 10000 \
+#     --input ../output/${RUN_NAME}/test_${RUN_NAME}.json \
+#     --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
+#     --percentage-map ./balancing_sub_categories.json \
+#     --seed 42
 
-cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
+# cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json
 
 # RUN_NAME_OBJ="run_${GENERAL_RUN_COUNT}_general_obj_num"
 # python ./subsample_questions_numbers.py \
@@ -63,23 +63,23 @@ cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_
 
 # -------------------------------------------------------------
 # 10K general - yms variations
-# RUN_NAME="run_${GENERAL_RUN_COUNT}_general_yms-variations"
+RUN_NAME="run_${GENERAL_RUN_COUNT}_general_yms-variations"
 
-# python main_parallel.py --simulation_path "${BASE_PATH}/yms-variations/" \
-#     --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
-#     --run_name "run_${GENERAL_RUN_COUNT}_general_yms-variations" \
-#     --n_scenes 3000 \
-#     --per_object_count 200 \
-#     --n_proc $CPUS \
-#     --timeit \
+python main_parallel.py --simulation_path "${BASE_PATH}/yms-variations/" \
+    --destination_simulation_path ${DESTINATION_SIMULATION_PATH} \
+    --run_name "run_${GENERAL_RUN_COUNT}_general_yms-variations" \
+    --n_scenes 3000 \
+    --per_object_count 200 \
+    --n_proc $CPUS \
+    --timeit \
 
-# python ./subsample_questions_yms_variations.py \
-#     --input ../output/${RUN_NAME}/test_${RUN_NAME}.json \
-#     --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
-#     --subcategory-map ./balancing_sub_categories.json \
-#     --total 10000 \
+python ./subsample_questions_yms_variations.py \
+    --input ../output/${RUN_NAME}/test_${RUN_NAME}.json \
+    --output ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json \
+    --subcategory-map ./balancing_sub_categories.json \
+    --total 10000 \
 
-# cp ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json ../output/${RUN_NAME}/test_${RUN_NAME}_karo_10K.json
+cp ../output/${RUN_NAME}/test_${RUN_NAME}_10K.json ../output/${RUN_NAME}/test_${RUN_NAME}_karo_10K.json
 
 
 # -------------------------------------------------------------

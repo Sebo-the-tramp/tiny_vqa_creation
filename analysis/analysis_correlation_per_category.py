@@ -9,10 +9,8 @@ from utils.utils_read import load_results, _sanitize_answer
 import utils.utils_graph as utils_graph
 import utils.utils_graph_correlation as utils_graph_correlation
 from utils.utils_graph_correlation import (
-    create_num_objects_violin_per_question_id,
+    create_num_objects_violin_grid,
 )
-
-# from utils.utils_paper import print_heatmap_table_latex
 
 
 def add_model_mode(
@@ -85,7 +83,9 @@ def build_eval_df(base_path: str | Path) -> pd.DataFrame:
     if not model_cols:
         raise ValueError(f"No model answer columns found in {results_dir}")
 
-    df["answer"] = df["answer"].apply(_sanitize_answer)
+    df["answer"] = df["answer"].apply(
+        lambda a: _sanitize_answer(a, max_prefix_chars=None)
+    )
 
     id_cols = [
         c
@@ -133,7 +133,7 @@ def main() -> None:
         "--base-path",
         default="/data0/sebastian.cavada/compositional-physics/tiny_vqa_creation/output/",
     )
-    parser.add_argument("--run-name", default="run_24_general")
+    parser.add_argument("--run-name", default="run_23_general_obj_num")
     parser.add_argument(
         "--mode",
         choices=["mixed", "general", "image-only"],
@@ -155,17 +155,38 @@ def main() -> None:
 
     eval_df = build_eval_df(args.base_path)
     eval_df = add_model_mode(eval_df)
+    if "category" not in eval_df.columns:
+        raise KeyError("eval_df must include 'category' to plot top categories.")
+    eval_df["sub_category"] = eval_df["category"]
 
     for mode_label, mode_df in select_eval_df(
         eval_df, mode=args.mode, split_by_mode=args.split_by_mode
     ):
-        create_num_objects_violin_per_question_id(
+        for x in range(1):
+            create_num_objects_violin_grid(
+                mode_df,
+                group_by="model_id",
+                save_per_category=True,
+                per_category_dirname=f"num_objects_per_category_{mode_label}",
+                save_grid=True,
+                save_legend=True,
+                legend_filename=f"num_objects_legend_category_{mode_label}.png",
+                legend_cols=6,
+                sample_frac=0.8,
+                sample_seed=x,
+                y_limit_mode="fixed",
+            )
+
+        create_num_objects_violin_grid(
             mode_df,
-            group_by="model_id",
-            per_question_dirname=f"num_objects_per_question_{mode_label}",
+            group_by="family",
+            save_per_category=True,
+            per_category_dirname=f"num_objects_per_category_family_{mode_label}",
+            save_grid=False,
             save_legend=True,
-            legend_filename=f"num_objects_legend_question_{mode_label}.png",
-            y_limit_mode="fixed",
+            legend_filename=f"num_objects_legend_category_families_{mode_label}.png",
+            legend_cols=4,
+            sample_frac=0.8,
         )
 
 

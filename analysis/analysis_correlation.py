@@ -157,7 +157,7 @@ def main() -> None:
     utils_graph.RUN_NAME = args.run_name
     utils_graph_correlation.RUN_NAME = args.run_name
 
-    output_dir = Path("analysis/output") / args.run_name
+    output_dir = Path("output_plots") / args.run_name
     output_dir.mkdir(parents=True, exist_ok=True)
 
     eval_df = build_eval_df(args.base_path)

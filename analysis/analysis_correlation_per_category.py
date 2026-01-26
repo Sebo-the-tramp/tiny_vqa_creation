@@ -12,8 +12,6 @@ from utils.utils_graph_correlation import (
     create_num_objects_violin_grid,
 )
 
-# from utils.utils_paper import print_heatmap_table_latex
-
 
 def add_model_mode(
     eval_df: pd.DataFrame, metadata_path: str | Path = "utils/metadata.json"
@@ -135,7 +133,7 @@ def main() -> None:
         "--base-path",
         default="/data0/sebastian.cavada/compositional-physics/tiny_vqa_creation/output/",
     )
-    parser.add_argument("--run-name", default="run_24_general_obj_num")
+    parser.add_argument("--run-name", default="run_23_general_obj_num")
     parser.add_argument(
         "--mode",
         choices=["mixed", "general", "image-only"],
@@ -147,17 +145,6 @@ def main() -> None:
         action="store_true",
         help="Generate separate outputs per model mode when --mode=mixed.",
     )
-    parser.add_argument(
-        "--family-marker-mode",
-        choices=["distinct", "rotated"],
-        default="distinct",
-        help="Use distinct shapes per family or rotate a base shape per family.",
-    )
-    parser.add_argument(
-        "--family-marker-base",
-        default="^",
-        help="Base marker to rotate when --family-marker-mode=rotated.",
-    )
     args = parser.parse_args()
 
     utils_graph.RUN_NAME = args.run_name
@@ -168,6 +155,9 @@ def main() -> None:
 
     eval_df = build_eval_df(args.base_path)
     eval_df = add_model_mode(eval_df)
+    if "category" not in eval_df.columns:
+        raise KeyError("eval_df must include 'category' to plot top categories.")
+    eval_df["sub_category"] = eval_df["category"]
 
     for mode_label, mode_df in select_eval_df(
         eval_df, mode=args.mode, split_by_mode=args.split_by_mode
@@ -177,30 +167,26 @@ def main() -> None:
                 mode_df,
                 group_by="model_id",
                 save_per_category=True,
-                per_category_dirname=f"num_objects_per_model_{mode_label}",
+                per_category_dirname=f"num_objects_per_category_{mode_label}",
                 save_grid=True,
                 save_legend=True,
-                legend_filename=f"num_objects_legend_models_{mode_label}.png",
+                legend_filename=f"num_objects_legend_category_{mode_label}.png",
                 legend_cols=6,
                 sample_frac=0.8,
                 sample_seed=x,
                 y_limit_mode="fixed",
-                family_marker_mode=args.family_marker_mode,
-                family_marker_base=args.family_marker_base,
             )
 
         create_num_objects_violin_grid(
             mode_df,
             group_by="family",
             save_per_category=True,
-            per_category_dirname=f"num_objects_per_family_{mode_label}",
+            per_category_dirname=f"num_objects_per_category_family_{mode_label}",
             save_grid=False,
             save_legend=True,
-            legend_filename=f"num_objects_legend_families_{mode_label}.png",
+            legend_filename=f"num_objects_legend_category_families_{mode_label}.png",
             legend_cols=4,
             sample_frac=0.8,
-            family_marker_mode=args.family_marker_mode,
-            family_marker_base=args.family_marker_base,
         )
 
 

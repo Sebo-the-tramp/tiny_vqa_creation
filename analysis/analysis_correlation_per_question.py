@@ -133,7 +133,7 @@ def main() -> None:
         "--base-path",
         default="/data0/sebastian.cavada/compositional-physics/tiny_vqa_creation/output/",
     )
-    parser.add_argument("--run-name", default="run_23_general_obj_num")
+    parser.add_argument("--run-name", default="run_24_general")
     parser.add_argument(
         "--mode",
         choices=["mixed", "general", "image-only"],

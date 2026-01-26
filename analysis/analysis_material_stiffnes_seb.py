@@ -14,6 +14,10 @@ from utils.utils_graph import (
     create_accuracy_bench_vs_common_sense,
 )
 
+from utils.utils_graph_correlation import (
+    create_material_stiffness_violin_grid,
+)
+
 from utils.utils_paper import print_heatmap_table_latex
 
 
@@ -28,6 +32,7 @@ def build_eval_df(base_path: str | Path) -> pd.DataFrame:
         merge_model_answers=True,
         model_answers_wide=True,
         cache=True,
+        add_sim_metadata=True
     )
 
     results_dir = base / run_folder / f"results_{run_folder}_sanitized"
@@ -55,6 +60,7 @@ def build_eval_df(base_path: str | Path) -> pd.DataFrame:
             "mode_test",
             "mode_val",
             "mode",
+            "object-yms"
         ]
         if c in df.columns
     ]
@@ -88,78 +94,52 @@ def main() -> None:
         "--base-path",
         default="/data0/sebastian.cavada/compositional-physics/tiny_vqa_creation/output/",
     )
-    parser.add_argument("--run-name", default="run_24_general")
+    parser.add_argument("--run-name", default="run_24_general_yms-variations")
     args = parser.parse_args()
 
     utils_graph.RUN_NAME = args.run_name
 
-    output_dir = Path("output") / args.run_name
+    output_dir = Path("/data0/sebastian.cavada/compositional-physics/tiny_vqa_creation/analysis/output") / args.run_name
     output_dir.mkdir(parents=True, exist_ok=True)
 
     eval_df = build_eval_df(args.base_path)
 
     # print(eval_df.head().to_string())
-
-    eval_df_single_image = eval_df[eval_df["idx"].astype(str).str.contains("_i")]
-    acc_mat_single, _ = create_graph_from_eval_balanced(
-        eval_base=eval_df_single_image,
-        index_to_use="question_id",
-        title="Balanced accuracy by question_id and general models - single-image task",
-        color_by_mode=True,
-        show=False,
-        include_counts=True,
-        color_question_id_by_subcategory=True,
-    )
-
-    eval_df_multi_image = eval_df[eval_df["idx"].astype(str).str.contains("_g")]
-    eval_df_multi_image = eval_df_multi_image.groupby("model_id").filter(
-        lambda g: g["model_answer"].notna().any()
-    )
-    acc_mat_multi, _ = create_graph_from_eval_balanced(
-        eval_base=eval_df_multi_image,  # your row-level eval with is_correct
-        index_to_use="question_id",
-        title="Balanced accuracy by question_id and general models - multi-image task",
-        color_by_mode=True,
-        show=False,
-        include_counts=True,
-        color_question_id_by_subcategory=True,
-    )
-
-    print_heatmap_table_latex(
-        acc_mat_single, output_path=str(output_dir / "heatmap_table_single.txt")
-    )
-    print_heatmap_table_latex(
-        acc_mat_multi, output_path=str(output_dir / "heatmap_table_multi.txt")
-    )
-
-    # eval_df_all = eval_df
-    eval_df_multi_image = eval_df
-
-    acc_mat, _ = create_graph_from_eval_balanced(
-        eval_base=eval_df_multi_image,
-        index_to_use="sub_category",
-        title="Balanced accuracy by sub_category and model - single-image",
-        color_by_mode=True,
-        show=False,
-    )
-
-    create_sub_categories_summary(
-        acc_mat=acc_mat,
-        title="Sub-category accuracy summary - all",
-        show=False,
-    )
-
-    create_correlation_common_sense(
+    fig = create_material_stiffness_violin_grid(
         eval_df,
-        acc_mat,
-        title="Correlation common sense",
+        output_dir=output_dir,
         show=False,
+        save_per_category=True,
+        save_grid=True,
+        save_legend=True,
+        y_limit_mode="fit",
+        show_legend=False,        
     )
 
-    create_accuracy_bench_vs_common_sense(
-        eval_df,
-        acc_mat,
-    )
+    # eval_df_single_image = eval_df[eval_df["idx"].astype(str).str.contains("_i")]
+    # acc_mat_single, _ = create_graph_from_eval_balanced(
+    #     eval_base=eval_df_single_image,
+    #     index_to_use="question_id",
+    #     title="Balanced accuracy by question_id and general models - single-image task",
+    #     color_by_mode=True,
+    #     show=False,
+    #     include_counts=True,
+    #     color_question_id_by_subcategory=True,
+    # )
+
+    # eval_df_multi_image = eval_df[eval_df["idx"].astype(str).str.contains("_g")]
+    # eval_df_multi_image = eval_df_multi_image.groupby("model_id").filter(
+    #     lambda g: g["model_answer"].notna().any()
+    # )
+    # acc_mat_multi, _ = create_graph_from_eval_balanced(
+    #     eval_base=eval_df_multi_image,  # your row-level eval with is_correct
+    #     index_to_use="question_id",
+    #     title="Balanced accuracy by question_id and general models - multi-image task",
+    #     color_by_mode=True,
+    #     show=False,
+    #     include_counts=True,
+    #     color_question_id_by_subcategory=True,
+    # )
 
 
 if __name__ == "__main__":

@@ -11,5 +11,11 @@
   "run_22_roi_circling_text_layout_position",
   "run_22_roi_circling_no_text_layout_position",
 
-  "run_23_general"
+  "run_23_general",
+
+  "run_24_no_roi_circling_no_text_layout_position",
+  "run_24_no_roi_circling_yes_text_layout_position",
+  "run_24_roi_circling_no_text",
+
+  "run_25_general"
 ]

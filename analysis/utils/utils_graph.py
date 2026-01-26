@@ -1,6 +1,7 @@
 import os
 import json
 import hashlib
+import re
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -11,6 +12,10 @@ from matplotlib.colors import LogNorm
 from matplotlib.lines import Line2D
 
 from scipy.stats import pearsonr
+try:
+    from adjustText import adjust_text
+except ImportError:  # adjustText is optional; plotting still works without it.
+    adjust_text = None
 
 colors_balanced = ["#E57373", "#F6E6B3", "#8BC87A"]
 cmap_balanced = LinearSegmentedColormap.from_list("soft_r2g", colors_balanced)
@@ -574,6 +579,17 @@ def create_correlation_common_sense(
 
 
 def create_accuracy_bench_vs_common_sense(eval_df: pd.DataFrame, acc_mat: pd.DataFrame):
+    def _standardize_model_label(model_id: str) -> str:
+        label = model_id.replace("2_5", "2.5")
+        label = label.replace("_", "-")
+        label = re.sub(
+            r"(\d+(?:\.\d+)?)b\b",
+            lambda m: f"{m.group(1)}B",
+            label,
+            flags=re.IGNORECASE,
+        )
+        return label
+
     with open("./utils/common_sense.json", "r") as file:
         common_sense_df = pd.DataFrame(json.load(file))
     with open("./utils/metadata.json", "r") as file:
@@ -590,10 +606,7 @@ def create_accuracy_bench_vs_common_sense(eval_df: pd.DataFrame, acc_mat: pd.Dat
 
     for model_id in model_unique_ids:
         for cs_model_id in common_sense_df["Method"].values:
-            modified_model_id = model_id
-            if "2_5" in model_id:
-                modified_model_id = model_id.replace("2_5", "2.5")
-            if modified_model_id in cs_model_id:
+            if _standardize_model_label(model_id) in cs_model_id:
                 # print(f"Model: {modified_model_id}, Common Sense Score: {cs_model_id}")
                 row = common_sense_df[common_sense_df["Method"] == cs_model_id].iloc[0]
                 common_sense_accuracy[model_id] = row.get("Avg. Score")
@@ -656,6 +669,7 @@ def create_accuracy_bench_vs_common_sense(eval_df: pd.DataFrame, acc_mat: pd.Dat
     )
 
     plt.figure(figsize=(12, 6))
+    sns.set_style("white")
 
     # Ensure numeric columns
     num_cols = ["common_sense_accuracy", "balanced_accuracy"]
@@ -665,6 +679,15 @@ def create_accuracy_bench_vs_common_sense(eval_df: pd.DataFrame, acc_mat: pd.Dat
         eval_df_accuracy_total_per_model[c] = pd.to_numeric(
             eval_df_accuracy_total_per_model[c], errors="coerce"
         ).astype(float)
+
+    balanced_max = eval_df_accuracy_total_per_model["balanced_accuracy"].max()
+    common_max = eval_df_accuracy_total_per_model["common_sense_accuracy"].max()
+    scale_balanced = pd.notna(balanced_max) and balanced_max <= 1.0 and common_max > 1.5
+    scale_common = pd.notna(common_max) and common_max <= 1.0 and balanced_max > 1.5
+    if scale_balanced:
+        eval_df_accuracy_total_per_model["balanced_accuracy"] *= 100.0
+    if scale_common:
+        eval_df_accuracy_total_per_model["common_sense_accuracy"] *= 100.0
 
     # 1. Calculate Pearson Correlation
     # Drop NaNs to ensure accurate calculation
@@ -714,20 +737,29 @@ def create_accuracy_bench_vs_common_sense(eval_df: pd.DataFrame, acc_mat: pd.Dat
             )
     ax = sns.scatterplot(**scatter_kwargs)
 
-    ax.set_xlabel("Common Sense Accuracy")
-    ax.set_ylabel("Mean Accuracy (LoFi)")
-    ax.set_title("LoFi Accuracy vs AVG. 8 Multimodal benchmarks, Colored by Mode")
-    ax.grid(alpha=0.3, which="both", axis="x")
+    label_fontsize = 18
+    tick_fontsize = 16
+    legend_fontsize = 14
+
+    ax.set_xlabel("Common Sense Accuracy", fontsize=label_fontsize)
+    ax.set_ylabel("NewtPhys Accuracy", fontsize=label_fontsize)
+    if scale_common:
+        ax.set_xlabel("Common Sense Accuracy (%)", fontsize=label_fontsize)
+    if scale_balanced:
+        ax.set_ylabel("NewtPhys Accuracy (%)", fontsize=label_fontsize)
+    ax.tick_params(axis="both", labelsize=tick_fontsize)
+    ax.grid(False)
 
     # 4. Display Pearson Correlation on the plot
     # transform=ax.transAxes uses relative coordinates (0,0 is bottom-left, 1,1 is top-right)
     ax.text(
-        0.05,
-        0.95,
+        0.02,
+        0.04,
         f"Pearson r = {r_val:.2f}",
         transform=ax.transAxes,
-        fontsize=12,
-        verticalalignment="top",
+        fontsize=legend_fontsize,
+        verticalalignment="bottom",
+        horizontalalignment="left",
         bbox=dict(boxstyle="round,pad=0.3", fc="white", ec="gray", alpha=0.8),
     )
 
@@ -755,22 +787,95 @@ def create_accuracy_bench_vs_common_sense(eval_df: pd.DataFrame, acc_mat: pd.Dat
         )
         for k in present
     ]
-    ax.legend(handles=handles, title="Model type", loc="best")
+    legend_mode = ax.legend(
+        handles=handles,
+        title="Model type",
+        loc="upper left",
+        fontsize=legend_fontsize,
+        title_fontsize=legend_fontsize,
+        frameon=True,
+    )
 
     # 6. Annotations
     annotate_df = eval_df_accuracy_total_per_model.dropna(
         subset=["common_sense_accuracy", "balanced_accuracy"]
     ).sort_values("balanced_accuracy", ascending=False)
+    annotate_df["model_label"] = annotate_df["model_id"].map(_standardize_model_label)
+    label_texts = []
     for _, r in annotate_df.iterrows():
-        ax.annotate(
-            r["model_id"],
-            xy=(r["common_sense_accuracy"], r["balanced_accuracy"]),
-            xytext=(5, 0),
-            textcoords="offset points",
-            va="center",
-            fontsize=8,
+        label = r["model_label"]
+        offset = (5, 0)
+        ha = "left"
+        if label in {"InternVL2.5-4B", "InternVL2.5-2B"}:
+            offset = (-10, 0)
+            ha = "right"
+        label_texts.append(
+            ax.annotate(
+                label,
+                xy=(r["common_sense_accuracy"], r["balanced_accuracy"]),
+                xytext=offset,
+                textcoords="offset points",
+                va="center",
+                ha=ha,
+                fontsize=12,
+            )
         )
 
+    if adjust_text is not None and label_texts:
+        adjust_text(
+            label_texts,
+            ax=ax,
+            expand_points=(1.2, 1.2),
+            expand_text=(1.1, 1.2),
+            arrowprops=dict(arrowstyle="-", color="0.5", lw=0.5),
+        )
+
+    if "params_b_plot" in eval_df_accuracy_total_per_model.columns:
+        params = eval_df_accuracy_total_per_model["params_b_plot"].dropna().astype(float)
+        positive = params[params > 0]
+        if not positive.empty:
+            min_pos = float(positive.min())
+            max_pos = float(positive.max())
+            size_min, size_max = 40, 900
+            size_norm = LogNorm(vmin=min_pos, vmax=max_pos)
+
+            def _size_for_param(val: float) -> float:
+                frac = float(size_norm(val))
+                return size_min + (size_max - size_min) * frac
+
+            size_refs = [1, 7, 20]
+            size_refs = [s for s in size_refs if min_pos <= s <= max_pos]
+            if not size_refs:
+                size_refs = [
+                    round(min_pos, 2),
+                    round((min_pos + max_pos) / 2, 2),
+                    round(max_pos, 2),
+                ]
+            size_handles = [
+                Line2D(
+                    [0],
+                    [0],
+                    marker="o",
+                    linestyle="",
+                    color="gray",
+                    markerfacecolor="none",
+                    markersize=_size_for_param(s) ** 0.5,
+                    label=f"{s}B",
+                )
+                for s in size_refs
+            ]
+            legend_sizes = ax.legend(
+                handles=size_handles,
+                title="Size (params)",
+                loc="lower right",
+                fontsize=legend_fontsize,
+                title_fontsize=legend_fontsize,
+                frameon=True,
+            )
+            ax.add_artist(legend_mode)
+            ax.add_artist(legend_sizes)
+
+    sns.despine(ax=ax)
     plt.tight_layout()
     run = globals().get("RUN_NAME", "default")
     os.makedirs(f"./output/{run}/", exist_ok=True)

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-PREFIX="${1:-run_24_}"
+PREFIX="${1:-run_25_}"
 MAX_PREFIX_CHARS="${2:--1}"
 OUTPUT_ROOT="/data0/sebastian.cavada/compositional-physics/tiny_vqa_creation/output"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

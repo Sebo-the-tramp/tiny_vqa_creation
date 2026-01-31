@@ -219,6 +219,7 @@ def main() -> None:
     with args.output.open("w", encoding="utf-8") as handle:
         json.dump(sampled, handle, indent=4)
 
+    print(f"Saved subsampled data to: {args.output}")
     print_summary(summary, totals, available_question_ids)
     print(f"\nTotal records overall: {len(sampled)}")
 

@@ -45,7 +45,6 @@ python ./subsample_questions_uniform_question_id.py \
     --count-per-sub-category 2000 \
     --input ../output/${RUN_NAME}/test_${RUN_NAME}.json \
     --output ../output/${RUN_NAME}/test_${RUN_NAME}_30K.json \
-    --percentage-map ./balancing_sub_categories.json \
     --seed 42
 
 # cp ../output/$RUN_NAME/test_${RUN_NAME}_10K.json ../output/$RUN_NAME/test_${RUN_NAME}_karo_10K.json

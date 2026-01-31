@@ -197,17 +197,20 @@ def main() -> None:
     summary: Dict[str, Counter[str]] = {}
     totals: Dict[str, int] = {}
     available_question_ids: Dict[str, int] = {}
+    warnings: List[str] = []
 
     for sub_category, records in grouped.items():
-        if len(records) < args.count_per_sub_category:
-            raise SystemExit(
-                f"Sub-category '{sub_category}' only has {len(records)} records, "
-                f"cannot reach {args.count_per_sub_category}."
+        target = args.count_per_sub_category
+        if len(records) < target:
+            warnings.append(
+                f"Warning: sub_category '{sub_category}' only has {len(records)} records; "
+                f"using all available instead of {target}."
             )
+            target = len(records)
         available_question_ids[sub_category] = len(group_by_question_id(records))
         chosen, counts = sample_sub_category(
             records=records,
-            count_per_sub_category=args.count_per_sub_category,
+            count_per_sub_category=target,
             rng=rng,
         )
         sampled.extend(chosen)
@@ -220,6 +223,10 @@ def main() -> None:
         json.dump(sampled, handle, indent=4)
 
     print(f"Saved subsampled data to: {args.output}")
+    if warnings:
+        print("\nWarnings:")
+        for warning in warnings:
+            print(warning)
     print_summary(summary, totals, available_question_ids)
     print(f"\nTotal records overall: {len(sampled)}")
 

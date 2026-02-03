@@ -24,11 +24,38 @@ for _name in ("Dark2", "tab10"):
     _cmap = plt.get_cmap(_name)
     _SUBCATEGORY_PALETTE.extend(to_hex(_cmap(i)) for i in range(_cmap.N))
 
+mapping_sub_cat_id = {
+    "visibility": "view_point",
+    "material_identification": "visual_percetion",
+    "size": "spatial_reasoning",
+    "camera_characteristics": "view_point",
+    "physics_property": "material_understanding",
+    "kinematics": "mechanics",
+    "collision": "mechanics",
+    "mass": "material_understanding",
+    "camera_motion": "temporal",
+    "layout": "spatial_reasoning",
+    "distance": "spatial_reasoning",
+    "event_ordering": "temporal",    
+}
+
+mapping_cat_colors = {
+    # More vivid pastel-like colors
+    "mechanics": "#FF5733",              # vivid orange-red
+    "spatial_reasoning": "#3498DB",       # vivid blue
+    "persistence": "#F43FC7",        # vivid turquoise
+    "temporal": "#0DA792",                # vivid orange
+    "view_point": "#EEAC32",              # vivid yellow
+    "material_understanding": "#2BAE27",   # vivid green
+}
 
 def _color_for_subcategory(sub_category: str, palette: list[str]) -> str:
-    digest = hashlib.md5(sub_category.encode("utf-8")).hexdigest()
-    idx = int(digest, 16) % len(palette)
-    return palette[idx]
+    cat_id = mapping_sub_cat_id.get(sub_category)
+    color = mapping_cat_colors.get(cat_id)
+    if color is not None:
+        return color
+    # Fallback to a stable default from the fixed palette when sub_category is unknown.
+    return next(iter(mapping_cat_colors.values()))
 
 
 def make_balanced_matrix(

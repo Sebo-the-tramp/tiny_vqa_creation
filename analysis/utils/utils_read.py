@@ -67,9 +67,9 @@ def load_results(
         else:
             print("Cache is missing required columns:", missing)
 
-            reply = input("There are missing columns in the cache. Proceed or reload? (y=use cache, n=reload): ").strip().lower()
-            if reply == "y":
-                return df_cached
+            # reply = input("There are missing columns in the cache. Proceed or reload? (y=use cache, n=reload): ").strip().lower()
+            # if reply == "y":
+            return df_cached
 
     df_test = _read_json_dataframe(test_path)
     df_val = _read_json_dataframe(val_path)
@@ -104,21 +104,21 @@ def load_results(
         )
 
         # here we can add the material of the simulation too
-        df['object-yms'] = df[sim_path_col].apply(
-            lambda s: re.search(r'(?<!\w)(stiff|soft|medium)(?!\w)', s).group(1)
-            if re.search(r'(?<!\w)(stiff|soft|medium)(?!\w)', s)
-            else "mixed"
-        )
+        # df['object-yms'] = df[sim_path_col].apply(
+        #     lambda s: re.search(r'(?<!\w)(stiff|soft|medium)(?!\w)', s).group(1)
+        #     if re.search(r'(?<!\w)(stiff|soft|medium)(?!\w)', s)
+        #     else "mixed"
+        # )
 
-        # if the interested objects are 2  we take the average of the visible pixels
-        df["visible_pixels_interested_object"] = df.apply(
-            lambda row: find_insterted_object_pixels_count(
-                str(row[sim_path_col]),
-                str(row["question"]),
-                row["file_name"],
-            )["visible_pixels_interested_object"],
-            axis=1,
-        )
+        # # if the interested objects are 2  we take the average of the visible pixels
+        # df["visible_pixels_interested_object"] = df.apply(
+        #     lambda row: find_insterted_object_pixels_count(
+        #         str(row[sim_path_col]),
+        #         str(row["question"]),
+        #         row["file_name"],
+        #     )["visible_pixels_interested_object"],
+        #     axis=1,
+        # )
 
     print("Merging model answers...")
     print(df.head().to_string())

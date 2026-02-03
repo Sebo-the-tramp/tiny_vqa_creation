@@ -10,7 +10,7 @@ from utils.utils_read import load_results, _sanitize_answer
 import utils.utils_graph as utils_graph
 from utils.utils_graph import create_graph_from_eval_balanced
 
-run = "23"
+run = "25"
 
 DEFAULT_ABLATIONS = [
     f"run_{run}_roi_ablation_baseline",
@@ -18,7 +18,7 @@ DEFAULT_ABLATIONS = [
     f"run_{run}_roi_circling_no_text_layout_position",
     f"run_{run}_roi_circling_text",
     f"run_{run}_roi_circling_text_layout_position",
-    f"run_{run}_no_roi_circling_yes_text_no_layout_position",
+    # f"run_{run}_no_roi_circling_yes_text_no_layout_position",
 ]
 
 TARGET_CATEGORIES = [
@@ -34,9 +34,9 @@ EXCLUDE_MODELS: list[str] = []
 
 TABLE_ROWS = [
     (f"run_{run}_roi_ablation_baseline", "\\checkmark", "-", "-"),
-    # (f"run_{run}_no_roi_circling_yes_text_no_layout_position", "\\checkmark", "\\checkmark", "-",), # -> this is fundamentally the ablation    
-    (f"run_{run}_roi_circling_text_layout_position", "\\checkmark", "\\checkmark", "\\checkmark"),
+    # (f"run_{run}_no_roi_circling_yes_text_no_layout_position", "\\checkmark", "\\checkmark", "-",), # -> this is fundamentally the ablation        
     (f"run_{run}_roi_circling_text", "\\checkmark", "-", "\\checkmark"),
+    (f"run_{run}_roi_circling_text_layout_position", "\\checkmark", "\\checkmark", "\\checkmark"),
     (f"run_{run}_roi_circling_no_text_layout_position", "-", "\\checkmark", "\\checkmark"),
     (f"run_{run}_roi_circling_no_text", "-", "-", "\\checkmark"),
 ]
@@ -98,8 +98,10 @@ def build_eval_df(base_path: str | Path, run_name: str) -> pd.DataFrame | None:
         id_vars=id_cols,
         value_vars=model_cols,
         var_name="model_id",
-        value_name="model_answer",
+        value_name="model_answer",    
     )
+
+    eval_df = eval_df[eval_df['sub_category'] != "material_identification"]
 
     valid = eval_df["model_answer"].notna() & eval_df["answer"].notna()
     eval_df["is_correct"] = pd.NA

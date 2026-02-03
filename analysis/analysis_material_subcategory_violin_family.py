@@ -18,7 +18,7 @@ def main() -> None:
         "--base-path",
         default="/data0/sebastian.cavada/compositional-physics/tiny_vqa_creation/output/",
     )
-    parser.add_argument("--run-name", default="run_23_general_obj_num")
+    parser.add_argument("--run-name", default="run_24_general")
     parser.add_argument(
         "--mode",
         choices=["mixed", "general", "image-only"],
@@ -27,7 +27,7 @@ def main() -> None:
     )
     parser.add_argument(
         "--top-category",
-        default="material_understandgin",
+        default="material_understanding",
         help="Top-level category to plot.",
     )
     parser.add_argument(

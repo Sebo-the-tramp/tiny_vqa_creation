@@ -125,12 +125,12 @@ def main() -> None:
         color_question_id_by_subcategory=True,
     )
 
-    print_heatmap_table_latex(
-        acc_mat_single, output_path=str(output_dir / "heatmap_table_single.txt")
-    )
-    print_heatmap_table_latex(
-        acc_mat_multi, output_path=str(output_dir / "heatmap_table_multi.txt")
-    )
+    # print_heatmap_table_latex(
+    #     acc_mat_single, output_path=str(output_dir / "heatmap_table_single.txt")
+    # )
+    # print_heatmap_table_latex(
+    #     acc_mat_multi, output_path=str(output_dir / "heatmap_table_multi.txt")
+    # )
 
     # eval_df_all = eval_df
     eval_df_multi_image = eval_df

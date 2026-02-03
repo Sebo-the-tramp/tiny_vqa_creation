@@ -192,12 +192,40 @@ def plot_subcategory_violin(
             .reset_index()
         )
     group_values = set(agg_df["group_label"])
-    top_order = sorted(
-        cat
-        for cat in pd.unique(plot_df["category"])
-        if cat != material_category and cat in group_values
-    )
-    material_order = [sub for sub in material_subcats if sub in group_values]
+    mapping_cat_colors = {
+        "mechanics": "#FF5733",
+        "spatial_reasoning": "#3498DB",
+        "persistence": "#F43FC7",
+        "temporal": "#0DA792",
+        "view_point": "#EEAC32",
+        "material_understanding": "#2BAE27",
+    }
+    mapping_sub_cat_id = {
+        "visibility": "view_point",
+        "material_identification": "material_understanding",
+        "size": "spatial_reasoning",
+        "camera_characteristics": "view_point",
+        "physics_property": "material_understanding",
+        "kinematics": "mechanics",
+        "collision": "mechanics",
+        "mass": "material_understanding",
+        "density": "material_understanding",
+        "poisson_ratio": "material_understanding",
+        "young_modulus": "material_understanding",
+        "camera_motion": "temporal",
+        "layout": "spatial_reasoning",
+        "distance": "spatial_reasoning",
+        "event_ordering": "temporal",
+    }
+    # top_order = sorted(
+    #     cat
+    #     for cat in pd.unique(plot_df["category"])
+    #     if cat != material_category and cat in group_values
+    # )
+    # material_order = [sub for sub in material_subcats if sub in group_values]
+
+    top_order = ["temporal" , "persistence", "view_point", "spatial_reasoning", "mechanics"]
+    material_order = ["material_identification", "poisson_ratio", "young_modulus", "density", "mass"]
     group_order = top_order + material_order
     if not group_order:
         group_order = sorted(pd.unique(agg_df["group_label"]))
@@ -205,8 +233,8 @@ def plot_subcategory_violin(
     sns.set_style("white")
     label_fontsize = 18
     tick_fontsize = 15
-    fig_width = 7.0 * 0.84 * 1.05 * 0.95
-    fig_height = max(4.0, 0.55 * len(group_order) + 1.2)
+    fig_width = 7.0 * 0.84 * 1.05 * 0.85
+    fig_height = max(4.0, 0.55 * len(group_order) + 1.8)
     fig, ax = plt.subplots(figsize=(fig_width, fig_height))
 
     sns.violinplot(
@@ -245,13 +273,14 @@ def plot_subcategory_violin(
         )
 
     ax.axvline(0.25, color="#d62728", linestyle="--", linewidth=1.2, zorder=-1)
-    ax.axvline(0.78, color="#8ecae6", linestyle="--", linewidth=1.2, zorder=-1)
+    ax.axvline(0.82, color="#8ecae6", linestyle="--", linewidth=1.2, zorder=-1)
     ax.set_xlabel("")
     ax.set_ylabel("")
     y_min = -1.0
-    y_max = len(group_order) - 0.5
+    y_max = len(group_order) - 0.5 + 0.5
     ax.set_xlim(0.0, 1.05)
     ax.set_xticks([0.25, 0.5, 0.75, 1.0])
+    ax.set_xticklabels(["25%", "50%", "75%", "100%"])
     ax.tick_params(axis="x", direction="in", pad=-18)
     ax.set_ylim(y_min, y_max)
     ax.tick_params(axis="both", labelsize=tick_fontsize, colors="black")
@@ -273,6 +302,8 @@ def plot_subcategory_violin(
         display_label = raw_label
         x_pos = max_by_group.get(cat, 0.0)
         x_pos = min(x_pos + 0.03, 1.03)
+        top_key = mapping_sub_cat_id.get(str(cat), str(cat))
+        label_color = mapping_cat_colors.get(top_key, "black")
         ax.text(
             x_pos,
             idx + y_offset,
@@ -280,31 +311,33 @@ def plot_subcategory_violin(
             va="bottom",
             ha="left",
             fontsize=tick_fontsize,
-            color="black",
+            color=label_color,
         )
     ax.grid(False)
     ax.text(
-        0.11,
-        y_max - 0.35,
+        0.2,
+        y_max - 1.49,
         "Random",
         ha="left",
         va="bottom",
-        fontsize=tick_fontsize - 2,
+        fontsize=tick_fontsize,
         color="#d62728",
+        rotation=90,
     )
     ax.text(
-        0.77,
-        y_max - 0.75,
-        "Common sense\nmean accuracy",
+        0.83,
+        y_max - 1.6,
+        "Common\nsense",
         ha="left",
         va="bottom",
-        fontsize=tick_fontsize - 2,
+        fontsize=tick_fontsize,
         color="#3d7ea6",
+        rotation=90,
     )
     if top_order and material_order:
         top_end = len(top_order) - 0.5
-        ax.axhspan(y_min, top_end, color="#e9f1ff", zorder=-2)
-        ax.axhspan(top_end, y_max, color="#efe6ff", zorder=-2)
+        ax.axhspan(y_min, top_end, color="#e9f1ff", alpha=0.35, zorder=-2)
+        ax.axhspan(top_end, y_max, color="#efe6ff", alpha=0.35, zorder=-2)
         label_x = 0.07
         ax.text(
             label_x,
@@ -320,7 +353,7 @@ def plot_subcategory_violin(
         ax.text(
             label_x,
             (top_end + len(group_order) - 0.5) / 2,
-            "Low-Level Physics",
+            "Low-Level Physics\n(=Material Understanding)",
             rotation=90,
             va="center",
             ha="center",
@@ -330,8 +363,8 @@ def plot_subcategory_violin(
         )
     if title:
         ax.set_title(title)
-    fig.subplots_adjust(left=0.0, right=1.0, top=1.0, bottom=0.0)
-    fig.savefig(output_path, dpi=300, bbox_inches="tight", pad_inches=0)
+    fig.subplots_adjust(bottom=0.02)
+    fig.savefig(output_path, dpi=300, bbox_inches="tight", pad_inches=0.02)
     plt.close(fig)
 
 

@@ -14,7 +14,7 @@ mapping_sub = {
     "poisson_ratio": "Poisson's ratio",
     "young_modulus": "Young's modulus",
     "density": "Density",
-    "persistence": "Persistence",
+    "persistence": "Permanence",
 }
 
 mapping_sub_cat_id = {

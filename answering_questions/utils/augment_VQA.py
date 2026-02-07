@@ -104,7 +104,6 @@ def augment_image_VQA_with_context(
             file_names,
             text=False,
             layout_position=False,
-            save_images=False,
         )
     elif augmentation == AUG_ROI_CIRCLING_TEXT_LAYOUT:
         file_names = augment_roi_circling(
@@ -114,7 +113,6 @@ def augment_image_VQA_with_context(
             file_names,
             text=True,
             layout_position=True,
-            save_images=False,
         )
     elif augmentation == AUG_ROI_CIRCLING_NO_TEXT_LAYOUT:
         file_names = augment_roi_circling(
@@ -123,8 +121,7 @@ def augment_image_VQA_with_context(
             resolved_attributes,
             file_names,
             text=False,
-            layout_position=True,
-            save_images=False,
+            layout_position=True,            
         )
     elif augmentation == AUG_ABLATION_TEXT_LAYOUT:
         file_names = augment_ablation(
@@ -133,7 +130,7 @@ def augment_image_VQA_with_context(
             resolved_attributes,
             file_names,
             text=True,
-            layout_position=False,
+            layout_position=True,
         )
     elif augmentation == AUG_ABLATION_NO_TEXT_LAYOUT:
         file_names = augment_ablation(
@@ -142,7 +139,7 @@ def augment_image_VQA_with_context(
             resolved_attributes,
             file_names,
             text=False,
-            layout_position=False,
+            layout_position=True,
         )
 
     # This is just to keep the same paths but with no augmentation.
@@ -292,13 +289,10 @@ def augment_roi_circling(
             path = Path(new_file_name)
             path.parent.mkdir(parents=True, exist_ok=True)
             original_image.save(new_file_name)
-        elif not Path(new_file_name).exists():
-            raise ImpossibleToAnswer(
-                "ROI circled image not found. Run augmentation "
-                f"'{AUG_ROI_CIRCLING_TEXT}' first to materialize shared ROI images."
-            )
-
-        file_names[file_idx] = new_file_name
+            file_names[file_idx] = new_file_name
+        else:
+            # Reuse the shared ROI image path without creating a new file.
+            file_names[file_idx] = new_file_name
 
     # if new_question is None:
     #     raise ImpossibleToAnswer("No modifications done to the question in ROI circling augmentation.")

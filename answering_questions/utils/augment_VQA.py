@@ -1,5 +1,4 @@
 import re
-import os
 from pathlib import Path
 import cv2
 import numpy as np
@@ -19,6 +18,36 @@ scene_description_path = "./utils/json/scene_context.json"
 scene_description_cache = {}
 with open(scene_description_path, "r") as f:
     scene_description_cache = json.load(f)
+
+
+# Canonical augmentation names
+AUG_ROI_CIRCLING_TEXT = "roi_circling_text"
+AUG_ROI_CIRCLING_NO_TEXT = "roi_circling_no_text"
+AUG_ROI_CIRCLING_TEXT_LAYOUT = "roi_circling_text_layout_position"
+AUG_ROI_CIRCLING_NO_TEXT_LAYOUT = "roi_circling_no_text_layout_position"
+AUG_ABLATION_TEXT_LAYOUT = "ablation_text_layout_position"
+AUG_ABLATION_NO_TEXT_LAYOUT = "ablation_no_text_layout_position"
+AUG_ABLATION = "ablation"
+AUG_GROUNDING_PHYSICS = "grounding_physics"
+AUG_ABLATION_PHYSICS_DURATION_TEXT = "ablation_physics_duration_text"
+AUG_ABLATION_PHYSICS_MASS_TEXT = "ablation_physics_mass_text"
+
+_AUGMENTATION_ALIASES = {
+    # Backward compatibility with previous naming.
+    "no_roi_circling_yes_text_layout_position": AUG_ABLATION_TEXT_LAYOUT,
+    "no_roi_circling_no_text_layout_position": AUG_ABLATION_NO_TEXT_LAYOUT,
+    # Short aliases for physics-cue ablations.
+    "duration_text": AUG_ABLATION_PHYSICS_DURATION_TEXT,
+    "mass_text": AUG_ABLATION_PHYSICS_MASS_TEXT,
+    "ablation_duration_text": AUG_ABLATION_PHYSICS_DURATION_TEXT,
+    "ablation_mass_text": AUG_ABLATION_PHYSICS_MASS_TEXT,
+}
+
+
+def _normalize_augmentation_name(augmentation):
+    if augmentation is None:
+        return None
+    return _AUGMENTATION_ALIASES.get(augmentation, augmentation)
 
 
 def get_counterfactual_image_paths(file_names):
@@ -52,11 +81,12 @@ def get_counterfactual_image_paths(file_names):
 def augment_image_VQA_with_context(
     question, world_state, resolved_attributes, file_names, augmentation=None
 ):
+    augmentation = _normalize_augmentation_name(augmentation)
     if augmentation is None:
         return file_names
 
-    # let's route here based on the flags
-    if augmentation == "roi_circling_text":
+    # Let's route here based on the flags.
+    if augmentation == AUG_ROI_CIRCLING_TEXT:
         file_names = augment_roi_circling(
             question,
             world_state,
@@ -64,8 +94,9 @@ def augment_image_VQA_with_context(
             file_names,
             text=True,
             layout_position=False,
+            save_images=True,
         )
-    if augmentation == "roi_circling_no_text":
+    elif augmentation == AUG_ROI_CIRCLING_NO_TEXT:
         file_names = augment_roi_circling(
             question,
             world_state,
@@ -73,8 +104,9 @@ def augment_image_VQA_with_context(
             file_names,
             text=False,
             layout_position=False,
+            save_images=False,
         )
-    if augmentation == "roi_circling_text_layout_position":
+    elif augmentation == AUG_ROI_CIRCLING_TEXT_LAYOUT:
         file_names = augment_roi_circling(
             question,
             world_state,
@@ -82,8 +114,9 @@ def augment_image_VQA_with_context(
             file_names,
             text=True,
             layout_position=True,
+            save_images=False,
         )
-    if augmentation == "roi_circling_no_text_layout_position":
+    elif augmentation == AUG_ROI_CIRCLING_NO_TEXT_LAYOUT:
         file_names = augment_roi_circling(
             question,
             world_state,
@@ -91,8 +124,9 @@ def augment_image_VQA_with_context(
             file_names,
             text=False,
             layout_position=True,
+            save_images=False,
         )
-    if augmentation == "no_roi_circling_yes_text_layout_position":
+    elif augmentation == AUG_ABLATION_TEXT_LAYOUT:
         file_names = augment_ablation(
             question,
             world_state,
@@ -100,8 +134,8 @@ def augment_image_VQA_with_context(
             file_names,
             text=True,
             layout_position=True,
-        )    
-    if augmentation == "no_roi_circling_no_text_layout_position":
+        )
+    elif augmentation == AUG_ABLATION_NO_TEXT_LAYOUT:
         file_names = augment_ablation(
             question,
             world_state,
@@ -111,8 +145,8 @@ def augment_image_VQA_with_context(
             layout_position=True,
         )
 
-    # this is just to add same pathwas but with NO AUGMENTATIONs
-    if augmentation == "ablation":
+    # This is just to keep the same paths but with no augmentation.
+    elif augmentation == AUG_ABLATION:
         file_names = augment_ablation(
             question,
             world_state,
@@ -122,13 +156,29 @@ def augment_image_VQA_with_context(
             layout_position=False,
         )
 
-    # other augmentations
-    if augmentation == "grounding_physics":
+    # Other augmentations.
+    elif augmentation == AUG_GROUNDING_PHYSICS:
         file_names = augment_scene_context(
             question, world_state, resolved_attributes, file_names
         )
+    elif augmentation == AUG_ABLATION_PHYSICS_DURATION_TEXT:
+        file_names = augment_duration_context(question, file_names)
+    elif augmentation == AUG_ABLATION_PHYSICS_MASS_TEXT:
+        file_names = augment_mass_context(question, resolved_attributes, file_names)
 
     return file_names
+
+
+def _get_roi_output_file_name(file_name, question_key, object_name):
+    # Use a single canonical ROI folder so all ROI variants share image assets.
+    return (
+        file_name.replace("render", "render_circling_text_no_layout_position")
+        .replace(".png", f"_{question_key}_{object_name}.png")
+        .replace("simulations_v4", "simulations_v4_augmented")
+        .replace(
+            "simulation_v4", "simulation_v4_augmented"
+        )  # account for Karolina and local path
+    )
 
 
 def augment_roi_circling(
@@ -138,15 +188,8 @@ def augment_roi_circling(
     file_names,
     text=True,
     layout_position=False,
+    save_images=False,
 ):
-    # just check for folder existance
-    new_dir = (
-        Path(file_names[0]).parent.as_posix().replace("render", "render_roi_circled")
-    )
-
-    if os.path.exists(new_dir) is False:
-        os.makedirs(new_dir, exist_ok=True)
-
     if resolved_attributes == {}:
         return file_names
 
@@ -155,57 +198,60 @@ def augment_roi_circling(
             "No resolved attributes for ROI circling. So no need to circle anything, and to ask questions about it"
         )
 
-    for file in file_names:
-        original_image = np.array(Image.open(file))
+    new_question = question["question"]
+
+    for file_idx, file in enumerate(file_names):
+        original_image = np.array(Image.open(file)) if save_images else None
+        object_name = None
 
         for idx, (resolved_attr, value) in enumerate(resolved_attributes.items()):
             if "OBJECT" in resolved_attr:
                 object_id = value["choice"]["id"]
                 render_name = file.split("/")[-1]
-                instance_image_path = file.replace("render", "instances")
 
-                # print(world_state["encoding"])
-                # rgb_object_class = world_state["encoding"]["semantic_classes"][
-                rgb_object_class = world_state["encoding"]["classes"][
-                    int(object_id) + 1
-                ]
+                if save_images:
+                    instance_image_path = file.replace("render", "instances")
+                    rgb_object_class = world_state["encoding"]["classes"][
+                        int(object_id) + 1
+                    ]
+                    visible_object_mask = (
+                        np.array(Image.open(instance_image_path).convert("RGB"))
+                        == rgb_object_class
+                    )
+                    visible_object_mask = np.all(visible_object_mask, axis=-1)
 
-                visible_object_mask = (
-                    np.array(Image.open(instance_image_path).convert("RGB"))
-                    == rgb_object_class
-                )
-                visible_object_mask = np.all(visible_object_mask, axis=-1)
+                    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
+                    eroded = cv2.erode(
+                        visible_object_mask.astype(np.uint8), kernel, iterations=1
+                    )
+                    inner_border_mask = visible_object_mask & ~eroded
 
-                kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
-                eroded = cv2.erode(
-                    visible_object_mask.astype(np.uint8), kernel, iterations=1
-                )
-                inner_border_mask = visible_object_mask & ~eroded
+                    # Create a binary mask where the object is located.
+                    binary_mask = inner_border_mask > 0
 
-                # Create a binary mask where the object is located
-                binary_mask = inner_border_mask > 0
+                    contours, _ = cv2.findContours(
+                        binary_mask.astype(np.uint8),
+                        cv2.RETR_EXTERNAL,
+                        cv2.CHAIN_APPROX_SIMPLE,
+                    )
 
-                contours, _ = cv2.findContours(
-                    binary_mask.astype(np.uint8),
-                    cv2.RETR_EXTERNAL,
-                    cv2.CHAIN_APPROX_SIMPLE,
-                )
+                    if len(contours) == 0:
+                        raise ImpossibleToAnswer("No visible object found.")
 
-                if len(contours) == 0:
-                    raise ImpossibleToAnswer("No visible object found.")
+                    pts = np.vstack([c.reshape(-1, 2) for c in contours]).astype(
+                        np.float32
+                    )
+                    center, radius = cv2.minEnclosingCircle(pts)
 
-                pts = np.vstack([c.reshape(-1, 2) for c in contours]).astype(np.float32)
-                center, radius = cv2.minEnclosingCircle(pts)
-
-                # Draw the bounding box on the image
-                original_image = draw_roi_circle(
-                    original_image, center, radius * 1.5, idx
-                )
+                    # Draw the ROI circle on the image.
+                    original_image = draw_roi_circle(
+                        original_image, center, radius * 1.5, idx
+                    )
 
                 object_name = value["choice"]["name"]
-                pattern = re.compile(re.escape('\"'+object_name+'\"'), re.IGNORECASE)
+                pattern = re.compile(re.escape('"' + object_name + '"'), re.IGNORECASE)
                 if text:
-                    # modify the question such that the name of the object is removed and replaced with "the circled object"
+                    # Modify the question text to include ROI reference.
                     if layout_position:
                         zone_to_focus = get_object_zone(
                             world_state, object_id, int(render_name.replace(".png", ""))
@@ -234,23 +280,25 @@ def augment_roi_circling(
                             "object circled in red", question["question"]
                         )
 
-        
-        string_text = "text" if text else "no_text"
-        layout_text = "layout_position" if layout_position else "no_layout_position"
+        if object_name is None:
+            continue
 
-        new_file_name = file.replace("render", f"render_circling_{string_text}_{layout_text}").replace(
-            ".png", f"_{question['_question_key']}_{object_name}.png"
-        ).replace("simulations_v4", "simulations_v4_augmented"
-        ).replace("simulation_v4", "simulation_v4_augmented") # this is to account for Karolina and local path
+        new_file_name = _get_roi_output_file_name(
+            file, question["_question_key"], object_name
+        )
 
-        original_image = Image.fromarray(original_image)
+        if save_images:
+            original_image = Image.fromarray(original_image)
+            path = Path(new_file_name)
+            path.parent.mkdir(parents=True, exist_ok=True)
+            original_image.save(new_file_name)
+        elif not Path(new_file_name).exists():
+            raise ImpossibleToAnswer(
+                "ROI circled image not found. Run augmentation "
+                f"'{AUG_ROI_CIRCLING_TEXT}' first to materialize shared ROI images."
+            )
 
-        #check for folder creation
-        path = Path(new_file_name)
-        path.parent.mkdir(parents=True, exist_ok=True)
-        original_image.save(new_file_name)
-
-        file_names[file_names.index(file)] = new_file_name
+        file_names[file_idx] = new_file_name
 
     # if new_question is None:
     #     raise ImpossibleToAnswer("No modifications done to the question in ROI circling augmentation.")
@@ -269,14 +317,6 @@ def augment_ablation(
     text=True,
     layout_position=False,
 ):
-    # just check for folder existance
-    new_dir = (
-        Path(file_names[0]).parent.as_posix().replace("render", "render_roi_circled")
-    )
-
-    if os.path.exists(new_dir) is False:
-        os.makedirs(new_dir, exist_ok=True)
-
     if resolved_attributes == {}:
         return file_names
 
@@ -285,57 +325,18 @@ def augment_ablation(
             "No resolved attributes for ROI circling. So no need to circle anything, and to ask questions about it"
         )
 
+    new_question = question["question"]
+
     for file in file_names:
-        original_image = np.array(Image.open(file))
+        render_name = file.split("/")[-1]
 
-        for idx, (resolved_attr, value) in enumerate(resolved_attributes.items()):
+        for resolved_attr, value in resolved_attributes.items():
             if "OBJECT" in resolved_attr:
-                object_id = value["choice"]["id"]                
-                render_name = file.split("/")[-1]
-                instance_image_path = file.replace("render", "instances")
-
-                # print(world_state["encoding"])
-                # rgb_object_class = world_state["encoding"]["semantic_classes"][
-                rgb_object_class = world_state["encoding"]["classes"][
-                    int(object_id) + 1
-                ]
-
-                visible_object_mask = (
-                    np.array(Image.open(instance_image_path).convert("RGB"))
-                    == rgb_object_class
-                )
-                visible_object_mask = np.all(visible_object_mask, axis=-1)
-
-                kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
-                eroded = cv2.erode(
-                    visible_object_mask.astype(np.uint8), kernel, iterations=1
-                )
-                inner_border_mask = visible_object_mask & ~eroded
-
-                # Create a binary mask where the object is located
-                binary_mask = inner_border_mask > 0
-
-                contours, _ = cv2.findContours(
-                    binary_mask.astype(np.uint8),
-                    cv2.RETR_EXTERNAL,
-                    cv2.CHAIN_APPROX_SIMPLE,
-                )
-
-                if len(contours) == 0:
-                    raise ImpossibleToAnswer("No visible object found.")
-
-                pts = np.vstack([c.reshape(-1, 2) for c in contours]).astype(np.float32)
-                center, radius = cv2.minEnclosingCircle(pts)
-
-                # Draw the bounding box on the image
-                original_image = draw_roi_circle(
-                    original_image, center, radius * 1.5, idx
-                )
-
+                object_id = value["choice"]["id"]
                 object_name = value["choice"]["name"]
-                pattern = re.compile(re.escape('\"'+object_name+'\"'), re.IGNORECASE)
+                pattern = re.compile(re.escape('"' + object_name + '"'), re.IGNORECASE)
                 if text:
-                    # modify the question such that the name of the object is removed and replaced with "the circled object"
+                    # Modify the question with textual cue only (no image changes).
                     if layout_position:
                         zone_to_focus = get_object_zone(
                             world_state, object_id, int(render_name.replace(".png", ""))
@@ -344,13 +345,9 @@ def augment_ablation(
                             f"\"{object_name}\" (located at the {zone_to_focus})",
                             question["question"],
                         )
-                    # else:
-                    #     new_question = pattern.sub(
-                    #         f"\"{object_name}\" (circled in red)", question["question"]
-                    #     )
                 else:
                     if layout_position:
-                        # append after the name of the object that it is circled in the image
+                        # Replace object mention with positional reference only.
                         zone_to_focus = get_object_zone(
                             world_state, object_id, int(render_name.replace(".png", ""))
                         )
@@ -358,16 +355,62 @@ def augment_ablation(
                             f"object located at the {zone_to_focus}",
                             question["question"],
                         )
-                    # else:
-                    #     # append after the name of the object that it is circled in the image
-                    #     new_question = pattern.sub(
-                    #         "object circled in red", question["question"]
-                    #     )
-
-                
-
-    if len(resolved_attributes) and (text or layout_position) > 0:
+    if len(resolved_attributes) > 0 and (text or layout_position):
         question["question"] = new_question
+
+    return file_names
+
+
+def _extract_frame_indices(file_names):
+    frame_indices = []
+    for file_name in file_names:
+        stem = Path(file_name).stem
+        if stem.isdigit():
+            frame_indices.append(int(stem))
+    return frame_indices
+
+
+def augment_duration_context(question, file_names):
+    frame_indices = _extract_frame_indices(file_names)
+    duration_seconds = 0.0
+    if len(frame_indices) > 1:
+        duration_seconds = (max(frame_indices) - min(frame_indices)) * time_interval
+
+    question["question"] = (
+        f"Physics cue: The provided images span {duration_seconds:.2f} seconds. "
+        + question["question"]
+    )
+    return file_names
+
+
+def augment_mass_context(question, resolved_attributes, file_names):
+    cues = []
+    seen_ids = set()
+
+    for resolved_attr, value in resolved_attributes.items():
+        if "OBJECT" not in resolved_attr:
+            continue
+
+        choice = value.get("choice", {})
+        object_id = choice.get("id")
+        if object_id in seen_ids:
+            continue
+
+        mass = choice.get("mass")
+        object_name = choice.get("name", "object")
+        if mass is None:
+            continue
+
+        try:
+            mass = float(mass)
+        except (TypeError, ValueError):
+            continue
+
+        cues.append(f'"{object_name}" has mass {mass:.2f} kg')
+        seen_ids.add(object_id)
+
+    if cues:
+        question["question"] = f"Physics cue: {'; '.join(cues)}. " + question["question"]
 
     return file_names
 

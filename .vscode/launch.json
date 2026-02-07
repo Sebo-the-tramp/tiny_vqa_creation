@@ -95,5 +95,13 @@
             "console": "integratedTerminal",
             "cwd": "/data0/sebastian.cavada/compositional-physics/tiny_vqa_creation/analysis",            
         },
+        {
+            "name": "ABLATION",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "./analysis_5_levels.py",
+            "console": "integratedTerminal",
+            "cwd": "/Users/sebastiancavada/Desktop/tmp_paris/tiny_vqa_creation/analysis",
+        },
     ]
 }

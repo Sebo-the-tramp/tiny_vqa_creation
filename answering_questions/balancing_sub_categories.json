@@ -17,5 +17,7 @@
 
     "camera_motion": 0.02,
     "event_ordering": 0.05,
-    "object_persistence": 0.1
+
+    "object_identity": 0.05,
+    "object_count": 0.05
 }

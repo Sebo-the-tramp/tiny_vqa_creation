@@ -350,6 +350,10 @@ def load_model_answers(results_dir: str | Path, wide: bool = False) -> pd.DataFr
 
     for path in sorted(results_dir.glob("*_val.json")):
         df = pd.read_json(path)
+
+        if df.size ==0:
+            return pd.DataFrame()
+        
         df["model"] = path.stem.replace("_val", "")
         df["og_answer"] = df["answer"]
         df["answer"] = df["answer"].apply(

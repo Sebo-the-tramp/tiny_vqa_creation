@@ -78,9 +78,9 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--base-path",
-        default="/data0/sebastian.cavada/compositional-physics/tiny_vqa_deterministic/output/",
+        default="/Users/sebastiancavada/Desktop/tmp_paris/tiny_vqa_creation/output",
     )
-    parser.add_argument("--run-name", default="run_11_general_levels")
+    parser.add_argument("--run-name", default="run_24_general_levels")
     args = parser.parse_args()
 
     utils_graph.RUN_NAME = args.run_name

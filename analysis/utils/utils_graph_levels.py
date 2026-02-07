@@ -240,11 +240,21 @@ def create_scatter_by_family(
 
         ax.set_xticks(range(len(levels_sorted)))
         nice_labels = [level.capitalize() for level in levels_sorted]
-        ax.set_xticklabels(nice_labels, fontsize=11, fontweight="bold")
-        ax.set_xlabel("Difficulty Level", fontsize=12)
-        ax.set_ylabel("Accuracy", fontsize=12)
-        ax.set_title(f"Performance by Family{title_suffix}", fontsize=14)
-        ax.legend(bbox_to_anchor=(1.05, 1), loc="upper left")
+        ax.set_xticklabels(nice_labels, fontsize=15, fontweight="bold")
+        ax.set_xlabel("Difficulty Level", fontsize=16)
+        ax.set_ylabel("Accuracy", fontsize=16)
+        handles, labels = ax.get_legend_handles_labels()
+        ncol = max(1, len(labels))
+        ax.legend(
+            handles,
+            labels,
+            loc="lower center",
+            bbox_to_anchor=(0.5, 0.02),
+            ncol=ncol,
+            frameon=True,
+            framealpha=0.9,
+            fontsize=11,
+        )
         ax.grid(True, linestyle="--", alpha=0.5)
 
         fig.tight_layout()

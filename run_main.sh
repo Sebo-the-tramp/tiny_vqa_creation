@@ -2,9 +2,11 @@
 
 set -euo pipefail
 
+source .venv/bin/activate
+
 GENERAL_RUN_COUNT=26
 PER_OBJECT_COUNT=300
-MATERIAL_SUBSAMPLE_COUNT=1000
+MATERIAL_SUBSAMPLE_COUNT=2000
 MATERIAL_OBJECTS_PER_COUNT=300
 
 # Select creations by uncommenting names below.
@@ -24,8 +26,8 @@ SELECTED_CREATIONS=(
     # "ablation_no_roi_no_text_layout_position"
     # "ablation_no_roi_text_layout_position"
     "ablation_baseline"
-    "ablation_physics_mass_text"
-    "ablation_physics_duration_text"
+    # "ablation_physics_mass_text"
+    # "ablation_physics_duration_text"
 
     # COUNTERFACTUALS
     # "counterfactual_shift"

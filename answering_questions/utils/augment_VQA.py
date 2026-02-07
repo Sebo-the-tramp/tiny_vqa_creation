@@ -133,7 +133,7 @@ def augment_image_VQA_with_context(
             resolved_attributes,
             file_names,
             text=True,
-            layout_position=True,
+            layout_position=False,
         )
     elif augmentation == AUG_ABLATION_NO_TEXT_LAYOUT:
         file_names = augment_ablation(
@@ -142,7 +142,7 @@ def augment_image_VQA_with_context(
             resolved_attributes,
             file_names,
             text=False,
-            layout_position=True,
+            layout_position=False,
         )
 
     # This is just to keep the same paths but with no augmentation.

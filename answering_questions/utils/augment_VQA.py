@@ -51,14 +51,14 @@ def _normalize_augmentation_name(augmentation):
 
 
 def get_counterfactual_image_paths(file_names):
-    patterns = ["shift-x", "shift-z", "low-gravity", "2xsmaller"]
-    pattern_re = re.compile(r"/(" + "|".join(map(re.escape, patterns)) + r")(?=/|$)")
-
     counterfactual_image_paths = []
 
     for file in file_names:
-        new_file_name = pattern_re.sub("", file).replace("//", "/")
-        simulation_id_path_og = new_file_name.replace("dl3dv-counterfact", "dl3dv")
+        # Map any counterfactual branch, e.g.:
+        # /dl3dv-counterfact/jitter-xy/... -> /dl3dv/...
+        simulation_id_path_og = re.sub(
+            r"/dl3dv-counterfact/[^/]+/", "/dl3dv/", file
+        ).replace("//", "/")
 
         # I need to check the folder that contains the original simulation
         base_dir = simulation_id_path_og.split("seed-")[0]

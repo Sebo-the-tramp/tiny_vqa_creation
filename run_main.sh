@@ -35,8 +35,8 @@ SELECTED_CREATIONS=(
 
     # COUNTERFACTUALS
     "counterfactual_shift"
-    # "counterfactual_gravity"
-    # "counterfactual_volume"
+    "counterfactual_gravity"
+    "counterfactual_volume"
 
     # LEVELS
     # "levels_general_5k"
@@ -216,7 +216,6 @@ run_counterfactual_shift() {
         --destination_simulation_path "${DESTINATION_SIMULATION_PATH}" \
         --run_name "run_${GENERAL_RUN_COUNT}_counterfactual_shift" \
         --counterfactual_type "shift" \
-        --timeit \
         --n_scenes 2000 \
         --n_proc "${CPUS}"
 }

@@ -45,10 +45,11 @@
             "request": "launch",
             "program": "./main_parallel_counterfactual_new.py",
             "console": "integratedTerminal",
-            "cwd": "/data0/sebastian.cavada/compositional-physics/tiny_vqa_counter/answering_questions",
+            "cwd": "/Users/sebastiancavada/Desktop/tmp_paris/tiny_vqa_creation/answering_questions",
             "args": [
+                "--simulation_path", "/Volumes/Extreme SSD/simulation_v4/dl3dv-counterfact/low-gravity",
                 // "--simulation_path", "/data0/sebastian.cavada/datasets/simulations_v4/dl3dv-counterfact/low-gravity",
-                "--simulation_path", "/data0/sebastian.cavada/datasets/simulations_v4/dl3dv-counterfact/jitter-xy/random/2/c-1_no-2_cl-output-sims-v4-dl3dv-random-2-all_seed-2_all_d-10_s-data-3dgrt-tools_revised2.ply_models-default_seed-2_20260119_043810",
+                // "--simulation_path", "/data0/sebastian.cavada/datasets/simulations_v4/dl3dv-counterfact/jitter-xy/random/2/c-1_no-2_cl-output-sims-v4-dl3dv-random-2-all_seed-2_all_d-10_s-data-3dgrt-tools_revised2.ply_models-default_seed-2_20260119_043810",
                 "--n_scenes", "300",
                 "--question_id", "CF_OCCLUSION_PERCENTAGE_OBJECT",
                 "--counterfactual_type", "shift",

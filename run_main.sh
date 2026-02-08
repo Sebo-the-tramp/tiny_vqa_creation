@@ -20,23 +20,23 @@ SELECTED_CREATIONS=(
 
     # ABLATIONS
     # THIS IS FIRST SO THAT WE CAN CREATE THE IMAGEs
-    "ablation_roi_circling_text"
+    # "ablation_roi_circling_text"
 
-    "ablation_baseline"
+    # "ablation_baseline"
 
-    "ablation_roi_circling_no_text"
-    "ablation_roi_circling_no_text_layout_position"
-    "ablation_roi_circling_text_layout_position"
-    "ablation_no_roi_no_text_layout_position"
-    "ablation_no_roi_text_layout_position"
+    # "ablation_roi_circling_no_text"
+    # "ablation_roi_circling_no_text_layout_position"
+    # "ablation_roi_circling_text_layout_position"
+    # "ablation_no_roi_no_text_layout_position"
+    # "ablation_no_roi_text_layout_position"
 
-    "ablation_physics_mass_text"
-    "ablation_physics_duration_text"
+    # "ablation_physics_mass_text"
+    # "ablation_physics_duration_text"
 
     # COUNTERFACTUALS
-    # "counterfactual_shift"
-    # "counterfactual_gravity"
-    # "counterfactual_volume"
+    "counterfactual_shift"
+    "counterfactual_gravity"
+    "counterfactual_volume"
 
     # LEVELS
     # "levels_general_5k"
@@ -212,7 +212,7 @@ run_ablation_physics_duration_text() {
 }
 
 run_counterfactual_shift() {
-    python main_parallel_counterfactual.py --simulation_paths "${BASE_PATH_CF}/shift-x" "${BASE_PATH_CF}/shift-z" \
+    python main_parallel_counterfactual.py --simulation_paths "${BASE_PATH_CF}/jitter-xy" "${BASE_PATH_CF}/jitter-z" \
         --destination_simulation_path "${DESTINATION_SIMULATION_PATH}" \
         --run_name "run_${GENERAL_RUN_COUNT}_counterfactual_shift" \
         --counterfactual_type "shift" \
@@ -231,7 +231,7 @@ run_counterfactual_gravity() {
 }
 
 run_counterfactual_volume() {
-    python main_parallel_counterfactual.py --simulation_paths "${BASE_PATH_CF}/2xsmaller" \
+    python main_parallel_counterfactual.py --simulation_paths "${BASE_PATH_CF}/rescale" \
         --destination_simulation_path "${DESTINATION_SIMULATION_PATH}" \
         --run_name "run_${GENERAL_RUN_COUNT}_counterfactual_smaller" \
         --counterfactual_type "volume" \

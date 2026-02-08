@@ -219,6 +219,8 @@ run_counterfactual_shift() {
         --timeit \
         --n_scenes 2000 \
         --n_proc "${CPUS}"
+
+    cp test_run_${GENERAL_RUN_COUNT}_counterfactual_shift.json test_run_${GENERAL_RUN_COUNT}_counterfactual_shift_karo_10K.json
 }
 
 run_counterfactual_gravity() {
@@ -228,6 +230,8 @@ run_counterfactual_gravity() {
         --counterfactual_type "gravity" \
         --n_scenes 1000 \
         --n_proc "${CPUS}"
+
+    cp test_run_${GENERAL_RUN_COUNT}_counterfactual_gravity.json test_run_${GENERAL_RUN_COUNT}_counterfactual_gravity_karo_10K.json
 }
 
 run_counterfactual_volume() {
@@ -237,6 +241,8 @@ run_counterfactual_volume() {
         --counterfactual_type "volume" \
         --n_scenes 1000 \
         --n_proc "${CPUS}"
+    
+    cp test_run_${GENERAL_RUN_COUNT}_counterfactual_smaller.json test_run_${GENERAL_RUN_COUNT}_counterfactual_smaller_karo_10K.json
 }
 
 run_levels_general_5k() {

@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-source .venv/bin/activate
+source ../tiny_vqa_creation/.venv/bin/activate
 
 GENERAL_RUN_COUNT=26
 PER_OBJECT_COUNT=300

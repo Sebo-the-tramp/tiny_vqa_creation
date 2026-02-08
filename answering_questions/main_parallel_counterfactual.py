@@ -5,6 +5,7 @@ import glob
 import argparse
 import time
 import resource
+import traceback
 from tqdm import tqdm
 
 import multiprocessing
@@ -123,7 +124,7 @@ def _process_one(sim_file, args):
         # Keep the pool running even if one simulation fails
         # if VERBOSE:
         print("\033[91mWorker error on", simulation_id_path, "->", repr(e), "\033[0m")
-        print(e.with_traceback())
+        traceback.print_exc()
         return [], {}, 0
 
 
@@ -233,7 +234,7 @@ def create_vqa(
                 continue
             except Exception as e:
                 print(f"Error occurred while checking original data CF: {e}")
-                print(e.with_traceback())
+                traceback.print_exc()
                 stats[stats_key]["errors"] += 1
                 attempted_in_question += 1
                 if question_start is not None:
@@ -258,7 +259,6 @@ def create_vqa(
                 answer_list_original_data_cf = fn_to_check_answer_original_data_cf(
                     simulation_steps_og,
                     simulation_steps_modified,
-                    answer_list_modified_data_factual,
                     question_payload,
                     destination_simulation_id_path,
                 )
@@ -274,7 +274,7 @@ def create_vqa(
                 continue
             except Exception as e:
                 print(f"Error occurred while checking original data CF: {e}")
-                print(e.with_traceback())
+                traceback.print_exc()
                 stats[stats_key]["errors"] += 1
                 attempted_in_question += 1
                 if question_start is not None:

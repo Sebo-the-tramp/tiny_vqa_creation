@@ -121,7 +121,7 @@ def load_results(
         # )
 
     print("Merging model answers...")
-    print(df.head().to_string())
+    # print(df.head().to_string())
 
     if merge_model_answers:
         results_dir = (
@@ -350,6 +350,12 @@ def load_model_answers(results_dir: str | Path, wide: bool = False) -> pd.DataFr
 
     for path in sorted(results_dir.glob("*_val.json")):
         df = pd.read_json(path)
+
+        if df.empty:
+            frames.append(pd.DataFrame())
+            continue
+        print(f"Loaded model answers from {path}, shape: {df.shape}")
+        print(df.head().to_string())
         df["model"] = path.stem.replace("_val", "")
         df["og_answer"] = df["answer"]
         df["answer"] = df["answer"].apply(

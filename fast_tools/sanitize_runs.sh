@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-PREFIX="${1:-run_25_}"
+PREFIX="${1:-run_26_}"
 MAX_PREFIX_CHARS="${2:--1}"
-# OUTPUT_ROOT="/data0/sebastian.cavada/compositional-physics/tiny_vqa_creation/output"
-OUTPUT_ROOT="/Users/sebastiancavada/Desktop/tmp_paris/tiny_vqa_creation/output"
+OUTPUT_ROOT="/data0/sebastian.cavada/compositional-physics/tiny_vqa_creation/output"
+# OUTPUT_ROOT="/Users/sebastiancavada/Desktop/tmp_paris/tiny_vqa_creation/output"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 shopt -s nullglob

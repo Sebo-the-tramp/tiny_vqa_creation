@@ -22,27 +22,15 @@ DEFAULT_BASE_PATH = Path(
 RUN = "26"
 
 DEFAULT_RUNS = [
-    f"run_{RUN}_roi_ablation_baseline",
-    f"run_{RUN}_roi_circling_no_text",
-    f"run_{RUN}_roi_circling_no_text_layout_position",
-    f"run_{RUN}_roi_circling_text",
-    f"run_{RUN}_roi_circling_text_layout_position",
-    f"run_{RUN}_no_roi_circling_yes_text_layout_position",
-    f"run_{RUN}_no_roi_circling_no_text_layout_position",
-    f"run_{RUN}_ablation_physics_duration_text",
-    f"run_{RUN}_ablation_physics_mass_text",
+    # f"run_{RUN}_counterfactual_gravity",
+    f"run_{RUN}_counterfactual_shift",
+    f"run_{RUN}_counterfactual_smaller"
 ]
 
 RUN_MAP = {
-    f"run_{RUN}_roi_ablation_baseline": "Text",
-    f"run_{RUN}_roi_circling_text": "Text + Circle",
-    f"run_{RUN}_no_roi_circling_yes_text_layout_position": "Text + Layout",
-    f"run_{RUN}_roi_circling_text_layout_position": "Text + Circle + Layout",
-    f"run_{RUN}_roi_circling_no_text_layout_position": "Circle + Layout",
-    f"run_{RUN}_roi_circling_no_text": "Circle",
-    f"run_{RUN}_no_roi_circling_no_text_layout_position": "Layout",
-    f"run_{RUN}_ablation_physics_duration_text": "Text + Duration",
-    f"run_{RUN}_ablation_physics_mass_text": "Text + Mass",
+    f"run_{RUN}_counterfactual_gravity": "1/10th Gravity",
+    f"run_{RUN}_counterfactual_shift": "Jitter-xy",
+    f"run_{RUN}_counterfactual_smaller": "Different Scale",
 }
 RUN_INDEX = {run_name: idx for idx, run_name in enumerate(RUN_MAP.keys())}
 

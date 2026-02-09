@@ -212,7 +212,7 @@ run_ablation_physics_duration_text() {
 }
 
 run_counterfactual_shift() {
-    python main_parallel_counterfactual.py --simulation_paths "${BASE_PATH_CF}/jitter-xy" "${BASE_PATH_CF}/jitter-z" \
+    python main_parallel_counterfactual_new.py --simulation_paths "${BASE_PATH_CF}/jitter-xy" "${BASE_PATH_CF}/jitter-z" \
         --destination_simulation_path "${DESTINATION_SIMULATION_PATH}" \
         --run_name "run_${GENERAL_RUN_COUNT}_counterfactual_shift" \
         --counterfactual_type "shift" \
@@ -221,7 +221,7 @@ run_counterfactual_shift() {
 }
 
 run_counterfactual_gravity() {
-    python main_parallel_counterfactual.py --simulation_paths "${BASE_PATH_CF}/low-gravity" \
+    python main_parallel_counterfactual_new.py --simulation_paths "${BASE_PATH_CF}/low-gravity" \
         --destination_simulation_path "${DESTINATION_SIMULATION_PATH}" \
         --run_name "run_${GENERAL_RUN_COUNT}_counterfactual_gravity" \
         --counterfactual_type "gravity" \
@@ -230,7 +230,7 @@ run_counterfactual_gravity() {
 }
 
 run_counterfactual_volume() {
-    python main_parallel_counterfactual.py --simulation_paths "${BASE_PATH_CF}/rescale" \
+    python main_parallel_counterfactual_new.py --simulation_paths "${BASE_PATH_CF}/rescale" \
         --destination_simulation_path "${DESTINATION_SIMULATION_PATH}" \
         --run_name "run_${GENERAL_RUN_COUNT}_counterfactual_smaller" \
         --counterfactual_type "volume" \

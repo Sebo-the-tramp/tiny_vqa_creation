@@ -1,0 +1,26 @@
+[
+    {
+        "question": "Based on the image, which visible object is the \"dark ballet flat shoe\" colliding with?",
+        "image_path": "/scratch/project/eu-25-92/composite_physics/dataset/simulation_v4/dl3dv/random/4/c-1_no-4_d-10_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-40_20251212_091923/render/000018.png",
+        "a": "\bold{shelf bin}",
+        "b": "empty purple and green pencil case",
+        "c": "colored cactus balancing toy",
+        "d": "white soccer shoe"
+    },
+    {
+        "question": "From the camera’s perspective, where is the "boxed My Monopoly board game" relative to the "blue backpack" in the image?",
+        "image_path": "/scratch/project/eu-25-92/composite_physics/dataset/simulation_v4/dl3dv/random-cam-stationary/6/c-1_no-6_d-10_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-1_20251215_055401/render/000010.png",
+        "a": "same depth",
+        "b": "horizontally aligned",
+        "c": "to the left",
+        "d": "\correct{below}"
+    }
+    {
+        "question": "Based on the image, which visible object exhibits the highest Young's Modulus?",
+        "image_path": "/scratch/project/eu-25-92/composite_physics/dataset/simulation_v4/dl3dv/random/8/c-1_no-8_d-10_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-19_20251215_124907/render/000013.png",
+        "a": "turquoise mermaid-design backpack",
+        "b": "274-piece LEGO Star Wars boxed set",
+        "c": "\correct{black and red hair straightener}",
+        "d": "green ogre toy figurine"
+    }
+]

@@ -13,9 +13,19 @@
 
   "run_23_general",
 
+  "run_24_general",
+
   "run_24_no_roi_circling_no_text_layout_position",
   "run_24_no_roi_circling_yes_text_layout_position",
   "run_24_roi_circling_no_text",
 
-  "run_25_general"
+  "run_25_general",
+  "run_25_roi_ablation_baseline",
+  "run_25_roi_circling_no_text",
+  "run_25_roi_circling_no_text_layout_position",
+  "run_25_roi_circling_text",
+  "run_25_roi_circling_text_layout_position",
+  "run_25_no_roi_circling_no_text_layout_position",
+  "run_25_no_roi_circling_yes_text_layout_position"
+
 ]

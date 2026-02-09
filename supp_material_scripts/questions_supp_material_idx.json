@@ -1,0 +1,203 @@
+{   
+    "spatial_reasoning": {
+        "F_DISTANCE_OBJECT_OBJECT": {
+            "i": ["26290_i", "27454_i", "17926_i"],
+            "g": ["26290_g", "27454_g", "17926_g"]
+        },        
+        "F_CLOSEST_OBJECT_OBJECT": {
+            "i": ["26290_i", "27454_i", "17926_i"],
+            "g": ["26290_g", "27454_g", "17926_g"]
+        },
+        "F_DISTANCE_OBJECT_CAMERA_DISTANCE": {
+            "i": [],
+            "g": []
+        },
+        "F_CLOSEST_OBJECT_CAMERA": {
+            "i": [],
+            "g": []
+        },
+        "F_SIZE_OBJECT": {
+            "i": [],
+            "g": []
+        },
+        "F_SIZE_OBJECT_BIGGER": {
+            "i": [],
+            "g": []
+        },
+        "F_LAYOUT_POSITION_OBJECT_OBJECT": {
+            "i": [],
+            "g": []
+        }
+    },
+    "mechanics": {
+        "F_KINEMATICS_SPEED_OBJECT": {
+            "g": []
+        },
+        "F_KINEMATICS_ACCEL_OBJECT": {
+            "g": []
+        },
+        "F_KINEMATICS_DISTANCE_TRAVELED_INTERVAL": {
+            "g": []
+        },
+        "F_KINEMATICS_SYSTEM_STABILITY": {
+            "g": []
+        },
+        "F_COLLISION_OBJECT_OBJECT_FRAME_SINGLE": {
+            "i": []
+        },
+        "F_COLLISION_OBJECT_OBJECT_FRAME_MULTI": {
+            "g": []
+        },        
+        "F_COLLISION_OBJECT_SCENE_FRAME_MULTI": {
+            "g": []
+        }
+    },
+    "material_understanding": {
+        "F_MASS_OBJECT": {
+            "i": ["18479_i"],
+            "g": ["18479_g"]
+        },
+        "F_MASS_HEAVIEST_OBJECT": {            
+            "i": ["44756_i"],
+            "g": ["44756_g"]
+        },
+        "F_MASS_LIGHTEST_OBJECT": {
+            "i": ["18479_i"],
+            "g": ["18479_g"]
+        },
+        "F_PHYSICS_PROPERTY_DENSITY_OBJECT": {
+            "i": [],
+            "g": []
+        },
+        "F_PHYSICS_PROPERTY_DENSITY_OBJECT_RELATIVE": {
+            "i": ["18479_i"],
+            "g": ["18479_g"]
+        },
+        "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_METRIC_PREFIX": {
+            "i": [],
+            "g": []
+        },
+        "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR": {
+            "i": [],
+            "g": []
+        },
+        "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR_NON_TECHNICAL": {
+            "i": [],
+            "g": []
+        },
+        "F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST": {
+            "i": ["18479_i"],
+            "g": ["18479_g"]
+        },
+        "F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST_NON_TECHNICAL": {
+            "i": [],
+            "g": []
+        }, 
+        "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_HIGH_LEVEL": {
+            "i": [],
+            "g": []
+        },
+        "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT": {
+            "i": [],
+            "g": []
+        },
+        "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR": {
+            "i": [],
+            "g": []
+        },
+        "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR_NON_TECHNICAL": {
+            "i": [],
+            "g": []
+        },
+        "F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST": {
+            "i": [],
+            "g": []
+        },
+        "F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST_NON_TECHNICAL": {
+            "i": [],
+            "g": []
+        },
+        "F_PHYSICS_PROPERTY_POISSON_HIGH_LEVEL": {
+            "i": [],
+            "g": []
+        },
+        "F_MATERIAL_IDENTIFICATION_SIMILAR_OBJECT": {
+            "i": [],
+            "g": []
+        },
+        "F_MATERIAL_IDENTIFICATION_OBJECT_LEVEL_1": {
+            "i": [],
+            "g": []
+        },
+        "F_MATERIAL_IDENTIFICATION_OBJECT_LEVEL_2": {
+            "i": [],
+            "g": []
+        },
+        "F_MATERIAL_IDENTIFICATION_OBJECT_LEVEL_3": {
+            "i": [],
+            "g": []
+        }
+    },
+    "view_point": {
+        "F_VISIBILITY_OBJECT": {
+            "i": [],
+            "g": []
+        },
+        "F_OCCLUSION_PERCENTAGE_OBJECT": {
+            "i": [],
+            "g": []
+        },
+        "F_VISIBILITY_OBJECT_COUNT": {
+            "i": [],
+            "g": []
+        },
+        "F_VIEWPOINT_CAMERA_ANGLE": {
+            "i": [],
+            "g": []
+        },
+        "F_FOCAL_LENGTH_CLASS": {
+            "i": [],
+            "g": []
+        }
+    },
+    "temporal": {
+        "F_TEMPORAL_SEQUENCE_IMAGES": {
+            "g": []
+        },
+        "F_TEMPORAL_PREDICTION_NEXT_IMAGE_GRANULARITY_1": {
+            "g": []
+        },
+        "F_TEMPORAL_PREDICTION_NEXT_IMAGE_GRANULARITY_2": {
+            "g": []
+        },
+        "F_TEMPORAL_PREDICTION_NEXT_IMAGE_GRANULARITY_5": {
+            "g": []
+        },
+        "F_TEMPORAL_PREDICTION_PREVIOUS_IMAGE": {
+            "g": []
+        },
+        "F_TEMPORAL_PREDICTION_MISSING_IMAGE": {
+            "g": []
+        },
+        "F_CAMERA_MOTION_DIRECTION": {
+            "g": []
+        },
+        "F_CAMERA_ZOOM_BEHAVIOR": {
+            "g": []
+        }
+    },
+    "persistence": {
+        "F_PERSISTENCE_OBJECT_PRESENT": {
+            "g": []
+        },
+        "F_PERSISTENCE_OBJECT_DISAPPEAR": {
+            "g": []
+        },
+        "F_PERSISTENCE_OBJECT_TOTAL_COUNT": {
+            "g": []
+        },
+        "F_PERSISTENCE_OBJECT_TOTAL_COUNT_HIDDEN": {
+            "g": []
+        }        
+    }
+}

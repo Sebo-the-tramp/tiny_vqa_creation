@@ -49,6 +49,7 @@ def compute_output_path(input_path: Path, override: Path | None) -> Path:
 def filter_per_template(
     entries: Iterable[dict],
     templates: Dict[str, Dict[str, str]],
+    only_general: bool,
 ) -> List[dict]:
      
     filtered: List[dict] = []
@@ -60,9 +61,10 @@ def filter_per_template(
         if not template:            
             continue
 
-        #filter non _general questions
-        if question_idx is not None and not str(question_idx).endswith("_g"):
-            continue        
+        if only_general:
+            # filter non _general questions
+            if question_idx is not None and not str(question_idx).endswith("_g"):
+                continue
 
         filtered.append(entry)
 
@@ -73,6 +75,7 @@ def expand_questions(
     templates: Dict[str, Dict[str, str]],
     keep_original: bool,
     max_questions: int | None,
+    only_general: bool,
 ) -> List[dict]:
     expanded: List[dict] = []
     missing_templates = 0
@@ -89,9 +92,10 @@ def expand_questions(
             missing_templates += 1
             continue
 
-        #filter non _general questions
-        if question_idx is not None and not str(question_idx).endswith("_g"):
-            continue
+        if only_general:
+            # filter non _general questions
+            if question_idx is not None and not str(question_idx).endswith("_g"):
+                continue
 
         if max_questions is not None and generated_questions >= max_questions:
             continue
@@ -179,6 +183,12 @@ def parse_args() -> argparse.Namespace:
         help="Keep the original entries alongside the leveled versions.",
     )
     parser.add_argument(
+        "--only-general",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Use only questions whose idx ends with _g (default: True).",
+    )
+    parser.add_argument(
         "--max-questions",
         type=int,
         default=None,
@@ -200,14 +210,18 @@ def main() -> None:
 
     templates = load_questions(questions_path)
 
-    filtered = filter_per_template(entries, templates)
+    filtered = filter_per_template(entries, templates, args.only_general)
     print(f"Filtered entries to {len(filtered)} based on available templates.")
 
     balanced_entries = balance_entries(filtered, templates)
     print(f"Balanced entries to {len(balanced_entries)} total.")
 
     expanded_entries = expand_questions(
-        balanced_entries, templates, args.keep_original, args.max_questions
+        balanced_entries,
+        templates,
+        args.keep_original,
+        args.max_questions,
+        args.only_general,
     )    
 
     output_path = compute_output_path(input_path, args.output)

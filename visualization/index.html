@@ -368,6 +368,13 @@
       <select id="runSelect"></select>
     </div>
     <div class="control-block">
+      <label for="questionSet">Question set</label>
+      <select id="questionSet">
+        <option value="full">Full (test_*.json)</option>
+        <option value="10k">10K subset (test_*_10K.json)</option>
+      </select>
+    </div>
+    <div class="control-block">
       <label for="questionIdFilter">Question ID Filter</label>
       <select id="questionIdFilter">
         <option value="">All question_id</option>
@@ -547,6 +554,7 @@
       pageSize: 50,
       filterId: "",
       searchText: "",
+      questionSet: "full",
       imageType: "",
       objectCount: ""
     };
@@ -559,6 +567,7 @@
       table: document.getElementById("table"),
       pager: document.getElementById("pager"),
       runSelect: document.getElementById("runSelect"),
+      questionSet: document.getElementById("questionSet"),
       questionIdFilter: document.getElementById("questionIdFilter"),
       objectCountFilter: document.getElementById("objectCountFilter"),
       searchInput: document.getElementById("searchInput"),
@@ -592,8 +601,11 @@
     }
 
     function buildPaths(runName) {
+      const questionFile = state.questionSet === "10k"
+        ? `test_${runName}_karo_10K.json`
+        : `test_${runName}.json`;
       return {
-        questionFiles: [`test_${runName}_10K.json`, `test_${runName}.json`],
+        questionFiles: [questionFile],
         resultsDir: `results_${runName}`,
         correctAnswersFile: `val_answer_${runName}.json`
       };
@@ -613,8 +625,14 @@
       return fallbackRuns;
     }
 
-    const SCRATCH_PREFIX = "/scratch/project/eu-25-92/composite_physics/dataset/simulation_v4/dl3dv/";
-    const DATA_PREFIX = "/data0/sebastian.cavada/datasets/simulations_v4/dl3dv/";
+    const SCRATCH_PREFIXES = [
+      "/scratch/project/eu-25-92/composite_physics/dataset/simulation_v4/dl3dv/",
+      "/scratch/project/eu-25-92/composite_physics/dataset/simulation_v4_augmented/dl3dv/"
+    ];
+    const DATA_PREFIXES = [
+      "/data0/sebastian.cavada/datasets/simulations_v4/dl3dv/",
+      "/data0/sebastian.cavada/datasets/simulations_v4_augmented/dl3dv/"
+    ];
     const WEB_LIGHT_PREFIX = "/data0/sebastian.cavada/datasets/simulations_web_light/dl3dv/";
     const FALLBACK_PREFIX = "/home/cavadahub/scsv/dataset-server/dl3dv/";
 
@@ -622,11 +640,18 @@
       if (path.startsWith(WEB_LIGHT_PREFIX)) {
         return path;
       }
-      if (path.startsWith(SCRATCH_PREFIX)) {
-        return WEB_LIGHT_PREFIX + path.slice(SCRATCH_PREFIX.length);
+      if (path.includes("/simulation_v4_augmented/")) {
+        return path;
       }
-      if (path.startsWith(DATA_PREFIX)) {
-        return WEB_LIGHT_PREFIX + path.slice(DATA_PREFIX.length);
+      for (const prefix of SCRATCH_PREFIXES) {
+        if (path.startsWith(prefix)) {
+          return WEB_LIGHT_PREFIX + path.slice(prefix.length);
+        }
+      }
+      for (const prefix of DATA_PREFIXES) {
+        if (path.startsWith(prefix)) {
+          return WEB_LIGHT_PREFIX + path.slice(prefix.length);
+        }
       }
       const marker = "/dl3dv/";
       const markerIndex = path.indexOf(marker);
@@ -634,6 +659,17 @@
         return WEB_LIGHT_PREFIX + path.slice(markerIndex + marker.length);
       }
       return path;
+    }
+
+    function toDisplayUrl(candidatePath) {
+      if (!candidatePath) return "";
+      if (candidatePath.startsWith("/")) {
+        if (window.location.origin === "null") {
+          return encodeURI(candidatePath);
+        }
+        return encodeURI(`${window.location.origin}${candidatePath}`);
+      }
+      return encodeURI(candidatePath);
     }
 
     function buildPngCandidates(path) {
@@ -655,28 +691,37 @@
     function buildImageCandidates(path) {
       if (!path) return [];
       const candidates = [];
-      const rewritten = toWebLightPath(path);
+      const karoPath = path.includes("/simulation_v4_augmented/")
+        ? path.replace("/simulation_v4_augmented/", "/simulation_v4_augmented_augmented_karo/")
+        : path;
+      const rewritten = toWebLightPath(karoPath);
       const pushCandidates = candidatePath => {
         if (!candidatePath) return;
         if (candidatePath.startsWith("/")) {
           buildPngCandidates(candidatePath).forEach(candidate => {
-            candidates.push(`${window.location.origin}${candidate}`);
+            candidates.push(toDisplayUrl(candidate));
           });
         } else {
           buildPngCandidates(candidatePath).forEach(candidate => {
-            candidates.push(candidate);
+            candidates.push(toDisplayUrl(candidate));
           });
         }
       };
 
       pushCandidates(path);
-      if (rewritten !== path) {
+      if (karoPath !== path) {
+        pushCandidates(karoPath);
+      }
+      if (rewritten !== karoPath) {
         pushCandidates(rewritten);
       }
 
-      if (path.startsWith(SCRATCH_PREFIX)) {
-        const fallbackPath = FALLBACK_PREFIX + path.slice(SCRATCH_PREFIX.length);
-        pushCandidates(fallbackPath);
+      for (const prefix of SCRATCH_PREFIXES) {
+        if (karoPath.startsWith(prefix)) {
+          const fallbackPath = FALLBACK_PREFIX + karoPath.slice(prefix.length);
+          pushCandidates(fallbackPath);
+          break;
+        }
       }
 
       return Array.from(new Set(candidates));
@@ -1054,6 +1099,7 @@
 
       elements.searchInput.value = "";
       elements.imageTypeFilter.value = "";
+      elements.questionSet.value = state.questionSet;
       elements.questionIdFilter.innerHTML = "<option value=\"\">All question_id</option>";
       elements.objectCountFilter.innerHTML = "<option value=\"\">All</option>";
 
@@ -1151,6 +1197,16 @@
       const runName = event.target.value;
       if (runName) {
         loadRun(runName).catch(err => {
+          console.error(err);
+          updateStatus("Failed to load data. Check the diagnostics line for missing URLs or network errors.");
+        });
+      }
+    });
+
+    elements.questionSet.addEventListener("change", event => {
+      state.questionSet = event.target.value;
+      if (state.runName) {
+        loadRun(state.runName).catch(err => {
           console.error(err);
           updateStatus("Failed to load data. Check the diagnostics line for missing URLs or network errors.");
         });

@@ -2,9 +2,9 @@
 
 set -euo pipefail
 
-source .venv/bin/activate
+source ../tiny_vqa_creation/.venv/bin/activate
 
-GENERAL_RUN_COUNT=26
+GENERAL_RUN_COUNT=28
 PER_OBJECT_COUNT=300
 MATERIAL_SUBSAMPLE_COUNT=2000
 MATERIAL_OBJECTS_PER_COUNT=300
@@ -20,9 +20,9 @@ SELECTED_CREATIONS=(
 
     # ABLATIONS
     # THIS IS FIRST SO THAT WE CAN CREATE THE IMAGEs
-    # "ablation_roi_circling_text"
+    "ablation_roi_circling_text"
 
-    # "ablation_baseline"
+    "ablation_baseline"
 
     # "ablation_roi_circling_no_text"
     # "ablation_roi_circling_no_text_layout_position"
@@ -34,9 +34,9 @@ SELECTED_CREATIONS=(
     # "ablation_physics_duration_text"
 
     # COUNTERFACTUALS
-    "counterfactual_shift"
-    "counterfactual_gravity"
-    "counterfactual_volume"
+    # "counterfactual_shift"
+    # "counterfactual_gravity"
+    # "counterfactual_volume"
 
     # LEVELS
     # "levels_general_5k"
@@ -159,7 +159,8 @@ run_material_ablation() {
         --augmentation "${augmentation}" \
         --include_categories "material_understanding" \
         --exclude_question_ids "${MATERIAL_ABLATION_EXCLUDE_IDS[@]}" \
-        --n_proc "${CPUS}"
+        --n_proc "${CPUS}" \
+        --print_errors
 
     python ./subsample_questions_percentage.py \
         --count "${MATERIAL_SUBSAMPLE_COUNT}" \
@@ -212,37 +213,30 @@ run_ablation_physics_duration_text() {
 }
 
 run_counterfactual_shift() {
-    python main_parallel_counterfactual.py --simulation_paths "${BASE_PATH_CF}/jitter-xy" "${BASE_PATH_CF}/jitter-z" \
+    python main_parallel_counterfactual_new.py --simulation_paths "${BASE_PATH_CF}/jitter-xy" "${BASE_PATH_CF}/jitter-z" \
         --destination_simulation_path "${DESTINATION_SIMULATION_PATH}" \
         --run_name "run_${GENERAL_RUN_COUNT}_counterfactual_shift" \
         --counterfactual_type "shift" \
-        --timeit \
         --n_scenes 2000 \
         --n_proc "${CPUS}"
-
-    cp test_run_${GENERAL_RUN_COUNT}_counterfactual_shift.json test_run_${GENERAL_RUN_COUNT}_counterfactual_shift_karo_10K.json
 }
 
 run_counterfactual_gravity() {
-    python main_parallel_counterfactual.py --simulation_paths "${BASE_PATH_CF}/low-gravity" \
+    python main_parallel_counterfactual_new.py --simulation_paths "${BASE_PATH_CF}/low-gravity" \
         --destination_simulation_path "${DESTINATION_SIMULATION_PATH}" \
         --run_name "run_${GENERAL_RUN_COUNT}_counterfactual_gravity" \
         --counterfactual_type "gravity" \
         --n_scenes 1000 \
         --n_proc "${CPUS}"
-
-    cp test_run_${GENERAL_RUN_COUNT}_counterfactual_gravity.json test_run_${GENERAL_RUN_COUNT}_counterfactual_gravity_karo_10K.json
 }
 
 run_counterfactual_volume() {
-    python main_parallel_counterfactual.py --simulation_paths "${BASE_PATH_CF}/rescale" \
+    python main_parallel_counterfactual_new.py --simulation_paths "${BASE_PATH_CF}/rescale" \
         --destination_simulation_path "${DESTINATION_SIMULATION_PATH}" \
         --run_name "run_${GENERAL_RUN_COUNT}_counterfactual_smaller" \
         --counterfactual_type "volume" \
         --n_scenes 1000 \
         --n_proc "${CPUS}"
-    
-    cp test_run_${GENERAL_RUN_COUNT}_counterfactual_smaller.json test_run_${GENERAL_RUN_COUNT}_counterfactual_smaller_karo_10K.json
 }
 
 run_levels_general_5k() {

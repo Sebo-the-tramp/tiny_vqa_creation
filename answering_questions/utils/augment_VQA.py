@@ -27,7 +27,7 @@ AUG_ROI_CIRCLING_TEXT_LAYOUT = "roi_circling_text_layout_position"
 AUG_ROI_CIRCLING_NO_TEXT_LAYOUT = "roi_circling_no_text_layout_position"
 AUG_ABLATION_TEXT_LAYOUT = "ablation_text_layout_position"
 AUG_ABLATION_NO_TEXT_LAYOUT = "ablation_no_text_layout_position"
-AUG_ABLATION = "ablation"
+AUG_ABLATION = "ablation_baseline"
 AUG_GROUNDING_PHYSICS = "grounding_physics"
 AUG_ABLATION_PHYSICS_DURATION_TEXT = "ablation_physics_duration_text"
 AUG_ABLATION_PHYSICS_MASS_TEXT = "ablation_physics_mass_text"
@@ -168,9 +168,10 @@ def augment_image_VQA_with_context(
 
 def _get_roi_output_file_name(file_name, question_key, object_name):
     # Use a single canonical ROI folder so all ROI variants share image assets.
+    safe_object_name = object_name.replace(" ", "-")
     return (
-        file_name.replace("render", "render_circling_text_no_layout_position")
-        .replace(".png", f"_{question_key}_{object_name}.png")
+        file_name.replace("render", "render_circling")
+        .replace(".png", f"_{question_key}_{safe_object_name}.png")
         .replace("simulations_v4", "simulations_v4_augmented")
         .replace(
             "simulation_v4", "simulation_v4_augmented"
@@ -198,7 +199,7 @@ def augment_roi_circling(
     new_question = question["question"]
 
     for file_idx, file in enumerate(file_names):
-        original_image = np.array(Image.open(file)) if save_images else None
+        original_image = np.array(Image.open(file))
         object_name = None
 
         for idx, (resolved_attr, value) in enumerate(resolved_attributes.items()):
@@ -206,44 +207,44 @@ def augment_roi_circling(
                 object_id = value["choice"]["id"]
                 render_name = file.split("/")[-1]
 
-                if save_images:
-                    instance_image_path = file.replace("render", "instances")
-                    rgb_object_class = world_state["encoding"]["classes"][
-                        int(object_id) + 1
-                    ]
-                    visible_object_mask = (
-                        np.array(Image.open(instance_image_path).convert("RGB"))
-                        == rgb_object_class
-                    )
-                    visible_object_mask = np.all(visible_object_mask, axis=-1)
+                # if save_images:
+                instance_image_path = file.replace("render", "instances")
+                rgb_object_class = world_state["encoding"]["classes"][
+                    int(object_id) + 1
+                ]
+                visible_object_mask = (
+                    np.array(Image.open(instance_image_path).convert("RGB"))
+                    == rgb_object_class
+                )
+                visible_object_mask = np.all(visible_object_mask, axis=-1)
 
-                    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
-                    eroded = cv2.erode(
-                        visible_object_mask.astype(np.uint8), kernel, iterations=1
-                    )
-                    inner_border_mask = visible_object_mask & ~eroded
+                kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
+                eroded = cv2.erode(
+                    visible_object_mask.astype(np.uint8), kernel, iterations=1
+                )
+                inner_border_mask = visible_object_mask & ~eroded
 
-                    # Create a binary mask where the object is located.
-                    binary_mask = inner_border_mask > 0
+                # Create a binary mask where the object is located.
+                binary_mask = inner_border_mask > 0
 
-                    contours, _ = cv2.findContours(
-                        binary_mask.astype(np.uint8),
-                        cv2.RETR_EXTERNAL,
-                        cv2.CHAIN_APPROX_SIMPLE,
-                    )
+                contours, _ = cv2.findContours(
+                    binary_mask.astype(np.uint8),
+                    cv2.RETR_EXTERNAL,
+                    cv2.CHAIN_APPROX_SIMPLE,
+                )
 
-                    if len(contours) == 0:
-                        raise ImpossibleToAnswer("No visible object found.")
+                if len(contours) == 0:
+                    raise ImpossibleToAnswer("No visible object found.")
 
-                    pts = np.vstack([c.reshape(-1, 2) for c in contours]).astype(
-                        np.float32
-                    )
-                    center, radius = cv2.minEnclosingCircle(pts)
+                pts = np.vstack([c.reshape(-1, 2) for c in contours]).astype(
+                    np.float32
+                )
+                center, radius = cv2.minEnclosingCircle(pts)
 
-                    # Draw the ROI circle on the image.
-                    original_image = draw_roi_circle(
-                        original_image, center, radius * 1.5, idx
-                    )
+                # Draw the ROI circle on the image.
+                augmented_image = draw_roi_circle(
+                    original_image, center, radius * 1.5, idx
+                )
 
                 object_name = value["choice"]["name"]
                 pattern = re.compile(re.escape('"' + object_name + '"'), re.IGNORECASE)
@@ -285,14 +286,18 @@ def augment_roi_circling(
         )
 
         if save_images:
-            original_image = Image.fromarray(original_image)
+            # print("New path name", new_file_name)
+            augmented_image = Image.fromarray(augmented_image)
             path = Path(new_file_name)
             path.parent.mkdir(parents=True, exist_ok=True)
-            original_image.save(new_file_name)
+            augmented_image.save(new_file_name)
             file_names[file_idx] = new_file_name
+            # print("No problems")
         else:
-            # Reuse the shared ROI image path without creating a new file.
-            file_names[file_idx] = new_file_name
+            # If ROI assets were pre-generated, reuse that path.
+            # Otherwise keep the original image path to avoid dangling references.
+            if Path(new_file_name).exists():
+                file_names[file_idx] = new_file_name
 
     # if new_question is None:
     #     raise ImpossibleToAnswer("No modifications done to the question in ROI circling augmentation.")
@@ -326,6 +331,47 @@ def augment_ablation(
 
         for resolved_attr, value in resolved_attributes.items():
             if "OBJECT" in resolved_attr:
+
+                # if save_images:  -> DO NOT REMOVE IS TO emulate exactly what is happening 
+                # in the augmentation to trigger same impossible answers and remove images as well from there
+                instance_image_path = file.replace("render", "instances")
+                rgb_object_class = world_state["encoding"]["classes"][
+                    int(object_id) + 1
+                ]
+                visible_object_mask = (
+                    np.array(Image.open(instance_image_path).convert("RGB"))
+                    == rgb_object_class
+                )
+                visible_object_mask = np.all(visible_object_mask, axis=-1)
+
+                kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
+                eroded = cv2.erode(
+                    visible_object_mask.astype(np.uint8), kernel, iterations=1
+                )
+                inner_border_mask = visible_object_mask & ~eroded
+
+                # Create a binary mask where the object is located.
+                binary_mask = inner_border_mask > 0
+
+                contours, _ = cv2.findContours(
+                    binary_mask.astype(np.uint8),
+                    cv2.RETR_EXTERNAL,
+                    cv2.CHAIN_APPROX_SIMPLE,
+                )
+
+                if len(contours) == 0:
+                    raise ImpossibleToAnswer("No visible object found.")
+
+                pts = np.vstack([c.reshape(-1, 2) for c in contours]).astype(
+                    np.float32
+                )
+                center, radius = cv2.minEnclosingCircle(pts)
+
+                # Draw the ROI circle on the image.
+                augmented_image = draw_roi_circle(
+                    original_image, center, radius * 1.5, idx
+                )
+
                 object_id = value["choice"]["id"]
                 object_name = value["choice"]["name"]
                 pattern = re.compile(re.escape('"' + object_name + '"'), re.IGNORECASE)

@@ -20,7 +20,7 @@ SELECTED_CREATIONS=(
 
     # ABLATIONS
     # THIS IS FIRST SO THAT WE CAN CREATE THE IMAGEs
-    "ablation_roi_circling_text"
+    # "ablation_roi_circling_text"
 
     "ablation_baseline"
 

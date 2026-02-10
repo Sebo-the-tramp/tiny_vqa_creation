@@ -27,7 +27,7 @@ AUG_ROI_CIRCLING_TEXT_LAYOUT = "roi_circling_text_layout_position"
 AUG_ROI_CIRCLING_NO_TEXT_LAYOUT = "roi_circling_no_text_layout_position"
 AUG_ABLATION_TEXT_LAYOUT = "ablation_text_layout_position"
 AUG_ABLATION_NO_TEXT_LAYOUT = "ablation_no_text_layout_position"
-AUG_ABLATION = "ablation_baseline"
+AUG_ABLATION_TEXT = "ablation"
 AUG_GROUNDING_PHYSICS = "grounding_physics"
 AUG_ABLATION_PHYSICS_DURATION_TEXT = "ablation_physics_duration_text"
 AUG_ABLATION_PHYSICS_MASS_TEXT = "ablation_physics_mass_text"
@@ -142,14 +142,14 @@ def augment_image_VQA_with_context(
             layout_position=True,
         )
 
-    # This is just to keep the same paths but with no augmentation.
-    elif augmentation == AUG_ABLATION:
+    # # This is just to keep the same paths but with no augmentation.
+    elif augmentation == AUG_ABLATION_TEXT:
         file_names = augment_ablation(
             question,
             world_state,
             resolved_attributes,
             file_names,
-            text=False,
+            text=True,
             layout_position=False,
         )
 

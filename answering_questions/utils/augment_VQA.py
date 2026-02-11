@@ -389,7 +389,7 @@ def augment_ablation(
                         )
                     else:
                         new_question = pattern.sub(
-                            f"\"{object_name}\" (circled in red)", question["question"]
+                            f"\"{object_name}\"", question["question"]
                         )
                 else:
                     if layout_position:
@@ -410,23 +410,23 @@ def augment_ablation(
         if object_name is None:
             continue
 
-        new_file_name = _get_roi_output_file_name(
-            file, question["_question_key"], object_name
-        )
+        # new_file_name = _get_roi_output_file_name(
+        #     file, question["_question_key"], object_name
+        # )
 
-        if save_images:
-            # print("New path name", new_file_name)
-            augmented_image = Image.fromarray(augmented_image)
-            path = Path(new_file_name)
-            path.parent.mkdir(parents=True, exist_ok=True)
-            augmented_image.save(new_file_name)
-            file_names[file_idx] = new_file_name
-            # print("No problems")
-        else:
-            # If ROI assets were pre-generated, reuse that path.
-            # Otherwise keep the original image path to avoid dangling references.
-            if Path(new_file_name).exists():
-                file_names[file_idx] = new_file_name
+        # if save_images:
+        #     # print("New path name", new_file_name)
+        #     augmented_image = Image.fromarray(augmented_image)
+        #     path = Path(new_file_name)
+        #     path.parent.mkdir(parents=True, exist_ok=True)
+        #     augmented_image.save(new_file_name)
+        #     file_names[file_idx] = new_file_name
+        #     # print("No problems")
+        # else:
+        #     # If ROI assets were pre-generated, reuse that path.
+        #     # Otherwise keep the original image path to avoid dangling references.
+        #     if Path(new_file_name).exists():
+        #         file_names[file_idx] = new_file_name
 
     # if new_question is None:
     #     raise ImpossibleToAnswer("No modifications done to the question in ROI circling augmentation.")

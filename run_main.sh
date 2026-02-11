@@ -20,18 +20,18 @@ SELECTED_CREATIONS=(
 
     # ABLATIONS
     # THIS IS FIRST SO THAT WE CAN CREATE THE IMAGEs
-    "ablation_roi_circling_text"
+    # "ablation_roi_circling_text"
 
     "ablation_baseline"
 
-    "ablation_roi_circling_no_text"
-    "ablation_roi_circling_no_text_layout_position"
-    "ablation_roi_circling_text_layout_position"
-    "ablation_no_roi_no_text_layout_position"
-    "ablation_no_roi_text_layout_position"
+    # "ablation_roi_circling_no_text"
+    # "ablation_roi_circling_no_text_layout_position"
+    # "ablation_roi_circling_text_layout_position"
+    # "ablation_no_roi_no_text_layout_position"
+    # "ablation_no_roi_text_layout_position"
 
-    "ablation_physics_mass_text"
-    "ablation_physics_duration_text"
+    # "ablation_physics_mass_text"
+    # "ablation_physics_duration_text"
 
     # COUNTERFACTUALS
     # "counterfactual_shift"

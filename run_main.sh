@@ -228,6 +228,8 @@ run_counterfactual_gravity() {
         --counterfactual_type "gravity" \
         --n_scenes 1000 \
         --n_proc "${CPUS}"
+
+    ## ADD conversion to 1OK_karo
 }
 
 run_counterfactual_volume() {

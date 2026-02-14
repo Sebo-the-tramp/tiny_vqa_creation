@@ -104,7 +104,7 @@ run_general_generate() {
     #     --print_errors
     
     local run_name="run_${GENERAL_RUN_COUNT}_general"
-    ./slice_json.py ../output/${run_name}/test_${run_name}.json 10000
+    python slice_json.py ../output/${run_name}/test_${run_name}.json 10000
 }
 
 run_general_subsample_30k() {

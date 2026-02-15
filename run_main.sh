@@ -109,11 +109,14 @@ run_general_generate() {
 
 run_general_subsample_30k() {
     local run_name="run_${GENERAL_RUN_COUNT}_general"
-    python ./subsample_questions_uniform_question_id.py \
-        --count-per-sub-category 2000 \
-        --input "../output/${run_name}/test_${run_name}.json" \
-        --output "../output/${run_name}/test_${run_name}_30K.json" \
-        --seed 42
+    # python ./subsample_questions_uniform_question_id.py \
+    #     --count-per-sub-category 2000 \
+    #     --input "../output/${run_name}/test_${run_name}.json" \
+    #     --output "../output/${run_name}/test_${run_name}_30K.json" \
+    #     --seed 42
+
+    python slice_json.py ../output/${run_name}/test_${run_name}_30K.json 10000
+ 
 }
 
 run_general_obj_numbers_10k() {

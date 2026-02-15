@@ -91,7 +91,12 @@ def main() -> None:
 
     eval_df = build_eval_df(args.base_path)
 
-    create_scatter_by_family(eval_df, split_by_mode=True)
+    create_scatter_by_family(eval_df, 
+                             filename="levels_by_family.png",
+                             split_by_mode=True, 
+                             show=False, \
+                            #  levels_sorted=["child", "teen", "undegrad", "graduate", "expert"] \
+                             )
 
 
 if __name__ == "__main__":

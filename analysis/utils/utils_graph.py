@@ -7,11 +7,13 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from matplotlib.ticker import PercentFormatter
 from matplotlib.patches import Rectangle
-from matplotlib.colors import LinearSegmentedColormap, to_hex
+from matplotlib.colors import LinearSegmentedColormap, Normalize, to_hex
 from matplotlib.colors import LogNorm
 from matplotlib.lines import Line2D
+import utils.utils_mapping
 
 from scipy.stats import pearsonr
+
 try:
     from adjustText import adjust_text
 except ImportError:  # adjustText is optional; plotting still works without it.
@@ -238,49 +240,49 @@ def create_graph_from_eval_balanced(
     plt.yticks(rotation=0)
 
     # Optional tick coloring by model mode
-    if color_by_mode and "mode_y" in eval_base.columns:
-        model_mode_map = (
-            eval_base[[by, "mode_y"]]
-            .drop_duplicates(subset=[by])
-            .set_index(by)["mode_y"]
-        )
-        mode_colors = {"image-only": "#208A00", "general": "#001C82"}
-        ticklabels = (
-            ax.get_xticklabels() if orientation == "landscape" else ax.get_yticklabels()
-        )
-        for label in ticklabels:
-            model = label.get_text()
-            if model in model_mode_map.index:
-                label.set_color(mode_colors.get(model_mode_map[model], "black"))
-        handles = [plt.Line2D([0], [0], color=c, lw=4) for c in mode_colors.values()]
-        ax.legend(
-            handles,
-            list(mode_colors.keys()),
-            title="Mode",
-            loc="upper left",
-            bbox_to_anchor=(1.02, 1),
-        )
+    # if color_by_mode and "mode_y" in eval_base.columns:
+    #     model_mode_map = (
+    #         eval_base[[by, "mode_y"]]
+    #         .drop_duplicates(subset=[by])
+    #         .set_index(by)["mode_y"]
+    #     )
+    #     mode_colors = {"image-only": "#208A00", "general": "#001C82"}
+    #     ticklabels = (
+    #         ax.get_xticklabels() if orientation == "landscape" else ax.get_yticklabels()
+    #     )
+    #     for label in ticklabels:
+    #         model = label.get_text()
+    #         if model in model_mode_map.index:
+    #             label.set_color(mode_colors.get(model_mode_map[model], "black"))
+    #     handles = [plt.Line2D([0], [0], color=c, lw=4) for c in mode_colors.values()]
+    #     ax.legend(
+    #         handles,
+    #         list(mode_colors.keys()),
+    #         title="Mode",
+    #         loc="upper left",
+    #         bbox_to_anchor=(1.02, 1),
+    #     )
 
-    if color_question_id_by_subcategory and index_to_use == "question_id":
-        if "sub_category" in eval_base.columns:
-            q_to_sub = (
-                eval_base[["question_id", "sub_category"]]
-                .drop_duplicates()
-                .set_index("question_id")["sub_category"]
-                .to_dict()
-            )
-            palette = subcategory_palette or _SUBCATEGORY_PALETTE
-            ticklabels = (
-                ax.get_yticklabels()
-                if orientation == "landscape"
-                else ax.get_xticklabels()
-            )
-            for label in ticklabels:
-                raw = label.get_text()
-                qid = raw.split(" (n=")[0]
-                sub = q_to_sub.get(qid)
-                if sub:
-                    label.set_color(_color_for_subcategory(str(sub), palette))
+    # if color_question_id_by_subcategory and index_to_use == "question_id":
+    #     if "sub_category" in eval_base.columns:
+    #         q_to_sub = (
+    #             eval_base[["question_id", "sub_category"]]
+    #             .drop_duplicates()
+    #             .set_index("question_id")["sub_category"]
+    #             .to_dict()
+    #         )
+    #         palette = subcategory_palette or _SUBCATEGORY_PALETTE
+    #         ticklabels = (
+    #             ax.get_yticklabels()
+    #             if orientation == "landscape"
+    #             else ax.get_xticklabels()
+    #         )
+    #         for label in ticklabels:
+    #             raw = label.get_text()
+    #             qid = raw.split(" (n=")[0]
+    #             sub = q_to_sub.get(qid)
+    #             if sub:
+    #                 label.set_color(_color_for_subcategory(str(sub), palette))
 
     # Highlight the first column and last row
     num_rows, num_columns = acc.shape
@@ -578,7 +580,20 @@ def create_correlation_common_sense(
     return corr_sorted
 
 
-def create_accuracy_bench_vs_common_sense(eval_df: pd.DataFrame, acc_mat: pd.DataFrame):
+def create_accuracy_bench_vs_common_sense(
+        eval_df: pd.DataFrame, 
+        acc_mat: pd.DataFrame, 
+        out_filename: str = "accuracy_vs_common_sense.png",
+        show_legend: bool = True,
+        family_marker_mode: str = "distinct",
+        family_marker_base: str = "^",
+        ylabel: str = "Accuracy (%)",
+        label_fontsize = 12,
+        tick_fontsize = 12,
+        legend_fontsize = 10,
+        show_xlabel: bool = True,
+        figsize: tuple = (4, 2.5)
+        ):
     def _standardize_model_label(model_id: str) -> str:
         label = model_id.replace("2_5", "2.5")
         label = label.replace("_", "-")
@@ -595,9 +610,6 @@ def create_accuracy_bench_vs_common_sense(eval_df: pd.DataFrame, acc_mat: pd.Dat
     with open("./utils/metadata.json", "r") as file:
         metadata_models = pd.DataFrame(json.load(file))
 
-    with open("./utils/metadata.json", "r") as file:
-        metadata_models = pd.DataFrame(json.load(file))
-
     common_sense_df.head()
 
     model_unique_ids = eval_df["model_id"].unique()
@@ -611,6 +623,15 @@ def create_accuracy_bench_vs_common_sense(eval_df: pd.DataFrame, acc_mat: pd.Dat
                 row = common_sense_df[common_sense_df["Method"] == cs_model_id].iloc[0]
                 common_sense_accuracy[model_id] = row.get("Avg. Score")
 
+    from utils.utils_graph_correlation import _build_model_style
+    model_style, family_map = _build_model_style(
+        eval_df,
+        "./utils/metadata.json",
+        group_by="family",
+        family_marker_mode=family_marker_mode,
+        family_marker_base=family_marker_base,
+    )
+    
     accuracy_total_per_model = acc_mat.iloc[-1:, :]
     eval_df_accuracy_total_per_model = (
         eval_df.merge(
@@ -668,7 +689,7 @@ def create_accuracy_bench_vs_common_sense(eval_df: pd.DataFrame, acc_mat: pd.Dat
         eval_df_accuracy_total_per_model["common_sense_accuracy"], errors="coerce"
     )
 
-    plt.figure(figsize=(12, 6))
+    plt.figure(figsize=figsize)
     sns.set_style("white")
 
     # Ensure numeric columns
@@ -709,58 +730,77 @@ def create_accuracy_bench_vs_common_sense(eval_df: pd.DataFrame, acc_mat: pd.Dat
     )
 
     # 3. Scatter Plot
-    scatter_kwargs = dict(
-        data=eval_df_accuracy_total_per_model,
-        x="common_sense_accuracy",
-        y="balanced_accuracy",
-        hue="mode",
-        marker="o",
-        edgecolor="w",
-        alpha=0.9,
-        legend=False,
-    )
-
-    print(eval_df_accuracy_total_per_model.head())
-
-    if "params_b" in eval_df_accuracy_total_per_model.columns:
-        params = pd.to_numeric(
-            eval_df_accuracy_total_per_model["params_b"], errors="coerce"
+    for model_id, df_m in eval_df_accuracy_total_per_model.groupby("model_id"):
+        color, marker, size = model_style.get(family_map.get(model_id))
+        # print(f"Plotting model {model_id} with color {color}, marker {marker}, size {size}")
+        scatter_kwargs = dict(
+            data=df_m,
+            x="common_sense_accuracy",
+            y="balanced_accuracy",
+            # hue="mode",
+            # marker="o",
+            color=color,
+            # s=500 + 400 * size,
+            marker=marker,
+            edgecolor="w",
+            alpha=0.9,
+            legend=False,
         )
-        positive = params[params > 0]
-        if not positive.empty:
-            min_pos = float(positive.min())
-            eval_df_accuracy_total_per_model["params_b_plot"] = params.fillna(min_pos)
-            scatter_kwargs.update(
-                size="params_b_plot",
-                sizes=(40, 900),
-                size_norm=LogNorm(),  # params_b must be > 0
+
+        # print(df_m.head())
+
+        if "params_b" in df_m.columns:
+            params = pd.to_numeric(
+                df_m["params_b"], errors="coerce"
             )
-    ax = sns.scatterplot(**scatter_kwargs)
+            positive = params[params > 0]
+            if not positive.empty:
+                min_pos = float(positive.min())
+                df_m["params_b_plot"] = params.fillna(min_pos)
+                scatter_kwargs.update(
+                    size="params_b_plot",
+                    sizes=(200, 900),
+                    size_norm=LogNorm(),  # params_b must be > 0
+                )
+        ax = sns.scatterplot(**scatter_kwargs)
 
-    label_fontsize = 18
-    tick_fontsize = 16
-    legend_fontsize = 14
+    if show_xlabel:
+        ax.set_xlabel("Common Sense", fontsize=label_fontsize, fontweight="bold")
+    else:
+        ax.set_xlabel("", fontsize=label_fontsize, fontweight="bold")
+    # ax.set_ylabel("Accuracy", fontsize=label_fontsize, fontweight="bold")
+    # if scale_common:
+    #     ax.set_xlabel("Common Sense (%)", fontsize=label_fontsize, fontweight="bold")
+    # if scale_balanced:
+    ylabel_color = "black"
+    if eval_df["category"].nunique() == 1:
+        ylabel_color = utils.utils_mapping.mapping_cat_colors.get(eval_df["category"].unique()[0])+"CC"
 
-    ax.set_xlabel("Common Sense Accuracy", fontsize=label_fontsize)
-    ax.set_ylabel("NewtPhys Accuracy", fontsize=label_fontsize)
-    if scale_common:
-        ax.set_xlabel("Common Sense Accuracy (%)", fontsize=label_fontsize)
-    if scale_balanced:
-        ax.set_ylabel("NewtPhys Accuracy (%)", fontsize=label_fontsize)
+    ax.set_ylabel(ylabel, fontsize=label_fontsize, fontweight="bold", color=ylabel_color)
+    # ax.set_ylim(0, 60)
     ax.tick_params(axis="both", labelsize=tick_fontsize)
-    ax.grid(False)
+    # ax.grid(False)
+    
+    import matplotlib.ticker as mticker
+    # yticks = list(range(int(ax.get_ylim()[0])//5*5, int(ax.get_ylim()[1])//5*5 + 5, 5))  # [10, 20, ..., 100]
+    # ax.set_yticks(yticks)
+    ax.yaxis.set_major_locator(mticker.MultipleLocator(5))
+    # ax.grid(axis="y", which="major", alpha=0.3)
+    ax.grid(axis="y", alpha=0.3)
 
     # 4. Display Pearson Correlation on the plot
     # transform=ax.transAxes uses relative coordinates (0,0 is bottom-left, 1,1 is top-right)
+    cmap = plt.get_cmap("RdYlGn")
     ax.text(
         0.02,
         0.04,
-        f"Pearson r = {r_val:.2f}",
+        f"r = {r_val:.2f}",
         transform=ax.transAxes,
         fontsize=legend_fontsize,
+        fontweight="bold",
         verticalalignment="bottom",
         horizontalalignment="left",
-        bbox=dict(boxstyle="round,pad=0.3", fc="white", ec="gray", alpha=0.8),
+        bbox=dict(boxstyle="round,pad=0.3", fc=cmap(Normalize(0.2, 0.8, clip=True)(r_val)), ec="gray", alpha=0.8),
     )
 
     # 5. Modified Legend
@@ -787,14 +827,15 @@ def create_accuracy_bench_vs_common_sense(eval_df: pd.DataFrame, acc_mat: pd.Dat
         )
         for k in present
     ]
-    legend_mode = ax.legend(
-        handles=handles,
-        title="Model type",
-        loc="upper left",
-        fontsize=legend_fontsize,
-        title_fontsize=legend_fontsize,
-        frameon=True,
-    )
+    # if show_legend:
+    #     legend_mode = ax.legend(
+    #         handles=handles,
+    #         title="",
+    #         loc="upper left",
+    #         fontsize=legend_fontsize,
+    #         title_fontsize=legend_fontsize,
+    #         frameon=True,
+    #     )
 
     # 6. Annotations
     annotate_df = eval_df_accuracy_total_per_model.dropna(
@@ -804,20 +845,25 @@ def create_accuracy_bench_vs_common_sense(eval_df: pd.DataFrame, acc_mat: pd.Dat
     label_texts = []
     for _, r in annotate_df.iterrows():
         label = r["model_label"]
-        offset = (5, 0)
-        ha = "left"
-        if label in {"InternVL2.5-4B", "InternVL2.5-2B"}:
-            offset = (-10, 0)
-            ha = "right"
+        versionname = metadata_models.loc[metadata_models["id"] == r["model_id"], "versionname"].values[0]
+        # print(r["model_id"])
+        offset = (0, 10)
+        # ha = "left" if r["common_sense_accuracy"] < 45 else "right"
+        if r["common_sense_accuracy"] < 45:
+            offset = (offset[0]+10*(45-r["common_sense_accuracy"])/(45-35), offset[1])
+        ha = "center"
+        # if label in {"InternVL2.5-4B", "InternVL2.5-2B"}:
+        #     offset = (-10, 0)
+        #     ha = "right"
         label_texts.append(
             ax.annotate(
-                label,
+                versionname,
                 xy=(r["common_sense_accuracy"], r["balanced_accuracy"]),
                 xytext=offset,
                 textcoords="offset points",
                 va="center",
                 ha=ha,
-                fontsize=12,
+                fontsize=8,
             )
         )
 
@@ -864,23 +910,25 @@ def create_accuracy_bench_vs_common_sense(eval_df: pd.DataFrame, acc_mat: pd.Dat
                 )
                 for s in size_refs
             ]
-            legend_sizes = ax.legend(
-                handles=size_handles,
-                title="Size (params)",
-                loc="lower right",
-                fontsize=legend_fontsize,
-                title_fontsize=legend_fontsize,
-                frameon=True,
-            )
-            ax.add_artist(legend_mode)
-            ax.add_artist(legend_sizes)
+            if show_legend:
+                legend_sizes = ax.legend(
+                    handles=size_handles,
+                    title="Size (params)",
+                    loc="lower right",
+                    fontsize=legend_fontsize,
+                    title_fontsize=legend_fontsize,
+                    frameon=True,
+                )
+                ax.add_artist(legend_mode)
+                ax.add_artist(legend_sizes)
 
     sns.despine(ax=ax)
     plt.tight_layout()
     run = globals().get("RUN_NAME", "default")
     os.makedirs(f"./output/{run}/", exist_ok=True)
     plt.savefig(
-        f"./output/{run}/LoFi_Accuracy_vs_Common_Sense.png",
-        dpi=300,
+        f"./output/{run}/{out_filename}",
+        dpi=200,
         bbox_inches="tight",
+        pad_inches=0.0,
     )

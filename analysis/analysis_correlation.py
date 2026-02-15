@@ -14,6 +14,7 @@ from utils.utils_read import load_results, _sanitize_answer
 import utils.utils_graph as utils_graph
 import utils.utils_graph_correlation as utils_graph_correlation
 from utils.utils_graph_correlation import (
+    create_num_objects_category_curve,
     create_num_objects_violin_grid,
 )
 
@@ -138,7 +139,7 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--base-path",
-        default="/data0/sebastian.cavada/compositional-physics/tiny_vqa_creation/output/",
+        default="../output/",
     )
     parser.add_argument("--run-name", default="run_24_general_obj_num")
     parser.add_argument(
@@ -168,47 +169,72 @@ def main() -> None:
     utils_graph.RUN_NAME = args.run_name
     utils_graph_correlation.RUN_NAME = args.run_name
 
-    output_dir = Path("output_plots") / args.run_name
+    output_dir = Path("output") / args.run_name
     output_dir.mkdir(parents=True, exist_ok=True)
 
     eval_df = build_eval_df(args.base_path)
     eval_df = add_model_mode(eval_df)
+    eval_df_src = eval_df
 
-    for mode_label, mode_df in select_eval_df(
-        eval_df, mode=args.mode, split_by_mode=args.split_by_mode
-    ):
-        for x in range(1):
+    for category_filter in ("category", "*"):
+        if category_filter == "*":
+            # Mix all categories to get overall results
+            eval_df = eval_df_src.copy()
+            eval_df["category"] = "all"
+            eval_df["sub_category"] = "all"
+        else:
+            eval_df = eval_df_src
+
+        for mode_label, mode_df in select_eval_df(
+            eval_df, mode=args.mode, split_by_mode=args.split_by_mode
+        ):
+            if category_filter == "category":
+                create_num_objects_category_curve(
+                    mode_df,
+                    # sample_frac=0.8,
+                    output_dir=output_dir,
+                    filename=f"num_objects_category_curve_{category_filter}_{mode_label}.png",
+                    category_column=category_filter,
+                    y_limit_mode="fixed",
+                    run_name="all"
+                )
+            
+            for x in range(1):
+                create_num_objects_violin_grid(
+                    mode_df,
+                    group_by="model_id",
+                    # metadata_path="analysis/utils/metadata.json",
+                    save_per_category=True,
+                    per_category_dirname=f"{'all/' if category_filter == '*' else ''}num_objects_per_model_{mode_label}",
+                    save_grid=True,
+                    save_legend=True,
+                    legend_filename=f"num_objects_legend_models_{mode_label}.png",
+                    legend_cols=6,
+                    # sample_frac=0.8,
+                    # sample_seed=x,
+                    output_dir=output_dir,
+                    family_marker_mode=args.family_marker_mode,
+                    family_marker_base=args.family_marker_base,
+                    split_values=None,
+                    category_column=category_filter if category_filter != "*" else "category",
+                )
+
             create_num_objects_violin_grid(
                 mode_df,
-                group_by="model_id",
+                group_by="family",
                 save_per_category=True,
-                per_category_dirname=f"num_objects_per_model_{mode_label}",
-                save_grid=True,
+                per_category_dirname=f"{'all/' if category_filter == '*' else ''}num_objects_per_family_{mode_label}",
+                save_grid=False,
                 save_legend=True,
-                legend_filename=f"num_objects_legend_models_{mode_label}.png",
-                legend_cols=6,
-                sample_frac=0.8,
-                sample_seed=x,
-                y_limit_mode="fixed",
+                legend_filename=f"num_objects_legend_families_{mode_label}.png",
+                legend_cols=4,
+                # sample_frac=0.8,
                 output_dir=output_dir,
                 family_marker_mode=args.family_marker_mode,
                 family_marker_base=args.family_marker_base,
+                split_values=None,
+                category_column=category_filter if category_filter != "*" else "category",
             )
-
-        create_num_objects_violin_grid(
-            mode_df,
-            group_by="family",
-            save_per_category=True,
-            per_category_dirname=f"num_objects_per_family_{mode_label}",
-            save_grid=False,
-            save_legend=True,
-            legend_filename=f"num_objects_legend_families_{mode_label}.png",
-            legend_cols=4,
-            sample_frac=0.8,
-            output_dir=output_dir,
-            family_marker_mode=args.family_marker_mode,
-            family_marker_base=args.family_marker_base,
-        )
 
 
 if __name__ == "__main__":

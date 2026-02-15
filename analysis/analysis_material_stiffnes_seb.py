@@ -99,22 +99,37 @@ def main() -> None:
 
     utils_graph.RUN_NAME = args.run_name
 
-    output_dir = Path("/data0/sebastian.cavada/compositional-physics/tiny_vqa_creation/analysis/output") / args.run_name
-    output_dir.mkdir(parents=True, exist_ok=True)
+    # output_dir = Path("/data0/sebastian.cavada/compositional-physics/tiny_vqa_creation/analysis/output") / args.run_name
+    # output_dir = Path("output") / args.run_name
+    # output_dir.mkdir(parents=True, exist_ok=True)
 
     eval_df = build_eval_df(args.base_path)
+    
+    excluded_questions = ["F_OCCLUSION_PERCENTAGE_OBJECT", "F_MATERIAL_IDENTIFICATION_SIMILAR_OBJECT"]
+    eval_df = eval_df[~eval_df["question_id"].isin(excluded_questions)]
+
 
     # print(eval_df.head().to_string())
-    fig = create_material_stiffness_violin_grid(
-        eval_df,
-        output_dir=output_dir,
-        show=False,
-        save_per_category=True,
-        save_grid=True,
-        save_legend=True,
-        y_limit_mode="fit",
-        show_legend=False,        
-    )
+    for group_by in ["model_id", "family"]:
+    # for group_by in ["model_id"]:
+        # for category_col in ["category", "sub_category"]:
+        for category_col in ["category"]:
+            #  fig = create_material_stiffness_violin_grid(
+            fig = create_material_stiffness_violin_grid(
+                eval_df,
+                # output_dir=output_dir,
+                run_name=args.run_name,
+                show=False,
+                save_per_category=True,
+                save_grid=True,
+                save_legend=True,
+                y_limit_mode="fit",
+                group_by=group_by,  # model_id or family
+                category_col=category_col,  # sub_category or category
+                show_legend=False,        
+                # stiffness_labels=("Soft\n($\\text{yms} \leq 2e4$)", "Medium\n($2e4 > \\text{yms} \leq 1e6$)", "Stiff\n($\\text{yms} > 1e6$)"),
+                stiffness_labels=("Soft", "Medium", "Stiff"),
+            )
 
     # eval_df_single_image = eval_df[eval_df["idx"].astype(str).str.contains("_i")]
     # acc_mat_single, _ = create_graph_from_eval_balanced(

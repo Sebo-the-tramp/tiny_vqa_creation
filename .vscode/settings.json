@@ -1,5 +1,14 @@
 {
     "python.analysis.extraPaths": [
         "/Users/sebastiancavada/.vscode/extensions/roipoussiere.cadquery-0.1.3/stubs"
-    ]
+    ],
+    "python.defaultInterpreterPath": "~/miniconda3/envs/physicsvqa/bin/python",
+    "python.terminal.activateEnvironment": true,
+    "python.terminal.activateEnvInCurrentTerminal": true,
+    "terminal.integrated.env.linux": {
+        "CONDA_DEFAULT_ENV": "physicsvqa"
+    },
+    "python-envs.defaultEnvManager": "ms-python.python:conda",
+    "python-envs.defaultPackageManager": "ms-python.python:conda",
+    "python-envs.pythonProjects": []
 }

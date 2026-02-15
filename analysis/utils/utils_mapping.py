@@ -50,8 +50,36 @@ mapping_sub_cat_name = {
 mapping_cat = {
     "mechanics": "Mechanics",
     "spatial_reasoning": "Spatial Reasoning",
-    "visual_percetion": "Visual Perception",
+    "persistence": "Permanence",
     "temporal": "Temporal Reasoning",
     "view_point": "Viewpoint",
     "material_understanding": "Material Understanding"
+}
+
+mapping_cat_order = {
+    "material_understanding": 0,
+    "mechanics": 1,
+    "spatial_reasoning": 2,
+    "view_point": 3,
+    "persistence": 4,
+    "temporal": 5,
+}
+
+mapping_cat_colors = {
+    # More vivid pastel-like colors
+    "mechanics": "#FF5733",              # vivid orange-red
+    "spatial_reasoning": "#3498DB",       # vivid blue
+    "persistence": "#F43FC7",        # vivid turquoise
+    "temporal": "#0DA792",                # vivid orange
+    "view_point": "#EEAC32",              # vivid yellow
+    "material_understanding": "#2BAE27",   # vivid green
+}
+
+mapping_cat_short = {
+    "mechanics": mapping_cat.get("mechanics"),
+    "spatial_reasoning": mapping_cat.get("spatial_reasoning"),
+    "persistence": mapping_cat.get("persistence"),
+    "temporal": mapping_cat.get("temporal"),
+    "view_point": mapping_cat.get("view_point"),
+    "material_understanding": "Material Underst."
 }

@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 from utils.utils_read import load_results, _sanitize_answer
@@ -15,6 +16,7 @@ from utils.utils_graph import (
 )
 
 from utils.utils_paper import print_heatmap_table_latex
+import utils.utils_mapping
 
 def build_eval_df(base_path: str | Path) -> pd.DataFrame:
     base = Path(base_path)
@@ -80,9 +82,9 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--base-path",
-        default="/data0/sebastian.cavada/compositional-physics/tiny_vqa_deterministic/output/",
+        default="../output/",
     )
-    parser.add_argument("--run-name", default="run_16_general")
+    parser.add_argument("--run-name", default="run_24_general")
     args = parser.parse_args()
 
     utils_graph.RUN_NAME = args.run_name
@@ -95,66 +97,84 @@ def main() -> None:
     print(eval_df.head().to_string())
 
     eval_df_single_image = eval_df[eval_df["idx"].astype(str).str.contains("_i")]
-    acc_mat_single, _ = create_graph_from_eval_balanced(
-        eval_base=eval_df_single_image,
-        index_to_use="question_id",
-        title="Balanced accuracy by question_id and general models - single-image task",
-        color_by_mode=True,
-        show=False,
-        include_counts=True,
-        color_question_id_by_subcategory=True,
-    )
+    # acc_mat_single, _ = create_graph_from_eval_balanced(
+    #     eval_base=eval_df_single_image,
+    #     index_to_use="question_id",
+    #     title="Balanced accuracy by question_id and general models - single-image task",
+    #     color_by_mode=True,
+    #     show=False,
+    #     include_counts=True,
+    #     color_question_id_by_subcategory=True,
+    # )
 
 
-    eval_df_multi_image = eval_df[eval_df["idx"].astype(str).str.contains("_g")]
-    eval_df_multi_image = eval_df_multi_image.groupby("model_id").filter(
-        lambda g: g["model_answer"].notna().any()
-    )
-    acc_mat_multi, _ = create_graph_from_eval_balanced(
-        eval_base=eval_df_multi_image,                     # your row-level eval with is_correct
-        index_to_use="question_id",
-        title="Balanced accuracy by question_id and general models - multi-image task",
-        color_by_mode=True,
-        show=False,
-        include_counts=True,
-        color_question_id_by_subcategory=True,
-    )
+    # eval_df_multi_image = eval_df[eval_df["idx"].astype(str).str.contains("_g")]
+    # eval_df_multi_image = eval_df_multi_image.groupby("model_id").filter(
+    #     lambda g: g["model_answer"].notna().any()
+    # )
+    # acc_mat_multi, _ = create_graph_from_eval_balanced(
+    #     eval_base=eval_df_multi_image,                     # your row-level eval with is_correct
+    #     index_to_use="question_id",
+    #     title="Balanced accuracy by question_id and general models - multi-image task",
+    #     color_by_mode=True,
+    #     show=False,
+    #     include_counts=True,
+    #     color_question_id_by_subcategory=True,
+    # )
 
-    print_heatmap_table_latex(
-        acc_mat_single, output_path=str(output_dir / "heatmap_table_single.txt")
-    )
-    print_heatmap_table_latex(
-        acc_mat_multi, output_path=str(output_dir / "heatmap_table_multi.txt")
-    )
+    # print_heatmap_table_latex(
+    #     acc_mat_single, output_path=str(output_dir / "heatmap_table_single.txt")
+    # )
+    # print_heatmap_table_latex(
+    #     acc_mat_multi, output_path=str(output_dir / "heatmap_table_multi.txt")
+    # )
+
+    excluded_questions = ["F_OCCLUSION_PERCENTAGE_OBJECT", "F_MATERIAL_IDENTIFICATION_SIMILAR_OBJECT"]
+    eval_df = eval_df[~eval_df["question_id"].isin(excluded_questions)]
 
     # eval_df_all = eval_df
-    eval_df_multi_image = eval_df
+    categories = eval_df["category"].unique()
+    print("Categories:", categories)
+    for cat in np.hstack([categories, "all"]):
+        print("Processing category:", cat)
+        eval_df_sub = eval_df.copy() if cat == "all" else eval_df[eval_df["category"] == cat].copy()
 
-    acc_mat, _ = create_graph_from_eval_balanced(
-        eval_base=eval_df_multi_image,
-        index_to_use="sub_category",
-        title="Balanced accuracy by sub_category and model - single-image",
-        color_by_mode=True,    
-        show=False,
-    )
+        acc_mat, _ = create_graph_from_eval_balanced(
+            eval_base=eval_df_sub,
+            index_to_use="sub_category",
+            title="Balanced accuracy by sub_category and model - single-image",
+            color_by_mode=True,    
+            show=False,
+        )
 
-    create_sub_categories_summary(
-        acc_mat=acc_mat,
-        title="Sub-category accuracy summary - all",
-        show=False,
-    )
+        # create_sub_categories_summary(
+        #     acc_mat=acc_mat,
+        #     title="Sub-category accuracy summary - all",
+        #     show=False,
+        # )
 
-    create_correlation_common_sense(
-        eval_df,
-        acc_mat,
-        title="Correlation common sense",
-        show=False,
-    )
+        # create_correlation_common_sense(
+        #     eval_df_sub,
+        #     acc_mat,
+        #     title="Correlation common sense",
+        #     show=False,
+        # )
 
-    create_accuracy_bench_vs_common_sense(
-        eval_df,
-        acc_mat,
-    )
+
+        if cat == "all":
+            cat_label = "Overall accuracy (%)"
+        else:
+            cat_label = utils.utils_mapping.mapping_cat_short.get(cat)
+        create_accuracy_bench_vs_common_sense(
+            eval_df_sub,
+            acc_mat,
+            out_filename="common_sense_correlation_" + cat + ".png" if cat != "all" else "common_sense_correlation.png",
+            show_legend=cat == "all",
+            ylabel= cat_label,
+            legend_fontsize=12 if cat != "all" else 10,
+            show_xlabel= cat == "all",
+            figsize=(6, 2.5) if cat == "all" else (4, 2.5),
+        )
 
     
 

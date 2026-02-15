@@ -95,5 +95,13 @@
             "console": "integratedTerminal",
             "cwd": "/data0/sebastian.cavada/compositional-physics/tiny_vqa_creation/analysis",            
         },
+        {
+            "name": "ANALYSIS Raoul",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}/analysis"
+        }
     ]
 }

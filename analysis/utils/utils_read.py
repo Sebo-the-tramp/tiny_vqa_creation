@@ -65,11 +65,12 @@ def load_results(
         if len(missing) == 0:
             return df_cached
         else:
-            print("Cache is missing required columns:", missing)
+            print("/!\ WARNING: Cache is missing required columns (you may need to reload):", missing)
+            return df_cached
 
-            reply = input("There are missing columns in the cache. Proceed or reload? (y=use cache, n=reload): ").strip().lower()
-            if reply == "y":
-                return df_cached
+            # reply = input("There are missing columns in the cache. Proceed or reload? (y=use cache, n=reload): ").strip().lower()
+            # if reply == "y":
+            #     return df_cached
 
     df_test = _read_json_dataframe(test_path)
     df_val = _read_json_dataframe(val_path)

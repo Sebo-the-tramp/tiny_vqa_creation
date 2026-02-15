@@ -38,6 +38,41 @@ _DEFAULT_MARKERS = [
 ]
 
 
+def paperformat(ax, figsize=(4, 3.1), ylim=None, ticks_step=10, grid=["x", "y"], minor=True):
+    fig = ax.get_figure()
+    if figsize is not None:
+        fig.set_size_inches(*figsize)
+
+    ax.set_title("")
+    for label in ax.get_xticklabels():
+        label.set_fontsize(13)
+        label.set_ha('center')
+        label.set_fontweight('bold')  # or 'normal', 'light', etc.
+    
+    for label in ax.get_yticklabels():
+        label.set_fontsize(13)
+        label.set_fontweight('bold')  # or 'normal', 'light', etc.
+
+    for label in [ax.xaxis.label, ax.yaxis.label]:
+        label.set_fontsize(14)
+        label.set_fontweight("bold")
+
+    ax.spines['right'].set_visible(False)
+    ax.spines['top'].set_visible(False)
+    if ylim is not None:
+        ax.set_ylim(ylim)
+    
+    import matplotlib.ticker as mticker
+    ax.yaxis.set_major_locator(mticker.MultipleLocator(ticks_step))
+    if minor:
+        ax.yaxis.set_minor_locator(mticker.MultipleLocator(ticks_step//2))
+
+    ax.grid(False)
+    if grid:
+        for axis in grid:
+            ax.grid(axis=axis, which="major", linestyle="-", alpha=0.5)
+            ax.grid(axis=axis, which="minor", linestyle="-", alpha=0.1)
+        
 def _safe_filename(label: str) -> str:
     return label.replace("/", "_").replace("\\", "_").replace(" ", "_")
 
@@ -166,6 +201,8 @@ def create_scatter_by_family(
         eval_df["accuracy"] = pd.to_numeric(eval_df["is_correct"], errors="coerce")
     else:
         raise KeyError("eval_df must include 'accuracy' or 'is_correct'.")
+    
+    eval_df["accuracy"] *= 100
 
     family_style, family_map = _build_model_style(
         eval_df,
@@ -175,6 +212,9 @@ def create_scatter_by_family(
     eval_df = eval_df.copy()
     eval_df["family"] = eval_df["model_id"].map(family_map).fillna("Other")
 
+    print(eval_df["family"].unique())
+    print(eval_df["sub_category"].unique())
+    
     metadata_df = None
     if metadata_path is not None and Path(metadata_path).exists():
         metadata_df = _load_model_metadata(metadata_path)
@@ -187,6 +227,7 @@ def create_scatter_by_family(
         )
 
     line_styles = ["-", "--", "-.", ":", (0, (3, 1, 1, 1)), (0, (5, 3))]
+    rng = np.random.default_rng(0)
 
     def _plot_subset(
         plot_df: pd.DataFrame, title_suffix: str, output_name: str
@@ -200,17 +241,8 @@ def create_scatter_by_family(
             .dropna()
         )
 
-        subcat_scores = (
-            q_scores.groupby(["family", "level", "sub_category"], observed=True)[
-                "accuracy"
-            ]
-            .mean()
-            .reset_index(name="subcat_acc")
-            .dropna()
-        )
-
         final_plot_df = (
-            subcat_scores.groupby(["family", "level"], observed=True)["subcat_acc"]
+            q_scores.groupby(["family", "level"], observed=True)["accuracy"]
             .agg(mean_accuracy="mean", band_width="sem")
             .reset_index()
             .dropna()
@@ -220,39 +252,200 @@ def create_scatter_by_family(
         final_plot_df["level_idx"] = final_plot_df["level"].map(level_map)
 
         fig, ax = plt.subplots(figsize=(12, 6))
+        # plot_df_model = (
+        #     plot_df.groupby(
+        #         ["model_id", question_col, "level", "sub_category"], observed=True
+        #     )["accuracy"]
+        #     .mean()
+        #     .reset_index()
+        #     .dropna()
+        # )
+        # final_plot_df_model = (
+        #     plot_df_model.groupby(["model_id", "level"], observed=True)["accuracy"]
+        #     .agg(mean_accuracy="mean", band_width="sem")
+        #     .reset_index()
+        #     .dropna()
+        # )
+        # final_plot_df_model["level_idx"] = final_plot_df_model["level"].map(level_map)
+        # sns.violinplot(
+        #     data=final_plot_df_model,
+        #     x="level_idx",
+        #     y="mean_accuracy",
+        #     ax=ax,
+        #     color="0.85",
+        #     # inner="box",
+        #     inner=None,
+        #     cut=0,
+        #     width=1.0,
+        #     linewidth=0.5,
+        #     order=list(range(len(levels_sorted))),
+        # )
+
         for i, (family, fam_data) in enumerate(final_plot_df.groupby("family")):
             fam_data = fam_data.sort_values("level_idx")
             if fam_data.empty:
                 continue
-            x = fam_data["level_idx"].values
-            y = fam_data["mean_accuracy"].values
+            
+            jitter = rng.uniform(-0.15, 0.15, size=fam_data["level_idx"].values[1:].size)
+            x = fam_data["level_idx"].values[1:] + jitter
+            y = fam_data["mean_accuracy"].values[1:]
+            baseline_acc =fam_data[fam_data["level_idx"] == 0]["mean_accuracy"].values
+            # y = y - baseline_acc
+
             y_err = fam_data["band_width"].values
             color, marker, _size = family_style.get(family, ("black", "o", 0.5))
             ls = line_styles[i % len(line_styles)]
-            ax.plot(
-                x, y, color=color, linestyle=ls, linewidth=2, alpha=0.85, label=family
-            )
+            # ax.plot(
+            #     x, y, color=color, linestyle=ls, linewidth=2, alpha=0.85, label=family
+            # )
             ax.scatter(
-                x, y, color=color, marker=marker, s=60, edgecolor="white", linewidth=0.7
+                x, y, color=color, marker=marker, s=150+300*_size, edgecolor="white", linewidth=1, zorder=4
             )
-            if np.isfinite(y_err).any():
-                ax.fill_between(x, y - y_err, y + y_err, color=color, alpha=0.12)
+            # if np.isfinite(y_err).any():
+            #     ax.fill_between(x, y - y_err, y + y_err, color=color, alpha=0.12)
+        
+        # n = 10
+        # y_min, y_max = ax.get_ylim()
+        # for i in range(n):
+        #     ax.axhspan(y_min*(i+1)/n, y_min*i/n, facecolor="#ffcccc", alpha=0.5*i/n, zorder=1)
+        # for i in range(n):
+        #     ax.axhspan(y_max*i/n, y_max*(i+1)/n, facecolor="#ccffcc", alpha=0.5*i/n, zorder=1)
+        # ax.set_ylim(y_min, y_max)
+        # ax.axhline(0, color="#555555", alpha=1, zorder=3, linewidth=2)
 
-        ax.set_xticks(range(len(levels_sorted)))
+        ax.set_xticks(list(range(len(levels_sorted)))[1:])
         nice_labels = [level.capitalize() for level in levels_sorted]
-        ax.set_xticklabels(nice_labels, fontsize=11, fontweight="bold")
-        ax.set_xlabel("Difficulty Level", fontsize=12)
-        ax.set_ylabel("Accuracy", fontsize=12)
+        ax.set_xticklabels(nice_labels[1:], fontsize=11, fontweight="bold", rotation=30)
+        ax.tick_params(axis='x', pad=-2)
+        # ax.set_xlabel("Difficulty Level", fontsize=12)
+        ax.set_ylabel("Accuracy (%)", fontsize=12)
+        ax.set_title(f"Performance by Family{title_suffix}", fontsize=14)
+        # ax.legend(bbox_to_anchor=(1.05, 1), loc="upper left")
+        ax.grid(True, linestyle="--", alpha=0.5)
+
+        fig.tight_layout()
+        paperformat(ax, figsize=(4, 3.5), grid=["y"])
+
+        run = run_name or globals().get("RUN_NAME", "default")
+        out_dir = Path(output_dir) if output_dir is not None else Path("output") / run
+        out_dir.mkdir(parents=True, exist_ok=True)
+        fig.savefig(out_dir / output_name, dpi=300, bbox_inches="tight", pad_inches=0.05)
+
+        if show:
+            plt.show()
+        else:
+            plt.close(fig)
+
+        return fig
+
+    def _plot_baseline_improvement(
+        plot_df: pd.DataFrame, title_suffix: str, output_name: str
+    ) -> plt.Figure:
+        q_scores = (
+            plot_df.groupby(
+                ["family", question_col, "level", "sub_category"], observed=True
+            )["accuracy"]
+            .mean()
+            .reset_index()
+            .dropna()
+        )
+
+        final_plot_df = (
+            q_scores.groupby(["family", "level"], observed=True)["accuracy"]
+            .agg(mean_accuracy="mean", band_width="sem")
+            .reset_index()
+            .dropna()
+        )
+
+        level_map = {lvl: i for i, lvl in enumerate(levels_sorted)}
+        final_plot_df["level_idx"] = final_plot_df["level"].map(level_map)
+
+        fig, ax = plt.subplots(figsize=(12, 6))
+        # plot_df_model = (
+        #     plot_df.groupby(
+        #         ["model_id", question_col, "level", "sub_category"], observed=True
+        #     )["accuracy"]
+        #     .mean()
+        #     .reset_index()
+        #     .dropna()
+        # )
+        # final_plot_df_model = (
+        #     plot_df_model.groupby(["model_id", "level"], observed=True)["accuracy"]
+        #     .agg(mean_accuracy="mean", band_width="sem")
+        #     .reset_index()
+        #     .dropna()
+        # )
+        # final_plot_df_model["level_idx"] = final_plot_df_model["level"].map(level_map)
+        # sns.violinplot(
+        #     data=final_plot_df_model,
+        #     x="level_idx",
+        #     y="mean_accuracy",
+        #     ax=ax,
+        #     color="0.85",
+        #     # inner="box",
+        #     inner=None,
+        #     cut=0,
+        #     width=1.0,
+        #     linewidth=0.5,
+        #     order=list(range(len(levels_sorted))),
+        # )
+
+        for i, (family, fam_data) in enumerate(final_plot_df.groupby("family")):
+            fam_data = fam_data.sort_values("level_idx")
+            if fam_data.empty:
+                continue
+            
+            jitter = rng.uniform(-0.15, 0.15, size=fam_data["level_idx"].values[1:].size)
+            x = fam_data["level_idx"].values[1:] + jitter
+            y = fam_data["mean_accuracy"].values[1:]
+            baseline_acc =fam_data[fam_data["level_idx"] == 0]["mean_accuracy"].values
+            y = y - baseline_acc
+
+            y_err = fam_data["band_width"].values
+            color, marker, _size = family_style.get(family, ("black", "o", 0.5))
+            ls = line_styles[i % len(line_styles)]
+            # ax.plot(
+            #     x, y, color=color, linestyle=ls, linewidth=2, alpha=0.85, label=family
+            # )
+            ax.scatter(
+                x, y, color=color, marker=marker, s=150+300*_size, edgecolor="white", linewidth=1, zorder=4, label=family
+            )
+            # if np.isfinite(y_err).any():
+            #     ax.fill_between(x, y - y_err, y + y_err, color=color, alpha=0.12)
+        
+        n = 10
+        y_min, y_max = ax.get_ylim()
+        for i in range(n):
+            ax.axhspan(y_min*(i+1)/n, y_min*i/n, facecolor="#ffcccc", alpha=0.5*i/n, zorder=1)
+        for i in range(n):
+            ax.axhspan(y_max*i/n, y_max*(i+1)/n, facecolor="#ccffcc", alpha=0.5*i/n, zorder=1)
+        ax.set_ylim(y_min, y_max)
+        ax.axhline(0, color="#555555", alpha=1, zorder=3, linewidth=2)
+
+        ax.set_xticks(list(range(len(levels_sorted)))[1:])
+        nice_labels = [level.capitalize() for level in levels_sorted]
+        ax.set_xticklabels(nice_labels[1:], fontsize=11, fontweight="bold", rotation=30)
+        ax.tick_params(axis='x', pad=-2)
+        # ax.set_xlabel("Difficulty Level", fontsize=12)
+        ax.set_ylabel("Change in accuracy", fontsize=12)
         ax.set_title(f"Performance by Family{title_suffix}", fontsize=14)
         ax.legend(bbox_to_anchor=(1.05, 1), loc="upper left")
         ax.grid(True, linestyle="--", alpha=0.5)
 
         fig.tight_layout()
+        paperformat(ax, figsize=(4.5, 3), grid=["y"], minor=False)
+
+        yticks = np.arange(-2, 10, 2)
+        ax.set_yticks(yticks)
+        ax.set_yticklabels([f"{'+' if i>0 else ''}{int(i)}" for i in yticks])
+        colors = ["black" if y==0 else ("green" if y > 0 else "red") for y in yticks]
+        for ticklabel, color in zip(ax.get_yticklabels(), colors):
+            ticklabel.set_color(color)
 
         run = run_name or globals().get("RUN_NAME", "default")
         out_dir = Path(output_dir) if output_dir is not None else Path("output") / run
         out_dir.mkdir(parents=True, exist_ok=True)
-        fig.savefig(out_dir / output_name, dpi=300, bbox_inches="tight")
+        fig.savefig(out_dir / output_name, dpi=300, bbox_inches="tight", pad_inches=0.05)
 
         if show:
             plt.show()
@@ -272,6 +465,8 @@ def create_scatter_by_family(
             suffix = f" ({mode})"
             out_name = filename.replace(".png", f"_{_safe_filename(mode)}.png")
             figures.append(_plot_subset(subset, suffix, out_name))
+
+            figures.append(_plot_baseline_improvement(subset, suffix, out_name.replace(".png", "_baselinerelative.png")))
         if figures:
             return figures[0]
 

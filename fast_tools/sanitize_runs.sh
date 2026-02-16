@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-PREFIX="${1:-run_26_}"
+PREFIX="${1:-run_28_}"
 MAX_PREFIX_CHARS="${2:--1}"
 OUTPUT_ROOT="/data0/sebastian.cavada/compositional-physics/tiny_vqa_creation/output"
 # OUTPUT_ROOT="/Users/sebastiancavada/Desktop/tmp_paris/tiny_vqa_creation/output"

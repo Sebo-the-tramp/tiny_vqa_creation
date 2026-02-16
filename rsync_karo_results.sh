@@ -7,7 +7,7 @@
 # copy results from karo to local
 rsync -avz -e "ssh -i ~/.ssh/id_rsa_karolina" \
   --include="*/" \
-  --include="*run_28**" \
+  --include="*run_26**" \
   --exclude="*" \
   it4i-thvu@login3.karolina.it4i.cz:/mnt/proj1/eu-25-92/tiny_vqa_creation/output/ \
   ./output/

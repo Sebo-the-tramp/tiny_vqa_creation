@@ -4,7 +4,7 @@ set -euo pipefail
 
 source ../tiny_vqa_creation/.venv/bin/activate
 
-GENERAL_RUN_COUNT=28
+GENERAL_RUN_COUNT=26
 PER_OBJECT_COUNT=300
 MATERIAL_SUBSAMPLE_COUNT=2000
 MATERIAL_OBJECTS_PER_COUNT=300
@@ -13,7 +13,7 @@ MATERIAL_OBJECTS_PER_COUNT=300
 # This is the only place where toggling is needed.
 SELECTED_CREATIONS=(
     # GENERAL
-    # "general_generate"
+    "general_generate"
     # "general_subsample_30k"
     # "general_obj_numbers_10k"
     # "general_yms_variations_10k"
@@ -27,8 +27,8 @@ SELECTED_CREATIONS=(
     # "ablation_roi_circling_no_text"
     # "ablation_roi_circling_no_text_layout_position"
     # "ablation_roi_circling_text_layout_position"
-    "ablation_no_roi_no_text_layout_position"
-    "ablation_no_roi_text_layout_position"
+    # "ablation_no_roi_no_text_layout_position"
+    # "ablation_no_roi_text_layout_position"
 
     # "ablation_physics_mass_text"
     # "ablation_physics_duration_text"
@@ -97,11 +97,14 @@ run_general_generate() {
     python main_parallel.py --simulation_paths "${simulation_paths[@]}" \
         --destination_simulation_path "${DESTINATION_SIMULATION_PATH}" \
         --run_name "run_${GENERAL_RUN_COUNT}_general" \
-        --n_scenes 100 \
+        --n_scenes 5000 \
         --exclude_simulations_file "problematic_paths.txt" \
         --n_proc "${CPUS}" \
         --timeit \
         --print_errors
+
+    local run_name="run_${GENERAL_RUN_COUNT}_general"
+    ./slice_json.py ../output/${run_name}/test_${run_name}.json 10000
 }
 
 run_general_subsample_30k() {
@@ -111,6 +114,8 @@ run_general_subsample_30k() {
         --input "../output/${run_name}/test_${run_name}.json" \
         --output "../output/${run_name}/test_${run_name}_30K.json" \
         --seed 42
+    
+    ./slice_json.py ../output/${run_name}/test_${run_name}.json 10000
 }
 
 run_general_obj_numbers_10k() {

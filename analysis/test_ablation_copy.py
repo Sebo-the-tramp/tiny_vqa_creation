@@ -19,7 +19,7 @@ DEFAULT_BASE_PATH = Path(
     "/data0/sebastian.cavada/compositional-physics/tiny_vqa_creation/output"
 )
 
-RUN = "26"
+RUN = "28"
 
 DEFAULT_RUNS = [
     f"run_{RUN}_roi_ablation_baseline",
@@ -29,8 +29,8 @@ DEFAULT_RUNS = [
     f"run_{RUN}_roi_circling_text_layout_position",
     f"run_{RUN}_no_roi_circling_yes_text_layout_position",
     f"run_{RUN}_no_roi_circling_no_text_layout_position",
-    f"run_{RUN}_ablation_physics_duration_text",
-    f"run_{RUN}_ablation_physics_mass_text",
+    # f"run_{RUN}_ablation_physics_duration_text",
+    # f"run_{RUN}_ablation_physics_mass_text",
 ]
 
 RUN_MAP = {
@@ -41,8 +41,8 @@ RUN_MAP = {
     f"run_{RUN}_roi_circling_no_text_layout_position": "Circle + Layout",
     f"run_{RUN}_roi_circling_no_text": "Circle",
     f"run_{RUN}_no_roi_circling_no_text_layout_position": "Layout",
-    f"run_{RUN}_ablation_physics_duration_text": "Text + Duration",
-    f"run_{RUN}_ablation_physics_mass_text": "Text + Mass",
+    # f"run_{RUN}_ablation_physics_duration_text": "Text + Duration",
+    # f"run_{RUN}_ablation_physics_mass_text": "Text + Mass",
 }
 RUN_INDEX = {run_name: idx for idx, run_name in enumerate(RUN_MAP.keys())}
 

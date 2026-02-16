@@ -45,7 +45,7 @@ def main():
 
     count = 0
     for i, chunk in enumerate(chunks, start=1):
-        out_path = parent / f"{stem}_{label}K_{i}.json"
+        out_path = parent / f"{stem}-{i}_karo_{label}K.json"
         with out_path.open("w", encoding="utf-8") as f:
             json.dump(chunk, f, ensure_ascii=False)
         count += 1

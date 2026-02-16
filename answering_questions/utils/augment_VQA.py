@@ -384,7 +384,7 @@ def augment_ablation(
                             world_state, object_id, int(render_name.replace(".png", ""))
                         )
                         new_question = pattern.sub(
-                            f"\"{object_name}\" (circled in red and located at the {zone_to_focus})",
+                            f"\"{object_name}\" (located at the {zone_to_focus})",
                             question["question"],
                         )
                     else:
@@ -398,7 +398,7 @@ def augment_ablation(
                             world_state, object_id, int(render_name.replace(".png", ""))
                         )
                         new_question = pattern.sub(
-                            f"object circled in red (located at the {zone_to_focus})",
+                            f"(located at the {zone_to_focus})",
                             question["question"],
                         )
                     else:

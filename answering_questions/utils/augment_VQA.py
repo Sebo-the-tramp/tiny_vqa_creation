@@ -31,6 +31,7 @@ AUG_ABLATION_TEXT = "ablation"
 AUG_GROUNDING_PHYSICS = "grounding_physics"
 AUG_ABLATION_PHYSICS_DURATION_TEXT = "ablation_physics_duration_text"
 AUG_ABLATION_PHYSICS_MASS_TEXT = "ablation_physics_mass_text"
+AUG_ABLATION_PHYSICS_MASS_APPROX_TEXT = "ablation_physics_mass_approx_text"
 
 _AUGMENTATION_ALIASES = {
     # Backward compatibility with previous naming.
@@ -162,6 +163,8 @@ def augment_image_VQA_with_context(
         file_names = augment_duration_context(question, world_state, resolved_attributes, file_names)
     elif augmentation == AUG_ABLATION_PHYSICS_MASS_TEXT:
         file_names = augment_mass_context(question, world_state, resolved_attributes, file_names)
+    elif augmentation == AUG_ABLATION_PHYSICS_MASS_APPROX_TEXT:
+        file_names = augment_mass_approx_context(question, world_state, resolved_attributes, file_names) 
 
     return file_names
 
@@ -664,6 +667,124 @@ def augment_mass_context(question, world_state, resolved_attributes, file_names,
 
     return file_names
 
+def augment_mass_approx_context(question, world_state, resolved_attributes, file_names, layout_position=False, text=False):
+    cues = []
+    seen_ids = set()
+
+    for resolved_attr, value in resolved_attributes.items():
+        if "OBJECT" not in resolved_attr:
+            continue
+
+        choice = value.get("choice", {})
+        object_id = choice.get("id")
+        if object_id in seen_ids:
+            continue
+
+        mass = choice.get("mass")
+        object_name = choice.get("name", "object")
+        if mass is None:
+            continue
+
+        try:
+            mass = float(mass)
+        except (TypeError, ValueError):
+            continue
+
+        approx_mass = round(mass * 2.0) / 2.0
+        if approx_mass.is_integer():
+            approx_mass_str = f"{int(approx_mass)}"
+        else:
+            approx_mass_str = f"{approx_mass:.1f}"
+        cues.append(f'"{object_name}" has mass approx. {approx_mass_str} kg')
+        seen_ids.add(object_id)
+
+    if cues:
+        question["question"] = f"Physics cue: {'; '.join(cues)}. " + question["question"]
+
+    for file_idx, file in enumerate(file_names):
+        original_image = np.array(Image.open(file))
+        object_name = None
+
+        for idx, (resolved_attr, value) in enumerate(resolved_attributes.items()):
+            if "OBJECT" in resolved_attr:
+                object_id = value["choice"]["id"]
+                render_name = file.split("/")[-1]
+
+                # if save_images:
+                instance_image_path = file.replace("render", "instances")
+                rgb_object_class = world_state["encoding"]["classes"][
+                    int(object_id) + 1
+                ]
+                visible_object_mask = (
+                    np.array(Image.open(instance_image_path).convert("RGB"))
+                    == rgb_object_class
+                )
+                visible_object_mask = np.all(visible_object_mask, axis=-1)
+
+                kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
+                eroded = cv2.erode(
+                    visible_object_mask.astype(np.uint8), kernel, iterations=1
+                )
+                inner_border_mask = visible_object_mask & ~eroded
+
+                # Create a binary mask where the object is located.
+                binary_mask = inner_border_mask > 0
+
+                contours, _ = cv2.findContours(
+                    binary_mask.astype(np.uint8),
+                    cv2.RETR_EXTERNAL,
+                    cv2.CHAIN_APPROX_SIMPLE,
+                )
+
+                if len(contours) == 0:
+                    raise ImpossibleToAnswer("No visible object found.")
+
+                pts = np.vstack([c.reshape(-1, 2) for c in contours]).astype(
+                    np.float32
+                )
+                center, radius = cv2.minEnclosingCircle(pts)
+
+                # Draw the ROI circle on the image.
+                augmented_image = draw_roi_circle(
+                    original_image, center, radius * 1.5, idx
+                )
+
+                object_name = value["choice"]["name"]
+                pattern = re.compile(re.escape('"' + object_name + '"'), re.IGNORECASE)
+                if text:
+                    # Modify the question text to include ROI reference.
+                    if layout_position:
+                        zone_to_focus = get_object_zone(
+                            world_state, object_id, int(render_name.replace(".png", ""))
+                        )
+                        new_question = pattern.sub(
+                            f"\"{object_name}\" (circled in red and located at the {zone_to_focus})",
+                            question["question"],
+                        )
+                    else:
+                        new_question = pattern.sub(
+                            f"\"{object_name}\"", question["question"]
+                        )
+                else:
+                    if layout_position:
+                        # append after the name of the object that it is circled in the image
+                        zone_to_focus = get_object_zone(
+                            world_state, object_id, int(render_name.replace(".png", ""))
+                        )
+                        new_question = pattern.sub(
+                            f"object circled in red (located at the {zone_to_focus})",
+                            question["question"],
+                        )
+                    else:
+                        # append after the name of the object that it is circled in the image
+                        new_question = pattern.sub(
+                            "object circled in red", question["question"]
+                        )
+
+        if object_name is None:
+            continue
+
+    return file_names
 
 def draw_roi_circle(original_image, center, radius=10, idx=0):
     cx, cy = map(int, center)

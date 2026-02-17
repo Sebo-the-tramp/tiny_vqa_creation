@@ -13,7 +13,7 @@ MATERIAL_OBJECTS_PER_COUNT=300
 # This is the only place where toggling is needed.
 SELECTED_CREATIONS=(
     # GENERAL
-    "general_generate"
+    # "general_generate"
     # "general_subsample_30k"
     # "general_obj_numbers_10k"
     # "general_yms_variations_10k"
@@ -30,8 +30,9 @@ SELECTED_CREATIONS=(
     # # "ablation_no_roi_no_text_layout_position"
     # # "ablation_no_roi_text_layout_position"
 
-    "ablation_physics_mass_text"
-    "ablation_physics_duration_text"
+    # "ablation_physics_mass_text"
+    "ablation_physics_mass_approx_text"
+    # "ablation_physics_duration_text"
 
     # COUNTERFACTUALS
     # "counterfactual_shift"

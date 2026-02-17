@@ -345,6 +345,24 @@
       cursor: not-allowed;
     }
 
+    .download-btn {
+      margin-left: auto;
+      background: var(--accent-2);
+      color: #fff;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .download-btn[disabled] {
+      opacity: 0.6;
+      cursor: progress;
+    }
+
     .hint {
       font-size: 12px;
       color: var(--muted);
@@ -414,6 +432,7 @@
   <div class="table" id="table"></div>
   <div class="pager" id="pager"></div>
 
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
   <script>
     const baseOutputRoots = [
       "../output"
@@ -832,6 +851,139 @@
       return highlighted.join("<br>");
     }
 
+    function sanitizeFolderName(text) {
+      return String(text || "question")
+        .trim()
+        .replace(/[^a-zA-Z0-9_-]+/g, "_")
+        .replace(/^_+|_+$/g, "") || "question";
+    }
+
+    function extractPossibleAnswers(item) {
+      const answers = [];
+      if (item && Array.isArray(item.choices)) {
+        item.choices.forEach((entry, index) => {
+          if (!entry) return;
+          if (typeof entry === "string") {
+            const label = ["A", "B", "C", "D"][index] || String(index + 1);
+            answers.push({ label, text: entry });
+          } else if (entry.label && entry.text) {
+            answers.push({ label: String(entry.label), text: String(entry.text) });
+          }
+        });
+      } else if (item && item.choices && typeof item.choices === "object") {
+        Object.entries(item.choices).forEach(([label, text]) => {
+          if (text) answers.push({ label: String(label), text: String(text) });
+        });
+      }
+
+      if (answers.length > 0) return answers;
+      const questionText = String(item && item.question ? item.question : "");
+      const lines = questionText.split("\n");
+      lines.forEach(line => {
+        const trimmed = line.trim();
+        const match = trimmed.match(/^([A-D])[).]\\s*(.*)$/);
+        if (match) {
+          answers.push({ label: match[1], text: match[2] });
+        }
+      });
+      return answers;
+    }
+
+    function extensionFromPath(path) {
+      if (!path) return "";
+      const clean = String(path).split("?")[0];
+      const dot = clean.lastIndexOf(".");
+      if (dot === -1) return "";
+      return clean.slice(dot);
+    }
+
+    async function fetchFirstAvailable(candidates) {
+      for (const url of candidates) {
+        try {
+          const response = await fetch(url);
+          if (!response.ok) continue;
+          return { blob: await response.blob(), url };
+        } catch (err) {
+          continue;
+        }
+      }
+      return null;
+    }
+
+    function buildQuestionExport(item, correctAnswer, imageManifest) {
+      const possibleAnswers = extractPossibleAnswers(item);
+      const correctText = possibleAnswers.find(entry => entry.label === correctAnswer)?.text || null;
+      return {
+        question: item.question || "",
+        possible_answers: possibleAnswers,
+        correct_answer: correctAnswer || null,
+        correct_answer_text: correctText,
+        idx: item.idx || null,
+        question_id: item.question_id || null,
+        choice_type: item.choice_type || null,
+        mode: item.mode || null,
+        source: item.source || null,
+        simulation_id: item.simulation_id || null,
+        file_name: item.file_name || [],
+        images: imageManifest,
+        raw: item
+      };
+    }
+
+    async function downloadQuestion(item, button) {
+      if (typeof JSZip === "undefined") {
+        updateStatus("Download requires JSZip. Check your network access.");
+        return;
+      }
+      const originalLabel = button.textContent;
+      button.disabled = true;
+      button.textContent = "Preparing...";
+
+      const folderName = `folder_${sanitizeFolderName(item.idx || "question")}`;
+      const zip = new JSZip();
+      const root = zip.folder(folderName);
+      const imagesFolder = root.folder("images");
+      const fileNames = Array.isArray(item.file_name) ? item.file_name : (item.file_name ? [item.file_name] : []);
+      const imageManifest = [];
+
+      for (let i = 0; i < fileNames.length; i += 1) {
+        const path = fileNames[i];
+        button.textContent = `Image ${i + 1}/${fileNames.length}`;
+        const candidates = buildImageCandidates(path);
+        const fetched = await fetchFirstAvailable(candidates);
+        if (!fetched) {
+          imageManifest.push({ original_path: path, status: "missing" });
+          continue;
+        }
+        const ext = extensionFromPath(fetched.url) || extensionFromPath(path) || ".png";
+        const name = `image_${String(i + 1).padStart(2, "0")}${ext}`;
+        imagesFolder.file(name, fetched.blob);
+        imageManifest.push({
+          original_path: path,
+          chosen_url: fetched.url,
+          filename: name,
+          status: "ok"
+        });
+      }
+
+      const correctAnswer = state.correctByIdx.get(item.idx);
+      const payload = buildQuestionExport(item, correctAnswer, imageManifest);
+      root.file("question.json", JSON.stringify(payload, null, 2));
+
+      button.textContent = "Zipping...";
+      const blob = await zip.generateAsync({ type: "blob" });
+      const downloadUrl = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = downloadUrl;
+      anchor.download = `${folderName}.zip`;
+      anchor.click();
+      URL.revokeObjectURL(downloadUrl);
+
+      button.textContent = originalLabel;
+      button.disabled = false;
+      updateStatus(`Download ready for ${item.idx}.`);
+    }
+
     function filterQuestions() {
       const search = normalize(state.searchText.trim());
       state.filtered = state.questions.filter(item => {
@@ -883,6 +1035,11 @@
           ${objectCount ? `<span class="badge">objects: ${objectCount}</span>` : ""}
           ${correctAnswer ? `<span class="badge answer-${correctAnswer}">correct: ${correctAnswer}</span>` : ""}
         `;
+        const downloadBtn = document.createElement("button");
+        downloadBtn.className = "download-btn";
+        downloadBtn.textContent = "Download";
+        downloadBtn.addEventListener("click", () => downloadQuestion(item, downloadBtn));
+        head.appendChild(downloadBtn);
 
         const question = document.createElement("div");
         question.className = "question";

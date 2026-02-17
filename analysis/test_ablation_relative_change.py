@@ -30,7 +30,7 @@ DEFAULT_RUNS = [
     f"run_{RUN}_no_roi_circling_yes_text_layout_position",
     f"run_{RUN}_no_roi_circling_no_text_layout_position",
     f"run_{RUN}_ablation_physics_duration_text",
-    f"run_{RUN}_ablation_physics_mass_text",
+    # f"run_{RUN}_ablation_physics_mass_text",
 ]
 
 RUN_MAP = {
@@ -42,9 +42,10 @@ RUN_MAP = {
     f"run_{RUN}_roi_circling_no_text": "Circle",
     f"run_{RUN}_no_roi_circling_no_text_layout_position": "Layout",
     f"run_{RUN}_ablation_physics_duration_text": "Text + Duration",
-    f"run_{RUN}_ablation_physics_mass_text": "Text + Mass",
+    # f"run_{RUN}_ablation_physics_mass_text": "Text + Mass",
 }
 RUN_INDEX = {run_name: idx for idx, run_name in enumerate(RUN_MAP.keys())}
+BASELINE_LABEL = "Text"
 
 FAMILY_STYLE = {
     "InternVLChat2": {"label": "InternVLChat2", "marker": "o", "color": "#3D73A9"},
@@ -71,6 +72,15 @@ FAMILY_MARKERS = {
 }
 FAMILY_COLORS = {
     style["label"]: style["color"] for style in FAMILY_STYLE.values()
+}
+
+JITTER_SPAN = 0.24
+JITTER_OFFSETS = {
+    label: float(offset)
+    for label, offset in zip(
+        FAMILY_ORDER,
+        np.linspace(-JITTER_SPAN, JITTER_SPAN, len(FAMILY_ORDER)),
+    )
 }
 
 PLOT_BG = "#FFFFFF"
@@ -365,7 +375,9 @@ def _legend_handles_labels(ax_list: list[plt.Axes]) -> tuple[list, list[str]]:
     return handles, labels
 
 
-def _apply_reference_style(ax: plt.Axes, *, y_label: bool = False) -> None:
+def _apply_reference_style(
+    ax: plt.Axes, *, y_label_text: str | None = None
+) -> None:
     ax.set_facecolor(PLOT_BG)
     ax.grid(axis="y", which="major", linestyle="-", linewidth=0.9, color=GRID_MAJOR)
     ax.grid(axis="y", which="minor", linestyle="-", linewidth=0.7, color=GRID_MINOR)
@@ -380,8 +392,8 @@ def _apply_reference_style(ax: plt.Axes, *, y_label: bool = False) -> None:
     ax.spines["left"].set_color("black")
     ax.spines["bottom"].set_color("black")
 
-    if y_label:
-        ax.set_ylabel("Accuracy (%)", fontsize=18, fontweight="bold")
+    if y_label_text:
+        ax.set_ylabel(y_label_text, fontsize=18, fontweight="bold")
     ax.tick_params(axis="y", labelsize=15, width=1.2)
     ax.tick_params(axis="x", width=1.2)
 
@@ -419,10 +431,56 @@ def _get_object_count_thresholds(full_df: pd.DataFrame) -> list[int]:
     return sorted(pd.unique(numeric.astype(int)))
 
 
+def _get_baseline_run_name() -> str:
+    for run_name, label in RUN_MAP.items():
+        if label == BASELINE_LABEL:
+            return run_name
+    raise ValueError(f"Baseline label '{BASELINE_LABEL}' not found in RUN_MAP.")
+
+
+def add_accuracy_change_pp(
+    df: pd.DataFrame,
+    *,
+    value_col: str,
+    baseline_run_name: str,
+    group_cols: list[str],
+    baseline_col: str = "baseline_accuracy",
+    change_col: str = "accuracy_change_pp",
+) -> pd.DataFrame:
+    if df.empty:
+        return df.copy()
+
+    missing_cols = [col for col in group_cols + ["run_name", value_col] if col not in df.columns]
+    if missing_cols:
+        raise ValueError(f"Missing columns for relative change: {missing_cols}")
+
+    baseline = (
+        df[df["run_name"] == baseline_run_name][group_cols + [value_col]]
+        .rename(columns={value_col: baseline_col})
+        .copy()
+    )
+    if baseline.empty:
+        raise ValueError(
+            f"No baseline rows found for run '{baseline_run_name}'. Check --runs."
+        )
+
+    merged = df.merge(baseline, on=group_cols, how="left")
+    baseline_vals = pd.to_numeric(merged[baseline_col], errors="coerce")
+    current_vals = pd.to_numeric(merged[value_col], errors="coerce")
+    merged[change_col] = np.where(
+        baseline_vals.notna(),
+        current_vals - baseline_vals,
+        np.nan,
+    )
+    return merged
+
+
 def plot_object_count_scatter(
     full_df: pd.DataFrame,
     metadata_map: dict[str, dict],
     output_path: Path,
+    *,
+    baseline_run_name: str,
 ) -> None:
     object_counts = _get_object_count_thresholds(full_df)
     if not object_counts:
@@ -452,6 +510,12 @@ def plot_object_count_scatter(
             metadata_map,
             min_object_count=object_count_threshold,
         )
+        subset = add_accuracy_change_pp(
+            subset,
+            value_col="macro_accuracy",
+            baseline_run_name=baseline_run_name,
+            group_cols=["model_id"],
+        )
         subset_plot = subset[subset["family_label"].isin(FAMILY_ORDER)]
         ax.set_title(
             f"Object Count >= {object_count_threshold}",
@@ -459,8 +523,11 @@ def plot_object_count_scatter(
             fontweight="bold",
             pad=10,
         )
-        _apply_reference_style(ax, y_label=(idx % cols == 0))
-        y_min, y_max = _compute_y_limits(subset_plot["macro_accuracy"], y_floor=15.0)
+        _apply_reference_style(
+            ax,
+            y_label_text="Accuracy Change (pp)" if (idx % cols == 0) else None,
+        )
+        y_min, y_max = _compute_y_limits(subset_plot["accuracy_change_pp"])
         ax.set_ylim(y_min, y_max)
 
         for family_label in FAMILY_ORDER:
@@ -469,7 +536,7 @@ def plot_object_count_scatter(
                 continue
 
             run_df = (
-                family_df.groupby("run_name", observed=True)["macro_accuracy"]
+                family_df.groupby("run_name", observed=True)["accuracy_change_pp"]
                 .mean()
                 .reset_index()
             )
@@ -479,12 +546,15 @@ def plot_object_count_scatter(
 
             run_df["run_idx"] = run_df["run_name"].map(RUN_INDEX)
             run_df = run_df.sort_values("run_idx")
+            run_df["run_idx_jitter"] = run_df["run_idx"] + JITTER_OFFSETS.get(
+                family_label, 0.0
+            )
             marker = FAMILY_MARKERS.get(family_label, "o")
             color = FAMILY_COLORS.get(family_label, "#4C72B0")
 
             ax.scatter(
-                run_df["run_idx"],
-                run_df["macro_accuracy"],
+                run_df["run_idx_jitter"],
+                run_df["accuracy_change_pp"],
                 label=family_label,
                 s=260,
                 alpha=0.95,
@@ -533,10 +603,11 @@ def plot_object_count_scatter(
 def plot_family_scatter(grouped_df: pd.DataFrame, output_path: Path) -> None:
     fig, ax = plt.subplots(figsize=(10.2, 5.7))
     fig.patch.set_facecolor(PLOT_BG)
-    _apply_reference_style(ax, y_label=True)
+    _apply_reference_style(ax, y_label_text="Accuracy Change (pp)")
 
     grouped_df_plot = grouped_df[grouped_df["family_label"].isin(FAMILY_ORDER)]
-    ax.set_ylim(15.0, 60.0)
+    y_min, y_max = _compute_y_limits(grouped_df_plot["accuracy_change_pp"])
+    ax.set_ylim(y_min, y_max)
 
     for family_label in FAMILY_ORDER:
         family_df = grouped_df_plot[grouped_df_plot["family_label"] == family_label]
@@ -544,7 +615,7 @@ def plot_family_scatter(grouped_df: pd.DataFrame, output_path: Path) -> None:
             continue
 
         run_df = (
-            family_df.groupby("run_name", observed=True)["macro_accuracy"]
+            family_df.groupby("run_name", observed=True)["accuracy_change_pp"]
             .mean()
             .reset_index()
         )
@@ -554,10 +625,13 @@ def plot_family_scatter(grouped_df: pd.DataFrame, output_path: Path) -> None:
 
         run_df["run_idx"] = run_df["run_name"].map(RUN_INDEX)
         run_df = run_df.sort_values("run_idx")
+        run_df["run_idx_jitter"] = run_df["run_idx"] + JITTER_OFFSETS.get(
+            family_label, 0.0
+        )
 
         ax.scatter(
-            run_df["run_idx"],
-            run_df["macro_accuracy"],
+            run_df["run_idx_jitter"],
+            run_df["accuracy_change_pp"],
             s=270,
             marker=FAMILY_MARKERS.get(family_label, "o"),
             color=FAMILY_COLORS.get(family_label, "#4C72B0"),
@@ -601,15 +675,20 @@ def plot_family_scatter(grouped_df: pd.DataFrame, output_path: Path) -> None:
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description=(
-            "Run ablation analysis from test_ablation copy.ipynb as a regular Python "
-            "script with formatted family labels and scatter plots."
+            "Run ablation analysis with accuracy change in percentage points "
+            "based on the Text baseline run."
         )
     )
     parser.add_argument("--base-path", type=Path, default=DEFAULT_BASE_PATH)
     parser.add_argument("--metadata-path", type=Path, default=Path("utils/metadata.json"))
     parser.add_argument("--runs", nargs="*", default=DEFAULT_RUNS)
     parser.add_argument("--min-object-count", type=int, default=5)
-    parser.add_argument("--output-dir", type=Path, default=Path("output/test_ablation_copy"))
+    parser.add_argument("--baseline-run", type=str, default=None)
+    parser.add_argument(
+        "--output-dir",
+        type=Path,
+        default=Path("output/test_ablation_accuracy_change_pp"),
+    )
     return parser.parse_args()
 
 
@@ -617,21 +696,36 @@ def main() -> None:
     args = parse_args()
     metadata_map = load_metadata_map(args.metadata_path)
     full_df = collect_runs(args.base_path, args.runs)
+    baseline_run_name = args.baseline_run or _get_baseline_run_name()
 
     object_count_df = aggregate_by_object_count(full_df, metadata_map)
+    object_count_change_df = add_accuracy_change_pp(
+        object_count_df,
+        value_col="macro_accuracy",
+        baseline_run_name=baseline_run_name,
+        group_cols=["model_id", "object_count"],
+    )
     macro_df = aggregate_macro_by_model(
         full_df, metadata_map, min_object_count=args.min_object_count
     )
+    macro_change_df = add_accuracy_change_pp(
+        macro_df,
+        value_col="macro_accuracy",
+        baseline_run_name=baseline_run_name,
+        group_cols=["model_id"],
+    )
 
     args.output_dir.mkdir(parents=True, exist_ok=True)
-    object_count_csv = args.output_dir / "macro_by_model_object_count.csv"
-    macro_csv = args.output_dir / "macro_by_model.csv"
-    family_csv = args.output_dir / "family_macro_by_run.csv"
+    object_count_csv = args.output_dir / "macro_by_model_object_count_change_pp.csv"
+    macro_csv = args.output_dir / "macro_by_model_change_pp.csv"
+    family_csv = args.output_dir / "family_macro_by_run_change_pp.csv"
 
-    object_count_df.to_csv(object_count_csv, index=False)
-    macro_df.to_csv(macro_csv, index=False)
+    object_count_change_df.to_csv(object_count_csv, index=False)
+    macro_change_df.to_csv(macro_csv, index=False)
     family_summary = (
-        macro_df.groupby(["run_name", "family_label"], observed=True)["macro_accuracy"]
+        macro_change_df.groupby(["run_name", "family_label"], observed=True)[
+            "accuracy_change_pp"
+        ]
         .mean()
         .reset_index()
     )
@@ -644,9 +738,13 @@ def main() -> None:
     plot_object_count_scatter(
         full_df,
         metadata_map,
-        args.output_dir / "macro_accuracy_by_object_count_scatter.png",
+        args.output_dir / "accuracy_change_pp_by_object_count_scatter.png",
+        baseline_run_name=baseline_run_name,
     )
-    plot_family_scatter(macro_df, args.output_dir / "macro_accuracy_by_family_scatter.png")
+    plot_family_scatter(
+        macro_change_df,
+        args.output_dir / "accuracy_change_pp_by_family_scatter.png",
+    )
 
 
 if __name__ == "__main__":

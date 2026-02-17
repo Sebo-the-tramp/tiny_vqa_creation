@@ -214,6 +214,10 @@ run_ablation_physics_mass_text() {
     run_material_ablation "ablation_physics_mass_text" "ablation_physics_mass_text"
 }
 
+run_ablation_physics_mass_approx_text() {
+    run_material_ablation "ablation_physics_mass_approx_text" "ablation_physics_mass_approx_text" 
+}
+
 run_ablation_physics_duration_text() {
     run_material_ablation "ablation_physics_duration_text" "ablation_physics_duration_text"
 }
@@ -305,6 +309,7 @@ run_creation() {
         ablation_no_roi_text_layout_position) run_ablation_no_roi_text_layout_position ;;
         ablation_baseline) run_ablation_baseline ;;
         ablation_physics_mass_text) run_ablation_physics_mass_text ;;
+        ablation_physics_mass_approx_text) run_ablation_physics_mass_approx_text ;;
         ablation_physics_duration_text) run_ablation_physics_duration_text ;;
         counterfactual_shift) run_counterfactual_shift ;;
         counterfactual_gravity) run_counterfactual_gravity ;;

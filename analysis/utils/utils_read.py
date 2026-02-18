@@ -54,6 +54,7 @@ def build_eval_df(
         metadata_path: str | Path = "utils/metadata.json",
         excluded_questions: list[str] = ["F_OCCLUSION_PERCENTAGE_OBJECT", "F_MATERIAL_IDENTIFICATION_SIMILAR_OBJECT"],
         return_paths: dict | None = None,
+        columns: list[str] = []  # Columns to preserve
     ) -> pd.DataFrame:
     base = Path(base_path)
 
@@ -97,7 +98,7 @@ def build_eval_df(
             "mode_test",
             "mode_val",
             "mode",
-        ]
+        ] + columns
         if c in df.columns
     ]
 

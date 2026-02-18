@@ -192,8 +192,8 @@ def create_num_objects_category_curve(
 
     # Save
     if output_dir is not None:
-        run = run_name or "default"
-        out_dir = Path(output_dir) / run
+        run = run_name
+        out_dir = Path(output_dir)
         out_dir.mkdir(parents=True, exist_ok=True)
         f_out = out_dir / filename
         fig.savefig(f_out, dpi=150, bbox_inches="tight", pad_inches=0.05)
@@ -522,8 +522,8 @@ def create_num_objects_violin_grid(
     
     paperformat(fig.gca())
 
-    run = run_name or globals().get("RUN_NAME", "default")
-    out_dir = Path(output_dir) if output_dir is not None else Path("output") / run
+    run = run_name
+    out_dir = Path(output_dir)
     seed_tag = f"_seed_{sample_seed}" if sample_seed is not None else ""
     out_dir.mkdir(parents=True, exist_ok=True)
     if save_grid:
@@ -1205,7 +1205,7 @@ def create_material_stiffness_violin_grid(
         ax.set_title(label)
         # ax.set_xlabel("Object Stiffness")
         ax.set_xlabel("")
-        ax.set_ylabel("Accuracy")
+        ax.set_ylabel(utils.utils_mapping.mapping_cat.get(cat), color=utils.utils_mapping.mapping_cat_colors.get(cat))
         ax.grid(axis="y")
         if y_limit_mode == "fixed":
             ax.set_ylim(-10, 110)
@@ -1233,7 +1233,7 @@ def create_material_stiffness_violin_grid(
         else:
             ax.set_xticklabels([str(v) for v in stiffness_values])
 
-        paperformat(ax)
+        paperformat(ax, figsize=None)
 
     for j in range(len(categories), len(axes)):
         axes[j].set_visible(False)
@@ -1276,8 +1276,8 @@ def create_material_stiffness_violin_grid(
             wspace=grid_wspace if grid_wspace is not None else 0.2,
         )
 
-    run = run_name or globals().get("RUN_NAME", "default")
-    out_dir = Path(output_dir) if output_dir is not None else Path("output") / run / group_by
+    run = run_name
+    out_dir = Path(output_dir)
     # out_dir = out_dir / category_col
     out_dir.mkdir(parents=True, exist_ok=True)
     if save_grid:
@@ -1312,8 +1312,7 @@ def create_material_stiffness_violin_grid(
         plt.close(fig_legend)
 
     if save_per_category:
-        sub_dirname = per_category_dirname or filename.replace(".png", "")
-        per_cat_dir = out_dir / sub_dirname
+        per_cat_dir = out_dir / per_category_dirname if per_category_dirname else out_dir
         per_cat_dir.mkdir(parents=True, exist_ok=True)
         for cat in categories:
             fig_cat, ax_cat = plt.subplots(1, 1, figsize=(4, 3.1))
@@ -1436,9 +1435,10 @@ def create_material_stiffness_violin_grid(
                 assert plot_df[plot_df[category_col] == cat]["category"].unique().size == 1
                 safe_cat = plot_df[plot_df[category_col] == cat]["category"].unique()[0] + "_" + safe_cat
             bbox = None if y_limit_mode == "fit" else "tight"
-            print("Saving per-category plot to:", per_cat_dir / f"yms_{safe_cat}.png")
+            fname = f"{Path(filename).stem}_{safe_cat}.png"
+            print("Saving per-category plot to:", per_cat_dir / fname)
             fig_cat.savefig(
-                per_cat_dir / f"yms_{safe_cat}.png",
+                per_cat_dir / fname,
                 dpi=300,
                 bbox_inches=bbox,
                 pad_inches=0.05,
@@ -1541,8 +1541,8 @@ def create_num_objects_violin_per_question_id(
                 float(agg_all["accuracy"].max()),
             )
 
-    run = run_name or globals().get("RUN_NAME", "default")
-    out_dir = Path(output_dir) if output_dir is not None else Path("output") / run
+    run = run_name
+    out_dir = Path(output_dir)
     per_q_dir = out_dir / per_question_dirname
     per_q_dir.mkdir(parents=True, exist_ok=True)
 

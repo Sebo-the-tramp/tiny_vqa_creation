@@ -53,7 +53,6 @@ def main() -> None:
     args = parser.parse_args()
 
     utils_graph.RUN_NAME = args.run_name
-    utils_graph_correlation.RUN_NAME = args.run_name
 
     output_dir = Path("output") / args.run_name / args.vqa_set / "category"
     output_dir.mkdir(parents=True, exist_ok=True)

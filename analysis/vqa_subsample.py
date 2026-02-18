@@ -43,6 +43,12 @@ def main() -> None:
         type=int,
         help="Number of splits to create from the VQA set.",
     )
+    parser.add_argument(
+        "--skip-existing",
+        default=False,
+        action="store_true",
+        help="Skip existing splits if they already exist.",
+    )
     args = parser.parse_args()
     assert args.mode in ['range', 'sample', 'cumulative'], "Mode must be one of 'range', 'sample', 'cumulative'."
     
@@ -64,6 +70,20 @@ def main() -> None:
         print(f"\n\n\nCreating new split {s+1}/{args.num} with mode '{args.mode}' and sampling fraction {args.sampling}:")
         split_df = df.copy()
 
+        if args.mode == 'range':
+            suffix = f"-r{args.num}-s{s}"
+        elif args.mode == 'cumulative':
+            suffix = f"-c{args.num}-s{s}"
+        elif args.mode == 'sample':
+            suffix = f"-s{args.sampling}-s{s}"
+
+        split_path = str(test_path.with_suffix("")) + suffix + ".json"
+        pkl_path = test_path.parent / f"merged_results_{args.vqa_set}" + suffix + ".pkl"
+        
+        if args.skip_existing and Path(split_path).exists():
+            print(f"  Skipping existing split {split_path}")
+            continue
+
         for q in questions:
             q_idxs = questions_idx[q]
 
@@ -83,13 +103,6 @@ def main() -> None:
                 # print({sampled_q_idxs})
                 
                 split_df = split_df[~((split_df["question_id"] == q) & (~split_df["idx"].isin(sampled_q_idxs)))]
-
-        if args.mode == 'range':
-            split_path = str(test_path.with_suffix("")) + f"-d{args.num}-s{s}.json"
-        elif args.mode == 'cumulative':
-            split_path = str(test_path.with_suffix("")) + f"-c{args.num}-s{s}.json"
-        elif args.mode == 'sample':
-            split_path = str(test_path.with_suffix("")) + f"-p{args.sampling}-s{s}.json"
         
         print(f"\nSaving split df to {split_path}")
         print(f"Entries in {split_path}: {len(split_df)}")
@@ -100,6 +113,18 @@ def main() -> None:
             indent=4,           # pretty format like original
             force_ascii=False,
         )
+
+        # If cache exists, delete it
+        if pkl_path.exists():
+            print(f"Deleting existing cache at {pkl_path} for split {split_path}")
+            pkl_path.unlink()
+        
+        # If merged cache exists, delete it
+        pkl_meta_path = pkl_path.parent / f"merged_results_{args.vqa_set}_vqa-split-{args.mode}.pkl"
+        if pkl_meta_path.exists():
+            print(f"Deleting existing cache at {pkl_meta_path}")
+            pkl_meta_path.unlink()
+            
 
 
 if __name__ == "__main__":

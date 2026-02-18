@@ -152,6 +152,7 @@ def create_graph_from_eval_balanced(
     include_counts=False,
     color_question_id_by_subcategory=False,
     subcategory_palette=None,
+    out_dir=None,
 ):
     """
     Plot a heatmap where every cell is a balanced accuracy derived from eval_base.
@@ -160,6 +161,10 @@ def create_graph_from_eval_balanced(
     The "Average" first column is the simple mean across models for each row,
     added for quick visual comparison.
     """
+    if out_dir is None:
+        run = globals().get("RUN_NAME", "default")
+        out_dir = f"./output/{run}/"
+
     # Build the balanced matrix for the requested row index
     acc, breakdown = make_balanced_matrix(
         eval_base=eval_base,
@@ -296,9 +301,8 @@ def create_graph_from_eval_balanced(
     ax.add_patch(rect_column)
 
     # Save
-    run = globals().get("RUN_NAME", "default")
-    os.makedirs(f"./output/{run}/", exist_ok=True)
-    plt.savefig(f"./output/{run}/{title}.png", dpi=300, bbox_inches="tight")
+    os.makedirs(out_dir, exist_ok=True)
+    plt.savefig(f"{out_dir}/{title}.png", dpi=300, bbox_inches="tight")
 
     return acc, breakdown
 
@@ -592,8 +596,13 @@ def create_accuracy_bench_vs_common_sense(
         tick_fontsize = 12,
         legend_fontsize = 10,
         show_xlabel: bool = True,
-        figsize: tuple = (4, 2.5)
-        ):
+        figsize: tuple = (4, 2.5),
+        out_dir: str = None,
+    ):
+    if out_dir is None:
+        run = globals().get("RUN_NAME", "default")
+        out_dir = f"./output/{run}/"
+    
     def _standardize_model_label(model_id: str) -> str:
         label = model_id.replace("2_5", "2.5")
         label = label.replace("_", "-")
@@ -924,10 +933,10 @@ def create_accuracy_bench_vs_common_sense(
 
     sns.despine(ax=ax)
     plt.tight_layout()
-    run = globals().get("RUN_NAME", "default")
-    os.makedirs(f"./output/{run}/", exist_ok=True)
+
+    os.makedirs(out_dir, exist_ok=True)
     plt.savefig(
-        f"./output/{run}/{out_filename}",
+        f"{out_dir}/{out_filename}",
         dpi=200,
         bbox_inches="tight",
         pad_inches=0.0,

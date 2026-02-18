@@ -1,3 +1,14 @@
+from __future__ import annotations
+
+from pathlib import Path
+
+import matplotlib.markers as mmarkers
+import numpy as np
+import pandas as pd
+import seaborn as sns
+
+import utils.utils_read
+
 mapping_sub = {
     "visibility": "Visibility",
     "material_identification": "Material\nIdentification",
@@ -83,3 +94,131 @@ mapping_cat_short = {
     "view_point": mapping_cat.get("view_point"),
     "material_understanding": "Material Underst."
 }
+
+family_marker = {
+    "AquilaVL":		    "o",  # circle
+    "InternVLChat":	    ">",  # triangle right
+    "InternVLChat":	    "H",  # hexagon (flat)
+    "LLaVAVideo":		"h",  # hexagon (pointy)
+    "Mantis":			"D",  # diamond
+    "MiniCPMV":		    "d",  # thin diamond
+    "MolmoE":			".",  # point
+    "Phi":			    "1",  # tri-down tick (approx from image)
+    "QwenVLChat":		"3",  # tri-left tick (approx)
+    "XinyuanVL":		"P",  # filled plus
+    "BLIP2":			"s",  # square
+    "Cambrian":		    "^",  # triangle up
+    "DeepSeekVL":		"v",  # triangle down
+    "InstructBlip":	    "<",  # triangle left
+    "LLaVA":			"*",  # star
+    "LLaVAInterleave":	"8",  # octagon
+    "Owl3":			    "1",  # tick-style (approx)
+    "PaliGemma2":		"3",  # tick-style (approx)
+    "VILAModel":		"o",  # circle
+}
+
+_DEFAULT_MARKERS = [
+    "o",
+    "s",
+    "^",
+    "v",
+    "<",
+    ">",
+    "p",
+    "*",
+    "h",
+    "H",
+    "D",
+    "d",
+    ".",
+    "1",
+    "2",
+    "3",
+    "4",
+    "8",
+    "P",
+    "X",
+]
+
+def _build_model_style(
+    metadata_path: str | Path | None,
+    *,
+    group_by: str = "model_id",
+    family_marker_mode: str = "distinct",
+) -> tuple[dict[str, tuple[str, object, float]], dict[str, str]]:
+    group_ids = []
+    palette = []
+
+    metadata_df = None
+    if metadata_path is not None:
+        metadata_df = utils.utils_read._load_model_metadata(metadata_path)
+
+    families = []
+    params = []
+    family_map = {}
+    for model_id in pd.unique(metadata_df["model_id"]):
+        if metadata_df is not None and model_id in set(metadata_df["model_id"]):
+            row = metadata_df[metadata_df["model_id"] == model_id].iloc[0]
+            family = row["family"]
+            params_b = pd.to_numeric(row.get("params_b", np.nan), errors="coerce")
+        else:
+            family = "Other"
+            params_b = np.nan
+        family_map[str(model_id)] = family
+        if group_by == "model_id":
+            families.append(family)
+            params.append(params_b)
+
+    if group_by == "model_family":
+        group_ids = pd.unique(pd.Series(list(family_map.values())))
+        families = list(group_ids)
+        params = [np.nan] * len(group_ids)
+    else:
+        group_ids = pd.unique(metadata_df["model_id"])
+    
+    unique_families = list(dict.fromkeys(families)) if families else ["Other"]
+    unique_families = sorted(unique_families)
+    palette = sns.color_palette("tab20", len(group_ids))
+    if family_marker_mode not in {"distinct", "rotated"}:
+        raise ValueError(
+            f"family_marker_mode must be 'distinct' or 'rotated', got {family_marker_mode}"
+        )
+
+    if family_marker_mode == "rotated":
+        angle_step = 360.0 / max(1, len(unique_families))
+        family_markers = {
+            fam: mmarkers.MarkerStyle("^").rotated(angle_step * i)
+            for i, fam in enumerate(unique_families)
+        }
+    else:
+        markers = list(_DEFAULT_MARKERS)
+        # for marker in list(mmarkers.MarkerStyle.markers.keys()):
+        #     if marker not in markers:
+        #         markers.append(marker)
+        markers = [
+            marker
+            for marker in markers
+            if marker not in (None, "", " ", "None", "none")
+        ]
+        family_markers = {
+            fam: family_marker.get(fam, 's')
+                 for i, fam in enumerate(unique_families)
+        }
+    
+
+    params = np.array(params, dtype=float)
+    valid_params = params[~np.isnan(params)]
+    fallback = float(np.nanmedian(valid_params)) if valid_params.size else 5.0
+    params = np.where(np.isnan(params), fallback, params)
+    params = np.clip(params, 2.0, 15.0)
+    sizes = (params - 2.0) / (15.0 - 2.0)
+
+    model_style = {}
+    for group_id, color, fam, size in zip(group_ids, palette, families, sizes):
+        model_style[str(group_id)] = (color, family_markers.get(fam, "o"), float(size))
+
+    # Alphabetically sort family_map and model_style by keys for consistent ordering
+    family_map = {k: family_map[k] for k in sorted(family_map)}
+    model_style = {k: model_style[k] for k in sorted(model_style)}
+
+    return model_style, family_map

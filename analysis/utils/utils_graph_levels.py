@@ -104,6 +104,7 @@ def _build_model_style(
     *,
     group_by: str = "model_id",
 ) -> tuple[dict[str, tuple[str, str, float]], dict[str, str]]:
+    assert False and "Replace with refactorize _build_model_style"
     group_ids = []
     palette = []
 

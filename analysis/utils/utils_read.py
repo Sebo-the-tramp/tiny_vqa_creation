@@ -1,9 +1,13 @@
+import json
 from pathlib import Path
 import re
 from typing import List
 import tqdm
 
 import pandas as pd
+
+from utils import utils_graph
+
 
 # _ANSWER_RE = re.compile(r"(?i)^\s*([a-d])(?:[^a-z0-9]|$)")
 # _ANSWER_RE = re.compile(r"\b([A-D])\s*[\.\,\:\)]")
@@ -21,6 +25,132 @@ TIMESTART = 0.01
 SAMPLING_RATE = 25
 RENDER_STEP = 1.0 / SAMPLING_RATE
 
+def _load_model_metadata(metadata_path: str | Path = "utils/metadata.json") -> pd.DataFrame:
+    path = Path(metadata_path)
+    with path.open("r", encoding="utf-8") as f:
+        data = json.load(f)
+    df = pd.DataFrame(data)
+    if "id" in df.columns:
+        df = df.rename(columns={"id": "model_id"})
+    return df
+
+def _assert_all_model_ids_in_metadata(
+    eval_df: pd.DataFrame, metadata_df: pd.DataFrame
+) -> None:
+    eval_ids = set(eval_df["model_id"].dropna().unique())
+    metadata_ids = set(metadata_df["model_id"].dropna().unique())
+    missing = sorted(eval_ids - metadata_ids)
+    if missing:
+        preview = ", ".join(missing[:10])
+        suffix = "" if len(missing) <= 10 else f" ... (+{len(missing) - 10} more)"
+        raise KeyError(
+            "model_id values missing from metadata.json: "
+            f"{preview}{suffix}"
+        )
+
+def build_eval_df(  
+        base_path: str | Path, 
+        vqa_set: str = "10K",
+        metadata_path: str | Path = "utils/metadata.json",
+        excluded_questions: list[str] = ["F_OCCLUSION_PERCENTAGE_OBJECT", "F_MATERIAL_IDENTIFICATION_SIMILAR_OBJECT"],
+        return_paths: dict | None = None,
+    ) -> pd.DataFrame:
+    base = Path(base_path)
+
+    run_folder = Path(utils_graph.RUN_NAME)
+
+    df = load_results(
+        base,
+        run_folder=run_folder,
+        merge_model_answers=True,
+        model_answers_wide=True,
+        cache=True,
+        add_sim_metadata=True,
+        vqa_set=vqa_set,
+        return_paths=return_paths,
+    )
+
+
+    
+    results_dir = base / run_folder / f"results_{run_folder}"
+    model_cols = sorted(
+        p.stem.replace("_val", "") for p in results_dir.glob("*_val.json")
+    )
+    model_cols = [c for c in model_cols if c in df.columns]
+    if not model_cols:
+        raise ValueError(f"No model answer columns found in {results_dir}")
+
+    df["answer"] = df["answer"].apply(
+        lambda a: _sanitize_answer(a, max_prefix_chars=None)
+    )
+
+    id_cols = [
+        c
+        for c in [
+            "idx",
+            "question_id",
+            "category",
+            "sub_category",
+            "num_objects",
+            "object_count",
+            "answer",
+            "mode_test",
+            "mode_val",
+            "mode",
+        ]
+        if c in df.columns
+    ]
+
+    eval_df = df.melt(
+        id_vars=id_cols,
+        value_vars=model_cols,
+        var_name="model_id",
+        value_name="model_answer",
+    )
+
+    valid = eval_df["model_answer"].notna() & eval_df["answer"].notna()
+    eval_df["is_correct"] = pd.NA
+    eval_df.loc[valid, "is_correct"] = (
+        eval_df.loc[valid, "model_answer"] == eval_df.loc[valid, "answer"]
+    )
+
+    if "mode_val" in eval_df.columns:
+        eval_df["mode_y"] = eval_df["mode_val"]
+    elif "mode_test" in eval_df.columns:
+        eval_df["mode_y"] = eval_df["mode_test"]
+    elif "mode" in eval_df.columns:
+        eval_df["mode_y"] = eval_df["mode"]
+    
+    if excluded_questions is not None:
+        print(f"Excluding questions: {excluded_questions}")
+        eval_df = eval_df[~eval_df["question_id"].isin(excluded_questions)]
+
+
+    metadata_df = _load_model_metadata(metadata_path=metadata_path)
+    _assert_all_model_ids_in_metadata(eval_df=eval_df, metadata_df=metadata_df)
+    
+    for col in ["family", "params_b", "release_year", "mode"]:
+        col_map = metadata_df.set_index("model_id")[col].to_dict()
+        eval_df["model_"+col] = eval_df["model_id"].map(col_map)
+    
+    # Convert accuracy column
+    if "accuracy" in eval_df.columns:
+        eval_df["accuracy"] = pd.to_numeric(eval_df["accuracy"], errors="coerce")
+    elif "is_correct" in eval_df.columns:
+        eval_df["accuracy"] = pd.to_numeric(eval_df["is_correct"], errors="coerce")
+    else:
+        raise KeyError("eval_df must include 'accuracy' or 'is_correct'.")
+    
+    before_drop = len(eval_df)
+    eval_df = eval_df.dropna(subset=["category", "sub_category", "accuracy"])
+    dropped_rows = before_drop - len(eval_df)
+    if dropped_rows > 0:
+        print(f"Dropped {dropped_rows} rows with NaN in category/sub_category/accuracy")
+        prompt = input("Proceed with dropped rows or raise error? (y=proceed, n=error): ").strip().lower()
+        if prompt != "y":
+            raise ValueError("NaN values in category/sub_category/accuracy columns.")
+    
+    return eval_df
 
 def load_results(
     base_path: str | Path,
@@ -34,17 +164,24 @@ def load_results(
     model_results_dir: str | Path | None = None,
     cache: bool = True,
     cache_path: str | Path | None = None,
+    vqa_set: str = "10K",
+    return_paths: dict | None = None,
 ) -> pd.DataFrame:
     base = Path(base_path)
 
-    test_path = base / run_folder / f"test_{run_folder}_10K.json"
+    test_path = base / run_folder / f"test_{run_folder}_{vqa_set}.json"
     val_path = base / run_folder / f"val_answer_{run_folder}.json"
 
     if cache_path is None:
-        cache_path = base / run_folder / "merged_results.pkl"
+        cache_path = base / run_folder / f"merged_results_{vqa_set}.pkl"
     else:
         cache_path = Path(cache_path)
 
+    if return_paths is not None:
+        return_paths["val"] = val_path
+        return_paths["test"] = test_path
+        return_paths["cache"] = cache_path
+    
     if cache and cache_path.exists():
         print("Cache found at ", cache_path)
         df_cached = _load_cached_df(cache_path)
@@ -141,7 +278,6 @@ def load_results(
 
     return df
 
-
 def load_results_levels(
     base_path: str | Path,
     run_folder: str | None = None,
@@ -154,10 +290,11 @@ def load_results_levels(
     model_results_dir: str | Path | None = None,
     cache: bool = True,
     cache_path: str | Path | None = None,
+    vqa_set: str = "10K"
 ) -> pd.DataFrame:
     base = Path(base_path)
 
-    test_path = base / run_folder / f"test_{run_folder}_10K.json"
+    test_path = base / run_folder / f"test_{run_folder}_{vqa_set}.json"
     val_path = base / run_folder / f"val_answer_{run_folder}.json"
 
     print(f"Loading test data from: {test_path}")
@@ -165,9 +302,9 @@ def load_results_levels(
 
     if cache_path is None:
         cache_path = (
-            base / run_folder / "merged_results.pkl"
+            base / run_folder / f"merged_results_{vqa_set}.pkl"
             if run_folder
-            else base / "merged_results.pkl"
+            else base / f"merged_results_{vqa_set}.pkl"
         )
     else:
         cache_path = Path(cache_path)
@@ -181,7 +318,7 @@ def load_results_levels(
             results_dir = (
                 Path(model_results_dir)
                 if model_results_dir is not None
-                else base / run_folder / f"results_{run_folder}"
+                else base / run_folder / f"results_{run_folder}_{vqa_set}"
             )
             required_cols.extend(
                 p.stem.replace("_val", "") for p in results_dir.glob("*_val.json")
@@ -227,7 +364,7 @@ def load_results_levels(
         results_dir = (
             Path(model_results_dir)
             if model_results_dir is not None
-            else base / run_folder / f"results_{run_folder}"
+            else base / run_folder / f"results_{run_folder}_{vqa_set}"
         )
         df_models = load_model_answers(results_dir, wide=model_answers_wide)
         if model_answers_wide:
@@ -388,9 +525,35 @@ def _sanitize_answer(answer: object, max_prefix_chars: int | None = 10) -> str |
     answer = next((group for group in match.groups() if group), None)
     return answer.upper()
 
+def iter_mode_slices(eval_df: pd.DataFrame) -> list[tuple[str, pd.DataFrame]]:
+    if "model_mode" not in eval_df.columns:
+        return [("all", eval_df)]
+
+    slices = []
+    for mode in ("image-only", "general"):
+        subset = eval_df[eval_df["model_mode"] == mode]
+        if not subset.empty:
+            slices.append((mode, subset))
+
+    unknown = eval_df[eval_df["model_mode"] == "unknown"]
+    if not unknown.empty:
+        slices.append(("unknown", unknown))
+
+    return slices or [("all", eval_df)]
+
+def select_eval_df(
+    eval_df: pd.DataFrame, *, mode: str, split_by_mode: bool
+) -> list[tuple[str, pd.DataFrame]]:
+    if mode != "mixed":
+        subset = eval_df[eval_df["model_mode"] == mode]
+        return [(mode, subset)]
+    if split_by_mode:
+        return iter_mode_slices(eval_df)
+    return [("mixed", eval_df)]
+
 
 if __name__ == "__main__":
-    df = load_results(
+    df, paths = load_results(
         "/data0/sebastian.cavada/compositional-physics/tiny_vqa_deterministic/output/run_15_general"
     )
     print(df.head())

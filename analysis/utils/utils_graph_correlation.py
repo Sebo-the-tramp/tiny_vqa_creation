@@ -15,30 +15,6 @@ import utils.utils_mapping
 
 warnings.filterwarnings("ignore", message=".*edgecolor.*unfilled marker.*")
 
-
-_DEFAULT_MARKERS = [
-    "o",
-    "s",
-    "^",
-    "v",
-    "<",
-    ">",
-    "p",
-    "*",
-    "h",
-    "H",
-    "D",
-    "d",
-    ".",
-    "1",
-    "2",
-    "3",
-    "4",
-    "8",
-    "P",
-    "X",
-]
-
 def paperformat(ax, figsize=(4, 3.1), ylim=None, ticks_step=10, grid=["x", "y"], minor=True):
     fig = ax.get_figure()
     if figsize is not None:
@@ -89,95 +65,6 @@ def _macro_avg_by_question(df: pd.DataFrame, group_cols: list[str]) -> pd.DataFr
     )
     return q_acc.groupby(group_cols, observed=True)["accuracy"].mean().reset_index()
 
-
-def _load_model_metadata(metadata_path: str | Path) -> pd.DataFrame:
-    path = Path(metadata_path)
-    with path.open("r", encoding="utf-8") as f:
-        data = json.load(f)
-    df = pd.DataFrame(data)
-    if "id" in df.columns:
-        df = df.rename(columns={"id": "model_id"})
-    return df
-
-
-def _build_model_style(
-    eval_df: pd.DataFrame,
-    metadata_path: str | Path | None,
-    *,
-    group_by: str = "model_id",
-    family_marker_mode: str = "distinct",
-    family_marker_base: str = "^",
-) -> tuple[dict[str, tuple[str, object, float]], dict[str, str]]:
-    group_ids = []
-    palette = []
-
-    metadata_df = None
-    if metadata_path is not None:
-        metadata_df = _load_model_metadata(metadata_path)
-
-    families = []
-    params = []
-    family_map = {}
-    for model_id in pd.unique(eval_df["model_id"]):
-        if metadata_df is not None and model_id in set(metadata_df["model_id"]):
-            row = metadata_df[metadata_df["model_id"] == model_id].iloc[0]
-            family = row["family"]
-            params_b = pd.to_numeric(row.get("params_b", np.nan), errors="coerce")
-        else:
-            family = "Other"
-            params_b = np.nan
-        family_map[str(model_id)] = family
-        if group_by == "model_id":
-            families.append(family)
-            params.append(params_b)
-
-    if group_by == "family":
-        group_ids = pd.unique(pd.Series(list(family_map.values())))
-        families = list(group_ids)
-        params = [np.nan] * len(group_ids)
-    else:
-        group_ids = pd.unique(eval_df["model_id"])
-
-    unique_families = list(dict.fromkeys(families)) if families else ["Other"]
-    unique_families = sorted(unique_families)
-    palette = sns.color_palette("tab20", len(group_ids))
-    if family_marker_mode not in {"distinct", "rotated"}:
-        raise ValueError(
-            f"family_marker_mode must be 'distinct' or 'rotated', got {family_marker_mode}"
-        )
-
-    if family_marker_mode == "rotated":
-        angle_step = 360.0 / max(1, len(unique_families))
-        family_markers = {
-            fam: mmarkers.MarkerStyle(family_marker_base).rotated(angle_step * i)
-            for i, fam in enumerate(unique_families)
-        }
-    else:
-        markers = list(_DEFAULT_MARKERS)
-        for marker in list(mmarkers.MarkerStyle.markers.keys()):
-            if marker not in markers:
-                markers.append(marker)
-        markers = [
-            marker
-            for marker in markers
-            if marker not in (None, "", " ", "None", "none")
-        ]
-        family_markers = {
-            fam: markers[i % len(markers)] for i, fam in enumerate(unique_families)
-        }
-
-    params = np.array(params, dtype=float)
-    valid_params = params[~np.isnan(params)]
-    fallback = float(np.nanmedian(valid_params)) if valid_params.size else 5.0
-    params = np.where(np.isnan(params), fallback, params)
-    params = np.clip(params, 2.0, 15.0)
-    sizes = (params - 2.0) / (15.0 - 2.0)
-
-    model_style = {}
-    for group_id, color, fam, size in zip(group_ids, palette, families, sizes):
-        model_style[str(group_id)] = (color, family_markers.get(fam, "o"), float(size))
-
-    return model_style, family_map
 
 
 def create_num_objects_category_curve(
@@ -419,12 +306,12 @@ def create_num_objects_violin_grid(
     if sub_categories.size == 0:
         raise ValueError(f"No {category_column} values found after filtering.")
 
-    model_style, family_map = _build_model_style(
-        plot_df,
+    model_style, family_map = utils.utils_mapping._build_model_style(
+        # plot_df,
         metadata_path,
         group_by=group_by,
         family_marker_mode=family_marker_mode,
-        family_marker_base=family_marker_base,
+        # family_marker_base=family_marker_base,
     )
     rng = np.random.default_rng(seed)
 
@@ -439,7 +326,7 @@ def create_num_objects_violin_grid(
 
     global_limits = None
     if y_limit_mode == "zero_to_max":
-        if group_by == "family":
+        if group_by == "model_family":
             plot_df["group_id"] = plot_df["model_id"].map(family_map).fillna("Other")
         else:
             plot_df["group_id"] = plot_df["model_id"].astype(str)
@@ -457,7 +344,7 @@ def create_num_objects_violin_grid(
             ax.set_visible(False)
             continue
 
-        if group_by == "family":
+        if group_by == "model_family":
             df_cat["group_id"] = df_cat["model_id"].map(family_map).fillna("Other")
         else:
             df_cat["group_id"] = df_cat["model_id"].astype(str)
@@ -661,9 +548,9 @@ def create_num_objects_violin_grid(
         )
         fig_legend.tight_layout()
         legend_name = legend_filename or filename.replace(".png", "_legend.png")
-        f_out = f"{Path(legend_name).stem}{seed_tag}{Path(legend_name).suffix}"
+        f_out = out_dir / f"{Path(legend_name).stem}{seed_tag}{Path(legend_name).suffix}"
         fig_legend.savefig(
-            out_dir / f_out,
+            f_out,
             dpi=300,
             bbox_inches="tight",
             pad_inches=0.05,
@@ -682,7 +569,7 @@ def create_num_objects_violin_grid(
                 plt.close(fig_cat)
                 continue
 
-            if group_by == "family":
+            if group_by == "model_family":
                 df_cat["group_id"] = df_cat["model_id"].map(family_map).fillna("Other")
             else:
                 df_cat["group_id"] = df_cat["model_id"].astype(str)
@@ -753,9 +640,8 @@ def create_num_objects_violin_grid(
                     continue
                 jitter = rng.uniform(-0.2, 0.2, size=x_vals.size)
                 x_jittered = x_vals + jitter
-                color, marker, size = model_style.get(
-                    str(group_id), ("black", "o", 0.5)
-                )
+                color, marker, size = model_style[group_id]
+                # print(f"Plotting group '{group_id}' with color {color}, marker {marker}, size {size}")
                 ax_cat.scatter(
                     x_jittered,
                     y_vals,
@@ -859,7 +745,6 @@ def create_category_accuracy(
     y_limit_mode: str = "fixed",
     y_pad: float = 0.05,
     family_marker_mode: str = "distinct",
-    family_marker_base: str = "^",
     group_by: str = "model_id",
     bars: bool = False,
 ) -> plt.Figure:
@@ -879,18 +764,8 @@ def create_category_accuracy(
         raise KeyError(f"eval_df must include '{category_col}' and 'model_id' columns.")
 
     plot_df = eval_df.copy()
-    
-    # Convert accuracy column
-    if "accuracy" in plot_df.columns:
-        plot_df["accuracy"] = pd.to_numeric(plot_df["accuracy"], errors="coerce")
-    elif "is_correct" in plot_df.columns:
-        plot_df["accuracy"] = pd.to_numeric(plot_df["is_correct"], errors="coerce")
-    else:
-        raise KeyError("eval_df must include 'accuracy' or 'is_correct'.")
 
     plot_df["accuracy"] *= 100
-
-    plot_df = plot_df.dropna(subset=[category_col, "accuracy"])
 
     # Compute accuracy for each model-category combination (keeping model_family)
     group_by_cols = np.unique(["model_id", group_by, category_col])
@@ -918,12 +793,11 @@ def create_category_accuracy(
     agg_df["category_pos"] = agg_df[category_col].map(cat_to_pos)
 
     # Build model style
-    model_style, family_map = _build_model_style(
-        plot_df,
+    model_style, family_map = utils.utils_mapping._build_model_style(
+        # plot_df,
         metadata_path,
         group_by=group_by,
         family_marker_mode=family_marker_mode,
-        family_marker_base=family_marker_base,
     )
     rng = np.random.default_rng(seed)
 
@@ -964,7 +838,7 @@ def create_category_accuracy(
         
         jitter = rng.uniform(-0.15, 0.15, size=x_vals.size)
         x_jittered = x_vals + jitter
-        color, marker, size = model_style.get(str(group_name), ("black", "o", 0.5))
+        color, marker, size = model_style[group_name]
         
         # Plot error bars (min to max range)
         # ax.errorbar(
@@ -1049,7 +923,7 @@ def create_category_accuracy(
     question_df = plot_df.groupby("question_id")["accuracy"].mean()
 
     def get_cat_label(cat):
-        print(cat)
+        # print(cat)
         q_ids = plot_df[plot_df.loc[:, category_col] == cat]["question_id"].unique()
 
         label = utils.utils_mapping.mapping_cat.get(cat).replace(" ", "\n")
@@ -1084,7 +958,11 @@ def create_category_accuracy(
     if show_legend:
         legend_handles = []
         legend_labels = []
+        groups = plot_df[group_by].unique()
         for group_name, (color, marker, size_val) in model_style.items():
+            if group_name not in groups:
+                continue
+
             marker_style = mmarkers.MarkerStyle(marker)
             marker_face = color if marker_style.is_filled() else "none"
 
@@ -1103,14 +981,16 @@ def create_category_accuracy(
                 )
             )
             legend_labels.append(group_name)
-        ax.legend(legend_handles, legend_labels, title="Model Family", bbox_to_anchor=(1.05, 1), loc='upper left', fontsize=8, title_fontsize=9, markerscale=0.7)
+
+        title_str = {"model_id": "Model", 
+                     "model_family": "Model Family"}.get(group_by)
+        ax.legend(legend_handles, legend_labels, title=title_str, bbox_to_anchor=(1.05, 1), loc='upper left', fontsize=8, title_fontsize=9, markerscale=0.7)
 
     plt.tight_layout()
 
     # Save figure
     if output_dir is not None:
-        run = run_name or "default"
-        out_dir = Path(output_dir) / run
+        out_dir = Path(output_dir)
         out_dir.mkdir(parents=True, exist_ok=True)
         f_out = out_dir / filename
         fig.savefig(f_out, dpi=150, bbox_inches="tight")
@@ -1199,12 +1079,12 @@ def create_material_stiffness_violin_grid(
     if categories.size == 0:
         raise ValueError("No sub_category values found after filtering.")
 
-    model_style, family_map = _build_model_style(
-        plot_df,
+    model_style, family_map = utils.utils_mapping._build_model_style(
+        # plot_df,
         metadata_path,
         group_by=group_by,
         family_marker_mode=family_marker_mode,
-        family_marker_base=family_marker_base,
+        # family_marker_base=family_marker_base,
     )
     rng = np.random.default_rng(seed)
 
@@ -1218,7 +1098,7 @@ def create_material_stiffness_violin_grid(
 
     global_limits = None
     if y_limit_mode == "zero_to_max":
-        if group_by == "family":
+        if group_by == "model_family":
             plot_df["group_id"] = plot_df["model_id"].map(family_map).fillna("Other")
         else:
             plot_df["group_id"] = plot_df["model_id"].astype(str)
@@ -1236,7 +1116,7 @@ def create_material_stiffness_violin_grid(
             ax.set_visible(False)
             continue
 
-        if group_by == "family":
+        if group_by == "model_family":
             df_cat["group_id"] = df_cat["model_id"].map(family_map).fillna("Other")
         else:
             df_cat["group_id"] = df_cat["model_id"].astype(str)
@@ -1442,7 +1322,7 @@ def create_material_stiffness_violin_grid(
                 plt.close(fig_cat)
                 continue
 
-            if group_by == "family":
+            if group_by == "model_family":
                 df_cat["group_id"] = df_cat["model_id"].map(family_map).fillna("Other")
             else:
                 df_cat["group_id"] = df_cat["model_id"].astype(str)
@@ -1641,18 +1521,18 @@ def create_num_objects_violin_per_question_id(
     if question_ids.size == 0:
         raise ValueError("No question_id values found after filtering.")
 
-    model_style, family_map = _build_model_style(
-        plot_df,
+    model_style, family_map = utils.utils_mapping._build_model_style(
+        # plot_df,
         metadata_path,
         group_by=group_by,
         family_marker_mode=family_marker_mode,
-        family_marker_base=family_marker_base,
+        # family_marker_base=family_marker_base,
     )
     rng = np.random.default_rng(seed)
 
     global_limits = None
     if y_limit_mode == "zero_to_max":
-        if group_by == "family":
+        if group_by == "model_family":
             plot_df["group_id"] = plot_df["model_id"].map(family_map).fillna("Other")
         else:
             plot_df["group_id"] = plot_df["model_id"].astype(str)
@@ -1709,7 +1589,7 @@ def create_num_objects_violin_per_question_id(
         if df_q.empty:
             continue
 
-        if group_by == "family":
+        if group_by == "model_family":
             df_q["group_id"] = df_q["model_id"].map(family_map).fillna("Other")
         else:
             df_q["group_id"] = df_q["model_id"].astype(str)

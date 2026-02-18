@@ -214,7 +214,7 @@ def load_results(
     df_val = _read_json_dataframe(val_path)
 
     # FOR AGENT Keep the hardcoded columns #
-    print("Processing columns...")
+    # print("Processing columns...")
 
     drop_cols = ["scene", "source"]
 
@@ -251,7 +251,7 @@ def load_results(
 
         # if the interested objects are 2  we take the average of the visible pixels
         df["visible_pixels_interested_object"] = df.apply(
-            lambda row: find_insterted_object_pixels_count(
+            lambda row: find_interested_object_pixels_count(
                 str(row[sim_path_col]),
                 str(row["question"]),
                 row["file_name"],
@@ -260,7 +260,7 @@ def load_results(
         )
 
     print("Merging model answers...")
-    print(df.head().to_string())
+    # print(df.head().to_string())
 
     if merge_model_answers:
         results_dir = (
@@ -410,7 +410,7 @@ def read_simulation_metadata(
     return result
 
 
-def find_insterted_object_pixels_count(
+def find_interested_object_pixels_count(
     simulation_json_path: str | Path,
     question: str,
     file_names: List,
@@ -446,9 +446,9 @@ def find_insterted_object_pixels_count(
     # find the interested objects from the question
     for object_id, obj in cached["objects"].items():
         if question.find(str(obj["description"]["object_name"])) != -1:
-            print(
-                f"Found interested object: {obj['description']['object_name']} with id {object_id}"
-            )
+            # print(
+            #     f"Found interested object: {obj['description']['object_name']} with id {object_id}"
+            # )
 
             return {
                 "visible_pixels_interested_object": cached["simulation"][

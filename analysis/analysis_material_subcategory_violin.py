@@ -232,12 +232,12 @@ def plot_subcategory_violin(
             style_key = str(row["family"])
         else:
             style_key = str(row["model_id"])
-        color, marker, size = model_style.get(style_key, ("black", "o", 0.5))
+        color, marker, size = model_style[style_key]
         ax.scatter(
             row["accuracy"],
             y_pos + jitter,
             color=color,
-            s=40 + 40 * size,
+            s=size**2,
             alpha=0.85,
             edgecolor="white",
             linewidth=0.7,

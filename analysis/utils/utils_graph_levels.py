@@ -300,7 +300,7 @@ def create_scatter_by_family(
             #     x, y, color=color, linestyle=ls, linewidth=2, alpha=0.85, label=family
             # )
             ax.scatter(
-                x, y, color=color, marker=marker, s=150+300*_size, edgecolor="white", linewidth=1, zorder=4
+                x, y, color=color, marker=marker, s=_size**2, edgecolor="white", linewidth=1, zorder=4
             )
             # if np.isfinite(y_err).any():
             #     ax.fill_between(x, y - y_err, y + y_err, color=color, alpha=0.12)
@@ -409,7 +409,7 @@ def create_scatter_by_family(
             #     x, y, color=color, linestyle=ls, linewidth=2, alpha=0.85, label=family
             # )
             ax.scatter(
-                x, y, color=color, marker=marker, s=150+300*_size, edgecolor="white", linewidth=1, zorder=4, label=family
+                x, y, color=color, marker=marker, s=_size**2, edgecolor="white", linewidth=1, zorder=4, label=family
             )
             # if np.isfinite(y_err).any():
             #     ax.fill_between(x, y - y_err, y + y_err, color=color, alpha=0.12)

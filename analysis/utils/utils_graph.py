@@ -749,7 +749,7 @@ def create_accuracy_bench_vs_common_sense(
             # hue="mode",
             # marker="o",
             color=color,
-            s=75+ 200 * size,
+            s=size**2,
             marker=marker,
             edgecolor="w",
             alpha=0.9,
@@ -871,6 +871,7 @@ def create_accuracy_bench_vs_common_sense(
         )
 
     if "params_b_plot" in eval_df_accuracy_total_per_model.columns:
+        assert False, "Outdated need to refactorize with the new plot code,(style, etc.)"
         params = eval_df_accuracy_total_per_model["params_b_plot"].dropna().astype(float)
         positive = params[params > 0]
         if not positive.empty:

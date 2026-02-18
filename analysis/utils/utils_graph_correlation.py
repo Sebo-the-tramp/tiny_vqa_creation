@@ -423,7 +423,7 @@ def create_num_objects_violin_grid(
                 x_jittered,
                 y_vals,
                 color=color,
-                s=50+ 100 * size,
+                s=size**2,
                 alpha=0.8,
                 edgecolor="white",
                 linewidth=1,
@@ -490,7 +490,7 @@ def create_num_objects_violin_grid(
                 color="none",
                 markerfacecolor=marker_face,
                 markeredgecolor=color,
-                markersize=8 + 6 * size,
+                markersize=size,
                 linestyle="None",
             )
         )
@@ -646,7 +646,7 @@ def create_num_objects_violin_grid(
                     x_jittered,
                     y_vals,
                     color=color,
-                    s=50+ 100 * size,
+                    s=size**2,
                     alpha=0.8,
                     edgecolor="white",
                     linewidth=1,
@@ -859,7 +859,7 @@ def create_category_accuracy(
             x_jittered,
             y_vals,
             color=color,
-            s=75+ 200 * size,
+            s=size**2,
             alpha=0.8,
             edgecolor="white",
             linewidth=1,
@@ -976,7 +976,7 @@ def create_category_accuracy(
                     color="none",
                     markerfacecolor=marker_face,
                     markeredgecolor=color,
-                    markersize=8 + 6 * size_val,
+                    markersize=size_val,
                     linestyle="None",
                 )
             )
@@ -1189,7 +1189,7 @@ def create_material_stiffness_violin_grid(
                 x_jittered,
                 y_vals,
                 color=color,
-                s=75+ 200 * size,
+                s=size**2,
                 alpha=0.8,
                 edgecolor="white",
                 linewidth=1,
@@ -1251,7 +1251,7 @@ def create_material_stiffness_violin_grid(
                 color="none",
                 markerfacecolor=marker_face,
                 markeredgecolor=color,
-                markersize=8 + 6 * size,
+                markersize=size,
                 linestyle="None",
             )
         )
@@ -1387,7 +1387,7 @@ def create_material_stiffness_violin_grid(
                     x_jittered,
                     y_vals,
                     color=color,
-                    s=75+ 200 * size,
+                    s=size**2,
                     alpha=0.8,
                     edgecolor="white",
                     linewidth=1,
@@ -1559,7 +1559,7 @@ def create_num_objects_violin_per_question_id(
                 color="none",
                 markerfacecolor=marker_face,
                 markeredgecolor=color,
-                markersize=8 + 6 * size,
+                markersize=size,
                 linestyle="None",
             )
         )
@@ -1667,7 +1667,7 @@ def create_num_objects_violin_per_question_id(
                 x_jittered,
                 y_vals,
                 color=color,
-                s=75+ 200 * size,
+                s=size**2,
                 alpha=0.8,
                 edgecolor="white",
                 linewidth=1,

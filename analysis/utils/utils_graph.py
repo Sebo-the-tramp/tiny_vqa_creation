@@ -303,6 +303,7 @@ def create_graph_from_eval_balanced(
     # Save
     os.makedirs(out_dir, exist_ok=True)
     plt.savefig(f"{out_dir}/{title}.png", dpi=300, bbox_inches="tight")
+    print(f"Plot saved to: {out_dir}/{title}.png")
 
     return acc, breakdown
 
@@ -464,6 +465,7 @@ def create_sub_categories_summary(
     run = globals().get("RUN_NAME", "default")
     os.makedirs(f"./output/{run}/", exist_ok=True)
     plt.savefig(f"./output/{run}/{title}.png", dpi=300, bbox_inches="tight")
+    print(f"Plot saved to: ./output/{run}/{title}.png")
 
 
 def create_correlation_common_sense(
@@ -580,6 +582,7 @@ def create_correlation_common_sense(
     run = globals().get("RUN_NAME", "default")
     os.makedirs(f"./output/{run}/", exist_ok=True)
     plt.savefig(f"./output/{run}/{title}.png", dpi=300, bbox_inches="tight")
+    print(f"Plot saved to: ./output/{run}/{title}.png")
 
     return corr_sorted
 
@@ -590,7 +593,8 @@ def create_accuracy_bench_vs_common_sense(
         out_filename: str = "accuracy_vs_common_sense.png",
         show_legend: bool = True,
         family_marker_mode: str = "distinct",
-        family_marker_base: str = "^",
+        # family_marker_base: str = "^",
+        group_by: str = "model_family",
         ylabel: str = "Accuracy (%)",
         label_fontsize = 12,
         tick_fontsize = 12,
@@ -632,13 +636,10 @@ def create_accuracy_bench_vs_common_sense(
                 row = common_sense_df[common_sense_df["Method"] == cs_model_id].iloc[0]
                 common_sense_accuracy[model_id] = row.get("Avg. Score")
 
-    from utils.utils_graph_correlation import _build_model_style
-    model_style, family_map = _build_model_style(
-        eval_df,
+    model_style, family_map = utils.utils_mapping._build_model_style(
         "./utils/metadata.json",
-        group_by="family",
+        group_by=group_by,
         family_marker_mode=family_marker_mode,
-        family_marker_base=family_marker_base,
     )
     
     accuracy_total_per_model = acc_mat.iloc[-1:, :]
@@ -740,8 +741,7 @@ def create_accuracy_bench_vs_common_sense(
 
     # 3. Scatter Plot
     for model_id, df_m in eval_df_accuracy_total_per_model.groupby("model_id"):
-        color, marker, size = model_style.get(family_map.get(model_id))
-        # print(f"Plotting model {model_id} with color {color}, marker {marker}, size {size}")
+        color, marker, size = model_style[model_id]
         scatter_kwargs = dict(
             data=df_m,
             x="common_sense_accuracy",
@@ -749,28 +749,13 @@ def create_accuracy_bench_vs_common_sense(
             # hue="mode",
             # marker="o",
             color=color,
-            # s=500 + 400 * size,
+            s=75+ 200 * size,
             marker=marker,
             edgecolor="w",
             alpha=0.9,
             legend=False,
         )
 
-        # print(df_m.head())
-
-        if "params_b" in df_m.columns:
-            params = pd.to_numeric(
-                df_m["params_b"], errors="coerce"
-            )
-            positive = params[params > 0]
-            if not positive.empty:
-                min_pos = float(positive.min())
-                df_m["params_b_plot"] = params.fillna(min_pos)
-                scatter_kwargs.update(
-                    size="params_b_plot",
-                    sizes=(200, 900),
-                    size_norm=LogNorm(),  # params_b must be > 0
-                )
         ax = sns.scatterplot(**scatter_kwargs)
 
     if show_xlabel:
@@ -941,3 +926,4 @@ def create_accuracy_bench_vs_common_sense(
         bbox_inches="tight",
         pad_inches=0.0,
     )
+    print(f"Plot saved to: {out_dir}/{out_filename}")

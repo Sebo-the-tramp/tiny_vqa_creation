@@ -418,7 +418,7 @@ def create_num_objects_violin_grid(
                 continue
             jitter = rng.uniform(-0.2, 0.2, size=x_vals.size)
             x_jittered = x_vals + jitter
-            color, marker, size = model_style.get(str(group_id), ("black", "o", 0.5))
+            color, marker, size = model_style[group_id]
             ax.scatter(
                 x_jittered,
                 y_vals,
@@ -1184,7 +1184,7 @@ def create_material_stiffness_violin_grid(
                 continue
             jitter = rng.uniform(-0.2, 0.2, size=x_vals.size)
             x_jittered = x_vals + jitter
-            color, marker, size = model_style.get(str(group_id), ("black", "o", 0.5))
+            color, marker, size = model_style[group_id]
             ax.scatter(
                 x_jittered,
                 y_vals,
@@ -1383,9 +1383,7 @@ def create_material_stiffness_violin_grid(
                     continue
                 jitter = rng.uniform(-0.2, 0.2, size=x_vals.size)
                 x_jittered = x_vals + jitter
-                color, marker, size = model_style.get(
-                    str(group_id), ("black", "o", 0.5)
-                )
+                color, marker, size = model_style[group_id]
                 ax_cat.scatter(
                     x_jittered,
                     y_vals,
@@ -1664,7 +1662,7 @@ def create_num_objects_violin_per_question_id(
                 continue
             jitter = rng.uniform(-0.2, 0.2, size=x_vals.size)
             x_jittered = x_vals + jitter
-            color, marker, size = model_style.get(str(group_id), ("black", "o", 0.5))
+            color, marker, size = model_style[group_id]
             ax_q.scatter(
                 x_jittered,
                 y_vals,

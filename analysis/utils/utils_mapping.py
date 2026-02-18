@@ -146,6 +146,8 @@ def _build_model_style(
     group_by: str = "model_id",
     family_marker_mode: str = "distinct",
 ) -> tuple[dict[str, tuple[str, object, float]], dict[str, str]]:
+    assert group_by in {"model_id", "model_family"}, "group_by must be 'model_id' or 'model_family'"
+
     group_ids = []
     palette = []
 

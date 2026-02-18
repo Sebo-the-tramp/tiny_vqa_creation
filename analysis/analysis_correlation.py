@@ -71,6 +71,10 @@ def main() -> None:
     if args.family is not None:
         print("Filtering to family:", args.family)
         eval_df = eval_df[eval_df['model_family'] == args.family]
+        assert eval_df['idx'].nunique() > 0, f"No entries found for family {args.family} in eval_df after filtering. Check if family name is correct and if there are entries for that family."
+    
+        # Use subdirectory for family-specific results
+        output_dir = output_dir / f"family_{args.family}"
     
     eval_df_src = eval_df
 

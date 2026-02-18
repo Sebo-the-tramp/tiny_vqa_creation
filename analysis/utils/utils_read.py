@@ -122,7 +122,7 @@ def build_eval_df(
         eval_df["mode_y"] = eval_df["mode"]
     
     if excluded_questions is not None:
-        print(f"Excluding questions: {excluded_questions}")
+        print(f"/!\ WARNING: Excluding questions: {excluded_questions} => Dropping {len(eval_df[eval_df['question_id'].isin(excluded_questions)])} entries.")
         eval_df = eval_df[~eval_df["question_id"].isin(excluded_questions)]
 
 
@@ -145,10 +145,10 @@ def build_eval_df(
     eval_df = eval_df.dropna(subset=["category", "sub_category", "accuracy"])
     dropped_rows = before_drop - len(eval_df)
     if dropped_rows > 0:
-        print(f"Dropped {dropped_rows} rows with NaN in category/sub_category/accuracy")
-        prompt = input("Proceed with dropped rows or raise error? (y=proceed, n=error): ").strip().lower()
-        if prompt != "y":
-            raise ValueError("NaN values in category/sub_category/accuracy columns.")
+        print(f"/!\ WARNING: Dropped {dropped_rows} out of {before_drop} rows with NaN in category/sub_category/accuracy")
+        # prompt = input("Proceed with dropped rows or raise error? (y=proceed, n=error): ").strip().lower()
+        # if prompt != "y":
+        #     raise ValueError("NaN values in category/sub_category/accuracy columns.")
     
     return eval_df
 

@@ -2,21 +2,21 @@ RUN_NAME="run_26_general"
 VQA_SET="30K"
 VARIANCE_SPLITS=5
 
-OBJNUM_RUN_NAME="${RUN_NAME}_obj_num"
+OBJNUM_RUN_NAME="run_24_general_obj_num"
 OBJNUM_VQA_SET="10K"
 
-YMS_RUN_NAME="${RUN_NAME}_yms-variations"
+YMS_RUN_NAME="run_24_general_yms-variations"
 YMS_VQA_SET="10K"
 
 LEVELS_RUN_NAME="${RUN_NAME}_levels"
 LEVELS_VQA_SET="10K"
 
 set -x
+python ./analysis_correlation.py --base-path ../output --run-name $OBJNUM_RUN_NAME --vqa-set $OBJNUM_VQA_SET
 python ./analysis_vqaset.py --base-path ../output/ --run-name $RUN_NAME --vqa-set $VQA_SET --mode mixed
 python ./analysis_category.py --base-path ../output/ --run-name $RUN_NAME --vqa-set $VQA_SET --mode mixed
 python ./analysis_commonsense.py --base-path ../output/ --run-name $RUN_NAME --vqa-set $VQA_SET
 
-python ./analysis_correlation.py --base-path ../output --run-name $OBJNUM_RUN_NAME --vqa-set $OBJNUM_VQA_SET
 python ./analysis_material_yms.py --base-path ../output --run-name $YMS_RUN_NAME --vqa-set $YMS_VQA_SET
 python ./analysis_5_levels.py --base-path ../output --run-name $LEVELS_RUN_NAME --vqa-set $LEVELS_VQA_SET
 

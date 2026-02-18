@@ -72,7 +72,7 @@ def plot_bar(counts: Iterable[Tuple[str, int]], output_path: Path, title: str) -
     for idx, value in enumerate(values):
         ax.text(value, idx, f"{value:,}", va="center", ha="left", fontsize=8)
     fig.tight_layout()
-    fig.savefig(output_path, dpi=200)
+    fig.savefig(output_path, dpi=300)
     plt.close(fig)
     print(f"Wrote {output_path}")
 

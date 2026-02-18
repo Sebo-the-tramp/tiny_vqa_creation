@@ -923,7 +923,7 @@ def create_accuracy_bench_vs_common_sense(
     os.makedirs(out_dir, exist_ok=True)
     plt.savefig(
         f"{out_dir}/{out_filename}",
-        dpi=200,
+        dpi=300,
         bbox_inches="tight",
         pad_inches=0.0,
     )

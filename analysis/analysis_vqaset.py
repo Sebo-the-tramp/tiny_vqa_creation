@@ -108,7 +108,7 @@ def main() -> None:
             col,
             top_n=1000,
         )
-        fig.savefig(output_dir / f"hist_{col}.png", dpi=150, bbox_inches="tight")
+        fig.savefig(output_dir / f"hist_{col}.png", dpi=300, bbox_inches="tight")
         plt.close(fig)
 
 

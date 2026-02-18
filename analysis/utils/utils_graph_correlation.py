@@ -196,7 +196,7 @@ def create_num_objects_category_curve(
         out_dir = Path(output_dir)
         out_dir.mkdir(parents=True, exist_ok=True)
         f_out = out_dir / filename
-        fig.savefig(f_out, dpi=150, bbox_inches="tight", pad_inches=0.05)
+        fig.savefig(f_out, dpi=300, bbox_inches="tight", pad_inches=0.05)
         print(f"Plot saved to: {f_out}")
 
     if show:
@@ -993,7 +993,7 @@ def create_category_accuracy(
         out_dir = Path(output_dir)
         out_dir.mkdir(parents=True, exist_ok=True)
         f_out = out_dir / filename
-        fig.savefig(f_out, dpi=150, bbox_inches="tight")
+        fig.savefig(f_out, dpi=300, bbox_inches="tight")
         print(f"Plot saved to: {f_out}")
 
     if show:

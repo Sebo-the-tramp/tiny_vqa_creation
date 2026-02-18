@@ -191,7 +191,7 @@ def plot_violin_by_question(
     else:
         ax.legend(loc="upper right")
     fig.tight_layout()
-    fig.savefig(output_path, dpi=200)
+    fig.savefig(output_path, dpi=300)
     plt.close(fig)
 
 
@@ -229,7 +229,7 @@ def plot_avg_bar(
     ax.yaxis.set_major_formatter(PercentFormatter(1.0))
     ax.tick_params(axis="x", rotation=0)
     fig.tight_layout()
-    fig.savefig(output_path, dpi=200)
+    fig.savefig(output_path, dpi=300)
     plt.close(fig)
 
 

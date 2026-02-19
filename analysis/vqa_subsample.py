@@ -78,7 +78,7 @@ def main() -> None:
             suffix = f"-s{args.sampling}-s{s}"
 
         split_path = str(test_path.with_suffix("")) + suffix + ".json"
-        pkl_path = test_path.parent / f"merged_results_{args.vqa_set}" + suffix + ".pkl"
+        pkl_path = test_path.parent / (f"merged_results_{args.vqa_set}" + suffix + ".pkl")
         
         if args.skip_existing and Path(split_path).exists():
             print(f"  Skipping existing split {split_path}")
@@ -88,7 +88,8 @@ def main() -> None:
             q_idxs = questions_idx[q]
 
             if args.mode == 'range':
-                q_s, q_e = int(len(q_idxs) * s / args.num), int(len(q_idxs) * (s + 1) / args.num)
+                slice_size = int(len(q_idxs) / args.num)  # important to do the int() convertion here (instead of int(len(q_idxs) s / args.num) in q_s) to avoid slices with varying count that lead to different vqa_set_counts across splits
+                q_s, q_e = s * slice_size, (s + 1) * slice_size
                 sampled_q_idxs = q_idxs[q_s:q_e]
                 print(f"  '{q}' idxs deterministic {q_s}:{q_e} ({len(sampled_q_idxs)})")
                 # print({sampled_q_idxs})
@@ -101,8 +102,8 @@ def main() -> None:
                 sampled_q_idxs = pd.Series(q_idxs).sample(frac=args.sampling, random_state=s).tolist()
                 print(f"  '{q}' idxs sampled ({len(sampled_q_idxs)})")
                 # print({sampled_q_idxs})
-                
-                split_df = split_df[~((split_df["question_id"] == q) & (~split_df["idx"].isin(sampled_q_idxs)))]
+            
+            split_df = split_df[~((split_df["question_id"] == q) & (~split_df["idx"].isin(sampled_q_idxs)))]
         
         print(f"\nSaving split df to {split_path}")
         print(f"Entries in {split_path}: {len(split_df)}")
@@ -116,13 +117,13 @@ def main() -> None:
 
         # If cache exists, delete it
         if pkl_path.exists():
-            print(f"Deleting existing cache at {pkl_path} for split {split_path}")
+            print(f"Deleting existing cache at {pkl_path}")
             pkl_path.unlink()
         
         # If merged cache exists, delete it
         pkl_meta_path = pkl_path.parent / f"merged_results_{args.vqa_set}_vqa-split-{args.mode}.pkl"
         if pkl_meta_path.exists():
-            print(f"Deleting existing cache at {pkl_meta_path}")
+            print(f"Deleting existing merged cache at {pkl_meta_path}")
             pkl_meta_path.unlink()
             
 

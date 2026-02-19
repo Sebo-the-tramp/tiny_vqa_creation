@@ -214,8 +214,8 @@ def _build_model_style(
     params = np.where(np.isnan(params), fallback, params)
 
     params = np.clip(params, 1.0, 20.0)
-    sizes = (params - 1.0) / (20.0 - 1.0)
-    sizes = 8 + 8 * sizes  # Scale to range [8, 22] for better visibility
+    sizes = (params - 1.0) / (30.0 - 1.0)
+    sizes = 8 + 7 * sizes  # Scale to range [8, 22] for better visibility
 
     model_style = {}
     for group_id, color, fam, size in zip(group_ids, palette, families, sizes):

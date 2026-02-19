@@ -36,21 +36,11 @@ def main() -> None:
 
     eval_df = utils.utils_read.build_eval_df(args.base_path, vqa_set=args.vqa_set, columns=["object-yms"])
 
-
     # print(eval_df.head().to_string())
-    for group_by in ["model_family", "model_id", "model_best"]:
-        print(f"Analyzing YMS group by: {group_by}")
-        fname = f"yms_violin_{group_by}.png"
-
-        if group_by == "model_best":
-            # Compute the per model accuracy and keep only best overall model per family
-            model_accuracy = eval_df.groupby(['model_family', 'model_id'])['accuracy'].mean().reset_index()
-            best_models = model_accuracy.loc[model_accuracy.groupby('model_family')['accuracy'].idxmax()]
-            cur_df = eval_df[eval_df['model_id'].isin(best_models['model_id'])]
-            
-            group_by = "model_id"
-        else:
-            cur_df = eval_df
+    for group in utils.utils_read.GROUPINGS:
+        print(f"Analyzing YMS group by: {group}")
+        fname = f"yms_violin_{group}.png"
+        cur_df, group_by = utils.utils_read.apply_group(eval_df, group)
         
         # for category_col in ["category", "sub_category"]:
         for category_col in ["category"]:

@@ -85,7 +85,7 @@ def main() -> None:
             for f in globbed_files:
                 vqa_set = f.stem.split(f"test_{args.run_name}_")[-1]
                 all_vqa_sets.append(vqa_set)
-
+        
         print(f"{len(all_vqa_sets)} available VQA sets for '{args.run_name}': {all_vqa_sets}")
         manager = Manager()
         sets_to_load = manager.list(all_vqa_sets)
@@ -115,21 +115,12 @@ def main() -> None:
     print(f"Loading merged dataframe from {merged_path}..")
     merged_df = pd.read_pickle(merged_path)
     print(f"Merged dataframe loaded. Total rows: {len(merged_df)}")
-        
+
     for mode_label, mode_df in utils.utils_read.select_eval_df(
         merged_df, mode=args.mode, split_by_mode=args.split_by_mode
     ):
-        for group in ["model_family", "model_id", "model_best"]:
-            if group == "model_best":
-                # Compute the per model accuracy and keep only best overall model per family
-                model_accuracy = mode_df.groupby(['model_family', 'model_id'])['accuracy'].mean().reset_index()
-                best_models = model_accuracy.loc[model_accuracy.groupby('model_family')['accuracy'].idxmax()]
-                cur_df = mode_df[mode_df['model_id'].isin(best_models['model_id'])]
-                
-                group_by = "model_id"
-            else:
-                cur_df = mode_df
-                group_by = group
+        for group in utils.utils_read.GROUPINGS:
+            cur_df, group_by = utils.utils_read.apply_group(mode_df, group)
             
             print(f"Processing mode: {mode_label}, grouping by {group_by}: with {len(cur_df)} entries")
             for cat in list(cur_df["category"].unique()) + ["all"]:

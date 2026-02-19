@@ -62,18 +62,9 @@ def main() -> None:
     for mode_label, mode_df in utils.utils_read.select_eval_df(
         eval_df, mode=args.mode, split_by_mode=args.split_by_mode
     ):
-        for group_by in ["model_family", "model_id", "model_best"]:
-            fname = f"acc_by_cat_{mode_label}_{group_by}.png"
-
-            if group_by == "model_best":
-                # Compute the per model accuracy and keep only best overall model per family
-                model_accuracy = mode_df.groupby(['model_family', 'model_id'])['accuracy'].mean().reset_index()
-                best_models = model_accuracy.loc[model_accuracy.groupby('model_family')['accuracy'].idxmax()]
-                cur_df = mode_df[mode_df['model_id'].isin(best_models['model_id'])]
-                
-                group_by = "model_id"
-            else:
-                cur_df = mode_df
+        for group in utils.utils_read.GROUPINGS:
+            fname = f"acc_by_cat_{mode_label}_{group}.png"
+            cur_df, group_by = utils.utils_read.apply_group(mode_df, group)
             
             print(f"Processing mode: {mode_label}, grouping by {group_by}: with {len(cur_df)} entries")
             create_category_accuracy(

@@ -552,6 +552,40 @@ def select_eval_df(
         return iter_mode_slices(eval_df)
     return [("mixed", eval_df)]
 
+GROUPINGS = ["model_best", 
+             "model_bestmat", 
+             "model_biggest", 
+             "model_id", 
+             "model_family"]
+
+def apply_group(df: pd.DataFrame, group_by: str) -> pd.DataFrame:
+    # Best average across question (no balancing)
+    # model_accuracy = df.groupby(['model_family', 'model_id'])['accuracy'].mean().reset_index()
+    # best_models = model_accuracy.loc[model_accuracy.groupby('model_family')['accuracy'].idxmax()]
+    # df = df[df['model_id'].isin(best_models['model_id'])]
+    # group_by = "model_id"cat_acc_df
+
+    if group_by in ["model_best", "model_bestmat"]:
+        cat_acc_df = (
+            df.groupby(["category", "model_family", "model_id"], observed=True)["accuracy"]
+            .mean()
+            .reset_index()
+        )
+        
+        if group_by == "model_bestmat":
+            cat_acc_df = cat_acc_df[cat_acc_df["category"] == "material_understanding"]
+        
+        model_accuracy = cat_acc_df.groupby(['model_family', 'model_id'])['accuracy'].mean().reset_index()
+        best_models = model_accuracy.loc[model_accuracy.groupby('model_family')['accuracy'].idxmax()]
+        df = df[df['model_id'].isin(best_models['model_id'])]
+        group_by = "model_id"
+    elif group_by in ["model_biggest"]:
+        biggest_models = df.loc[df.groupby('model_family')['model_params_b'].idxmax()]
+        df = df[df['model_id'].isin(biggest_models['model_id'])]
+        group_by = "model_id"
+        
+
+    return df, group_by
 
 if __name__ == "__main__":
     df, paths = load_results(

@@ -89,7 +89,7 @@ def main() -> None:
     )
     parser.add_argument(
         "--vqa-set",
-        default="10K",
+        default="30K",
         help="VQA set to use (e.g., 10K, 30K, karo_5K).",
     )
     args = parser.parse_args()

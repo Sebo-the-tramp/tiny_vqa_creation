@@ -578,6 +578,10 @@
       objectCount: ""
     };
 
+    const urlParams = new URLSearchParams(window.location.search);
+    const cacheBustEnabled = urlParams.has("nocache") || urlParams.has("cachebust");
+    let gzipMode = urlParams.has("nogzip") ? "off" : (urlParams.has("gzip") ? "force" : "auto");
+
     const elements = {
       title: document.getElementById("title"),
       status: document.getElementById("status"),
@@ -611,6 +615,7 @@
     }
 
     function withCacheBust(url) {
+      if (!cacheBustEnabled) return url;
       const sep = url.includes("?") ? "&" : "?";
       return `${url}${sep}ts=${Date.now()}`;
     }
@@ -751,6 +756,10 @@
       return candidates[0] || "";
     }
 
+    const MAX_CONCURRENT_IMAGE_LOADS = 6;
+    const lazyLoadQueue = [];
+    let activeImageLoads = 0;
+
     const lazyImageObserver = "IntersectionObserver" in window
       ? new IntersectionObserver(entries => {
           entries.forEach(entry => {
@@ -758,15 +767,50 @@
             loadLazyImage(entry.target);
             lazyImageObserver.unobserve(entry.target);
           });
-        }, { rootMargin: "240px 0px", threshold: 0.01 })
+        }, { rootMargin: "0px", threshold: 0.01 })
       : null;
 
-    function loadLazyImage(img) {
+    function drainLazyQueue() {
+      if (activeImageLoads >= MAX_CONCURRENT_IMAGE_LOADS) return;
+      while (activeImageLoads < MAX_CONCURRENT_IMAGE_LOADS && lazyLoadQueue.length > 0) {
+        const img = lazyLoadQueue.shift();
+        if (!img || !document.contains(img)) continue;
+        if (img.dataset.loaded === "true") continue;
+        const src = img.dataset.src;
+        if (!src) continue;
+        img.dataset.enqueued = "false";
+        activeImageLoads += 1;
+        const onDone = () => {
+          activeImageLoads = Math.max(0, activeImageLoads - 1);
+          img.removeEventListener("load", onDone);
+          img.removeEventListener("error", onDone);
+          drainLazyQueue();
+        };
+        img.addEventListener("load", onDone);
+        img.addEventListener("error", onDone);
+        img.src = src;
+        img.dataset.loaded = "true";
+      }
+    }
+
+    function enqueueLazyImage(img) {
+      if (!img || img.dataset.loaded === "true") return;
+      if (img.dataset.enqueued === "true") return;
+      img.dataset.enqueued = "true";
+      lazyLoadQueue.push(img);
+      drainLazyQueue();
+    }
+
+    function loadLazyImage(img, { force = false } = {}) {
       if (!img || img.dataset.loaded === "true") return;
       const src = img.dataset.src;
       if (!src) return;
-      img.src = src;
-      img.dataset.loaded = "true";
+      if (force) {
+        img.src = src;
+        img.dataset.loaded = "true";
+        return;
+      }
+      enqueueLazyImage(img);
     }
 
     function registerLazyImage(img) {
@@ -783,8 +827,9 @@
       img.dataset.candidateIndex = "0";
       img.dataset.src = candidates[0] || "";
       img.dataset.loaded = "false";
+      img.dataset.enqueued = "false";
       if (immediate) {
-        loadLazyImage(img);
+        loadLazyImage(img, { force: true });
       }
     }
 
@@ -795,8 +840,9 @@
       if (index >= candidates.length) return;
       img.dataset.candidateIndex = String(index);
       img.dataset.src = candidates[index];
-      img.src = candidates[index];
-      img.dataset.loaded = "true";
+      img.dataset.loaded = "false";
+      img.dataset.enqueued = "false";
+      loadLazyImage(img, { force: true });
     }
 
     function createImageCard(path) {
@@ -833,6 +879,8 @@
         const thumb = document.createElement("img");
         thumb.className = `carousel-thumb${index === 0 ? " active" : ""}`;
         thumb.dataset.src = primaryImageUrl(path);
+        thumb.dataset.loaded = "false";
+        thumb.dataset.enqueued = "false";
         thumb.loading = "lazy";
         thumb.decoding = "async";
         thumb.alt = path;
@@ -935,6 +983,43 @@
       const dot = clean.lastIndexOf(".");
       if (dot === -1) return "";
       return clean.slice(dot);
+    }
+
+    function toGzipUrl(url) {
+      const [base, query] = String(url).split("?");
+      if (!base.endsWith(".json")) return null;
+      const gzBase = `${base}.gz`;
+      return query ? `${gzBase}?${query}` : gzBase;
+    }
+
+    function canUseGzip() {
+      if (gzipMode === "off") return false;
+      return "DecompressionStream" in window;
+    }
+
+    function markGzipAvailable() {
+      if (gzipMode === "auto") gzipMode = "force";
+    }
+
+    function markGzipUnavailable() {
+      if (gzipMode === "auto") gzipMode = "off";
+    }
+
+    async function fetchGzipJson(url) {
+      try {
+        const response = await fetch(url);
+        if (!response.ok) {
+          return { ok: false, url, status: response.status, gzip: true };
+        }
+        if (!("DecompressionStream" in window)) {
+          return { ok: false, url, status: "gzip-unsupported", gzip: true };
+        }
+        const stream = response.body.pipeThrough(new DecompressionStream("gzip"));
+        const text = await new Response(stream).text();
+        return { ok: true, url, data: JSON.parse(text), gzip: true };
+      } catch (err) {
+        return { ok: false, url, status: "network-error", error: err, gzip: true };
+      }
     }
 
     async function fetchFirstAvailable(candidates) {
@@ -1052,6 +1137,7 @@
       if (lazyImageObserver) {
         lazyImageObserver.disconnect();
       }
+      lazyLoadQueue.length = 0;
 
       const start = (state.page - 1) * state.pageSize;
       const pageItems = state.filtered.slice(start, start + state.pageSize);
@@ -1223,6 +1309,18 @@
     }
 
     async function tryFetchJson(url) {
+      const gzUrl = toGzipUrl(url);
+      if (gzUrl && canUseGzip()) {
+        const gzResult = await fetchGzipJson(gzUrl);
+        if (gzResult.ok) {
+          markGzipAvailable();
+          return gzResult;
+        }
+        if (gzResult.status === 404 || gzResult.status === 403 || gzResult.status === "gzip-unsupported") {
+          markGzipUnavailable();
+        }
+      }
+
       try {
         const response = await fetch(url);
         if (!response.ok) {

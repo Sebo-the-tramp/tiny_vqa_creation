@@ -13,7 +13,7 @@ MATERIAL_OBJECTS_PER_COUNT=300
 # This is the only place where toggling is needed.
 SELECTED_CREATIONS=(
     # GENERAL
-    "general_generate"
+    # "general_generate"
     # "general_subsample_30k"
     # "general_obj_numbers_10k"
     # "general_yms_variations_10k"
@@ -30,8 +30,9 @@ SELECTED_CREATIONS=(
     # # "ablation_no_roi_no_text_layout_position"
     # # "ablation_no_roi_text_layout_position"
 
-    "ablation_physics_mass_text"
-    "ablation_physics_duration_text"
+    # "ablation_physics_mass_text"
+    "ablation_physics_mass_approx_text"
+    # "ablation_physics_duration_text"
 
     # COUNTERFACTUALS
     # "counterfactual_shift"
@@ -214,6 +215,10 @@ run_ablation_physics_mass_text() {
     run_material_ablation "ablation_physics_mass_text" "ablation_physics_mass_text"
 }
 
+run_ablation_physics_mass_approx_text() {
+    run_material_ablation "ablation_physics_mass_approx_text" "ablation_physics_mass_approx_text" 
+}
+
 run_ablation_physics_duration_text() {
     run_material_ablation "ablation_physics_duration_text" "ablation_physics_duration_text"
 }
@@ -305,6 +310,7 @@ run_creation() {
         ablation_no_roi_text_layout_position) run_ablation_no_roi_text_layout_position ;;
         ablation_baseline) run_ablation_baseline ;;
         ablation_physics_mass_text) run_ablation_physics_mass_text ;;
+        ablation_physics_mass_approx_text) run_ablation_physics_mass_approx_text ;;
         ablation_physics_duration_text) run_ablation_physics_duration_text ;;
         counterfactual_shift) run_counterfactual_shift ;;
         counterfactual_gravity) run_counterfactual_gravity ;;

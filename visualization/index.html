@@ -65,6 +65,71 @@
       box-shadow: 0 8px 18px var(--shadow);
     }
 
+    .scene-filter-block {
+      grid-column: 1 / -1;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .scene-filter-block summary {
+      padding: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .scene-filter-inner {
+      padding: 0 12px 12px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .scene-filter-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .scene-filter-actions button {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .scene-filter-list {
+      max-height: 220px;
+      overflow: auto;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px;
+      background: #fff;
+      display: grid;
+      gap: 4px;
+    }
+
+    .scene-filter-option {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 6px;
+      border-radius: 6px;
+    }
+
+    .scene-filter-option:hover {
+      background: #f7f3e8;
+    }
+
+    .scene-filter-meta {
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.3;
+    }
+
     label {
       display: block;
       font-size: 12px;
@@ -392,6 +457,19 @@
         <option value="10k">10K subset (test_*_10K.json)</option>
       </select>
     </div>
+    <details class="control-block scene-filter-block" id="sceneFilterDetails">
+      <summary id="sceneFilterSummary">Scene filter (all)</summary>
+      <div class="scene-filter-inner">
+        <input id="sceneFilterSearch" placeholder="Search scene id, name, batch, comment" />
+        <div class="scene-filter-actions">
+          <button type="button" id="sceneSelectAllVisible">Select visible</button>
+          <button type="button" id="sceneClearSelection">Clear selection</button>
+        </div>
+        <div class="scene-filter-list" id="sceneFilterList">
+          <div class="hint">Loading scenes...</div>
+        </div>
+      </div>
+    </details>
     <div class="control-block">
       <label for="questionIdFilter">Question ID Filter</label>
       <select id="questionIdFilter">
@@ -411,8 +489,8 @@
     <div class="control-block">
       <label for="pageSize">Rows per page</label>
       <select id="pageSize">
-        <option value="25">25</option>
-        <option value="50" selected>50</option>
+        <option value="25" selected>25</option>
+        <option value="50">50</option>
         <option value="100">100</option>
       </select>
     </div>
@@ -434,9 +512,8 @@
 
   <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
   <script>
-    const baseOutputRoots = [
-      "../output"
-    ];
+    const EXCLUDE_SCENES_FILE = "/data0/sebastian.cavada/compositional-physics/tiny_vqa_creation/visualization/exclude_scenes.txt";
+
     const fallbackRuns = [
       "run_06_contour",
       "run_06_general",
@@ -513,55 +590,7 @@
       "run_16_test_general",
       "run_16_test_general_obj_num"
     ];
-    const defaultRun = "run_16_general";
-    const modelFiles = [
-      "Aquila-VL-2B_val.json",
-      "InternVL-Chat-V1-5-quantable_val.json",
-      "InternVL2-1B_val.json",
-      "InternVL2-2B_val.json",
-      "InternVL2-4B_val.json",
-      "InternVL2-8B_val.json",
-      "InternVL2_5-1B_val.json",
-      "InternVL2_5-2B_val.json",
-      "InternVL2_5-4B_val.json",
-      "InternVL2_5-8B_val.json",
-      "LLaVA-NeXT-Video-7B-DPO-hf_val.json",
-      "LLaVA-NeXT-Video-7B-hf_val.json",
-      "Mantis-8B-Idefics2_val.json",
-      "Mantis-8B-clip-llama3_val.json",
-      "Mantis-8B-siglip-llama3_val.json",
-      "Mantis-llava-7b_val.json",
-      "MiniCPM-V2.5_val.json",
-      "MiniCPM-V2.6_val.json",
-      "MiniCPM-V2_val.json",
-      "MolmoE-1B_val.json",
-      "MolmoE-7B-D_val.json",
-      "MolmoE-7B-O_val.json",
-      "Phi-3-vision-128k-instruct_val.json",
-      "Phi-3.5V_val.json",
-      "Qwen-VL-Chat_val.json",
-      "blip2-flant5xxl_val.json",
-      "cambrian-8b_val.json",
-      "deepseek1B_val.json",
-      "deepseek7B_val.json",
-      "instructblip-flan-t5-xl_val.json",
-      "instructblip-flan-t5-xxl_val.json",
-      "instructblip-vicuna-13b_val.json",
-      "instructblip-vicuna-7b_val.json",
-      "llava-1.5-13b-hf_val.json",
-      "llava-1.5-7b-hf_val.json",
-      "llava-interleave-qwen-7b-dpo-hf_val.json",
-      "llava-interleave-qwen-7b-hf_val.json",
-      "llava-v1.6-mistral-7b-hf_val.json",
-      "llava-v1.6-vicuna-7b-hf_val.json",
-      "mPLUG-Owl3-2B-241014_val.json",
-      "mPLUG-Owl3-7B-241101_val.json",
-      "paligemma2-10b_val.json",
-      "paligemma2-3b_val.json",
-      "vila-1.5-13b_val.json",
-      "vila-1.5-3b-s2_val.json",
-      "vila-1.5-8b_val.json"
-    ];
+    const defaultRun = "run_28_general";
 
     const state = {
       runName: defaultRun,
@@ -569,18 +598,28 @@
       answersByIdx: new Map(),
       correctByIdx: new Map(),
       filtered: [],
+      totalFiltered: 0,
+      pageCount: 1,
+      summaryData: null,
+      modelCount: 0,
       page: 1,
-      pageSize: 50,
+      pageSize: 25,
       filterId: "",
       searchText: "",
       questionSet: "full",
       imageType: "",
-      objectCount: ""
+      objectCount: "",
+      sceneOptions: [],
+      selectedSceneIds: new Set(),
+      excludedSceneIds: new Set(),
+      excludeSceneSource: "",
+      applySceneExcludeDefaultsOnNextRun: true,
+      requestToken: 0,
+      answerCache: new Map()
     };
 
     const urlParams = new URLSearchParams(window.location.search);
     const cacheBustEnabled = urlParams.has("nocache") || urlParams.has("cachebust");
-    let gzipMode = urlParams.has("nogzip") ? "off" : (urlParams.has("gzip") ? "force" : "auto");
 
     const elements = {
       title: document.getElementById("title"),
@@ -591,6 +630,12 @@
       pager: document.getElementById("pager"),
       runSelect: document.getElementById("runSelect"),
       questionSet: document.getElementById("questionSet"),
+      sceneFilterDetails: document.getElementById("sceneFilterDetails"),
+      sceneFilterSummary: document.getElementById("sceneFilterSummary"),
+      sceneFilterSearch: document.getElementById("sceneFilterSearch"),
+      sceneFilterList: document.getElementById("sceneFilterList"),
+      sceneSelectAllVisible: document.getElementById("sceneSelectAllVisible"),
+      sceneClearSelection: document.getElementById("sceneClearSelection"),
       questionIdFilter: document.getElementById("questionIdFilter"),
       objectCountFilter: document.getElementById("objectCountFilter"),
       searchInput: document.getElementById("searchInput"),
@@ -620,21 +665,6 @@
       return `${url}${sep}ts=${Date.now()}`;
     }
 
-    function normalize(text) {
-      return text.toLowerCase();
-    }
-
-    function buildPaths(runName) {
-      const questionFile = state.questionSet === "10k"
-        ? `test_${runName}_karo_10K.json`
-        : `test_${runName}.json`;
-      return {
-        questionFiles: [questionFile],
-        resultsDir: `results_${runName}`,
-        correctAnswersFile: `val_answer_${runName}.json`
-      };
-    }
-
     function getObjectCount(item) {
       const sourcePath = String(item.simulation_id || "");
       const match = sourcePath.match(/\/(random|random-cam-stationary)\/([^\/]+)/);
@@ -642,9 +672,13 @@
     }
 
     async function loadRunList() {
-      const result = await tryFetchJson(`runs.json?ts=${Date.now()}`);
-      if (result.ok && Array.isArray(result.data) && result.data.length > 0) {
-        return result.data;
+      const apiResult = await fetchApiJson("/api/runs");
+      if (apiResult.ok && Array.isArray(apiResult.data.runs) && apiResult.data.runs.length > 0) {
+        return apiResult.data.runs;
+      }
+      const fileResult = await fetchApiJson(`runs.json?ts=${Date.now()}`);
+      if (fileResult.ok && Array.isArray(fileResult.data) && fileResult.data.length > 0) {
+        return fileResult.data;
       }
       return fallbackRuns;
     }
@@ -985,43 +1019,6 @@
       return clean.slice(dot);
     }
 
-    function toGzipUrl(url) {
-      const [base, query] = String(url).split("?");
-      if (!base.endsWith(".json")) return null;
-      const gzBase = `${base}.gz`;
-      return query ? `${gzBase}?${query}` : gzBase;
-    }
-
-    function canUseGzip() {
-      if (gzipMode === "off") return false;
-      return "DecompressionStream" in window;
-    }
-
-    function markGzipAvailable() {
-      if (gzipMode === "auto") gzipMode = "force";
-    }
-
-    function markGzipUnavailable() {
-      if (gzipMode === "auto") gzipMode = "off";
-    }
-
-    async function fetchGzipJson(url) {
-      try {
-        const response = await fetch(url);
-        if (!response.ok) {
-          return { ok: false, url, status: response.status, gzip: true };
-        }
-        if (!("DecompressionStream" in window)) {
-          return { ok: false, url, status: "gzip-unsupported", gzip: true };
-        }
-        const stream = response.body.pipeThrough(new DecompressionStream("gzip"));
-        const text = await new Response(stream).text();
-        return { ok: true, url, data: JSON.parse(text), gzip: true };
-      } catch (err) {
-        return { ok: false, url, status: "network-error", error: err, gzip: true };
-      }
-    }
-
     async function fetchFirstAvailable(candidates) {
       for (const url of candidates) {
         try {
@@ -1109,29 +1106,282 @@
       updateStatus(`Download ready for ${item.idx}.`);
     }
 
-    function filterQuestions() {
-      const search = normalize(state.searchText.trim());
-      state.filtered = state.questions.filter(item => {
-        if (state.filterId && item.question_id !== state.filterId) return false;
-        if (state.imageType) {
-          const idx = String(item.idx || "");
-          if (state.imageType === "single" && !idx.endsWith("_i")) return false;
-          if (state.imageType === "multi" && !idx.endsWith("_g")) return false;
+    function debounce(fn, delayMs = 300) {
+      let timerId = null;
+      return (...args) => {
+        if (timerId) {
+          clearTimeout(timerId);
         }
-        if (state.objectCount) {
-          if (getObjectCount(item) !== state.objectCount) return false;
+        timerId = setTimeout(() => fn(...args), delayMs);
+      };
+    }
+
+    async function fetchApiJson(url) {
+      const finalUrl = withCacheBust(url);
+      try {
+        const response = await fetch(finalUrl);
+        if (!response.ok) {
+          return { ok: false, url: finalUrl, status: response.status };
         }
-        if (!search) return true;
-        const haystack = `${item.idx} ${item.question} ${item.question_id}`.toLowerCase();
-        return haystack.includes(search);
+        return { ok: true, url: finalUrl, data: await response.json() };
+      } catch (err) {
+        return { ok: false, url: finalUrl, status: "network-error", error: err };
+      }
+    }
+
+    async function fetchTextFile(url) {
+      const finalUrl = withCacheBust(url);
+      try {
+        const response = await fetch(finalUrl);
+        if (!response.ok) {
+          return { ok: false, url: finalUrl, status: response.status };
+        }
+        return { ok: true, url: finalUrl, text: await response.text() };
+      } catch (err) {
+        return { ok: false, url: finalUrl, status: "network-error", error: err };
+      }
+    }
+
+    function parseSceneIdsFromText(text) {
+      const ids = new Set();
+      String(text || "")
+        .split(/\r?\n/g)
+        .map(line => line.trim())
+        .forEach(line => {
+          if (!line || line.startsWith("#")) return;
+          ids.add(line);
+        });
+      return ids;
+    }
+
+    async function loadExcludedSceneIds() {
+      const candidates = [EXCLUDE_SCENES_FILE, "exclude_scenes.txt"];
+      for (const path of candidates) {
+        const result = await fetchTextFile(path);
+        if (!result.ok) continue;
+        state.excludedSceneIds = parseSceneIdsFromText(result.text);
+        state.excludeSceneSource = path;
+        return;
+      }
+      state.excludedSceneIds = new Set();
+      state.excludeSceneSource = "";
+    }
+
+    function updateSceneFilterSummary() {
+      const selectedCount = state.selectedSceneIds.size;
+      const totalCount = state.sceneOptions.length;
+      if (selectedCount === 0) {
+        elements.sceneFilterSummary.textContent = `Scene filter (all${totalCount ? `, ${totalCount} scenes` : ""})`;
+        return;
+      }
+      elements.sceneFilterSummary.textContent = `Scene filter (${selectedCount} selected of ${totalCount})`;
+    }
+
+    function sceneOptionMeta(option) {
+      const parts = [];
+      if (option.name) parts.push(option.name);
+      if (option.batch) parts.push(`batch ${option.batch}`);
+      if (option.comment) parts.push(option.comment);
+      return parts.join(" | ");
+    }
+
+    function renderSceneOptions() {
+      const search = (elements.sceneFilterSearch.value || "").trim().toLowerCase();
+      elements.sceneFilterList.innerHTML = "";
+      if (!state.sceneOptions.length) {
+        elements.sceneFilterList.innerHTML = "<div class=\"hint\">No scene ids available for this run.</div>";
+        updateSceneFilterSummary();
+        return;
+      }
+
+      const fragment = document.createDocumentFragment();
+      state.sceneOptions.forEach(option => {
+        const sceneId = String(option.scene_id || "");
+        if (!sceneId) return;
+        const searchable = `${sceneId} ${option.name || ""} ${option.batch || ""} ${option.comment || ""}`.toLowerCase();
+        if (search && !searchable.includes(search)) return;
+
+        const label = document.createElement("label");
+        label.className = "scene-filter-option";
+        label.dataset.sceneId = sceneId;
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.value = sceneId;
+        checkbox.checked = state.selectedSceneIds.has(sceneId);
+        label.appendChild(checkbox);
+
+        const textWrap = document.createElement("div");
+        const title = document.createElement("div");
+        title.textContent = sceneId;
+        title.style.fontSize = "12px";
+        title.style.fontWeight = "600";
+        textWrap.appendChild(title);
+
+        const meta = document.createElement("div");
+        meta.className = "scene-filter-meta";
+        meta.textContent = sceneOptionMeta(option) || "No extra metadata";
+        textWrap.appendChild(meta);
+
+        label.appendChild(textWrap);
+        fragment.appendChild(label);
       });
-      state.page = 1;
+
+      if (!fragment.childNodes.length) {
+        elements.sceneFilterList.innerHTML = "<div class=\"hint\">No scenes match this search.</div>";
+      } else {
+        elements.sceneFilterList.appendChild(fragment);
+      }
+      updateSceneFilterSummary();
+    }
+
+    function buildApiParams({ includePaging } = { includePaging: true }) {
+      const params = new URLSearchParams();
+      params.set("run", state.runName);
+      params.set("question_set", "full");
+      if (state.filterId) params.set("question_id", state.filterId);
+      if (state.searchText.trim()) params.set("search", state.searchText.trim());
+      if (state.imageType) params.set("image_type", state.imageType);
+      if (state.objectCount) params.set("object_count", state.objectCount);
+      Array.from(state.selectedSceneIds)
+        .sort()
+        .forEach(sceneId => params.append("scene_id", sceneId));
+      if (includePaging) {
+        params.set("page", String(state.page));
+        params.set("page_size", String(state.pageSize));
+        params.set("include_answers", "0");
+      }
+      return params;
+    }
+
+    async function refreshFilteredData({ resetPage = false } = {}) {
+      if (!state.runName) return;
+      if (resetPage) {
+        state.page = 1;
+      }
+      const token = ++state.requestToken;
+      updateStatus(`Loading filtered rows for ${state.runName}...`);
+
+      const pageParams = buildApiParams({ includePaging: true });
+      const questionsResult = await fetchApiJson(`/api/questions?${pageParams.toString()}`);
+
+      if (token !== state.requestToken) {
+        return;
+      }
+      if (!questionsResult.ok) {
+        throw new Error(`Failed to load questions (${questionsResult.status})`);
+      }
+
+      const payload = questionsResult.data || {};
+      state.filtered = Array.isArray(payload.items) ? payload.items : [];
+      state.totalFiltered = Number(payload.total) || 0;
+      state.pageCount = Number(payload.page_count) || 1;
+      state.modelCount = Number(payload.model_count) || 0;
+
+      state.answersByIdx = new Map();
+      state.correctByIdx = new Map();
+      state.filtered.forEach(item => {
+        const idx = item && item.idx ? item.idx : "";
+        if (!idx) return;
+        if (item.correct_answer) {
+          state.correctByIdx.set(idx, item.correct_answer);
+        }
+        const answers = Array.isArray(item.model_answers) ? item.model_answers : [];
+        if (answers.length > 0) {
+          state.answerCache.set(idx, answers);
+        }
+        state.answersByIdx.set(idx, answers);
+      });
+
+      state.summaryData = payload.summary || null;
+
       render();
     }
 
+    function filterQuestions({ resetPage = true } = {}) {
+      refreshFilteredData({ resetPage }).catch(err => {
+        console.error(err);
+        updateStatus("Failed to load filtered data from API.");
+      });
+    }
+
+    function buildAnswerSummaryText(answers, correctAnswer) {
+      const answeredCount = answers.length;
+      if (answeredCount === 0) {
+        return "Models answered: 0";
+      }
+      if (!correctAnswer) {
+        return `Models answered: ${answeredCount}`;
+      }
+      const correctCount = answers.filter(entry => entry.answer === correctAnswer).length;
+      const correctness = ((correctCount / answeredCount) * 100).toFixed(1);
+      return `Models answered: ${answeredCount} | avg correct: ${correctness}%`;
+    }
+
+    function renderAnswersList(answersWrap, answers, correctAnswer) {
+      answersWrap.innerHTML = "";
+      if (answers.length === 0) {
+        const none = document.createElement("div");
+        none.className = "hint";
+        none.textContent = "No model answers available.";
+        answersWrap.appendChild(none);
+        return;
+      }
+      answers.forEach(entry => {
+        const rowEl = document.createElement("div");
+        const isCorrect = correctAnswer && entry.answer === correctAnswer;
+        const answerClass = ["A", "B", "C", "D"].includes(entry.answer) ? ` answer-${entry.answer}` : "";
+        rowEl.className = `answer-row${answerClass}${isCorrect ? " correct" : ""}`;
+        rowEl.innerHTML = `<span>${entry.model}</span><span>${entry.answer}</span>`;
+        answersWrap.appendChild(rowEl);
+      });
+    }
+
+    async function ensureAnswersLoaded(item, details, summaryEl, answersWrap) {
+      if (!details.open) return;
+      const idx = String(item && item.idx ? item.idx : "");
+      if (!idx) return;
+
+      const cached = state.answerCache.get(idx);
+      if (cached) {
+        const correctAnswer = state.correctByIdx.get(idx);
+        summaryEl.textContent = buildAnswerSummaryText(cached, correctAnswer);
+        renderAnswersList(answersWrap, cached, correctAnswer);
+        return;
+      }
+
+      if (details.dataset.loading === "true") return;
+      details.dataset.loading = "true";
+      summaryEl.textContent = "Models answered: loading...";
+      answersWrap.innerHTML = "<div class=\"hint\">Loading model answers...</div>";
+      try {
+        const url = `/api/answers?run=${encodeURIComponent(state.runName)}&idx=${encodeURIComponent(idx)}`;
+        const result = await fetchApiJson(url);
+        if (!document.contains(details)) return;
+        if (!result.ok) {
+          summaryEl.textContent = "Models answered: failed to load";
+          answersWrap.innerHTML = "<div class=\"hint\">Could not load model answers.</div>";
+          return;
+        }
+        const payload = result.data || {};
+        const answers = Array.isArray(payload.answers) ? payload.answers : [];
+        const correctAnswer = payload.correct_answer || state.correctByIdx.get(idx);
+        if (correctAnswer) {
+          state.correctByIdx.set(idx, correctAnswer);
+        }
+        state.answerCache.set(idx, answers);
+        state.answersByIdx.set(idx, answers);
+
+        summaryEl.textContent = buildAnswerSummaryText(answers, correctAnswer);
+        renderAnswersList(answersWrap, answers, correctAnswer);
+      } finally {
+        details.dataset.loading = "false";
+      }
+    }
+
     function render() {
-      const total = state.filtered.length;
-      const pageCount = Math.max(1, Math.ceil(total / state.pageSize));
+      const total = state.totalFiltered;
+      const pageCount = Math.max(1, state.pageCount || 1);
       if (state.page > pageCount) state.page = pageCount;
 
       if (lazyImageObserver) {
@@ -1139,8 +1389,7 @@
       }
       lazyLoadQueue.length = 0;
 
-      const start = (state.page - 1) * state.pageSize;
-      const pageItems = state.filtered.slice(start, start + state.pageSize);
+      const pageItems = state.filtered;
 
       elements.table.innerHTML = "";
       const fragment = document.createDocumentFragment();
@@ -1152,9 +1401,6 @@
         const head = document.createElement("div");
         head.className = "row-head";
         const correctAnswer = state.correctByIdx.get(item.idx);
-        const answersForScore = state.answersByIdx.get(item.idx) || [];
-        const correctCount = correctAnswer ? answersForScore.filter(entry => entry.answer === correctAnswer).length : 0;
-        const correctness = answersForScore.length > 0 ? ((correctCount / answersForScore.length) * 100).toFixed(1) : null;
         const objectCount = getObjectCount(item);
         head.innerHTML = `
           <span class="badge">${item.question_id}</span>
@@ -1218,30 +1464,31 @@
         }
 
         const details = document.createElement("details");
-        const answers = state.answersByIdx.get(item.idx) || [];
+        const cachedAnswers = state.answerCache.get(item.idx) || [];
+        const answers = cachedAnswers.length > 0 ? cachedAnswers : (state.answersByIdx.get(item.idx) || []);
         const answeredCount = answers.length;
 
-        details.innerHTML = `
-          <summary>Models answered: ${answeredCount}${correctness ? ` | avg correct: ${correctness}%` : ""}</summary>
-        `;
+        const summaryEl = document.createElement("summary");
+        if (answeredCount > 0) {
+          summaryEl.textContent = buildAnswerSummaryText(answers, correctAnswer);
+        } else {
+          summaryEl.textContent = "Models answered: click to load";
+        }
+        details.appendChild(summaryEl);
+
         const answersWrap = document.createElement("div");
         answersWrap.className = "answers";
-        if (answeredCount === 0) {
-          const none = document.createElement("div");
-          none.className = "hint";
-          none.textContent = "No model answers available.";
-          answersWrap.appendChild(none);
+        if (answeredCount > 0) {
+          renderAnswersList(answersWrap, answers, correctAnswer);
         } else {
-          answers.forEach(entry => {
-            const rowEl = document.createElement("div");
-            const isCorrect = correctAnswer && entry.answer === correctAnswer;
-            const answerClass = ["A", "B", "C", "D"].includes(entry.answer) ? ` answer-${entry.answer}` : "";
-            rowEl.className = `answer-row${answerClass}${isCorrect ? " correct" : ""}`;
-            rowEl.innerHTML = `<span>${entry.model}</span><span>${entry.answer}</span>`;
-            answersWrap.appendChild(rowEl);
-          });
+          answersWrap.innerHTML = "<div class=\"hint\">Open to load model answers.</div>";
         }
         details.appendChild(answersWrap);
+        details.addEventListener("toggle", () => {
+          if (details.open) {
+            ensureAnswersLoaded(item, details, summaryEl, answersWrap);
+          }
+        });
 
         row.appendChild(head);
         row.appendChild(rowMain);
@@ -1254,27 +1501,25 @@
 
       elements.table.appendChild(fragment);
       renderPager(total, pageCount);
-      updateStatus(`Run ${state.runName}: loaded ${state.questions.length} questions, ${modelFiles.length} models. Showing ${total} filtered results.`);
+      updateStatus(
+        `Run ${state.runName}: page ${state.page}/${pageCount}, ${pageItems.length} rows loaded, ` +
+        `${state.modelCount} models. Showing ${total} filtered results.`
+      );
       renderSummary();
     }
 
     function renderSummary() {
-      const counts = { A: 0, B: 0, C: 0, D: 0 };
-      let total = 0;
-      state.filtered.forEach(item => {
-        const answer = state.correctByIdx.get(item.idx);
-        if (answer && counts.hasOwnProperty(answer)) {
-          counts[answer] += 1;
-          total += 1;
-        }
-      });
-      if (total === 0) {
+      const summary = state.summaryData || {};
+      const counts = summary.counts || { A: 0, B: 0, C: 0, D: 0 };
+      const totalWithCorrect = Number(summary.total_with_correct) || 0;
+      if (totalWithCorrect === 0) {
         updateSummary("Answer distribution: no correct answers found for this filter.");
         return;
       }
       const parts = ["A", "B", "C", "D"].map(key => {
-        const pct = ((counts[key] / total) * 100).toFixed(1);
-        return `<span class=\"answer-${key}\">${key}</span>: ${counts[key]} (${pct}%)`;
+        const count = Number(counts[key]) || 0;
+        const pct = ((count / totalWithCorrect) * 100).toFixed(1);
+        return `<span class=\"answer-${key}\">${key}</span>: ${count} (${pct}%)`;
       });
       updateSummary(`Answer distribution (correct, filtered): ${parts.join(" | ")}`);
     }
@@ -1286,7 +1531,7 @@
       prev.disabled = state.page <= 1;
       prev.addEventListener("click", () => {
         state.page = Math.max(1, state.page - 1);
-        render();
+        filterQuestions({ resetPage: false });
       });
 
       const next = document.createElement("button");
@@ -1294,7 +1539,7 @@
       next.disabled = state.page >= pageCount;
       next.addEventListener("click", () => {
         state.page = Math.min(pageCount, state.page + 1);
-        render();
+        filterQuestions({ resetPage: false });
       });
 
       const meta = document.createElement("div");
@@ -1308,80 +1553,6 @@
       elements.pager.appendChild(meta);
     }
 
-    async function tryFetchJson(url) {
-      const gzUrl = toGzipUrl(url);
-      if (gzUrl && canUseGzip()) {
-        const gzResult = await fetchGzipJson(gzUrl);
-        if (gzResult.ok) {
-          markGzipAvailable();
-          return gzResult;
-        }
-        if (gzResult.status === 404 || gzResult.status === 403 || gzResult.status === "gzip-unsupported") {
-          markGzipUnavailable();
-        }
-      }
-
-      try {
-        const response = await fetch(url);
-        if (!response.ok) {
-          return { ok: false, url, status: response.status };
-        }
-        return { ok: true, url, data: await response.json() };
-      } catch (err) {
-        return { ok: false, url, status: "network-error", error: err };
-      }
-    }
-
-    async function loadAnswers(dataRoot, resultsDir, diagnostics) {
-      const answersByIdx = new Map();
-      let loaded = 0;
-      let missingCount = 0;
-
-      for (const file of modelFiles) {
-        updateStatus(`Loading model answers (${loaded + 1}/${modelFiles.length})...`);
-        const url = `${dataRoot}/${resultsDir}/${file}`;
-        const result = await tryFetchJson(withCacheBust(url));
-        if (!result.ok) {
-          missingCount += 1;
-          loaded += 1;
-          continue;
-        }
-        const data = result.data;
-        const model = modelNameFromFile(file);
-
-        data.forEach(entry => {
-          if (!answersByIdx.has(entry.idx)) {
-            answersByIdx.set(entry.idx, []);
-          }
-          answersByIdx.get(entry.idx).push({ model, answer: entry.answer });
-        });
-        loaded += 1;
-      }
-
-      if (missingCount > 0) {
-        diagnostics.push(`missing results files: ${missingCount}`);
-        updateDiagnostics(diagnostics);
-      }
-      state.answersByIdx = answersByIdx;
-    }
-
-    async function loadCorrectAnswers(dataRoot, correctAnswersFile, diagnostics) {
-      const correctByIdx = new Map();
-      const url = `${dataRoot}/${correctAnswersFile}`;
-      const result = await tryFetchJson(withCacheBust(url));
-      if (!result.ok) {
-        diagnostics.push(`missing ${url} (${result.status})`);
-        updateDiagnostics(diagnostics);
-        return;
-      }
-      result.data.forEach(entry => {
-        if (entry && entry.idx) {
-          correctByIdx.set(entry.idx, entry.answer);
-        }
-      });
-      state.correctByIdx = correctByIdx;
-    }
-
     async function loadRun(runName) {
       state.runName = runName;
       setTitle(runName);
@@ -1389,50 +1560,47 @@
       state.questions = [];
       state.answersByIdx = new Map();
       state.correctByIdx = new Map();
+      state.answerCache = new Map();
       state.filtered = [];
+      state.totalFiltered = 0;
+      state.pageCount = 1;
+      state.summaryData = null;
       state.page = 1;
       state.filterId = "";
       state.searchText = "";
       state.imageType = "";
       state.objectCount = "";
+      state.sceneOptions = [];
+      state.selectedSceneIds = new Set();
+      state.questionSet = "full";
 
       elements.searchInput.value = "";
       elements.imageTypeFilter.value = "";
-      elements.questionSet.value = state.questionSet;
+      elements.sceneFilterSearch.value = "";
+      elements.questionSet.value = "full";
+      elements.questionSet.disabled = true;
       elements.questionIdFilter.innerHTML = "<option value=\"\">All question_id</option>";
       elements.objectCountFilter.innerHTML = "<option value=\"\">All</option>";
+      elements.sceneFilterList.innerHTML = "<div class=\"hint\">Loading scenes...</div>";
+      updateSceneFilterSummary();
 
       updateSummary("");
-      updateStatus(`Loading questions for ${runName}...`);
+      updateStatus(`Loading metadata for ${runName}...`);
+      updateDiagnostics([]);
+
+      const metadataResult = await fetchApiJson(`/api/metadata?run=${encodeURIComponent(runName)}&question_set=full`);
+      if (!metadataResult.ok) {
+        throw new Error(`Failed to load run metadata (${metadataResult.status})`);
+      }
+
+      const metadata = metadataResult.data || {};
       const diagnostics = [];
-      let activeRoot = null;
-      let questionsUsed = null;
-      const paths = buildPaths(runName);
-
-      for (const root of baseOutputRoots) {
-        for (const file of paths.questionFiles) {
-          const questionsUrl = `${root}/${runName}/${file}`;
-          const result = await tryFetchJson(withCacheBust(questionsUrl));
-          if (result.ok) {
-            activeRoot = root;
-            questionsUsed = questionsUrl;
-            state.questions = result.data;
-            break;
-          }
-          diagnostics.push(`missing ${questionsUrl} (${result.status})`);
-          updateDiagnostics(diagnostics);
-        }
-        if (activeRoot) break;
-      }
-
-      if (!activeRoot) {
-        throw new Error("Failed to load questions from any output root.");
-      }
-
-      diagnostics.push(`using ${questionsUsed}`);
+      if (metadata.question_file) diagnostics.push(`question: ${metadata.question_file}`);
+      if (Array.isArray(metadata.results_dirs)) diagnostics.push(`results_dirs: ${metadata.results_dirs.length}`);
+      if (metadata.correct_answers_file) diagnostics.push(`correct: ${metadata.correct_answers_file}`);
       updateDiagnostics(diagnostics);
 
-      const questionIds = Array.from(new Set(state.questions.map(q => q.question_id))).sort();
+      const questionIds = Array.isArray(metadata.question_ids) ? metadata.question_ids : [];
       questionIds.forEach(id => {
         const option = document.createElement("option");
         option.value = id;
@@ -1440,7 +1608,7 @@
         elements.questionIdFilter.appendChild(option);
       });
 
-      const objectCounts = Array.from(new Set(state.questions.map(getObjectCount).filter(Boolean))).sort((a, b) => Number(a) - Number(b));
+      const objectCounts = Array.isArray(metadata.object_counts) ? metadata.object_counts : [];
       objectCounts.forEach(count => {
         const option = document.createElement("option");
         option.value = count;
@@ -1448,18 +1616,36 @@
         elements.objectCountFilter.appendChild(option);
       });
 
-      const dataRoot = `${activeRoot}/${runName}`;
-      await loadAnswers(dataRoot, paths.resultsDir, diagnostics);
-      await loadCorrectAnswers(dataRoot, paths.correctAnswersFile, diagnostics);
-      state.filtered = state.questions.slice();
-      try {
-        render();
-      } catch (err) {
-        console.error(err);
-        diagnostics.push(`render-error: ${err && err.message ? err.message : err}`);
-        updateDiagnostics(diagnostics);
-        updateStatus("Loaded data but failed to render. Check diagnostics for the error.");
+      const sceneOptions = Array.isArray(metadata.scene_options) ? metadata.scene_options : [];
+      if (sceneOptions.length > 0) {
+        state.sceneOptions = sceneOptions;
+      } else {
+        const sceneIds = Array.isArray(metadata.scene_ids) ? metadata.scene_ids : [];
+        state.sceneOptions = sceneIds.map(sceneId => ({ scene_id: sceneId, name: "", batch: "", comment: "" }));
       }
+
+      if (state.applySceneExcludeDefaultsOnNextRun) {
+        const allSceneIds = state.sceneOptions
+          .map(option => String(option.scene_id || ""))
+          .filter(Boolean);
+        const selected = allSceneIds.filter(sceneId => !state.excludedSceneIds.has(sceneId));
+        if (selected.length > 0) {
+          state.selectedSceneIds = new Set(selected);
+        } else {
+          state.selectedSceneIds = new Set(allSceneIds);
+        }
+        state.applySceneExcludeDefaultsOnNextRun = false;
+      }
+
+      if (state.excludeSceneSource) {
+        const excludedInRun = state.sceneOptions.filter(option => state.excludedSceneIds.has(String(option.scene_id || ""))).length;
+        diagnostics.push(`exclude_scenes: ${excludedInRun} matched (${state.excludeSceneSource})`);
+      }
+      updateDiagnostics(diagnostics);
+      renderSceneOptions();
+
+      state.modelCount = Number(metadata.model_count) || 0;
+      await refreshFilteredData({ resetPage: true });
     }
 
     function populateRunSelect(runs) {
@@ -1474,6 +1660,7 @@
 
     async function init() {
       try {
+        await loadExcludedSceneIds();
         const runs = await loadRunList();
         populateRunSelect(runs);
         const initialRun = runs.includes(defaultRun) ? defaultRun : (runs[0] || "");
@@ -1487,9 +1674,56 @@
       }
     }
 
+    const debouncedSearchFilter = debounce(() => {
+      filterQuestions({ resetPage: true });
+    }, 450);
+
+    elements.sceneFilterSearch.addEventListener("input", () => {
+      renderSceneOptions();
+    });
+
+    elements.sceneFilterList.addEventListener("change", event => {
+      const target = event.target;
+      if (!target || target.tagName !== "INPUT" || target.type !== "checkbox") return;
+      const sceneId = String(target.value || "");
+      if (!sceneId) return;
+      if (target.checked) {
+        state.selectedSceneIds.add(sceneId);
+      } else {
+        state.selectedSceneIds.delete(sceneId);
+      }
+      updateSceneFilterSummary();
+      filterQuestions({ resetPage: true });
+    });
+
+    elements.sceneSelectAllVisible.addEventListener("click", () => {
+      const checkboxes = elements.sceneFilterList.querySelectorAll("input[type=\"checkbox\"]");
+      let changed = false;
+      checkboxes.forEach(checkbox => {
+        const sceneId = String(checkbox.value || "");
+        if (!sceneId) return;
+        if (!state.selectedSceneIds.has(sceneId)) {
+          state.selectedSceneIds.add(sceneId);
+          checkbox.checked = true;
+          changed = true;
+        }
+      });
+      if (changed) {
+        updateSceneFilterSummary();
+        filterQuestions({ resetPage: true });
+      }
+    });
+
+    elements.sceneClearSelection.addEventListener("click", () => {
+      if (state.selectedSceneIds.size === 0) return;
+      state.selectedSceneIds.clear();
+      renderSceneOptions();
+      filterQuestions({ resetPage: true });
+    });
+
     elements.questionIdFilter.addEventListener("change", event => {
       state.filterId = event.target.value;
-      filterQuestions();
+      filterQuestions({ resetPage: true });
     });
 
     elements.runSelect.addEventListener("change", event => {
@@ -1503,33 +1737,28 @@
     });
 
     elements.questionSet.addEventListener("change", event => {
-      state.questionSet = event.target.value;
-      if (state.runName) {
-        loadRun(state.runName).catch(err => {
-          console.error(err);
-          updateStatus("Failed to load data. Check the diagnostics line for missing URLs or network errors.");
-        });
-      }
+      state.questionSet = "full";
+      elements.questionSet.value = "full";
     });
 
     elements.objectCountFilter.addEventListener("change", event => {
       state.objectCount = event.target.value;
-      filterQuestions();
+      filterQuestions({ resetPage: true });
     });
 
     elements.searchInput.addEventListener("input", event => {
       state.searchText = event.target.value;
-      filterQuestions();
+      debouncedSearchFilter();
     });
 
     elements.pageSize.addEventListener("change", event => {
       state.pageSize = Number(event.target.value) || 50;
-      filterQuestions();
+      filterQuestions({ resetPage: true });
     });
 
     elements.imageTypeFilter.addEventListener("change", event => {
       state.imageType = event.target.value;
-      filterQuestions();
+      filterQuestions({ resetPage: true });
     });
 
     init();

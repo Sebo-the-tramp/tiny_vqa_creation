@@ -15,13 +15,17 @@ Simple FastAPI + static frontend viewer for:
   - scenes (multi-select from `scenes.json`)
 - startup default scene selection = all scene IDs except `exclude_scenes.txt`
 - single-image view: image left, question right, correct answer in bold
-- multi-image view: thumbnail carousel + large selected image, question and answer on right
+- multi-image rows: lightweight carousel (prev/next + frame chips), but only one image is loaded at a time
 - per-question download button:
   - downloads `folder_<idx>.zip`
   - zip contains `folder_<idx>/question.json` and `folder_<idx>/images/*`
 - image loading optimization:
   - frontend delays image requests until image is in viewport for 1 second
   - `/api/image` can return compressed previews (webp/jpeg) with server-side cache
+- missing-file handling:
+  - by default, rows with zero existing image files are excluded from `/api/questions`
+  - this avoids broken image cards when source files are absent on disk
+  - if an image path is still requested and file is missing/unreadable, `/api/image` returns a placeholder image
 
 ## Run
 
@@ -50,8 +54,11 @@ Open: `http://localhost:8086`
 - `VQA_IMAGE_PREVIEW_QUALITY` (default `70`)
 - `VQA_IMAGE_PREVIEW_FORMAT` (`webp`, `jpeg`, `orig`; default `webp`)
 - `VQA_IMAGE_PREVIEW_CACHE_SIZE` (default `256`)
+- `VQA_REQUIRE_EXISTING_IMAGES` (default `1`; set `0` to include rows with missing files)
 
 ## API extra endpoint
 
 - `GET /api/download?idx=<question_idx>`
   - returns a zip bundle for that question
+- `GET /api/questions?...&include_missing_images=true`
+  - optional override to include rows even if their image files are missing

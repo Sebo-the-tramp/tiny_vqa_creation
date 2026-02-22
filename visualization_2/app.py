@@ -7,6 +7,7 @@ import math
 import mimetypes
 import os
 import re
+import sys
 import time
 import zipfile
 from collections import OrderedDict, defaultdict
@@ -16,21 +17,42 @@ from threading import Lock, RLock
 from typing import Any
 
 import json
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import FileResponse, Response
 
-try:
-    from PIL import Image, ImageOps, UnidentifiedImageError
+def _import_pillow() -> tuple[bool, Any, Any, Any]:
+    try:
+        from PIL import Image as _Image
+        from PIL import ImageOps as _ImageOps
+        from PIL import UnidentifiedImageError as _UnidentifiedImageError
 
-    PIL_AVAILABLE = True
-except Exception:  # pragma: no cover - optional dependency fallback
-    PIL_AVAILABLE = False
-    Image = None  # type: ignore[assignment]
-    ImageOps = None  # type: ignore[assignment]
+        return True, _Image, _ImageOps, _UnidentifiedImageError
+    except Exception:
+        pass
 
-    class UnidentifiedImageError(Exception):
-        """Fallback placeholder when Pillow is unavailable."""
+    # Fallback: some environments install Pillow only in system dist-packages.
+    for extra_site in (
+        "/usr/lib/python3/dist-packages",
+        "/usr/local/lib/python3.12/dist-packages",
+    ):
+        if extra_site not in sys.path and Path(extra_site).is_dir():
+            sys.path.append(extra_site)
+
+    try:
+        from PIL import Image as _Image
+        from PIL import ImageOps as _ImageOps
+        from PIL import UnidentifiedImageError as _UnidentifiedImageError
+
+        return True, _Image, _ImageOps, _UnidentifiedImageError
+    except Exception:
+        class _UnidentifiedImageError(Exception):
+            """Fallback placeholder when Pillow is unavailable."""
+
+        return False, None, None, _UnidentifiedImageError
+
+
+PIL_AVAILABLE, Image, ImageOps, UnidentifiedImageError = _import_pillow()
 
 
 DEFAULT_QUESTION_FILE = (
@@ -92,6 +114,34 @@ def _safe_name(value: str, default: str) -> str:
     return cleaned if cleaned else default
 
 
+def _placeholder_svg(width: int, height: int, message: str = "image not found") -> bytes:
+    safe_width = max(64, min(4096, int(width)))
+    safe_height = max(48, min(4096, int(height)))
+    safe_message = (
+        str(message or "image not found")
+        .replace("&", "&amp;")
+        .replace("<", "&lt;")
+        .replace(">", "&gt;")
+    )
+    svg = (
+        f'<svg xmlns="http://www.w3.org/2000/svg" width="{safe_width}" height="{safe_height}" '
+        f'viewBox="0 0 {safe_width} {safe_height}">'
+        '<defs>'
+        '<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">'
+        '<stop offset="0%" stop-color="#eef1f5"/>'
+        '<stop offset="100%" stop-color="#d8dee7"/>'
+        "</linearGradient>"
+        "</defs>"
+        f'<rect x="0" y="0" width="{safe_width}" height="{safe_height}" fill="url(#bg)"/>'
+        f'<text x="{safe_width / 2}" y="{safe_height / 2}" text-anchor="middle" '
+        'font-family="Arial, sans-serif" font-size="14" fill="#5b6572">'
+        f"{safe_message}"
+        "</text>"
+        "</svg>"
+    )
+    return svg.encode("utf-8")
+
+
 class DatasetStore:
     def __init__(
         self,
@@ -122,7 +172,13 @@ class DatasetStore:
         self.default_selected_scene_ids: list[str] = []
 
         self._all_indices: list[int] = []
-        self._filter_cache: OrderedDict[tuple[str, str, str, tuple[str, ...]], list[int]] = OrderedDict()
+        self.image_available_index: list[int] = []
+        self.rows_with_available_images = 0
+        self.rows_without_available_images = 0
+        self._filter_cache: OrderedDict[
+            tuple[str, str, str, tuple[str, ...], bool],
+            list[int],
+        ] = OrderedDict()
         self._cache_lock = RLock()
 
         self._load_all()
@@ -141,6 +197,7 @@ class DatasetStore:
         question_id_index: dict[str, list[int]] = defaultdict(list)
         object_count_index: dict[str, list[int]] = defaultdict(list)
         scene_index: dict[str, list[int]] = defaultdict(list)
+        file_exists_cache: dict[str, bool] = {}
 
         for entry in raw_questions:
             if not isinstance(entry, dict):
@@ -153,14 +210,24 @@ class DatasetStore:
 
             file_name_raw = entry.get("file_name")
             if isinstance(file_name_raw, list):
-                file_names = [str(value) for value in file_name_raw if value is not None]
+                raw_file_names = [str(value) for value in file_name_raw if value is not None]
             elif file_name_raw:
-                file_names = [str(file_name_raw)]
+                raw_file_names = [str(file_name_raw)]
             else:
-                file_names = []
+                raw_file_names = []
 
-            object_count = _to_object_count(file_names)
-            image_count = len(file_names)
+            available_file_names: list[str] = []
+            for file_name in raw_file_names:
+                exists = file_exists_cache.get(file_name)
+                if exists is None:
+                    exists = Path(file_name).is_file()
+                    file_exists_cache[file_name] = exists
+                if exists:
+                    available_file_names.append(file_name)
+            missing_image_count = max(0, len(raw_file_names) - len(available_file_names))
+
+            object_count = _to_object_count(raw_file_names)
+            image_count = len(raw_file_names)
             item_type = "single" if image_count <= 1 else "multi"
 
             item = {
@@ -168,14 +235,20 @@ class DatasetStore:
                 "question_id": question_id,
                 "question": question,
                 "scene": scene_id,
-                "file_name": file_names,
+                "file_name": available_file_names,
+                "file_name_raw": raw_file_names,
                 "image_count": image_count,
+                "available_image_count": len(available_file_names),
+                "missing_image_count": missing_image_count,
+                "has_available_images": bool(available_file_names),
                 "item_type": item_type,
                 "object_count": object_count,
                 "correct_answer": answer_by_idx.get(idx, ""),
             }
             pos = len(self.items)
             self.items.append(item)
+            if item["has_available_images"]:
+                self.image_available_index.append(pos)
 
             if idx:
                 self.idx_index[idx] = pos
@@ -206,10 +279,20 @@ class DatasetStore:
         self.default_selected_scene_ids = defaults if defaults else list(self.scene_ids)
 
         self._all_indices = list(range(len(self.items)))
+        self.rows_with_available_images = len(self.image_available_index)
+        self.rows_without_available_images = max(0, len(self.items) - self.rows_with_available_images)
         elapsed = time.time() - started
         print(
-            "[load] questions=%d, answers=%d, question_ids=%d, scenes=%d in %.2fs"
-            % (len(self.items), len(answer_by_idx), len(self.question_ids), len(self.scene_ids), elapsed)
+            "[load] questions=%d (with_images=%d, missing_images=%d), answers=%d, question_ids=%d, scenes=%d in %.2fs"
+            % (
+                len(self.items),
+                self.rows_with_available_images,
+                self.rows_without_available_images,
+                len(answer_by_idx),
+                len(self.question_ids),
+                len(self.scene_ids),
+                elapsed,
+            )
         )
 
     @staticmethod
@@ -256,14 +339,14 @@ class DatasetStore:
                 excluded.add(scene_id)
         return excluded
 
-    def _put_cache(self, key: tuple[str, str, str, tuple[str, ...]], indices: list[int]) -> None:
+    def _put_cache(self, key: tuple[str, str, str, tuple[str, ...], bool], indices: list[int]) -> None:
         with self._cache_lock:
             self._filter_cache[key] = indices
             self._filter_cache.move_to_end(key)
             while len(self._filter_cache) > self.filter_cache_size:
                 self._filter_cache.popitem(last=False)
 
-    def _get_cache(self, key: tuple[str, str, str, tuple[str, ...]]) -> list[int] | None:
+    def _get_cache(self, key: tuple[str, str, str, tuple[str, ...], bool]) -> list[int] | None:
         with self._cache_lock:
             cached = self._filter_cache.get(key)
             if cached is None:
@@ -278,8 +361,9 @@ class DatasetStore:
         question_id: str,
         object_count: str,
         scene_ids: tuple[str, ...],
+        include_missing_images: bool,
     ) -> list[int]:
-        key = (idx, question_id, object_count, scene_ids)
+        key = (idx, question_id, object_count, scene_ids, include_missing_images)
         cached = self._get_cache(key)
         if cached is not None:
             return cached
@@ -297,6 +381,8 @@ class DatasetStore:
                     ok = False
                 if scene_ids and row["scene"] not in scene_ids:
                     ok = False
+                if not include_missing_images and not row.get("has_available_images", False):
+                    ok = False
                 result = [pos] if ok else []
             self._put_cache(key, result)
             return result
@@ -312,6 +398,8 @@ class DatasetStore:
             for scene_id in scene_ids:
                 scene_union.update(self.scene_index.get(scene_id, []))
             candidates.append(sorted(scene_union))
+        if not include_missing_images:
+            candidates.append(self.image_available_index)
 
         if not candidates:
             result = self._all_indices
@@ -334,6 +422,8 @@ class DatasetStore:
             "question_file": str(self.question_file),
             "answer_file": str(self.answer_file),
             "total": len(self.items),
+            "rows_with_available_images": self.rows_with_available_images,
+            "rows_without_available_images": self.rows_without_available_images,
             "question_ids": self.question_ids,
             "object_counts": self.object_counts,
             "scene_options": self.scene_options,
@@ -350,12 +440,14 @@ class DatasetStore:
         question_id: str,
         object_count: str,
         scene_ids: tuple[str, ...],
+        include_missing_images: bool,
     ) -> dict[str, Any]:
         filtered = self._compute_indices(
             idx=idx,
             question_id=question_id,
             object_count=object_count,
             scene_ids=scene_ids,
+            include_missing_images=include_missing_images,
         )
 
         total = len(filtered)
@@ -377,6 +469,7 @@ class DatasetStore:
                 "question_id": question_id,
                 "object_count": object_count,
                 "scene_ids": list(scene_ids),
+                "include_missing_images": include_missing_images,
             },
             "items": items,
         }
@@ -391,7 +484,7 @@ class DatasetStore:
             raise KeyError(f"Unknown idx: {idx}")
 
         item = self.items[pos]
-        files: list[str] = list(item.get("file_name") or [])
+        files: list[str] = list(item.get("file_name_raw") or item.get("file_name") or [])
         folder_name = f"folder_{_safe_name(idx, 'question')}"
 
         image_entries: list[dict[str, str]] = []
@@ -456,9 +549,32 @@ IMAGE_PREVIEW_MAX_WIDTH = int(os.getenv("VQA_IMAGE_PREVIEW_MAX_WIDTH", "1280"))
 IMAGE_PREVIEW_QUALITY = int(os.getenv("VQA_IMAGE_PREVIEW_QUALITY", "70"))
 IMAGE_PREVIEW_FORMAT = str(os.getenv("VQA_IMAGE_PREVIEW_FORMAT", "webp")).lower()
 IMAGE_PREVIEW_CACHE_SIZE = int(os.getenv("VQA_IMAGE_PREVIEW_CACHE_SIZE", "256"))
+SLOW_REQUEST_LOG_MS = int(os.getenv("VQA_SLOW_REQUEST_LOG_MS", "1200"))
+REQUIRE_EXISTING_IMAGES = str(os.getenv("VQA_REQUIRE_EXISTING_IMAGES", "1")).strip().lower() not in {
+    "0",
+    "false",
+    "no",
+}
 
 app = FastAPI(title="Tiny VQA Visualization API")
 app.add_middleware(GZipMiddleware, minimum_size=1000)
+
+
+@app.middleware("http")
+async def _log_slow_requests(request: Request, call_next):  # type: ignore[no-untyped-def]
+    started = time.perf_counter()
+    response = await call_next(request)
+    elapsed_ms = (time.perf_counter() - started) * 1000.0
+    if elapsed_ms >= max(1, SLOW_REQUEST_LOG_MS):
+        query = request.url.query
+        if len(query) > 240:
+            query = query[:240] + "..."
+        suffix = f"?{query}" if query else ""
+        print(
+            "[slow] %.1fms %s %s%s status=%s"
+            % (elapsed_ms, request.method, request.url.path, suffix, response.status_code)
+        )
+    return response
 
 _STORE: DatasetStore | None = None
 _STORE_LOCK = Lock()
@@ -572,12 +688,12 @@ def _warm_start() -> None:
 
 
 @app.get("/")
-def index() -> FileResponse:
+async def index() -> FileResponse:
     return FileResponse(BASE_DIR / "index.html")
 
 
 @app.get("/api/health")
-def health() -> dict[str, Any]:
+async def health() -> dict[str, Any]:
     store = get_store()
     return {
         "status": "ok",
@@ -587,18 +703,19 @@ def health() -> dict[str, Any]:
 
 
 @app.get("/api/metadata")
-def metadata() -> dict[str, Any]:
+async def metadata() -> dict[str, Any]:
     return get_store().get_metadata()
 
 
 @app.get("/api/questions")
-def questions(
+async def questions(
     page: int = Query(default=1, ge=1),
     page_size: int = Query(default=50, ge=1),
     idx: str = Query(default=""),
     question_id: str = Query(default=""),
     object_count: str = Query(default=""),
     scene_id: list[str] | None = Query(default=None),
+    include_missing_images: bool = Query(default=False),
 ) -> dict[str, Any]:
     store = get_store()
     page_size = min(page_size, MAX_PAGE_SIZE)
@@ -615,6 +732,7 @@ def questions(
         question_id=question_id,
         object_count=object_count,
         scene_ids=scene_ids,
+        include_missing_images=include_missing_images or (not REQUIRE_EXISTING_IMAGES),
     )
 
 
@@ -626,22 +744,33 @@ def image(
     fmt: str = Query(default=""),
 ) -> Response:
     image_path = Path(path).expanduser()
-    if not image_path.is_file():
-        raise HTTPException(status_code=404, detail=f"Image file not found: {image_path}")
+    target_width = _clamp(width if width > 0 else IMAGE_PREVIEW_MAX_WIDTH, 64, 4096)
+    target_height = _clamp(int(target_width * 0.66), 48, 3072)
+    if not image_path.is_file() or not os.access(image_path, os.R_OK):
+        return Response(
+            content=_placeholder_svg(target_width, target_height, "image not found"),
+            media_type="image/svg+xml",
+            headers={
+                "Cache-Control": "public, max-age=300",
+                "X-Image-Placeholder": "1",
+            },
+        )
 
     chosen_fmt = (fmt.strip().lower() or IMAGE_PREVIEW_FORMAT or "orig")
     if chosen_fmt not in ALLOWED_PREVIEW_FORMATS:
         raise HTTPException(status_code=400, detail=f"Unsupported fmt '{chosen_fmt}'. Use webp, jpeg, or orig.")
 
-    target_width = _clamp(width if width > 0 else IMAGE_PREVIEW_MAX_WIDTH, 64, 4096)
     target_quality = _clamp(quality if quality > 0 else IMAGE_PREVIEW_QUALITY, 20, 95)
 
-    compressed = _prepare_compressed_image(
-        image_path,
-        width=target_width,
-        quality=target_quality,
-        fmt=chosen_fmt,
-    )
+    try:
+        compressed = _prepare_compressed_image(
+            image_path,
+            width=target_width,
+            quality=target_quality,
+            fmt=chosen_fmt,
+        )
+    except Exception:
+        compressed = None
     if compressed is not None:
         payload, media_type = compressed
         return Response(
@@ -654,14 +783,24 @@ def image(
         )
 
     media_type, _ = mimetypes.guess_type(str(image_path))
-    return FileResponse(
-        image_path,
-        media_type=media_type or "application/octet-stream",
-        headers={
-            "Cache-Control": "public, max-age=86400",
-            "X-Image-Preview": "original",
-        },
-    )
+    try:
+        return FileResponse(
+            image_path,
+            media_type=media_type or "application/octet-stream",
+            headers={
+                "Cache-Control": "public, max-age=86400",
+                "X-Image-Preview": "original",
+            },
+        )
+    except Exception:
+        return Response(
+            content=_placeholder_svg(target_width, target_height, "image unavailable"),
+            media_type="image/svg+xml",
+            headers={
+                "Cache-Control": "public, max-age=300",
+                "X-Image-Placeholder": "1",
+            },
+        )
 
 
 @app.get("/api/download")

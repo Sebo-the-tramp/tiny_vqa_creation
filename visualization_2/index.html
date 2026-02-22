@@ -1,0 +1,965 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Run 28 General Viewer</title>
+  <style>
+    :root {
+      --bg: #f4f1ea;
+      --card: #ffffff;
+      --ink: #1f2937;
+      --muted: #5d6878;
+      --line: #d6dbe3;
+      --accent: #0f766e;
+      --accent-2: #8b5e34;
+      --soft: #eef6f5;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: radial-gradient(circle at top right, #fbfaf7 0%, var(--bg) 35%, #ebe6dc 100%);
+      font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+    }
+
+    header {
+      padding: 22px 20px 8px;
+    }
+
+    h1 {
+      margin: 0;
+      font-family: "Georgia", "Times New Roman", serif;
+      font-size: 28px;
+      letter-spacing: 0.2px;
+    }
+
+    .subtitle {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .controls {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      padding: 14px 20px 16px;
+    }
+
+    .control {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px;
+    }
+
+    .control.actions {
+      display: flex;
+      align-items: end;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .control label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 12px;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    select, input, button {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 9px 10px;
+      font-size: 14px;
+      background: #fff;
+      color: var(--ink);
+    }
+
+    button {
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    .btn-secondary {
+      background: #fff;
+    }
+
+    details.scene-filter {
+      grid-column: 1 / -1;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    details.scene-filter summary {
+      padding: 10px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .scene-inner {
+      padding: 0 10px 10px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .scene-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .scene-actions button {
+      width: auto;
+      padding: 7px 10px;
+      font-size: 12px;
+    }
+
+    .scene-list {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      max-height: 250px;
+      overflow: auto;
+      padding: 8px;
+      display: grid;
+      gap: 6px;
+    }
+
+    .scene-option {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 8px;
+      align-items: start;
+      padding: 5px;
+      border-radius: 7px;
+    }
+
+    .scene-option:hover {
+      background: #f7f6f2;
+    }
+
+    .scene-meta {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .status {
+      padding: 0 20px 8px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .pagination {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 20px 14px;
+      flex-wrap: wrap;
+    }
+
+    .pagination button {
+      width: auto;
+      padding: 8px 12px;
+    }
+
+    #pageInfo {
+      font-weight: 600;
+      color: var(--muted);
+      margin-right: 8px;
+    }
+
+    main {
+      padding: 0 20px 28px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 14px;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+      animation: show 0.22s ease;
+    }
+
+    @keyframes show {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .row-head {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .badge {
+      padding: 4px 9px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      background: #f0f4f8;
+      color: #334155;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(300px, 52%) 1fr;
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .visual-panel, .text-panel {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fff;
+      padding: 10px;
+    }
+
+    .single-image {
+      width: 100%;
+      min-height: 300px;
+      max-height: 520px;
+      object-fit: contain;
+      background: #f5f7f9;
+      border-radius: 8px;
+      border: 1px solid #e7ecf1;
+    }
+
+    .carousel-main {
+      width: 100%;
+      min-height: 300px;
+      max-height: 520px;
+      object-fit: contain;
+      background: #f5f7f9;
+      border-radius: 8px;
+      border: 1px solid #e7ecf1;
+      margin-bottom: 8px;
+    }
+
+    .single-image.lazy-pending,
+    .carousel-main.lazy-pending,
+    .thumb.lazy-pending {
+      opacity: 0.25;
+      filter: blur(6px);
+      transition: opacity 0.2s ease, filter 0.2s ease;
+    }
+
+    .thumbs {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+      gap: 7px;
+    }
+
+    .thumb {
+      width: 100%;
+      height: 64px;
+      object-fit: cover;
+      border-radius: 6px;
+      border: 2px solid transparent;
+      cursor: pointer;
+      background: #f0f4f8;
+    }
+
+    .thumb.active {
+      border-color: var(--accent-2);
+      box-shadow: 0 0 0 1px rgba(139, 94, 52, 0.3);
+    }
+
+    .question {
+      border: 1px dashed #c8d1dc;
+      border-radius: 8px;
+      background: #fafbfc;
+      padding: 10px;
+      line-height: 1.45;
+      font-size: 15px;
+      white-space: pre-wrap;
+    }
+
+    .question-line.correct {
+      font-weight: 800;
+      color: #0f5132;
+      background: var(--soft);
+      border-radius: 6px;
+      padding: 1px 4px;
+      display: inline-block;
+    }
+
+    .answer {
+      margin-top: 10px;
+      font-size: 15px;
+      background: #f7f9fb;
+      border: 1px solid #dde4ec;
+      border-radius: 8px;
+      padding: 8px;
+    }
+
+    .card-actions {
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .download-link {
+      text-decoration: none;
+      display: inline-block;
+      width: auto;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--accent-2);
+      color: #fff;
+      background: var(--accent-2);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .download-link:hover {
+      filter: brightness(0.95);
+    }
+
+    .empty {
+      padding: 20px;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    @media (max-width: 1080px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+      .single-image, .carousel-main {
+        min-height: 240px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Run 28 General Viewer</h1>
+    <div class="subtitle">Server-side paging and exact filters (`idx`, `question_id`, `object_count`, scenes)</div>
+  </header>
+
+  <section class="controls">
+    <div class="control">
+      <label for="questionIdFilter">Question ID</label>
+      <select id="questionIdFilter">
+        <option value="">All</option>
+      </select>
+    </div>
+
+    <div class="control">
+      <label for="objectCountFilter">Object Count</label>
+      <select id="objectCountFilter">
+        <option value="">All</option>
+      </select>
+    </div>
+
+    <div class="control">
+      <label for="idxFilter">Exact idx</label>
+      <input id="idxFilter" placeholder="Example: 102_g" />
+    </div>
+
+    <div class="control">
+      <label for="pageSizeSelect">Page Size</label>
+      <select id="pageSizeSelect">
+        <option value="25">25</option>
+        <option value="50" selected>50</option>
+        <option value="100">100</option>
+      </select>
+    </div>
+
+    <div class="control actions">
+      <button id="applyBtn" class="btn-primary" type="button">Apply Filters</button>
+      <button id="resetBtn" class="btn-secondary" type="button">Reset</button>
+    </div>
+
+    <details class="control scene-filter" id="sceneFilterDetails">
+      <summary id="sceneFilterSummary">Scene filter</summary>
+      <div class="scene-inner">
+        <input id="sceneSearch" placeholder="Search scene id, name, batch, comment" />
+        <div class="scene-actions">
+          <button type="button" id="sceneSelectVisible">Select visible</button>
+          <button type="button" id="sceneUnselectVisible">Unselect visible</button>
+          <button type="button" id="sceneSelectAll">Select all</button>
+          <button type="button" id="sceneClearAll">Clear all</button>
+        </div>
+        <div class="scene-list" id="sceneList">
+          <div>Loading scenes...</div>
+        </div>
+      </div>
+    </details>
+  </section>
+
+  <div class="status" id="status">Loading metadata...</div>
+  <div class="pagination">
+    <button id="prevBtn" type="button">Prev</button>
+    <button id="nextBtn" type="button">Next</button>
+    <span id="pageInfo">Page 1 / 1</span>
+  </div>
+
+  <main id="results"></main>
+
+  <script>
+    const LAZY_VIEW_DELAY_MS = 1000;
+    const IMAGE_PREVIEW = {
+      mainWidth: 1280,
+      thumbWidth: 280,
+      quality: 70,
+      format: "webp",
+    };
+
+    const state = {
+      page: 1,
+      pageSize: 50,
+      total: 0,
+      pageCount: 1,
+      questionIds: [],
+      objectCounts: [],
+      sceneOptions: [],
+      defaultSelectedScenes: [],
+      selectedSceneIds: new Set(),
+    };
+
+    const lazyState = {
+      observer: null,
+      visible: new WeakMap(),
+      timers: new WeakMap(),
+    };
+
+    const el = {
+      questionIdFilter: document.getElementById("questionIdFilter"),
+      objectCountFilter: document.getElementById("objectCountFilter"),
+      idxFilter: document.getElementById("idxFilter"),
+      pageSizeSelect: document.getElementById("pageSizeSelect"),
+      applyBtn: document.getElementById("applyBtn"),
+      resetBtn: document.getElementById("resetBtn"),
+      sceneFilterSummary: document.getElementById("sceneFilterSummary"),
+      sceneSearch: document.getElementById("sceneSearch"),
+      sceneList: document.getElementById("sceneList"),
+      sceneSelectVisible: document.getElementById("sceneSelectVisible"),
+      sceneUnselectVisible: document.getElementById("sceneUnselectVisible"),
+      sceneSelectAll: document.getElementById("sceneSelectAll"),
+      sceneClearAll: document.getElementById("sceneClearAll"),
+      status: document.getElementById("status"),
+      prevBtn: document.getElementById("prevBtn"),
+      nextBtn: document.getElementById("nextBtn"),
+      pageInfo: document.getElementById("pageInfo"),
+      results: document.getElementById("results"),
+    };
+
+    function setStatus(text) {
+      el.status.textContent = text;
+    }
+
+    async function fetchJson(url) {
+      const response = await fetch(url);
+      if (!response.ok) {
+        const body = await response.text();
+        throw new Error(`HTTP ${response.status}: ${body}`);
+      }
+      return response.json();
+    }
+
+    function imageUrl(path, kind = "main") {
+      const params = new URLSearchParams();
+      params.set("path", path);
+      params.set("width", String(kind === "thumb" ? IMAGE_PREVIEW.thumbWidth : IMAGE_PREVIEW.mainWidth));
+      params.set("quality", String(IMAGE_PREVIEW.quality));
+      params.set("fmt", IMAGE_PREVIEW.format);
+      return `/api/image?${params.toString()}`;
+    }
+
+    function ensureLazyObserver() {
+      if (lazyState.observer) return;
+      lazyState.observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          const img = entry.target;
+          if (!(img instanceof HTMLImageElement)) return;
+
+          lazyState.visible.set(img, entry.isIntersecting);
+          if (!entry.isIntersecting) {
+            const timer = lazyState.timers.get(img);
+            if (timer) {
+              clearTimeout(timer);
+              lazyState.timers.delete(img);
+            }
+            return;
+          }
+
+          if (img.dataset.loaded === "1" || img.dataset.requested === "1") {
+            return;
+          }
+
+          if (lazyState.timers.get(img)) {
+            return;
+          }
+
+          const timer = setTimeout(() => {
+            lazyState.timers.delete(img);
+            if (!lazyState.visible.get(img)) return;
+            loadLazyImage(img);
+          }, LAZY_VIEW_DELAY_MS);
+          lazyState.timers.set(img, timer);
+        });
+      }, { threshold: 0.1 });
+    }
+
+    function bindLazyEvents(img) {
+      if (img.dataset.lazyBound === "1") return;
+      img.dataset.lazyBound = "1";
+
+      img.addEventListener("load", () => {
+        img.dataset.loaded = "1";
+        img.classList.remove("lazy-pending");
+        if (lazyState.observer) lazyState.observer.unobserve(img);
+        const timer = lazyState.timers.get(img);
+        if (timer) {
+          clearTimeout(timer);
+          lazyState.timers.delete(img);
+        }
+      });
+
+      img.addEventListener("error", () => {
+        img.classList.remove("lazy-pending");
+      });
+    }
+
+    function setLazySource(img, src) {
+      bindLazyEvents(img);
+      ensureLazyObserver();
+
+      img.dataset.src = src;
+      img.dataset.loaded = "0";
+      img.dataset.requested = "0";
+      img.classList.add("lazy-pending");
+      img.removeAttribute("src");
+
+      if (lazyState.observer) {
+        lazyState.observer.observe(img);
+      }
+    }
+
+    function loadLazyImage(img, force = false) {
+      const src = img.dataset.src || "";
+      if (!src) return;
+      if (!force && img.dataset.requested === "1") return;
+      img.dataset.requested = "1";
+      img.src = src;
+    }
+
+    function clearChildren(node) {
+      while (node.firstChild) {
+        node.removeChild(node.firstChild);
+      }
+    }
+
+    function stripImageTags(question) {
+      return String(question || "").replace(/<image>/g, "").trim();
+    }
+
+    function sceneMetaText(scene) {
+      const parts = [];
+      if (scene.name) parts.push(`name: ${scene.name}`);
+      if (scene.batch) parts.push(`batch: ${scene.batch}`);
+      if (scene.comment) parts.push(`comment: ${scene.comment}`);
+      return parts.join(" | ");
+    }
+
+    function updateSceneSummary() {
+      const selected = state.selectedSceneIds.size;
+      const total = state.sceneOptions.length;
+      el.sceneFilterSummary.textContent = `Scene filter (${selected} selected of ${total})`;
+    }
+
+    function visibleSceneOptions() {
+      const needle = (el.sceneSearch.value || "").trim().toLowerCase();
+      if (!needle) return state.sceneOptions;
+      return state.sceneOptions.filter((scene) => {
+        const haystack = `${scene.scene_id} ${scene.name || ""} ${scene.batch || ""} ${scene.comment || ""}`.toLowerCase();
+        return haystack.includes(needle);
+      });
+    }
+
+    function renderSceneList() {
+      clearChildren(el.sceneList);
+      const filtered = visibleSceneOptions();
+      if (!filtered.length) {
+        const empty = document.createElement("div");
+        empty.textContent = "No scenes match the search.";
+        el.sceneList.appendChild(empty);
+        updateSceneSummary();
+        return;
+      }
+
+      const frag = document.createDocumentFragment();
+      filtered.forEach((scene) => {
+        const label = document.createElement("label");
+        label.className = "scene-option";
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.value = scene.scene_id;
+        checkbox.checked = state.selectedSceneIds.has(scene.scene_id);
+        checkbox.addEventListener("change", () => {
+          if (checkbox.checked) {
+            state.selectedSceneIds.add(scene.scene_id);
+          } else {
+            state.selectedSceneIds.delete(scene.scene_id);
+          }
+          updateSceneSummary();
+        });
+
+        const textWrap = document.createElement("div");
+        const title = document.createElement("div");
+        title.textContent = scene.scene_id;
+        title.style.fontWeight = "700";
+
+        const meta = document.createElement("div");
+        meta.className = "scene-meta";
+        meta.textContent = sceneMetaText(scene) || "No extra metadata";
+
+        textWrap.appendChild(title);
+        textWrap.appendChild(meta);
+        label.appendChild(checkbox);
+        label.appendChild(textWrap);
+        frag.appendChild(label);
+      });
+
+      el.sceneList.appendChild(frag);
+      updateSceneSummary();
+    }
+
+    function populateSelect(selectEl, values) {
+      const current = selectEl.value;
+      clearChildren(selectEl);
+
+      const all = document.createElement("option");
+      all.value = "";
+      all.textContent = "All";
+      selectEl.appendChild(all);
+
+      values.forEach((value) => {
+        const option = document.createElement("option");
+        option.value = value;
+        option.textContent = value;
+        selectEl.appendChild(option);
+      });
+
+      if ([...selectEl.options].some((opt) => opt.value === current)) {
+        selectEl.value = current;
+      }
+    }
+
+    function buildQuery() {
+      const params = new URLSearchParams();
+      params.set("page", String(state.page));
+      params.set("page_size", String(state.pageSize));
+
+      const idx = (el.idxFilter.value || "").trim();
+      const questionId = (el.questionIdFilter.value || "").trim();
+      const objectCount = (el.objectCountFilter.value || "").trim();
+
+      if (idx) params.set("idx", idx);
+      if (questionId) params.set("question_id", questionId);
+      if (objectCount) params.set("object_count", objectCount);
+
+      const selectedScenes = Array.from(state.selectedSceneIds).sort();
+      selectedScenes.forEach((sceneId) => params.append("scene_id", sceneId));
+      return params.toString();
+    }
+
+    function renderQuestion(questionWrap, questionText, correctAnswer) {
+      clearChildren(questionWrap);
+      const cleaned = stripImageTags(questionText);
+      const lines = cleaned.split("\n");
+      lines.forEach((line) => {
+        const row = document.createElement("div");
+        row.className = "question-line";
+        row.textContent = line;
+        const trimmed = line.trim();
+        if (correctAnswer && trimmed.startsWith(`${correctAnswer}.`)) {
+          row.classList.add("correct");
+        }
+        questionWrap.appendChild(row);
+      });
+    }
+
+    function createSingleVisual(fileName) {
+      const panel = document.createElement("div");
+      panel.className = "visual-panel";
+      if (!fileName) {
+        const missing = document.createElement("div");
+        missing.className = "empty";
+        missing.textContent = "Missing image path.";
+        panel.appendChild(missing);
+        return panel;
+      }
+      const img = document.createElement("img");
+      img.className = "single-image";
+      setLazySource(img, imageUrl(fileName, "main"));
+      panel.appendChild(img);
+      return panel;
+    }
+
+    function createCarouselVisual(fileNames) {
+      const panel = document.createElement("div");
+      panel.className = "visual-panel";
+      if (!fileNames.length) {
+        const missing = document.createElement("div");
+        missing.className = "empty";
+        missing.textContent = "Missing image paths.";
+        panel.appendChild(missing);
+        return panel;
+      }
+
+      const mainImage = document.createElement("img");
+      mainImage.className = "carousel-main";
+      setLazySource(mainImage, imageUrl(fileNames[0], "main"));
+      panel.appendChild(mainImage);
+
+      const thumbs = document.createElement("div");
+      thumbs.className = "thumbs";
+
+      fileNames.forEach((fileName, index) => {
+        const thumb = document.createElement("img");
+        thumb.className = `thumb${index === 0 ? " active" : ""}`;
+        setLazySource(thumb, imageUrl(fileName, "thumb"));
+        thumb.addEventListener("click", () => {
+          setLazySource(mainImage, imageUrl(fileName, "main"));
+          loadLazyImage(mainImage, true);
+          thumbs.querySelectorAll(".thumb").forEach((item) => item.classList.remove("active"));
+          thumb.classList.add("active");
+        });
+        thumbs.appendChild(thumb);
+      });
+
+      panel.appendChild(thumbs);
+      return panel;
+    }
+
+    function renderItems(items) {
+      clearChildren(el.results);
+      if (!items.length) {
+        const empty = document.createElement("div");
+        empty.className = "empty";
+        empty.textContent = "No questions match the current filters.";
+        el.results.appendChild(empty);
+        return;
+      }
+
+      const frag = document.createDocumentFragment();
+      items.forEach((item) => {
+        const card = document.createElement("article");
+        card.className = "card";
+
+        const head = document.createElement("div");
+        head.className = "row-head";
+        [
+          `idx: ${item.idx || "-"}`,
+          `question_id: ${item.question_id || "-"}`,
+          `object_count: ${item.object_count || "-"}`,
+          `scene: ${item.scene || "-"}`,
+          `images: ${item.image_count || 0}`,
+        ].forEach((text) => {
+          const badge = document.createElement("span");
+          badge.className = "badge";
+          badge.textContent = text;
+          head.appendChild(badge);
+        });
+        card.appendChild(head);
+
+        const layout = document.createElement("div");
+        layout.className = "layout";
+
+        const files = Array.isArray(item.file_name) ? item.file_name : [];
+        const left = files.length <= 1 ? createSingleVisual(files[0]) : createCarouselVisual(files);
+        layout.appendChild(left);
+
+        const textPanel = document.createElement("div");
+        textPanel.className = "text-panel";
+
+        const question = document.createElement("div");
+        question.className = "question";
+        renderQuestion(question, item.question, item.correct_answer);
+        textPanel.appendChild(question);
+
+        const answer = document.createElement("div");
+        answer.className = "answer";
+        answer.append("Correct answer: ");
+        const strong = document.createElement("strong");
+        strong.textContent = item.correct_answer || "N/A";
+        answer.appendChild(strong);
+        textPanel.appendChild(answer);
+
+        const actions = document.createElement("div");
+        actions.className = "card-actions";
+        if (item.idx) {
+          const downloadLink = document.createElement("a");
+          downloadLink.className = "download-link";
+          downloadLink.href = `/api/download?idx=${encodeURIComponent(item.idx)}`;
+          downloadLink.textContent = "Download question bundle";
+          actions.appendChild(downloadLink);
+        }
+        textPanel.appendChild(actions);
+
+        layout.appendChild(textPanel);
+        card.appendChild(layout);
+        frag.appendChild(card);
+      });
+
+      el.results.appendChild(frag);
+    }
+
+    function updatePager() {
+      el.pageInfo.textContent = `Page ${state.page} / ${state.pageCount}`;
+      el.prevBtn.disabled = state.page <= 1;
+      el.nextBtn.disabled = state.page >= state.pageCount;
+    }
+
+    async function loadPage() {
+      const selectedCount = state.selectedSceneIds.size;
+      if (selectedCount === 0 && state.sceneOptions.length > 0) {
+        state.total = 0;
+        state.pageCount = 1;
+        state.page = 1;
+        updatePager();
+        setStatus("No scene selected. Select at least one scene.");
+        renderItems([]);
+        return;
+      }
+
+      setStatus("Loading page...");
+      try {
+        const payload = await fetchJson(`/api/questions?${buildQuery()}`);
+        state.page = Number(payload.page) || 1;
+        state.pageCount = Number(payload.page_count) || 1;
+        state.total = Number(payload.total) || 0;
+        updatePager();
+        setStatus(`Showing ${payload.items.length} items (total: ${state.total})`);
+        renderItems(Array.isArray(payload.items) ? payload.items : []);
+      } catch (err) {
+        setStatus(`Error loading questions: ${err.message}`);
+      }
+    }
+
+    async function loadMetadata() {
+      setStatus("Loading metadata...");
+      const metadata = await fetchJson("/api/metadata");
+      state.questionIds = Array.isArray(metadata.question_ids) ? metadata.question_ids : [];
+      state.objectCounts = Array.isArray(metadata.object_counts) ? metadata.object_counts : [];
+      state.sceneOptions = Array.isArray(metadata.scene_options) ? metadata.scene_options : [];
+
+      state.defaultSelectedScenes = Array.isArray(metadata.default_selected_scene_ids)
+        ? metadata.default_selected_scene_ids
+        : state.sceneOptions.map((scene) => scene.scene_id);
+      state.selectedSceneIds = new Set(state.defaultSelectedScenes);
+
+      populateSelect(el.questionIdFilter, state.questionIds);
+      populateSelect(el.objectCountFilter, state.objectCounts);
+      renderSceneList();
+      setStatus(`Loaded metadata. Total questions: ${metadata.total}`);
+    }
+
+    function resetFilters() {
+      el.idxFilter.value = "";
+      el.questionIdFilter.value = "";
+      el.objectCountFilter.value = "";
+      state.selectedSceneIds = new Set(state.defaultSelectedScenes);
+      renderSceneList();
+      state.page = 1;
+      loadPage();
+    }
+
+    el.applyBtn.addEventListener("click", () => {
+      state.page = 1;
+      loadPage();
+    });
+
+    el.resetBtn.addEventListener("click", resetFilters);
+
+    el.idxFilter.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        state.page = 1;
+        loadPage();
+      }
+    });
+
+    el.pageSizeSelect.addEventListener("change", () => {
+      state.pageSize = Number(el.pageSizeSelect.value) || 50;
+      state.page = 1;
+      loadPage();
+    });
+
+    el.prevBtn.addEventListener("click", () => {
+      if (state.page > 1) {
+        state.page -= 1;
+        loadPage();
+      }
+    });
+
+    el.nextBtn.addEventListener("click", () => {
+      if (state.page < state.pageCount) {
+        state.page += 1;
+        loadPage();
+      }
+    });
+
+    el.sceneSearch.addEventListener("input", renderSceneList);
+
+    el.sceneSelectVisible.addEventListener("click", () => {
+      visibleSceneOptions().forEach((scene) => state.selectedSceneIds.add(scene.scene_id));
+      renderSceneList();
+    });
+
+    el.sceneUnselectVisible.addEventListener("click", () => {
+      visibleSceneOptions().forEach((scene) => state.selectedSceneIds.delete(scene.scene_id));
+      renderSceneList();
+    });
+
+    el.sceneSelectAll.addEventListener("click", () => {
+      state.sceneOptions.forEach((scene) => state.selectedSceneIds.add(scene.scene_id));
+      renderSceneList();
+    });
+
+    el.sceneClearAll.addEventListener("click", () => {
+      state.selectedSceneIds = new Set();
+      renderSceneList();
+    });
+
+    async function init() {
+      try {
+        await loadMetadata();
+        await loadPage();
+      } catch (err) {
+        setStatus(`Initialization error: ${err.message}`);
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>

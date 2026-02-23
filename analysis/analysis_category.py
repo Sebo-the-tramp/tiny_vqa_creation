@@ -35,24 +35,16 @@ def main() -> None:
         help="Filter by model mode; all keeps all models.",
     )
     parser.add_argument(
-        "--family-marker-mode",
-        choices=["distinct", "rotated"],
-        default="distinct",
-        help="Use distinct shapes per family or rotate a base shape per family.",
-    )
-    parser.add_argument(
         "--vqa-set",
         default="150K",
         help="VQA set to use (e.g., 10K, 30K, karo_5K).",
     )
     args = parser.parse_args()
 
-    utils_graph.RUN_NAME = args.run_name
-
     output_dir = Path("output") / args.run_name / args.vqa_set / "category"
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    eval_df = utils.utils_read.build_eval_df(args.base_path, vqa_set=args.vqa_set)
+    eval_df = utils.utils_read.build_eval_df(args.run_name, args.base_path, vqa_set=args.vqa_set)
     
     for mode_label, mode_df in utils.utils_read.select_eval_df(
         eval_df, mode=args.mode
@@ -61,29 +53,21 @@ def main() -> None:
         cur_output_dir.mkdir(parents=True, exist_ok=True)
         
         for group in utils.utils_read.GROUPINGS:
-            fname = f"acc_{group}.png"
             cur_df, group_by = utils.utils_read.apply_group(mode_df, group)
             
             print(f"Processing mode: {mode_label}, grouping by {group_by}: with {len(cur_df)} entries")
-            create_category_accuracy(
-                cur_df,
-                # group_by="family",
-                # save_per_category=True,
-                # per_category_dirname=f"category_{mode_label}",
-                # save_grid=False,
-                # save_legend=True,
-                # legend_filename=f"category_{mode_label}.png",
-                # legend_cols=4,
-                # sample_frac=1.0,
-                output_dir=cur_output_dir,
-                family_marker_mode=args.family_marker_mode,
-                # metadata_path="utils/metadata.json",
-                filename=fname,
-                y_limit_mode="",
-                group_by=group_by,
-                show_legend=True,
-                bars=False,
-            )
+            
+            for cat_col in ["category", "sub_category"]:
+                create_category_accuracy(
+                    cur_df,
+                    output_dir=cur_output_dir,
+                    category_col=cat_col,
+                    filename=f"acc_{cat_col}_{group}.png",
+                    y_limit_mode="",
+                    group_by=group_by,
+                    show_legend=True,
+                    bars=False,
+                )
 
 
 if __name__ == "__main__":

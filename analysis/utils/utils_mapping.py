@@ -9,54 +9,6 @@ import seaborn as sns
 
 import utils.utils_read
 
-mapping_sub = {
-    "visibility": "Visibility",
-    "material_identification": "Material\nIdentification",
-    "size": "Size",
-    "camera_characteristics": "Camera Characteristics",
-    "physics_property": "Physics Property",
-    "kinematics": "Kinematics",
-    "collision": "Collision",
-    "mass": "Mass",
-    "camera_motion": "Camera Motion",
-    "layout": "Layout",
-    "distance": "Distance",
-    "event_ordering": "Event Ordering",
-    "poisson_ratio": "Poisson's ratio",
-    "young_modulus": "Young's modulus",
-    "density": "Density",
-    "persistence": "Persistence",
-}
-
-mapping_sub_cat_id = {
-    "visibility": "view_point",
-    "material_identification": "visual_percetion",
-    "size": "spatial_reasoning",
-    "camera_characteristics": "view_point",
-    "physics_property": "material_understanding",
-    "kinematics": "mechanics",
-    "collision": "mechanics",
-    "mass": "material_understanding",
-    "camera_motion": "temporal",
-    "layout": "spatial_reasoning",
-    "distance": "spatial_reasoning",
-    "event_ordering": "temporal",    
-}
-
-mapping_sub_cat_name = {
-    "Visibility": "view_point",
-    "Material Identification": "visual_percetion",
-    "Size": "spatial_reasoning",
-    "Camera Characteristics": "view_point",
-    "Physics Property": "material_understanding",
-    "Kinematics": "mechanics",
-    "Collision": "mechanics",
-    "Mass": "material_understanding",
-    "Camera Motion": "temporal",
-    "Layout": "spatial_reasoning",
-    "Distance": "spatial_reasoning",
-    "Event Ordering": "temporal"
-}
 
 mapping_cat = {
     "mechanics": "Mechanics",
@@ -76,8 +28,65 @@ mapping_cat_order = {
     "temporal": 5,
 }
 
-def categories_ordered() -> list[str]:
-    return [kv[0] for kv in sorted(mapping_cat.items(), key=lambda kv: mapping_cat_order.get(kv[0], float("inf")))]
+mapping_sub = {
+    # Material understanding
+    'density': "Density", 
+    'mass': "Mass", 
+    'material_identification': "Material Identification", 
+    'poisson_ratio': "Poisson's ratio", 
+    'young_modulus': "Young's modulus", 
+
+    # Mechanics
+    'collision': "Collision",
+    'kinematics': "Kinematics",
+
+    # Spatial reasoning
+    'distance': "Distance",
+    'layout': "Layout",
+    'size': "Size",
+    
+    # Viewpoint
+    'camera_characteristics': "Camera Characteristics",
+    'visibility': "Visibility",
+
+    # Permanence
+    'object_persistence': "Object Persistence",
+    
+    # Temporal reasoning
+    'camera_motion': "Camera Motion",
+    'event_ordering': "Event Ordering"
+}
+
+mapping_sub_cat_id = {
+    # Material understanding
+    'density': 'material_understanding', 
+    'mass': 'material_understanding', 
+    'material_identification': 'material_understanding', 
+    'poisson_ratio': 'material_understanding', 
+    'young_modulus': 'material_understanding', 
+
+    # Mechanics
+    'collision': 'mechanics',
+    'kinematics': 'mechanics',
+
+    # Spatial reasoning
+    'distance': 'spatial_reasoning',
+    'layout': 'spatial_reasoning',
+    'size': 'spatial_reasoning',
+
+    # Viewpoint
+    'camera_characteristics': 'view_point',
+    'visibility': 'view_point',
+
+    # Permanence
+    'object_persistence': 'persistence',
+    # 'object_identity': 'persistence',
+    # 'object_count': 'persistence',
+
+    # Temporal reasoning
+    'camera_motion': 'temporal',
+    'event_ordering': 'temporal'
+}
 
 mapping_cat_colors = {
     # More vivid pastel-like colors

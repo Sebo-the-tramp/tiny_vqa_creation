@@ -35,21 +35,18 @@ def main() -> None:
         default="150K",
         help="VQA set to use (e.g., 10K, 30K, karo_5K).",
     )
+    parser.add_argument(
+        "--mode",
+        choices=["all", "general", "image-only", "mixed"],
+        default="all",
+        help="Filter by model mode; all keeps all models.",
+    )
     parser.add_argument("--run-name", default="run_28_general")
     args = parser.parse_args()
 
     eval_df = utils.utils_read.build_eval_df(args.run_name, args.base_path, vqa_set=args.vqa_set)
 
-    mode = "mixed"
-    output_dir = Path("output") / args.run_name / args.vqa_set / "commonsense" / mode
-    if args.family is not None:
-        print("Filtering to family:", args.family)
-        eval_df = eval_df[eval_df['model_family'] == args.family]
-        assert eval_df['idx'].nunique() > 0, f"No entries found for family {args.family} in eval_df after filtering. Check if family name is correct and if there are entries for that family."
-
-        # Use subdirectory for family-specific results
-        output_dir = output_dir / f"family_{args.family}"
-
+    output_dir = Path("output") / args.run_name / args.vqa_set / "commonsense"
     output_dir.mkdir(parents=True, exist_ok=True)
 
     # eval_df_single_image = eval_df[eval_df["idx"].astype(str).str.contains("_i")]
@@ -85,41 +82,55 @@ def main() -> None:
     #     acc_mat_multi, output_path=str(output_dir / "heatmap_table_multi.txt")
     # )
 
-    categories = eval_df["category"].unique()
-    # print("Categories:", categories)
-    for cat in np.hstack([categories, "all"]):
-        print("Processing:", cat)
-        if cat == "all":
-            cat_df = eval_df.copy()
-        else:
-            cat_df = eval_df[eval_df["category"] == cat].copy()
+    for mode_label, mode_df in utils.utils_read.select_eval_df(
+        eval_df, mode=args.mode
+    ):
+        cur_output_dir = output_dir / mode_label
+        if args.family is not None:
+            print("Filtering to family:", args.family)
+            eval_df = eval_df[eval_df['model_family'] == args.family]
+            assert eval_df['idx'].nunique() > 0, f"No entries found for family {args.family} in eval_df after filtering. Check if family name is correct and if there are entries for that family."
 
-        if cat == "all":
-            create_graph_from_eval_balanced(
-                eval_base=cat_df,
-                index_to_use="sub_category",
-                filename=f"accuracy_matrix{'_' + cat if cat != 'all' else ''}.png",
-                color_by_mode=True,
-                show=False,
-                out_dir=output_dir,
+            # Use subdirectory for family-specific results
+            cur_output_dir = cur_output_dir / f"family_{args.family}"
+        
+        cur_output_dir.mkdir(parents=True, exist_ok=True)
+        
+        categories = mode_df["category"].unique()
+        # print("Categories:", categories)
+        for cat in np.hstack([categories, "all"]):
+            print("Processing:", cat)
+            if cat == "all":
+                cat_df = mode_df.copy()
+            else:
+                cat_df = mode_df[mode_df["category"] == cat].copy()
+
+            if cat == "all":
+                create_graph_from_eval_balanced(
+                    eval_base=cat_df,
+                    index_to_use="sub_category",
+                    filename=f"accuracy_matrix{'_' + cat if cat != 'all' else ''}.png",
+                    color_by_mode=True,
+                    show=False,
+                    out_dir=cur_output_dir,
+                )
+
+            if cat == "all":
+                cat_label = "Overall accuracy (%)"
+            else:
+                cat_label = utils.utils_mapping.mapping_cat_short.get(cat)
+            create_accuracy_bench_vs_common_sense(
+                cat_df,
+                out_filename="cs_" + cat + ".png" if cat != "all" else "cs_correlation.png",
+                show_legend=cat == "all",
+                group_by="model_id",
+                ylabel= cat_label,
+                legend_fontsize=12 if cat != "all" else 10,
+                show_xlabel= cat == "all",
+                figsize=(6, 2.5) if cat == "all" else (4, 2.5),
+                out_dir=cur_output_dir,
+                # ylim=(0, 60)
             )
-
-        if cat == "all":
-            cat_label = "Overall accuracy (%)"
-        else:
-            cat_label = utils.utils_mapping.mapping_cat_short.get(cat)
-        create_accuracy_bench_vs_common_sense(
-            cat_df,
-            out_filename="cs_" + cat + ".png" if cat != "all" else "cs_correlation.png",
-            show_legend=cat == "all",
-            group_by="model_id",
-            ylabel= cat_label,
-            legend_fontsize=12 if cat != "all" else 10,
-            show_xlabel= cat == "all",
-            figsize=(6, 2.5) if cat == "all" else (4, 2.5),
-            out_dir=output_dir,
-            # ylim=(0, 60)
-        )
 
     
 

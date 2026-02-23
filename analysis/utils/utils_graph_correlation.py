@@ -496,17 +496,14 @@ def create_category_accuracy(
     *,
     metadata_path: str | Path | None = "utils/metadata.json",
     category_col: str = "category", # "category" or "sub_category"
-    category_label_map: dict[str, str] | None = None,
     seed: int = 0,
     show: bool = False,
     output_dir: str | Path | None = None,
-    run_name: str | None = None,
     filename: str = "accuracy_by_category.png",
-    figsize: tuple[float, float] = (8.5, 4),
+    figsize: tuple[float, float] = None,
     show_legend: bool = False,
     y_limit_mode: str = "fixed",
     y_pad: float = 0.05,
-    family_marker_mode: str = "distinct",
     group_by: str = "model_id",
     bars: bool = False,
 ) -> plt.Figure:
@@ -534,27 +531,40 @@ def create_category_accuracy(
     )
 
     # Get unique categories and sort them
-    categories = utils.utils_mapping.categories_ordered()
-    categories = [cat for cat in categories if cat in agg_df[category_col].unique()]
-    cat_to_pos = {cat: idx for idx, cat in enumerate(categories)}
-    agg_df["category_pos"] = agg_df[category_col].map(cat_to_pos)
+    categories = list(plot_df["category"].unique())
+    categories = sorted(
+        categories,
+        key=lambda category: utils.utils_mapping.mapping_cat_order.get(category, float("inf")),
+    )
+    if category_col == "category":
+        cats = categories
+    elif category_col == "sub_category":
+        subcats = [
+            sorted(list(plot_df[plot_df["category"] == cat]["sub_category"].unique()))
+            for cat in categories
+        ]
+        cats = [subcat for cat_subcats in subcats for subcat in cat_subcats]  # Flatten list of subcategories
+    
+    cats = [cat for cat in cats if cat in list(agg_df[category_col].unique())]
+    cat_to_pos = {cat: idx for idx, cat in enumerate(cats)}
+    agg_df["cat_pos"] = agg_df[category_col].map(cat_to_pos)
     
     # Build model style
     model_style, family_map = utils.utils_mapping._build_model_style(
-        # plot_df,
         metadata_path,
-        group_by=group_by,
-        family_marker_mode=family_marker_mode,
+        group_by=group_by
     )
     rng = np.random.default_rng(seed)
 
     # Create figure
+    if figsize is None:
+        figsize = (2.5+len(cats), 4)
     fig, ax = plt.subplots(figsize=figsize)
 
     # Create violin plot
     sns.violinplot(
         data=agg_df,
-        x="category_pos",
+        x="cat_pos",
         y="mean",
         ax=ax,
         color="0.85",
@@ -563,7 +573,7 @@ def create_category_accuracy(
         cut=0,
         width=1.0,
         linewidth=0.5,
-        order=list(range(len(categories))),
+        order=list(range(len(cats))),
     )
     ax.set_xlabel("")
 
@@ -572,7 +582,7 @@ def create_category_accuracy(
 
     # Plot scatter points with error bars for each family
     for group_name, df_m in agg_df.groupby(group_by):
-        x_vals = df_m["category_pos"].to_numpy()
+        x_vals = df_m["cat_pos"].to_numpy()
         y_vals = df_m["mean"].to_numpy()
         y_min = df_m["min"].to_numpy()
         y_max = df_m["max"].to_numpy()
@@ -616,7 +626,7 @@ def create_category_accuracy(
 
     # "#AED6F1"
     # "#A9DFBF"
-    if eval_df["model_mode"].nunique() > 1:
+    if category_col == "category" and eval_df["model_mode"].nunique() > 1:
         for r_x_start, r_x_end, r_color, r_label in ((-0.5,3.5, None, "Image and Video Models"),
                                                     (3.5,5.6, None, "Video models")):
             # Add semi-transparent background
@@ -633,7 +643,7 @@ def create_category_accuracy(
             ax.text(mid_x, ax.get_ylim()[1] * 0.95, r_label, 
                     ha='center', va='top', fontsize=12, color='#555555', fontweight='bold')
 
-    ax.set_xlim(0.-0.5, len(categories) - 1 + 0.5)
+    ax.set_xlim(0.-0.5, len(cats) - 1 + 0.5)
     # Set labels
     # ax.set_xlabel(fontsize=12, fontweight="bold")
     ax.set_ylabel("Accuracy (%)", fontsize=12, fontweight="bold")
@@ -669,20 +679,28 @@ def create_category_accuracy(
     )
 
     def get_cat_label(cat):
-        label = utils.utils_mapping.mapping_cat.get(cat).replace(" ", "\n")
+        if category_col == "category":
+            label = utils.utils_mapping.mapping_cat.get(cat).replace(" ", "\n")
+        elif category_col == "sub_category":
+            label = utils.utils_mapping.mapping_sub.get(cat).replace(" ", "\n")
+        
         label += f"\n"
         label += f"({cat_accuracy.loc[cat_accuracy[category_col] == cat, 'accuracy'].values[0]:.1f}%)"
         return label
 
-    category_labels = [ get_cat_label(cat) for cat in categories ]
+    category_labels = [ get_cat_label(cat) for cat in cats ]
     # print(category_labels)
 
     # ax.set_xticklabels(category_labels, rotation=45, ha="right")
-    ax.set_xticks(range(len(categories)))
+    ax.set_xticks(range(len(cats)))
     ax.set_xticklabels(category_labels, ha='center', fontweight='bold', fontsize=9.5)
 
-    for ticklabel, cat in zip(ax.get_xticklabels(), categories):
-        ticklabel.set_color(utils.utils_mapping.mapping_cat_colors.get(cat)+"CC")  # Adding transparency
+    for ticklabel, cat in zip(ax.get_xticklabels(), cats):
+        if category_col == "sub_category":
+            cat_key = plot_df[plot_df["sub_category"] == cat]["category"].values[0]
+        else:
+            cat_key = cat
+        ticklabel.set_color(utils.utils_mapping.mapping_cat_colors.get(cat_key)+"CC")  # Adding transparency
     # ax.set_xticklabels(category_labels, ha="center")
 
 
@@ -1183,12 +1201,10 @@ def create_num_objects_violin_per_question_id(
     legend_cols: int = 4,
     legend_figsize: tuple[float, float] | None = None,
     y_limit_mode: str = "zero_to_max",
-    y_pad: float = 0.0,
     n_label_offset: float = 0.08,
     # split_values: tuple[float, float] | None = (3, 4),
     split_line_kwargs: dict | None = None,
     family_marker_mode: str = "distinct",
-    family_marker_base: str = "^",
 ) -> None:
     raise NotImplementedError("This should be updated to use the new macro accuracies")
     if "question_id" not in eval_df.columns or "model_id" not in eval_df.columns:

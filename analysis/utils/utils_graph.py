@@ -2,7 +2,9 @@ import os
 import json
 import hashlib
 import re
+import numpy as np
 import pandas as pd
+from prompt_toolkit import prompt
 import seaborn as sns
 import matplotlib.pyplot as plt
 from matplotlib.ticker import PercentFormatter
@@ -34,7 +36,7 @@ def _color_for_subcategory(sub_category: str, palette: list[str]) -> str:
 
 
 def make_balanced_matrix(
-    eval_base: pd.DataFrame,
+    eval_df: pd.DataFrame,
     by="model_id",
     hierarchy=("category", "sub_category", "question_id"),
     index_to_use="sub_category",
@@ -66,84 +68,30 @@ def make_balanced_matrix(
     by_cols = [by] if isinstance(by, str) else list(by)
     cat_col, sub_col, q_col = hierarchy
 
-    # 1) per question accuracy
-    q_acc = (
-        eval_base.groupby(
-            by_cols + [cat_col, sub_col, q_col], observed=True, dropna=False
-        )["is_correct"]
-        .mean()
-        .reset_index(name="acc_q")
-    )
-
-    # 2) per sub_category (equal weight to questions)
-    sub_acc = (
-        q_acc.groupby(by_cols + [cat_col, sub_col], observed=True, dropna=False)[
-            "acc_q"
-        ]
-        .mean()
-        .reset_index(name="acc_sub")
-    )
-
-    # 3) per category (equal weight to sub_categories)
-    cat_acc = (
-        sub_acc.groupby(by_cols + [cat_col], observed=True, dropna=False)["acc_sub"]
-        .mean()
-        .reset_index(name="acc_cat")
-    )
-
-    # 4) overall per model (equal weight to categories)
-    overall = (
-        cat_acc.groupby(by_cols, observed=True, dropna=False)["acc_cat"]
-        .mean()
-        .reset_index(name="balanced_overall")
-    )
+    level_df = utils.utils_read.macro_accuracy(eval_df, level=index_to_use, group_by=by_cols)
 
     # Choose which level to display on the heatmap rows
-    if index_to_use == q_col:
-        base = q_acc.rename(columns={"acc_q": "value"})
-        idx_cols = [q_col]
-    elif index_to_use == sub_col:
-        base = sub_acc.rename(columns={"acc_sub": "value"})
-        idx_cols = [sub_col]
-    elif index_to_use == cat_col:
-        base = cat_acc.rename(columns={"acc_cat": "value"})
-        idx_cols = [cat_col]
-    else:
-        # Generic dimension: take equal mean of per‑question accuracy inside that dimension
-        idx_cols = (
-            list(index_to_use)
-            if isinstance(index_to_use, (list, tuple))
-            else [index_to_use]
-        )
-        base = (
-            q_acc.groupby(by_cols + idx_cols, observed=True, dropna=False)["acc_q"]
-            .mean()
-            .reset_index(name="value")
-        )
+    idx_cols = index_to_use
 
     # Pivot into a matrix
     cols = by_cols[0] if len(by_cols) == 1 else by_cols
-    mat = base.pivot(index=idx_cols, columns=cols, values="value").sort_index()
+    mat = level_df.pivot(index=idx_cols, columns=cols, values="accuracy").sort_index()
 
     # Append a fully balanced Total row per model
     # okay the total is always aggregated by overall category accuracy
-    tot = overall.set_index(by_cols)["balanced_overall"].to_frame().T
+    overall_df = utils.utils_read.macro_accuracy(eval_df, level="model_id")
+    tot = overall_df.set_index(by_cols)["accuracy"].to_frame().T
     tot.index = ["Total"]
     acc = pd.concat([mat, tot], axis=0)
 
-    return acc, {
-        "q_acc": q_acc,
-        "sub_acc": sub_acc,
-        "cat_acc": cat_acc,
-        "overall": overall,
-    }
+    return acc
 
 
 def create_graph_from_eval_balanced(
     eval_base: pd.DataFrame,
     index_to_use="sub_category",
     name_graph="heatmap_balanced",
-    title=None,
+    filename="matrix.png",
     color_by_mode=True,
     orientation="landscape",
     by="model_id",
@@ -161,13 +109,12 @@ def create_graph_from_eval_balanced(
     The "Average" first column is the simple mean across models for each row,
     added for quick visual comparison.
     """
-    if out_dir is None:
-        run = globals().get("RUN_NAME", "default")
-        out_dir = f"./output/{run}/"
+    # Convert accuracy to percentage
+    # eval_base["accuracy"] = eval_base["accuracy"] * 100
 
     # Build the balanced matrix for the requested row index
-    acc, breakdown = make_balanced_matrix(
-        eval_base=eval_base,
+    acc = make_balanced_matrix(
+        eval_df=eval_base,
         by=by,
         index_to_use=index_to_use,
     )
@@ -241,7 +188,7 @@ def create_graph_from_eval_balanced(
     )
     ax.set_xlabel(x_label)
     ax.set_ylabel(y_label)
-    ax.set_title(title or f"Balanced accuracy by {index_to_use} and model", fontsize=32)
+    ax.set_title(f"Accuracy by {index_to_use} and model", fontsize=32)
     plt.yticks(rotation=0)
 
     # Optional tick coloring by model mode
@@ -302,10 +249,10 @@ def create_graph_from_eval_balanced(
 
     # Save
     os.makedirs(out_dir, exist_ok=True)
-    plt.savefig(f"{out_dir}/{title}.png", dpi=300, bbox_inches="tight")
-    print(f"Plot saved to: {out_dir}/{title}.png")
+    plt.savefig(f"{out_dir}/{filename}", dpi=300, bbox_inches="tight")
+    print(f"Plot saved to: {out_dir}/{filename}")
 
-    return acc, breakdown
+    return acc
 
 
 def create_sub_categories_summary(
@@ -313,6 +260,7 @@ def create_sub_categories_summary(
     title="Sub-category accuracy summary",
     show=True,
 ):
+    raise NotImplementedError("This should be updated to use the new macro accuracies")
     import matplotlib.pyplot as plt
     import seaborn as sns
     import pandas as pd
@@ -474,6 +422,7 @@ def create_correlation_common_sense(
     title: str = "Correlation Matrix Sorted",
     show: bool = True,
 ):
+    raise NotImplementedError("This should be updated to use the new macro accuracies")
     df = acc_mat.iloc[:-1, 1:].T.reset_index()  # Uncomment if you have the raw acc_mat
     df = df.rename(columns={"index": "model_id"})
 
@@ -589,26 +538,33 @@ def create_correlation_common_sense(
 
 def create_accuracy_bench_vs_common_sense(
         eval_df: pd.DataFrame, 
-        acc_mat: pd.DataFrame, 
         out_filename: str = "accuracy_vs_common_sense.png",
         show_legend: bool = True,
         family_marker_mode: str = "distinct",
-        # family_marker_base: str = "^",
         group_by: str = "model_family",
         ylabel: str = "Accuracy (%)",
         label_fontsize = 12,
         tick_fontsize = 12,
         legend_fontsize = 10,
+        ylim = None,
         show_xlabel: bool = True,
         figsize: tuple = (4, 2.5),
         out_dir: str = None,
     ):
-    if out_dir is None:
-        run = globals().get("RUN_NAME", "default")
-        out_dir = f"./output/{run}/"
-    
     def _standardize_model_label(model_id: str) -> str:
-        label = model_id.replace("2_5", "2.5")
+        label = model_id
+        label = label.replace("2_5", "2.5")
+        label = label.replace("V1-5-", "V1.5-")
+        label = label.replace("InternVL2-76B", "InternVL2-Llama3-76B")
+        label = label.replace("-quantable", "")
+        label = label.replace("MiniCPM-V2.5", "MiniCPM-Llama3-V2.5")
+        label = label.replace("MolmoE-7B-", "Molmo-7B-")
+        label = label.replace("Phi-3-vision-128k-instruct", "Phi-3-Vision")
+        label = label.replace("instructblip-vicuna-7b", "InstructBLIP-7B")
+        label = label.replace("llava-interleave-qwen", "LLaVA-Next-Interleave")
+        label = label.replace("llava-v1.6-", "LLaVA-Next-")
+        label = label.replace("vila-1.5-8b", "Llama-3-VILA1.5-8B")
+        label = label.removesuffix("-hf")
         label = label.replace("_", "-")
         label = re.sub(
             r"(\d+(?:\.\d+)?)b\b",
@@ -626,28 +582,44 @@ def create_accuracy_bench_vs_common_sense(
     common_sense_df.head()
 
     model_unique_ids = eval_df["model_id"].unique()
-
+    model_df = utils.utils_read.macro_accuracy(eval_df, level="model_id")
+    
     common_sense_accuracy = {}
-
+    cs_methods = common_sense_df["Method"].values
     for model_id in model_unique_ids:
-        for cs_model_id in common_sense_df["Method"].values:
-            if _standardize_model_label(model_id) in cs_model_id:
-                # print(f"Model: {modified_model_id}, Common Sense Score: {cs_model_id}")
-                row = common_sense_df[common_sense_df["Method"] == cs_model_id].iloc[0]
-                common_sense_accuracy[model_id] = row.get("Avg. Score")
+        model_row = model_df[model_df["model_id"] == model_id].iloc[0]
 
+        #Prioritize open, then close, then any match
+        cs_mask = None
+        for suffix in ["Open", "Close", ""]:
+            cs_mask = np.array([(_standardize_model_label(model_id)+suffix).lower() in cs_model_id.lower() for cs_model_id in cs_methods])
+            if sum(cs_mask) > 0:
+                break
+        
+        if sum(cs_mask) != 0:
+            if sum(cs_mask) > 1:
+                raise Exception(f"Multiple common sense matches found for {model_id}. Matches: {common_sense_df[cs_mask]['Method'].values}")
+            
+            cs_model_id = common_sense_df[cs_mask]["Method"].values[0]
+            cs_row = common_sense_df[common_sense_df["Method"] == cs_model_id].iloc[0]
+            print(f"Mapping {model_id} (ours, {model_row['accuracy']}) with {cs_model_id} (common sense: {cs_row.get('Avg. Score')})")
+            common_sense_accuracy[model_id] = cs_row.get("Avg. Score")
+        else:
+            print(f"No common sense mapping found for {model_id}")
+
+    print(len(common_sense_accuracy), "models with common sense mapping out of", len(model_unique_ids))
+    
     model_style, family_map = utils.utils_mapping._build_model_style(
         "./utils/metadata.json",
         group_by=group_by,
         family_marker_mode=family_marker_mode,
     )
     
-    accuracy_total_per_model = acc_mat.iloc[-1:, :]
+
+    # accuracy_total_per_model = acc_mat.iloc[-1:, :]
     eval_df_accuracy_total_per_model = (
         eval_df.merge(
-            accuracy_total_per_model.T.reset_index().rename(
-                columns={0: "balanced_accuracy"}
-            ),
+            model_df.reset_index().rename(columns={"accuracy": "Total"}),
             left_on="model_id",
             right_on="model_id",
             how="left",
@@ -771,7 +743,8 @@ def create_accuracy_bench_vs_common_sense(
         ylabel_color = utils.utils_mapping.mapping_cat_colors.get(eval_df["category"].unique()[0])+"CC"
 
     ax.set_ylabel(ylabel, fontsize=label_fontsize, fontweight="bold", color=ylabel_color)
-    # ax.set_ylim(0, 60)
+    if ylim is not None:
+        ax.set_ylim(ylim[0], ylim[1])
     ax.tick_params(axis="both", labelsize=tick_fontsize)
     # ax.grid(False)
     
@@ -885,7 +858,7 @@ def create_accuracy_bench_vs_common_sense(
                 return size_min + (size_max - size_min) * frac
 
             size_refs = [1, 7, 20]
-            size_refs = [s for s in size_refs if min_pos <= s <= max_pos]
+            size_refs = [suffix for suffix in size_refs if min_pos <= suffix <= max_pos]
             if not size_refs:
                 size_refs = [
                     round(min_pos, 2),
@@ -900,10 +873,10 @@ def create_accuracy_bench_vs_common_sense(
                     linestyle="",
                     color="gray",
                     markerfacecolor="none",
-                    markersize=_size_for_param(s) ** 0.5,
-                    label=f"{s}B",
+                    markersize=_size_for_param(suffix) ** 0.5,
+                    label=f"{suffix}B",
                 )
-                for s in size_refs
+                for suffix in size_refs
             ]
             if show_legend:
                 legend_sizes = ax.legend(

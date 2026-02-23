@@ -14,30 +14,6 @@ warnings.filterwarnings("ignore", message=".*edgecolor.*unfilled marker.*")
 
 # /data0/sebastian.cavada/compositional-physics/tiny_vqa_deterministic/output/run_11_general_levels
 
-_DEFAULT_MARKERS = [
-    "o",
-    "s",
-    "^",
-    "v",
-    "<",
-    ">",
-    "p",
-    "*",
-    "h",
-    "H",
-    "D",
-    "d",
-    ".",
-    "1",
-    "2",
-    "3",
-    "4",
-    "8",
-    "P",
-    "X",
-]
-
-
 def paperformat(ax, figsize=(4, 3.1), ylim=None, ticks_step=10, grid=["x", "y"], minor=True):
     fig = ax.get_figure()
     if figsize is not None:
@@ -172,6 +148,7 @@ def create_scatter_by_family(
     run_name: str | None = None,
     filename: str = "levels_by_family.png",
 ) -> plt.Figure:
+    raise NotImplementedError("This should be updated to use the new macro accuracies")
     levels_sorted = levels_sorted or [
         "baseline",
         "child",

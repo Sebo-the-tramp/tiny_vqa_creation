@@ -27,17 +27,12 @@ def main() -> None:
         "--base-path",
         default="../output",
     )
-    parser.add_argument("--run-name", default="run_26_general")
+    parser.add_argument("--run-name", default="run_28_general")
     parser.add_argument(
         "--mode",
-        choices=["mixed", "general", "image-only"],
-        default="mixed",
-        help="Filter by model mode; mixed keeps all models.",
-    )
-    parser.add_argument(
-        "--split-by-mode",
-        action="store_true",
-        help="Generate separate outputs per model mode when --mode=mixed.",
+        choices=["all", "general", "image-only", "mixed"],
+        default="all",
+        help="Filter by model mode; all keeps all models.",
     )
     parser.add_argument(
         "--family-marker-mode",
@@ -47,7 +42,7 @@ def main() -> None:
     )
     parser.add_argument(
         "--vqa-set",
-        default="30K",
+        default="150K",
         help="VQA set to use (e.g., 10K, 30K, karo_5K).",
     )
     args = parser.parse_args()
@@ -60,10 +55,13 @@ def main() -> None:
     eval_df = utils.utils_read.build_eval_df(args.base_path, vqa_set=args.vqa_set)
     
     for mode_label, mode_df in utils.utils_read.select_eval_df(
-        eval_df, mode=args.mode, split_by_mode=args.split_by_mode
+        eval_df, mode=args.mode
     ):
+        cur_output_dir = output_dir / mode_label
+        cur_output_dir.mkdir(parents=True, exist_ok=True)
+        
         for group in utils.utils_read.GROUPINGS:
-            fname = f"acc_by_cat_{mode_label}_{group}.png"
+            fname = f"acc_{group}.png"
             cur_df, group_by = utils.utils_read.apply_group(mode_df, group)
             
             print(f"Processing mode: {mode_label}, grouping by {group_by}: with {len(cur_df)} entries")
@@ -77,7 +75,7 @@ def main() -> None:
                 # legend_filename=f"category_{mode_label}.png",
                 # legend_cols=4,
                 # sample_frac=1.0,
-                output_dir=output_dir,
+                output_dir=cur_output_dir,
                 family_marker_mode=args.family_marker_mode,
                 # metadata_path="utils/metadata.json",
                 filename=fname,

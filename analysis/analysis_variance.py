@@ -43,14 +43,9 @@ def main() -> None:
     parser.add_argument("--run-name", default="run_26_general")
     parser.add_argument(
         "--mode",
-        choices=["mixed", "general", "image-only"],
-        default="mixed",
-        help="Filter by model mode; mixed keeps all models.",
-    )
-    parser.add_argument(
-        "--split-by-mode",
-        action="store_true",
-        help="Generate separate outputs per model mode when --mode=mixed.",
+        choices=["all", "general", "image-only", "mixed"],
+        default="all",
+        help="Filter by model mode; all keeps all models.",
     )
     parser.add_argument(
         "--vqa-set",
@@ -64,10 +59,7 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    utils_graph.RUN_NAME = args.run_name
-    utils_graph_correlation.RUN_NAME = args.run_name
-
-    output_dir = Path("output") / args.run_name / "variance" / f"{args.vqa_set}_{args.vqa_split_mode}"
+    output_dir = Path("output") / args.run_name / f"{args.vqa_set}" / f"variance_{args.vqa_split_mode}"
     output_dir.mkdir(parents=True, exist_ok=True)
 
     mode_letter = args.vqa_split_mode[0]
@@ -77,7 +69,8 @@ def main() -> None:
         globbed_files = list(path.parent.glob(path.name))
         assert globbed_files, f"No files found for pattern: {path}"
         
-        all_vqa_sets = [args.vqa_set]  # Always include the originally specified VQA set
+        # all_vqa_sets = [args.vqa_set]  # Always include the originally specified VQA set
+        all_vqa_sets = []
         if not globbed_files:
             print(f"No files found for pattern: {path}")
         else:
@@ -99,7 +92,7 @@ def main() -> None:
         print(f"\n\nLoading VQA dataframes..")
         all_vqa_sets_dfs = []
         for vqa_set in all_vqa_sets:
-            vqaset_df = utils.utils_read.build_eval_df(args.base_path, vqa_set=vqa_set)
+            vqaset_df = utils.utils_read.build_eval_df(args.run_name, args.base_path, vqa_set=vqa_set)
             vqaset_df["vqa_set"] = vqa_set
             vqaset_df["vqa_set_count"] = vqaset_df["idx"].nunique()  # Count unique questions per vqa_set
             
@@ -117,8 +110,11 @@ def main() -> None:
     print(f"Merged dataframe loaded. Total rows: {len(merged_df)}")
 
     for mode_label, mode_df in utils.utils_read.select_eval_df(
-        merged_df, mode=args.mode, split_by_mode=args.split_by_mode
+        merged_df, mode=args.mode
     ):
+        cur_output_dir = output_dir / mode_label
+        cur_output_dir.mkdir(parents=True, exist_ok=True)
+        
         for group in utils.utils_read.GROUPINGS:
             cur_df, group_by = utils.utils_read.apply_group(mode_df, group)
             
@@ -128,7 +124,7 @@ def main() -> None:
 
                 utils.utils_graph_variance.create_variance_curve(
                     cur_df,
-                    output_dir=output_dir / mode_label,
+                    output_dir=cur_output_dir,
                     filename= f"var_{group}"+(f"_{cat}" if cat != "all" else "")+".png",
                     y_limit_mode="",
                     group_by=group_by,

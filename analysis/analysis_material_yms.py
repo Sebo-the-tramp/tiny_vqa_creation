@@ -31,7 +31,7 @@ def main() -> None:
 
     utils_graph.RUN_NAME = args.run_name
 
-    output_dir = Path("output") / args.run_name / args.vqa_set / "yms"
+    output_dir = Path("output") / args.run_name / args.vqa_set / "yms" / "mixed"
     output_dir.mkdir(parents=True, exist_ok=True)
 
     eval_df = utils.utils_read.build_eval_df(args.base_path, vqa_set=args.vqa_set, columns=["object-yms"])

@@ -11,6 +11,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 from matplotlib.lines import Line2D
+from matplotlib.ticker import FuncFormatter
 import utils.utils_mapping
 
 warnings.filterwarnings("ignore", message=".*edgecolor.*unfilled marker.*")
@@ -55,6 +56,17 @@ def _safe_filename(label: str) -> str:
     return label.replace("/", "_").replace("\\", "_").replace(" ", "_")
 
 
+def _format_thousands_tick(value: float, _pos: int) -> str:
+    if abs(value) >= 1000:
+        scaled = value / 1000
+        if float(scaled).is_integer():
+            return f"{int(scaled)}k"
+        return f"{scaled:g}k"
+    if float(value).is_integer():
+        return f"{int(value)}"
+    return f"{value:g}"
+
+
 def create_variance_curve(
     eval_df: pd.DataFrame,
     *,
@@ -73,36 +85,21 @@ def create_variance_curve(
     """
     Plot accuracy (in %) vs num_objects, one curve per category (6 total).
     """
-    if category_column not in eval_df.columns or "model_id" not in eval_df.columns:
-        raise KeyError(f"eval_df must include '{category_column}' and 'model_id' columns.")
-    
     # Filter category if needed
     if category != "all":
         eval_df = eval_df[eval_df[category_column] == category]
 
-    # Compute cat mean accuracy
-    cat_acc_df = (
-        eval_df.groupby(["vqa_set_count", "vqa_set", "category", "model_family", "model_id"], observed=True)["accuracy"]
-        .mean()
-        .reset_index()
-    )
-
-    # Compute model mean accuracy
-    model_acc_df = (
-        cat_acc_df.groupby(["vqa_set_count", "vqa_set", "model_family", "model_id"], observed=True)["accuracy"]
-        .mean()
-        .reset_index()
-    )
+    # Convert accuracy to percentage
+    plot_df = eval_df.copy()
+    plot_df["accuracy"] = plot_df["accuracy"] * 100
+    plot_df = utils.utils_read.macro_accuracy(plot_df, level="model_id", group_by=["vqa_set", "vqa_set_count"])
 
     # Compute group stats (mean and std) across vqa_set_count
     stats_df = (
-        model_acc_df.groupby(["vqa_set_count", group_by], observed=True)["accuracy"]
+        plot_df.groupby(["vqa_set_count", group_by], observed=True)["accuracy"]
         .agg(['mean', 'std'])
         .reset_index()
     )
-
-    stats_df["mean"] *= 100
-    stats_df["std"] *= 100
 
     model_style, family_map = utils.utils_mapping._build_model_style(
         metadata_path,
@@ -145,25 +142,9 @@ def create_variance_curve(
 
         ylabel = utils.utils_mapping.mapping_cat_short.get(cat)
         ylabel_color = utils.utils_mapping.mapping_cat_colors.get(cat)+"CC"
-
-    ax.set_ylabel(ylabel, fontsize=12, fontweight="bold", color=ylabel_color)
     
-    # legend = ax.legend(  loc=legend_loc, 
-    #             fontsize=9.5, 
-    #             ncol=2, 
-    #             markerscale=0.5,
-    #             handletextpad=0.2,
-    #             columnspacing=0.5,
-    #             borderpad=0.2,
-    #             frameon=True,
-    #             handlelength=1.3 )
-    # for text, handle in zip(legend.get_texts(), legend.legend_handles):
-    #     if hasattr(handle, "get_color"):
-    #         text.set_color(handle.get_color())
-    #         text.set_fontweight("bold")
-    #     elif hasattr(handle, "get_facecolor"):
-    #         text.set_color(handle.get_facecolor()[0])
-    ax.grid(axis="y", alpha=0.3)
+    ax.set_ylabel(ylabel.capitalize(), color=ylabel_color)
+    # ax.axhline(y=25, color="gray", linestyle="--", linewidth=1)
 
     # Set y limits
     y_min = stats_df["mean"].min()
@@ -176,11 +157,10 @@ def create_variance_curve(
     elif y_limit_mode == "fixed":
         ax.set_ylim(15, 55)
 
+    thousands_formatter = FuncFormatter(_format_thousands_tick)
+    ax.xaxis.set_major_formatter(thousands_formatter)
+
     paperformat(ax, grid=["y"], minor=True, figsize=None)
-
-    # ax.set_xticks(range(1, 11))
-    # ax.set_xticklabels([str(v) for v in range(1, 11)])
-
 
     # Save
     if output_dir is not None:

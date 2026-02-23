@@ -76,6 +76,9 @@ mapping_cat_order = {
     "temporal": 5,
 }
 
+def categories_ordered() -> list[str]:
+    return [kv[0] for kv in sorted(mapping_cat.items(), key=lambda kv: mapping_cat_order.get(kv[0], float("inf")))]
+
 mapping_cat_colors = {
     # More vivid pastel-like colors
     "mechanics": "#FF5733",              # vivid orange-red

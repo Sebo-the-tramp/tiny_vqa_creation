@@ -86,7 +86,7 @@ def main() -> None:
     utils_graph.RUN_NAME = args.run_name
     utils_graph_levels.RUN_NAME = args.run_name
 
-    output_dir = Path("output") / args.run_name
+    output_dir = Path("output") / args.run_name / "levels" / "mixed"
     output_dir.mkdir(parents=True, exist_ok=True)
 
     eval_df = build_eval_df(args.base_path)

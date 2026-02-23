@@ -83,9 +83,9 @@ def main() -> None:
     parser.add_argument("--run-name", default="run_26_general")
     parser.add_argument(
         "--mode",
-        choices=["mixed", "general", "image-only"],
-        default="mixed",
-        help="Filter by model mode; mixed keeps all models.",
+        choices=["all", "general", "image-only", "mixed"],
+        default="all",
+        help="Filter by model mode; all keeps all models.",
     )
     parser.add_argument(
         "--vqa-set",
@@ -102,14 +102,20 @@ def main() -> None:
 
     eval_df = utils.utils_read.build_eval_df(args.base_path, vqa_set=args.vqa_set)
 
-    for col in ["model_id", "category", "sub_category", "question_id"]:
-        fig, _, _ = plot_row_counts_by_column(
-            eval_df,
-            col,
-            top_n=1000,
-        )
-        fig.savefig(output_dir / f"hist_{col}.png", dpi=300, bbox_inches="tight")
-        plt.close(fig)
+    for mode_label, mode_df in utils.utils_read.select_eval_df(
+        eval_df, mode=args.mode
+    ):
+        cur_output_dir = output_dir / mode_label
+        cur_output_dir.mkdir(parents=True, exist_ok=True)
+        
+        for col in ["model_id", "category", "sub_category", "question_id"]:
+            fig, _, _ = plot_row_counts_by_column(
+                mode_df,
+                col,
+                top_n=1000,
+            )
+            fig.savefig(cur_output_dir / f"hist_{col}.png", dpi=300, bbox_inches="tight")
+            plt.close(fig)
 
 
 if __name__ == "__main__":

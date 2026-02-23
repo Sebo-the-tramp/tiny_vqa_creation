@@ -32,17 +32,16 @@ def main() -> None:
     )
     parser.add_argument(
         "--vqa-set",
-        default="30K",
+        default="150K",
         help="VQA set to use (e.g., 10K, 30K, karo_5K).",
     )
-    parser.add_argument("--run-name", default="run_24_general")
+    parser.add_argument("--run-name", default="run_28_general")
     args = parser.parse_args()
 
-    utils_graph.RUN_NAME = args.run_name
+    eval_df = utils.utils_read.build_eval_df(args.run_name, args.base_path, vqa_set=args.vqa_set)
 
-    eval_df = utils.utils_read.build_eval_df(args.base_path, vqa_set=args.vqa_set)
-
-    output_dir = Path("output") / args.run_name / args.vqa_set / "commonsense"
+    mode = "mixed"
+    output_dir = Path("output") / args.run_name / args.vqa_set / "commonsense" / mode
     if args.family is not None:
         print("Filtering to family:", args.family)
         eval_df = eval_df[eval_df['model_family'] == args.family]
@@ -90,38 +89,27 @@ def main() -> None:
     # print("Categories:", categories)
     for cat in np.hstack([categories, "all"]):
         print("Processing:", cat)
-        eval_df_sub = eval_df.copy() if cat == "all" else eval_df[eval_df["category"] == cat].copy()
+        if cat == "all":
+            cat_df = eval_df.copy()
+        else:
+            cat_df = eval_df[eval_df["category"] == cat].copy()
 
-        acc_mat, _ = create_graph_from_eval_balanced(
-            eval_base=eval_df_sub,
-            index_to_use="sub_category",
-            title="Balanced accuracy by sub_category and model",
-            color_by_mode=True,    
-            show=False,
-            out_dir=output_dir,
-        )
-
-        # create_sub_categories_summary(
-        #     acc_mat=acc_mat,
-        #     title="Sub-category accuracy summary - all",
-        #     show=False,
-        # )
-
-        # create_correlation_common_sense(
-        #     eval_df_sub,
-        #     acc_mat,
-        #     title="Correlation common sense",
-        #     show=False,
-        # )
-
+        if cat == "all":
+            create_graph_from_eval_balanced(
+                eval_base=cat_df,
+                index_to_use="sub_category",
+                filename=f"accuracy_matrix{'_' + cat if cat != 'all' else ''}.png",
+                color_by_mode=True,
+                show=False,
+                out_dir=output_dir,
+            )
 
         if cat == "all":
             cat_label = "Overall accuracy (%)"
         else:
             cat_label = utils.utils_mapping.mapping_cat_short.get(cat)
         create_accuracy_bench_vs_common_sense(
-            eval_df_sub,
-            acc_mat,
+            cat_df,
             out_filename="cs_" + cat + ".png" if cat != "all" else "cs_correlation.png",
             show_legend=cat == "all",
             group_by="model_id",
@@ -130,6 +118,7 @@ def main() -> None:
             show_xlabel= cat == "all",
             figsize=(6, 2.5) if cat == "all" else (4, 2.5),
             out_dir=output_dir,
+            # ylim=(0, 60)
         )
 
     

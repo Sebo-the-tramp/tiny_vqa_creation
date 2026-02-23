@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import copy
 from fileinput import filename
 from pathlib import Path
 
@@ -27,19 +28,19 @@ def main() -> None:
         help="VQA set to use (e.g., 10K, 30K, karo_5K).",
     )
     parser.add_argument(
-        "--mode",
-        default='range',
+        "--vqa-split-mode",
+        default='sample',
         help="Mode to split the VQA set (range, sample, cumulative).",
     )
     parser.add_argument(
         "--sampling",
         default=0.5,
         type=float,
-        help="Fraction of the VQA set to use (e.g., 0.5 for 50%).",
+        help="Fraction (float) or size (int) of the VQA set to use (e.g., 0.5 for 50% or 5000 for 5000 VQA samples).",
     )
     parser.add_argument(
         "--num",
-        default=2,
+        default=3,
         type=int,
         help="Number of splits to create from the VQA set.",
     )
@@ -49,8 +50,14 @@ def main() -> None:
         action="store_true",
         help="Skip existing splits if they already exist.",
     )
+    parser.add_argument(
+        "--no-replacement",
+        default=False,
+        action="store_true",
+        help="Sample without replacement.",
+    )
     args = parser.parse_args()
-    assert args.mode in ['range', 'sample', 'cumulative'], "Mode must be one of 'range', 'sample', 'cumulative'."
+    assert args.vqa_split_mode in ['range', 'sample', 'cumulative'], "VQA split mode must be one of 'range', 'sample', 'cumulative'."
     
 
     test_path = Path(args.base_path) / args.run_name / f"test_{args.run_name}_{args.vqa_set}.json"
@@ -66,15 +73,17 @@ def main() -> None:
         questions_idx[q] = df.loc[df["question_id"] == q, "idx"].unique()
         print(f"  '{q}' unique idxs ({len(questions_idx[q])}):")
     
+    questions_idx_src = copy.deepcopy(questions_idx)
+
     for s in range(args.num):
-        print(f"\n\n\nCreating new split {s+1}/{args.num} with mode '{args.mode}' and sampling fraction {args.sampling}:")
+        print(f"\n\n\nCreating new split {s+1}/{args.num} with VQA split mode '{args.vqa_split_mode}' and sampling {args.sampling}:")
         split_df = df.copy()
 
-        if args.mode == 'range':
+        if args.vqa_split_mode == 'range':
             suffix = f"-r{args.num}-s{s}"
-        elif args.mode == 'cumulative':
+        elif args.vqa_split_mode == 'cumulative':
             suffix = f"-c{args.num}-s{s}"
-        elif args.mode == 'sample':
+        elif args.vqa_split_mode == 'sample':
             suffix = f"-s{args.sampling}-s{s}"
 
         split_path = str(test_path.with_suffix("")) + suffix + ".json"
@@ -87,21 +96,25 @@ def main() -> None:
         for q in questions:
             q_idxs = questions_idx[q]
 
-            if args.mode == 'range':
+            if args.vqa_split_mode == 'range':
                 slice_size = int(len(q_idxs) / args.num)  # important to do the int() convertion here (instead of int(len(q_idxs) s / args.num) in q_s) to avoid slices with varying count that lead to different vqa_set_counts across splits
                 q_s, q_e = s * slice_size, (s + 1) * slice_size
                 sampled_q_idxs = q_idxs[q_s:q_e]
                 print(f"  '{q}' idxs deterministic {q_s}:{q_e} ({len(sampled_q_idxs)})")
                 # print({sampled_q_idxs})
-            elif args.mode == 'cumulative':
+            elif args.vqa_split_mode == 'cumulative':
                 q_e = int(len(q_idxs) * (s + 1) / args.num)
                 sampled_q_idxs = q_idxs[:q_e]
                 print(f"  '{q}' idxs cumulative up to {q_e} ({len(sampled_q_idxs)})")
                 # print({sampled_q_idxs})
-            elif args.mode == 'sample':
-                sampled_q_idxs = pd.Series(q_idxs).sample(frac=args.sampling, random_state=s).tolist()
-                print(f"  '{q}' idxs sampled ({len(sampled_q_idxs)})")
+            elif args.vqa_split_mode == 'sample':
+                n = int(args.sampling * len(questions_idx_src[q]))
+                sampled_q_idxs = pd.Series(q_idxs).sample(n=n, random_state=s).tolist()
+                print(f"  '{q}' idxs sampled ({len(sampled_q_idxs)} / {len(q_idxs)})")
                 # print({sampled_q_idxs})
+                
+                # Remove questions 
+                questions_idx[q] = [idx for idx in q_idxs if idx not in set(sampled_q_idxs)]
             
             split_df = split_df[~((split_df["question_id"] == q) & (~split_df["idx"].isin(sampled_q_idxs)))]
         
@@ -121,11 +134,10 @@ def main() -> None:
             pkl_path.unlink()
         
         # If merged cache exists, delete it
-        pkl_meta_path = pkl_path.parent / f"merged_results_{args.vqa_set}_vqa-split-{args.mode}.pkl"
+        pkl_meta_path = pkl_path.parent / f"merged_results_{args.vqa_set}_vqa-split-{args.vqa_split_mode}.pkl"
         if pkl_meta_path.exists():
             print(f"Deleting existing merged cache at {pkl_meta_path}")
             pkl_meta_path.unlink()
-            
 
 
 if __name__ == "__main__":

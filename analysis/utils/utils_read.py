@@ -11,7 +11,7 @@ from utils import utils_graph
 
 # _ANSWER_RE = re.compile(r"(?i)^\s*([a-d])(?:[^a-z0-9]|$)")
 # _ANSWER_RE = re.compile(r"\b([A-D])\s*[\.\,\:\)]")
-_ANSWER_RE = re.compile(r"(?:^([A-D])\b|\b([A-D])\s*[\.\,\:\)]|\b([A-D])\b$)")
+_ANSWER_RE = re.compile(r"(?:^([A-D])\b|\b([A-D])\b\s*[\.\,\:\)]?$)", re.IGNORECASE)
 
 try:
     import orjson
@@ -48,24 +48,54 @@ def _assert_all_model_ids_in_metadata(
             f"{preview}{suffix}"
         )
 
+def _curate_invalid_and_unanswered(eval_df: pd.DataFrame) -> pd.DataFrame:
+    # Remove "general" VQA (ie, video questions) for image-only models (impossible)
+    incompatible = (eval_df["mode_test"]=="general") & (eval_df["model_mode"]=="image-only")
+    eval_df = eval_df[~incompatible]
+    
+    # Filter models with 100% empty answers "" (we assume the model crashed)
+    models_empty = (
+        eval_df.groupby(["model_family", "model_id"], observed=True)["model_answer"]
+        .apply(lambda s: s.eq("").all())
+    )
+    if models_empty.sum() > 0:
+        invalid_df = models_empty[models_empty].index.tolist()
+        for fam, mid in invalid_df:
+            print(f"[WARNING] Removing model {fam}, {mid} having ONLY empty answers.")
+
+        eval_df = eval_df[~eval_df.set_index(["model_family", "model_id"]).index.isin(invalid_df)]
+
+    # Check for missing answers (missing means the question idx was not found in the model's results json)
+    missing_answers = eval_df["model_answer"].isna()
+    if missing_answers.sum() > 0:
+        print(f"[WARNING] Missing {missing_answers.sum()} / {len(eval_df)} model answers:")
+        for model_id, group in eval_df[missing_answers].groupby("model_id"):
+            print(f"  {model_id}: {len(group)} missing answers") # (idx: {group['idx'].tolist()})")
+        
+        eval_df = eval_df[~missing_answers]
+
+    return eval_df
+
 def build_eval_df(  
+        run_name: str,
         base_path: str | Path, 
         vqa_set: str = "10K",
         metadata_path: str | Path = "utils/metadata.json",
         excluded_questions: list[str] = ["F_OCCLUSION_PERCENTAGE_OBJECT", "F_MATERIAL_IDENTIFICATION_SIMILAR_OBJECT"],
         return_paths: dict | None = None,
-        columns: list[str] = []  # Columns to preserve
+        columns: list[str] = [],  # Columns to preserve
+        cache: bool = True,
     ) -> pd.DataFrame:
     base = Path(base_path)
 
-    run_folder = Path(utils_graph.RUN_NAME)
+    run_folder = Path(run_name)
 
     df = load_results(
         base,
         run_folder=run_folder,
         merge_model_answers=True,
         model_answers_wide=True,
-        cache=True,
+        cache=cache,
         add_sim_metadata=True,
         vqa_set=vqa_set,
         return_paths=return_paths,
@@ -81,10 +111,6 @@ def build_eval_df(
     if not model_cols:
         raise ValueError(f"No model answer columns found in {results_dir}")
 
-    df["answer"] = df["answer"].apply(
-        lambda a: _sanitize_answer(a, max_prefix_chars=None)
-    )
-
     id_cols = [
         c
         for c in [
@@ -98,6 +124,8 @@ def build_eval_df(
             "mode_test",
             "mode_val",
             "mode",
+            "scene",
+            "source",
         ] + columns
         if c in df.columns
     ]
@@ -108,8 +136,22 @@ def build_eval_df(
         var_name="model_id",
         value_name="model_answer",
     )
+    assert set(df["answer"].unique()) <= {"A", "B", "C", "D"}, "Error, answers should in: {'A', 'B', 'C', 'D'}"
 
-    valid = eval_df["model_answer"].notna() & eval_df["answer"].notna()
+    metadata_df = _load_model_metadata(metadata_path=metadata_path)
+    _assert_all_model_ids_in_metadata(eval_df=eval_df, metadata_df=metadata_df)
+
+    for col in ["family", "params_b", "release_year", "mode", "priority"]:
+        col_map = metadata_df.set_index("model_id")[col].to_dict()
+        eval_df["model_"+col] = eval_df["model_id"].map(col_map)
+    
+    # Remove model that may have crashed or question invalid (eg, video question for image-only model)
+    eval_df = _curate_invalid_and_unanswered(eval_df)
+
+    # Verify all answers are either valid (A-D), empty ('') or invalid ('?' => typically, when model answers jiberish instead of A-D)
+    assert set(eval_df["model_answer"].dropna().unique()) <= {"A", "B", "C", "D", "?", ""}, "Models answers should be in: {'A', 'B', 'C', 'D', '?', ''}. Values found: " + str(eval_df["model_answer"].unique())
+    
+    valid = eval_df["model_answer"].notna()
     eval_df["is_correct"] = pd.NA
     eval_df.loc[valid, "is_correct"] = (
         eval_df.loc[valid, "model_answer"] == eval_df.loc[valid, "answer"]
@@ -123,34 +165,22 @@ def build_eval_df(
         eval_df["mode_y"] = eval_df["mode"]
     
     if excluded_questions is not None:
-        print(f"/!\ WARNING: Excluding questions: {excluded_questions} => Dropping {len(eval_df[eval_df['question_id'].isin(excluded_questions)])} entries.")
+        print(f"[WARNING] Excluding questions: {excluded_questions} => Dropping {len(eval_df[eval_df['question_id'].isin(excluded_questions)])} entries.")
         eval_df = eval_df[~eval_df["question_id"].isin(excluded_questions)]
-
-
-    metadata_df = _load_model_metadata(metadata_path=metadata_path)
-    _assert_all_model_ids_in_metadata(eval_df=eval_df, metadata_df=metadata_df)
-    
-    for col in ["family", "params_b", "release_year", "mode"]:
-        col_map = metadata_df.set_index("model_id")[col].to_dict()
-        eval_df["model_"+col] = eval_df["model_id"].map(col_map)
     
     # Convert accuracy column
-    if "accuracy" in eval_df.columns:
-        eval_df["accuracy"] = pd.to_numeric(eval_df["accuracy"], errors="coerce")
-    elif "is_correct" in eval_df.columns:
-        eval_df["accuracy"] = pd.to_numeric(eval_df["is_correct"], errors="coerce")
-    else:
-        raise KeyError("eval_df must include 'accuracy' or 'is_correct'.")
+    assert any(col in eval_df.columns for col in ["accuracy", "is_correct"]), "Expected 'accuracy' or 'is_correct' column in eval_df"
+    acc_column = "accuracy" if "accuracy" in eval_df.columns else "is_correct"
+    eval_df["accuracy"] = pd.to_numeric(eval_df[acc_column], errors="coerce")
     
-    before_drop = len(eval_df)
-    eval_df = eval_df.dropna(subset=["category", "sub_category", "accuracy"])
-    dropped_rows = before_drop - len(eval_df)
-    if dropped_rows > 0:
-        print(f"/!\ WARNING: Dropped {dropped_rows} out of {before_drop} rows with NaN in category/sub_category/accuracy")
-        # prompt = input("Proceed with dropped rows or raise error? (y=proceed, n=error): ").strip().lower()
-        # if prompt != "y":
-        #     raise ValueError("NaN values in category/sub_category/accuracy columns.")
-    
+    missing_acc = eval_df["accuracy"].isna()
+    if missing_acc.sum() > 0:
+        total_rows = len(eval_df)
+        print(
+            f"[WARNING] Dropping {missing_acc.sum()} / {total_rows} rows with NaN in accuracy"
+        )
+
+    eval_df = eval_df[~missing_acc]
     return eval_df
 
 def load_results(
@@ -200,11 +230,10 @@ def load_results(
                 p.stem.replace("_val", "") for p in results_dir.glob("*_val.json")
             )
         missing = [col for col in required_cols if col not in df_cached.columns]
-        if len(missing) == 0:
-            return df_cached
-        else:
-            print("/!\ WARNING: Cache is missing required columns (you may need to reload):", missing)
-            return df_cached
+        if len(missing) > 0:
+            print("[WARNING] Models missing:", missing)
+        
+        return df_cached
 
             # reply = input("There are missing columns in the cache. Proceed or reload? (y=use cache, n=reload): ").strip().lower()
             # if reply == "y":
@@ -215,15 +244,14 @@ def load_results(
 
     # FOR AGENT Keep the hardcoded columns #
     # print("Processing columns...")
-
-    drop_cols = ["scene", "source"]
-
-    if drop_cols and keep_cols:
-        raise ValueError("Use only one of drop_cols or keep_cols.")
-    if keep_cols is not None:
-        df_test = df_test[keep_cols]
-    elif drop_cols is not None:
-        df_test = df_test.drop(columns=drop_cols, errors="ignore")
+    # 
+    # drop_cols = ["scene", "source"]
+    # if drop_cols and keep_cols:
+    #     raise ValueError("Use only one of drop_cols or keep_cols.")
+    # if keep_cols is not None:
+    #     df_test = df_test[keep_cols]
+    # elif drop_cols is not None:
+    #     df_test = df_test.drop(columns=drop_cols, errors="ignore")
 
     # Keep all test questions; val answers may include extra idx.
     df = df_test.merge(df_val, on="idx", how="left", suffixes=("_test", "_val"))
@@ -268,6 +296,7 @@ def load_results(
             if model_results_dir is not None
             else base / run_folder / f"results_{run_folder}"
         )
+        assert results_dir.exists(), f"Model results directory not found: {results_dir}"
         df_models = load_model_answers(results_dir, wide=model_answers_wide)
         if model_answers_wide:
             df = df.merge(df_models, on="idx", how="left")
@@ -294,12 +323,14 @@ def load_results_levels(
     vqa_set: str = "10K"
 ) -> pd.DataFrame:
     base = Path(base_path)
+    assert False, "load_results_levels is not implemented yet. It should be similar to load_results but with additional processing to handle different levels of the dataset (e.g., question difficulty levels). You can start by copying load_results and then modifying it to include the necessary logic for handling levels."
 
     test_path = base / run_folder / f"test_{run_folder}_{vqa_set}.json"
     val_path = base / run_folder / f"val_answer_{run_folder}.json"
 
     print(f"Loading test data from: {test_path}")
     print(f"Loading val data from: {val_path}")
+
 
     if cache_path is None:
         cache_path = (
@@ -378,6 +409,36 @@ def load_results_levels(
 
     return df
 
+def macro_accuracy(df: pd.DataFrame, level: str, group_by: list[str] = None) -> pd.DataFrame:
+    levels = ["question_id", "sub_category", "category", "model_id", "model_family"]
+    if "run_name" in df.columns:
+        levels = levels + ["run_name"]
+    assert level in levels, "Invalid value for 'level' argument"
+
+    if group_by is not None:
+        levels = levels + [g for g in list(group_by) if g not in levels]
+        
+
+    level_df = df
+    # Compute a level accuracy by iteratively averaging the higher levels (eg, for level=category, we first average by question, then sub_category, then category)
+    for level_idx, level_name in enumerate(levels):
+        level_df = (
+            level_df.groupby(
+                levels[level_idx:]
+                # ["run_name", "model_family", "model_id", "category", "sub_category", "question_id"]
+            )["accuracy"]
+            .agg(
+                accuracy="mean",
+                accuracy_min="min",
+                accuracy_max="max",
+                accuracy_std="std",
+            )
+            .reset_index()
+        )
+        if level_name == level:
+            return level_df
+
+    return None
 
 sim_path_fct = lambda x: x.replace("simulation.json", "simulation_kinematics_min.json")
 def read_simulation_metadata(
@@ -488,13 +549,19 @@ def load_model_answers(results_dir: str | Path, wide: bool = False) -> pd.DataFr
     frames = []
 
     for path in sorted(results_dir.glob("*_val.json")):
+        model = path.stem.replace("_val", "")
         df = pd.read_json(path)
-        df["model"] = path.stem.replace("_val", "")
+        df["model"] = model
         df["og_answer"] = df["answer"]
         df["answer"] = df["answer"].apply(
-            lambda a: _sanitize_answer(a, max_prefix_chars=None)
+            lambda a: _sanitize_answer(a)
         )
         frames.append(df)
+
+        assert df["answer"].isna().sum() == 0, f"Error: Found NaN answers in model {model} at path {path}"
+
+        unanswered, invalid, total = df["answer"].eq("").sum(), df["answer"].eq("?").sum(), len(df)
+        print(f"{model}: loaded {total} answers{'' if unanswered+invalid == 0 else f' => [WARNING]'}{'' if unanswered == 0 else f' {100 * unanswered / total:.2f}% unanswered/empty'}{'' if invalid == 0 else f', {100 * invalid / total:.2f}% invalid/jibberish'}")
 
     if not frames:
         return pd.DataFrame()
@@ -502,6 +569,13 @@ def load_model_answers(results_dir: str | Path, wide: bool = False) -> pd.DataFr
     df_all = pd.concat(frames, ignore_index=True)
     if not wide:
         return df_all
+
+    # Check for duplicates before pivoting
+    dups = df_all.duplicated(subset=["idx", "model"], keep=False)
+    if dups.any():
+        print("Duplicate (idx, model) pairs found in model answers:")
+        print(df_all[dups])
+        raise ValueError("There are duplicates (idx, model) rows, printed above. Cannot pivot to wide format.")
 
     return df_all.pivot_table(
         index="idx", columns="model", values="answer", aggfunc="first"
@@ -512,23 +586,18 @@ def get_timestep_from_idx(idx: int) -> str:
     return f"{TIMESTART + float(idx) * RENDER_STEP:08.3f}"
 
 
-def _sanitize_answer(answer: object, max_prefix_chars: int | None = 10) -> str | None:
+def _sanitize_answer(answer: object) -> str | None:
     if answer is None or (isinstance(answer, float) and pd.isna(answer)):
-        return None
-    if max_prefix_chars is None or max_prefix_chars < 0:
-        text = str(answer)
-    else:
-        text = str(answer)[:max_prefix_chars]
-    # print(text)
-    match = _ANSWER_RE.search(text)
+        return ""
+    match = _ANSWER_RE.search(str(answer))
     if not match:
         return "?"
     answer = next((group for group in match.groups() if group), None)
     return answer.upper()
 
 def iter_mode_slices(eval_df: pd.DataFrame) -> list[tuple[str, pd.DataFrame]]:
-    if "model_mode" not in eval_df.columns:
-        return [("all", eval_df)]
+    # if "model_mode" not in eval_df.columns:
+    #     return [("all", eval_df)]
 
     slices = []
     for mode in ("image-only", "general"):
@@ -536,27 +605,35 @@ def iter_mode_slices(eval_df: pd.DataFrame) -> list[tuple[str, pd.DataFrame]]:
         if not subset.empty:
             slices.append((mode, subset))
 
-    unknown = eval_df[eval_df["model_mode"] == "unknown"]
-    if not unknown.empty:
-        slices.append(("unknown", unknown))
+    # unknown = eval_df[eval_df["model_mode"] == "unknown"]
+    # if not unknown.empty:
+    #     slices.append(("unknown", unknown))
 
     return slices or [("all", eval_df)]
 
 def select_eval_df(
-    eval_df: pd.DataFrame, *, mode: str, split_by_mode: bool
+    eval_df: pd.DataFrame, *, mode: str = "all"
 ) -> list[tuple[str, pd.DataFrame]]:
-    if mode != "mixed":
-        subset = eval_df[eval_df["model_mode"] == mode]
-        return [(mode, subset)]
-    if split_by_mode:
-        return iter_mode_slices(eval_df)
-    return [("mixed", eval_df)]
+    if mode == "all":
+        slices = iter_mode_slices(eval_df)
+        slices.append(("mixed", eval_df))
+        return slices
+    
+    if mode == "mixed":
+        return [("mixed", eval_df)]
+    
+    # Otherwise, select the specified mode
+    subset = eval_df[eval_df["model_mode"] == mode]
+    return [(mode, subset)]
 
-GROUPINGS = ["model_best", 
-             "model_bestmat", 
-             "model_biggest", 
-             "model_id", 
-             "model_family"]
+
+GROUPINGS = [
+    "family_best", 
+    "family_bestmat", 
+    "family_biggest", 
+    "model", 
+    # "family"  # not making sense to average by family
+]
 
 def apply_group(df: pd.DataFrame, group_by: str) -> pd.DataFrame:
     # Best average across question (no balancing)
@@ -565,27 +642,100 @@ def apply_group(df: pd.DataFrame, group_by: str) -> pd.DataFrame:
     # df = df[df['model_id'].isin(best_models['model_id'])]
     # group_by = "model_id"cat_acc_df
 
-    if group_by in ["model_best", "model_bestmat"]:
+    if group_by in ["family_best", "family_bestmat"]:
+        # Compute category accuracy for each model
         cat_acc_df = (
             df.groupby(["category", "model_family", "model_id"], observed=True)["accuracy"]
             .mean()
             .reset_index()
         )
         
-        if group_by == "model_bestmat":
+        if group_by == "family_bestmat":
             cat_acc_df = cat_acc_df[cat_acc_df["category"] == "material_understanding"]
         
+        # Macro-accuracy: average across categories
         model_accuracy = cat_acc_df.groupby(['model_family', 'model_id'])['accuracy'].mean().reset_index()
         best_models = model_accuracy.loc[model_accuracy.groupby('model_family')['accuracy'].idxmax()]
         df = df[df['model_id'].isin(best_models['model_id'])]
         group_by = "model_id"
-    elif group_by in ["model_biggest"]:
-        biggest_models = df.loc[df.groupby('model_family')['model_params_b'].idxmax()]
-        df = df[df['model_id'].isin(biggest_models['model_id'])]
+    elif group_by in ["family_biggest"]:
+        # We select the biggest (primary) most recent (tie-breaker) model per family, 
+        # and also check that there are no duplicates (same family, same params, same priority) 
+        # among the winners.
+
+        # No need to keep all entries, we just look at model metadata
+        df_mod = (
+                    df[["model_family", "model_id", "model_params_b", "model_priority"]]
+                    .drop_duplicates()
+                )
+        df_mod.loc[df_mod["model_priority"].isna(), "model_priority"] = 0  # Set unknown priorities
+
+        # Retrieve per-family model with highest params
+        max_params = df_mod.groupby("model_family")["model_params_b"].transform("max")
+        candidates = df_mod[df_mod["model_params_b"].eq(max_params)]
+
+        # Retrieve per-family model with highest priority, among the candidates
+        candidates_maxpriority = candidates.groupby("model_family")["model_priority"].transform("max")
+        family_biggest_all = candidates[candidates["model_priority"].eq(candidates_maxpriority)]
+
+        # Check if there are groups (family, params, priority) of size not equal to 1 (ie, duplicates)
+        mask = family_biggest_all.groupby("model_family")["model_id"].transform("nunique").ne(1)
+        assert family_biggest_all[mask].empty, (
+            "Expected exactly 1 highest parameters model per model_family, found more:\n"
+            + family_biggest_all[mask].to_string()
+        )
+
+        df = df[df['model_id'].isin(family_biggest_all["model_id"])]
         group_by = "model_id"
-        
+    elif group_by == "model":
+        group_by = "model_id"
+    elif group_by == "family":
+        group_by = "model_family"
+    else:
+        raise ValueError(f"Unknown group_by: {group_by}")
 
     return df, group_by
+
+def balanced_split_df(df: pd.DataFrame, 
+                      group_by: list[str], 
+                      balance_col: list[str], 
+                      max_size: int | None = None) -> pd.DataFrame:
+    group_by = list(group_by)
+    balance_col = list(balance_col)
+    strata = group_by + balance_col
+
+    # counts per (group, question_id)
+    c = df.groupby(strata, observed=True).size().rename("n").reset_index()
+
+    # target per question_id = minimum count across groups
+    target = (
+        c.groupby(balance_col, observed=True)["n"]
+        .min()
+        .rename("target_n")
+        .reset_index()
+    )
+    print(f"Max {group_by} size after balancing:", target["target_n"].sum())
+
+    # keep only strata with target_n > 0
+    c = c.merge(target, on=balance_col, how="inner")
+    c = c[c["target_n"] > 0]
+
+
+    # sample target_n within each (group_by, question_id) stratum
+    merged = df.merge(c[strata + ["target_n"]], on=strata, how="inner")
+
+    sampled_parts = []
+    for target_n, chunk in merged.groupby("target_n", observed=True):
+        n = int(target_n)
+        if n <= 0:
+            continue
+        sampled_parts.append(
+            chunk.groupby(strata, group_keys=False, observed=True)
+            .sample(n=n, random_state=42)
+        )
+
+    out = pd.concat(sampled_parts, ignore_index=True).drop(columns=["target_n"])
+    return out
 
 if __name__ == "__main__":
     df, paths = load_results(

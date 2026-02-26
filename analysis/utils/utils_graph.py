@@ -14,6 +14,8 @@ from matplotlib.colors import LogNorm
 from matplotlib.lines import Line2D
 import utils.utils_mapping
 
+from pathlib import Path
+
 from scipy.stats import pearsonr
 
 try:
@@ -33,6 +35,196 @@ def _color_for_subcategory(sub_category: str, palette: list[str]) -> str:
     digest = hashlib.md5(sub_category.encode("utf-8")).hexdigest()
     idx = int(digest, 16) % len(palette)
     return palette[idx]
+
+def paperformat(ax, figsize=(4, 3.1), ylim=None, ticks_step=10, grid=["x", "y"], minor=True):
+    fig = ax.get_figure()
+    if figsize is not None:
+        fig.set_size_inches(*figsize)
+
+    ax.set_title("")
+    for label in ax.get_xticklabels():
+        label.set_fontsize(13)
+        label.set_ha('center')
+        label.set_fontweight('bold')  # or 'normal', 'light', etc.
+    
+    for label in ax.get_yticklabels():
+        label.set_fontsize(13)
+        label.set_fontweight('bold')  # or 'normal', 'light', etc.
+
+    for label in [ax.xaxis.label, ax.yaxis.label]:
+        label.set_fontsize(14)
+        label.set_fontweight("bold")
+
+    ax.spines['right'].set_visible(False)
+    ax.spines['top'].set_visible(False)
+    if ylim is not None:
+        ax.set_ylim(ylim)
+    
+    import matplotlib.ticker as mticker
+    ax.yaxis.set_major_locator(mticker.MultipleLocator(ticks_step))
+    if minor:
+        ax.yaxis.set_minor_locator(mticker.MultipleLocator(ticks_step//2 if isinstance(ticks_step, int) else ticks_step/2))
+
+    ax.grid(False)
+    if grid:
+        for axis in grid:
+            ax.grid(axis=axis, which="major", linestyle="-", alpha=0.5)
+            ax.grid(axis=axis, which="minor", linestyle="-", alpha=0.1)
+    
+    leg = ax.get_legend()
+    if leg is not None:
+        leg.get_title().set_fontsize(12)
+        leg.get_title().set_fontweight("bold")
+        plt.setp(leg.get_texts(), fontsize=10)      # all entry labels
+        leg.get_frame().set_alpha(0.9)              # frame style
+        leg.get_frame().set_linewidth(0.8)
+
+def get_level_label(level, name):
+    if level == "category":
+        return utils.utils_mapping.categories.get(name).replace(" ", "\n")
+    elif level == "sub_category":
+        return utils.utils_mapping.subcategories.get(name).replace(" ", "\n")
+    elif level == "question_id":
+        return name
+
+# def get_level_color(level, name):
+#     cat_key = get_category(level, name)
+#     return utils.utils_mapping.mapping_cat_colors.get(cat_key)
+
+# def get_category(level, name):
+#     if level == "category":
+#         return name
+#     elif level == "sub_category":
+#         return utils.utils_mapping.mapping_sub.get(name)
+#     elif level == "question_id":
+#         return 
+
+
+def get_benchmark_filepath(dir, cat, bench):
+    o_dir = dir if bench == "all" else (dir / f"bench_{bench.lower().replace(' ', '_')}")
+    o_dir.mkdir(parents=True, exist_ok=True)
+    o_fname = f"cs_{cat}.png" if cat != "all" else "cs_correlation.png"
+    return Path(o_dir) / o_fname
+
+def create_benchmarks_violin(
+    eval_df: pd.DataFrame,
+    output_dir: str | Path,
+    filename: str,
+    benchmarks: list[str],
+    *,
+    figsize: tuple[float, float] = None,
+):
+    output_dir = Path(output_dir)
+    # all_categories = np.hstack([eval_df["category"].unique(), "all"])
+    categories = list(eval_df["category"].unique())
+
+    bench_frames: list[pd.DataFrame] = []
+    for bench in benchmarks:
+        cat_frames: list[pd.DataFrame] = []
+        for cat in categories:
+            fpath = get_benchmark_filepath(output_dir, cat, bench).with_suffix(".json")
+
+            df = pd.read_json(fpath)
+            df["category"] = cat
+            cat_frames.append(df)
+
+        bench_df = pd.concat(cat_frames, ignore_index=True)
+        bench_df["benchmark"] = bench
+        bench_frames.append(bench_df)
+
+    bench_df = pd.concat(bench_frames, ignore_index=True)
+
+    # Compute pearson per (benchmark, category) group
+    def _pearson(g: pd.DataFrame) -> float:
+        x, y = g["our_accuracy"], g["cs_accuracy"]
+        return pearsonr(x, y)[0]
+
+    bench_cat_pearson_df = (
+        bench_df.groupby(["benchmark", "category"], observed=True)[["our_accuracy", "cs_accuracy"]]
+        .apply(_pearson)
+        .reset_index(name="pearson")
+    )
+
+    # Add category positions for plotting
+    categories_sorted = utils.utils_mapping.sort_categories(
+        bench_cat_pearson_df["category"].unique()
+    )
+    categories_sorted = list(categories_sorted)
+    cat_to_pos = {cat: idx for idx, cat in enumerate(categories_sorted)}
+    bench_cat_pearson_df["cat_pos"] = bench_cat_pearson_df["category"].map(cat_to_pos)
+
+    # Do the violin
+    cats_mask = bench_cat_pearson_df["category"].ne("all")
+    fig, ax = plt.subplots(figsize=(2.5+len(categories_sorted), 4))
+    sns.violinplot(
+        data=bench_cat_pearson_df[cats_mask],  # Exclude the "all" category from the violin plot
+        x="cat_pos",
+        y="pearson",
+        ax=ax,
+        color="0.85",
+        inner=None,
+        cut=0,
+        width=1.0,
+        linewidth=0.5,
+        order=list(range(len(categories_sorted))),
+    )
+
+    ax.set_xticks(range(len(categories_sorted)))
+    ax.set_xticklabels(categories_sorted)
+    ax.set_xlabel("")
+    ax.set_ylabel("Pearson correlation")
+    
+    rng = np.random.default_rng(40)
+    palette = sns.color_palette("tab10", n_colors=bench_cat_pearson_df[cats_mask]["benchmark"].nunique())
+    for g_idx, (group_name, df_m) in enumerate(bench_cat_pearson_df[cats_mask].groupby("benchmark", observed=True)):
+        x_vals = df_m["cat_pos"].to_numpy()
+        y_vals = df_m["pearson"].to_numpy()
+        
+        x_jittered = x_vals + rng.uniform(-0.15, 0.15, size=x_vals.size)
+        
+        if group_name == "all":
+            color, marker, size = "#333333", "o", 12**2
+        else:
+            color, marker, size = palette[g_idx % len(palette)], "*", 24**2
+
+        # Plot scatter points
+        ax.scatter(
+            x_jittered,
+            y_vals,
+            color=color,
+            s=size,
+            alpha=0.8,
+            edgecolor="white",
+            linewidth=1,
+            marker=marker,
+            zorder=4,
+            label=group_name if group_name != "all" else "All benchmarks",
+        )
+    
+    # Category labels
+    category_labels = [ get_level_label("category", cat) if cat != "all" else "All benchmarks"
+                    #    + f"\n({bench_cat_pearson_df[bench_cat_pearson_df['category'] == 'all']['pearson'].values[0]:.2f})" 
+                       for cat in categories_sorted]
+    ax.set_xticks(range(len(category_labels)))
+    ax.set_xticklabels(category_labels, ha='center')
+    
+    for ticklabel, cat in zip(ax.get_xticklabels(), categories_sorted):
+        if cat != "all":
+            ticklabel.set_color(utils.utils_mapping.mapping_cat_colors.get(cat)+"CC")  # Adding transparency
+
+    ax.legend(
+        title="Benchmarks",
+        loc="upper left",
+        bbox_to_anchor=(1.02, 1),
+    )
+    
+    paperformat(ax, figsize=None, grid=["y"], minor=False, ticks_step=0.2)
+    for ticklabel in ax.get_xticklabels():
+        ticklabel.set_fontsize(ticklabel.get_fontsize()*0.85)
+    
+    output_dir.mkdir(parents=True, exist_ok=True)
+    plt.savefig(f"{output_dir}/{filename}", dpi=300, bbox_inches="tight")
+    print(f"Plot saved to: {output_dir}/{filename}")
 
 
 def make_balanced_matrix(
@@ -550,6 +742,7 @@ def create_accuracy_bench_vs_common_sense(
         show_xlabel: bool = True,
         figsize: tuple = (4, 2.5),
         out_dir: str = None,
+        benchmark: str = "all",
     ):
     def _standardize_model_label(model_id: str) -> str:
         label = model_id
@@ -583,8 +776,11 @@ def create_accuracy_bench_vs_common_sense(
 
     model_unique_ids = eval_df["model_id"].unique()
     model_df = utils.utils_read.macro_accuracy(eval_df, level="model_id")
+
+    benchmark_field = "Avg. Score" if benchmark == "all" else benchmark
     
-    common_sense_accuracy = {}
+    model_cs_mapping = {}
+    cs_accuracy = {}
     cs_methods = common_sense_df["Method"].values
     for model_id in model_unique_ids:
         model_row = model_df[model_df["model_id"] == model_id].iloc[0]
@@ -597,18 +793,31 @@ def create_accuracy_bench_vs_common_sense(
                 break
         
         if sum(cs_mask) != 0:
-            if sum(cs_mask) > 1:
-                raise Exception(f"Multiple common sense matches found for {model_id}. Matches: {common_sense_df[cs_mask]['Method'].values}")
+            assert sum(cs_mask) == 1, Exception(f"Multiple common sense matches found for {model_id}. Matches: {common_sense_df[cs_mask]['Method'].values}")
             
             cs_model_id = common_sense_df[cs_mask]["Method"].values[0]
             cs_row = common_sense_df[common_sense_df["Method"] == cs_model_id].iloc[0]
-            print(f"Mapping {model_id} (ours, {model_row['accuracy']}) with {cs_model_id} (common sense: {cs_row.get('Avg. Score')})")
-            common_sense_accuracy[model_id] = cs_row.get("Avg. Score")
+            # print(f"Mapping `{model_id}` (ours) with `{cs_model_id}` (common sense)")
+            cs_accuracy[model_id] = float(cs_row[benchmark_field])
+            if benchmark_field == "OCRBench":
+                cs_accuracy[model_id] *= 0.1  # OCRBench is in [0, 1000], we want it in [0, 100]
         else:
-            print(f"No common sense mapping found for {model_id}")
-
-    print(len(common_sense_accuracy), "models with common sense mapping out of", len(model_unique_ids))
+            cs_model_id = None
+        
+        model_cs_mapping[model_id] = cs_model_id
     
+    cs_found = [model for model, cs_model in model_cs_mapping.items() if cs_model is not None]
+    cs_not_found = [model for model, cs_model in model_cs_mapping.items() if cs_model is None]
+    print(f"CS Model mapping found ({len(cs_found)}/{len(model_cs_mapping)}): ", cs_found)
+    print(f"CS Model mapping NOT found ({len(cs_not_found)}/{len(model_cs_mapping)}): ", cs_not_found)
+    
+    # Save mapping for reference
+    pd.Series(model_cs_mapping, name="cs_model") \
+    .rename_axis("model_id") \
+    .reset_index() \
+    .to_json( f"{out_dir}/model_cs_mapping.json", orient="records", indent=2, force_ascii=False)
+
+    # Retrieve styles
     model_style, family_map = utils.utils_mapping._build_model_style(
         "./utils/metadata.json",
         group_by=group_by,
@@ -643,39 +852,36 @@ def create_accuracy_bench_vs_common_sense(
     base_cols = ["model_id", "Total", "mode_y"]
     if "params_b" in eval_df_accuracy_total_per_model.columns:
         base_cols.append("params_b")
+    
+    cs_df = pd.concat([
+            pd.Series({m: cs_m for m, cs_m in model_cs_mapping.items () if m is not None}, name="cs_model"),
+            pd.Series(cs_accuracy, name="cs_accuracy"),
+        ],
+        axis=1,
+    ).rename_axis("model_id").reset_index()
     eval_df_accuracy_total_per_model = (
         eval_df_accuracy_total_per_model[base_cols]
-        .rename(columns={"Total": "balanced_accuracy", "mode_y": "mode"})
-        .merge(
-            pd.DataFrame.from_dict(
-                {
-                    "common_sense_accuracy": common_sense_accuracy,
-                }
-            )
-            .reset_index()
-            .rename(columns={"index": "model_id"}),
-            on="model_id",
-            how="left",
-        )
+        .rename(columns={"Total": "our_accuracy", "mode_y": "mode"})
+        .merge(cs_df, on="model_id", how="left")
         .merge(
             metadata_models[["id", "params_b"]].rename(columns={"id": "model_id"}),
             on="model_id",
             how="left",
         )
-        .dropna(subset=["common_sense_accuracy"])
+        .dropna(subset=["cs_accuracy"])
     )
 
     if "params_b" not in eval_df_accuracy_total_per_model.columns:
         eval_df_accuracy_total_per_model["params_b"] = pd.NA
-    eval_df_accuracy_total_per_model["common_sense_accuracy"] = pd.to_numeric(
-        eval_df_accuracy_total_per_model["common_sense_accuracy"], errors="coerce"
+    eval_df_accuracy_total_per_model["cs_accuracy"] = pd.to_numeric(
+        eval_df_accuracy_total_per_model["cs_accuracy"], errors="coerce"
     )
 
     plt.figure(figsize=figsize)
     sns.set_style("white")
 
     # Ensure numeric columns
-    num_cols = ["common_sense_accuracy", "balanced_accuracy"]
+    num_cols = ["cs_accuracy", "our_accuracy"]
     if "params_b" in eval_df_accuracy_total_per_model.columns:
         num_cols.append("params_b")
     for c in num_cols:
@@ -683,29 +889,32 @@ def create_accuracy_bench_vs_common_sense(
             eval_df_accuracy_total_per_model[c], errors="coerce"
         ).astype(float)
 
-    balanced_max = eval_df_accuracy_total_per_model["balanced_accuracy"].max()
-    common_max = eval_df_accuracy_total_per_model["common_sense_accuracy"].max()
+    balanced_max = eval_df_accuracy_total_per_model["our_accuracy"].max()
+    common_max = eval_df_accuracy_total_per_model["cs_accuracy"].max()
     scale_balanced = pd.notna(balanced_max) and balanced_max <= 1.0 and common_max > 1.5
     scale_common = pd.notna(common_max) and common_max <= 1.0 and balanced_max > 1.5
     if scale_balanced:
-        eval_df_accuracy_total_per_model["balanced_accuracy"] *= 100.0
+        eval_df_accuracy_total_per_model["our_accuracy"] *= 100.0
     if scale_common:
-        eval_df_accuracy_total_per_model["common_sense_accuracy"] *= 100.0
+        eval_df_accuracy_total_per_model["cs_accuracy"] *= 100.0
 
     # 1. Calculate Pearson Correlation
     # Drop NaNs to ensure accurate calculation
+    assert eval_df_accuracy_total_per_model.isna().sum().sum() == 0, "NaN values found in correlation dataframe. Please check the data."
     corr_df = eval_df_accuracy_total_per_model.dropna(
-        subset=["common_sense_accuracy", "balanced_accuracy"]
+        subset=["cs_accuracy", "our_accuracy"]
     )
-    r_val, p_val = pearsonr(
-        corr_df["common_sense_accuracy"], corr_df["balanced_accuracy"]
-    )
+    corr_df.to_json(f"{out_dir}/{Path(out_filename).stem}.json", orient="records", indent=2, force_ascii=False)
 
+    r_val, p_val = pearsonr(
+        corr_df["cs_accuracy"], corr_df["our_accuracy"]
+    )
+    
     # 2. Regression Plot
     sns.regplot(
         data=eval_df_accuracy_total_per_model,
-        x="common_sense_accuracy",
-        y="balanced_accuracy",
+        x="cs_accuracy",
+        y="our_accuracy",
         scatter=False,
         ci=95,
         line_kws={"color": "red", "lw": 1.5, "ls": "--"},
@@ -716,8 +925,8 @@ def create_accuracy_bench_vs_common_sense(
         color, marker, size = model_style[model_id]
         scatter_kwargs = dict(
             data=df_m,
-            x="common_sense_accuracy",
-            y="balanced_accuracy",
+            x="cs_accuracy",
+            y="our_accuracy",
             # hue="mode",
             # marker="o",
             color=color,
@@ -771,43 +980,16 @@ def create_accuracy_bench_vs_common_sense(
     )
 
     # 5. Modified Legend
-    df_plot = eval_df_accuracy_total_per_model.query(
-        "mode in ['image-only', 'general']"
-    ).copy()
-
-    hue_order = ["image-only", "general"]
-    # Map old keys to new display names
-    label_map = {"image-only": "single-frame", "general": "multi-frame"}
-
-    palette = dict(zip(hue_order, sns.color_palette(n_colors=len(hue_order))))
-    present = [k for k in hue_order if k in set(df_plot["mode"])]
-
-    # Create handles with the new labels
-    handles = [
-        Line2D(
-            [0],
-            [0],
-            marker="o",
-            linestyle="",
-            color=palette[k],
-            label=label_map.get(k, k),
-        )
-        for k in present
-    ]
-    # if show_legend:
-    #     legend_mode = ax.legend(
-    #         handles=handles,
-    #         title="",
-    #         loc="upper left",
-    #         fontsize=legend_fontsize,
-    #         title_fontsize=legend_fontsize,
-    #         frameon=True,
-    #     )
+    # legend_handles, legend_labels, title_str = _build_group_legend_items(
+    #     plot_df,
+    #     group_by=group_by,
+    #     metadata_path=metadata_path
+    # )
 
     # 6. Annotations
     annotate_df = eval_df_accuracy_total_per_model.dropna(
-        subset=["common_sense_accuracy", "balanced_accuracy"]
-    ).sort_values("balanced_accuracy", ascending=False)
+        subset=["cs_accuracy", "our_accuracy"]
+    ).sort_values("our_accuracy", ascending=False)
     annotate_df["model_label"] = annotate_df["model_id"].map(_standardize_model_label)
     label_texts = []
     for _, r in annotate_df.iterrows():
@@ -815,9 +997,9 @@ def create_accuracy_bench_vs_common_sense(
         versionname = metadata_models.loc[metadata_models["id"] == r["model_id"], "versionname"].values[0]
         # print(r["model_id"])
         offset = (0, 10)
-        # ha = "left" if r["common_sense_accuracy"] < 45 else "right"
-        if r["common_sense_accuracy"] < 45:
-            offset = (offset[0]+10*(45-r["common_sense_accuracy"])/(45-35), offset[1])
+        # ha = "left" if r["cs_accuracy"] < 45 else "right"
+        if r["cs_accuracy"] < 45:
+            offset = (offset[0]+10*(45-r["cs_accuracy"])/(45-35), offset[1])
         ha = "center"
         # if label in {"InternVL2.5-4B", "InternVL2.5-2B"}:
         #     offset = (-10, 0)
@@ -825,7 +1007,7 @@ def create_accuracy_bench_vs_common_sense(
         label_texts.append(
             ax.annotate(
                 versionname,
-                xy=(r["common_sense_accuracy"], r["balanced_accuracy"]),
+                xy=(r["cs_accuracy"], r["our_accuracy"]),
                 xytext=offset,
                 textcoords="offset points",
                 va="center",

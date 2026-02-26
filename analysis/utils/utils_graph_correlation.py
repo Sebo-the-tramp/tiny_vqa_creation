@@ -16,42 +16,6 @@ import utils.utils_read
 
 warnings.filterwarnings("ignore", message=".*edgecolor.*unfilled marker.*")
 
-def paperformat(ax, figsize=(4, 3.1), ylim=None, ticks_step=10, grid=["x", "y"], minor=True):
-    fig = ax.get_figure()
-    if figsize is not None:
-        fig.set_size_inches(*figsize)
-
-    ax.set_title("")
-    for label in ax.get_xticklabels():
-        label.set_fontsize(13)
-        label.set_ha('center')
-        label.set_fontweight('bold')  # or 'normal', 'light', etc.
-    
-    for label in ax.get_yticklabels():
-        label.set_fontsize(13)
-        label.set_fontweight('bold')  # or 'normal', 'light', etc.
-
-    for label in [ax.xaxis.label, ax.yaxis.label]:
-        label.set_fontsize(14)
-        label.set_fontweight("bold")
-
-    ax.spines['right'].set_visible(False)
-    ax.spines['top'].set_visible(False)
-    if ylim is not None:
-        ax.set_ylim(ylim)
-    
-    import matplotlib.ticker as mticker
-    ax.yaxis.set_major_locator(mticker.MultipleLocator(ticks_step))
-    if minor:
-        ax.yaxis.set_minor_locator(mticker.MultipleLocator(ticks_step//2))
-
-    ax.grid(False)
-    if grid:
-        for axis in grid:
-            ax.grid(axis=axis, which="major", linestyle="-", alpha=0.5)
-            ax.grid(axis=axis, which="minor", linestyle="-", alpha=0.1)
-        
-
 def _safe_filename(label: str) -> str:
     return label.replace("/", "_").replace("\\", "_").replace(" ", "_")
 
@@ -139,7 +103,7 @@ def create_num_objects_category_curve(
     fig, ax = plt.subplots(figsize=(7, 3.5))
 
     categories = list(plot_df[category_column].unique())
-    categories_sorted = sorted(categories, key=lambda x: utils.utils_mapping.mapping_cat_order.get(x, float('inf')))
+    categories_sorted = utils.utils_mapping.sort_categories(categories)
     for i, cat in enumerate(categories_sorted):
         df_cat = agg_df[agg_df[category_column] == cat]
         if df_cat.empty:
@@ -185,7 +149,7 @@ def create_num_objects_category_curve(
         ax.set_ylim(15, 55)
 
     fig.tight_layout()
-    paperformat(ax, grid=["y"], minor=True)
+    utils_graph.paperformat(ax, grid=["y"], minor=True)
 
     ax.set_xticks(range(1, 11))
     ax.set_xticklabels([str(v) for v in range(1, 11)])
@@ -272,9 +236,9 @@ def create_num_objects_cat_violin(
         )
 
     if category_column == "category":
-        label = utils.utils_mapping.mapping_cat.get(cat)
+        label = utils.utils_mapping.categories.get(cat)
     elif category_column == "sub_category":
-        label = utils.utils_mapping.mapping_sub.get(cat)
+        label = utils.utils_mapping.subcategories.get(cat)
     ax.set_title(label)
     ax.set_xlabel("Number of Objects")
     # ax.set_ylabel("Accuracy")
@@ -384,7 +348,7 @@ def create_num_objects_violin_grid(
             if ax.get_ylim()[1] > cap_max:
                 ax.set_ylim(ax.get_ylim()[0], cap_max)
             
-            paperformat(ax, figsize=None)
+            utils_graph.paperformat(ax, figsize=None)
 
         for j in range(len(cats), len(axes)):
             axes[j].set_visible(False)
@@ -420,7 +384,7 @@ def create_num_objects_violin_grid(
             bottom=grid_bottom if grid_bottom is not None else 0.1,
         )
     
-    paperformat(fig.gca(), figsize=None)
+    utils_graph.paperformat(fig.gca(), figsize=None)
 
     out_dir = Path(output_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -468,8 +432,8 @@ def create_num_objects_violin_grid(
                 rng=rng,
             )
 
-            paperformat(ax_cat)
-                        
+            utils_graph.paperformat(ax_cat)
+            
             safe_cat = _safe_filename(str(cat))
             if category_column == "sub_category":
                 assert plot_df[plot_df[category_column] == cat]["category"].unique().size == 1
@@ -491,15 +455,15 @@ def create_num_objects_violin_grid(
     return fig
 
 
-def create_category_accuracy(
+def create_accuracy(
     eval_df: pd.DataFrame,
     *,
     metadata_path: str | Path | None = "utils/metadata.json",
-    category_col: str = "category", # "category" or "sub_category"
+    level: str = "category", # "category" or "sub_category" or "question_id"
     seed: int = 0,
     show: bool = False,
     output_dir: str | Path | None = None,
-    filename: str = "accuracy_by_category.png",
+    filename: str = "accuracy_by_level.png",
     figsize: tuple[float, float] = None,
     show_legend: bool = False,
     y_limit_mode: str = "fixed",
@@ -508,46 +472,61 @@ def create_category_accuracy(
     bars: bool = False,
 ) -> plt.Figure:
     """
-    Create a violin plot showing model accuracy by category.
+    Create a violin plot showing model accuracy by level.
     
     Parameters:
     -----------
     eval_df : pd.DataFrame
-        DataFrame with columns: model_id, category (or specified category_col), is_correct/accuracy
-    category_col : str
-        Name of the column containing categories
+        DataFrame with columns: model_id, category (or specified level), is_correct/accuracy
+    level : str
+        Name of the level to analyze ("category", "sub_category", or "question_id")
     category_label_map : dict, optional
         Mapping from category names to display labels
     """
     plot_df = eval_df.copy()
     plot_df["accuracy"] *= 100
 
-    plot_df = utils.utils_read.macro_accuracy(plot_df, level=category_col)
+    plot_df = utils.utils_read.macro_accuracy(plot_df, level=level)
 
     agg_df = (
-        plot_df.groupby([group_by, category_col], observed=True)["accuracy"]
+        plot_df.groupby([group_by, level], observed=True)["accuracy"]
         .agg(["mean", "min", "max", "std"])
         .reset_index()
     )
 
-    # Get unique categories and sort them
-    categories = list(plot_df["category"].unique())
-    categories = sorted(
-        categories,
-        key=lambda category: utils.utils_mapping.mapping_cat_order.get(category, float("inf")),
-    )
-    if category_col == "category":
-        cats = categories
-    elif category_col == "sub_category":
-        subcats = [
-            sorted(list(plot_df[plot_df["category"] == cat]["sub_category"].unique()))
-            for cat in categories
-        ]
-        cats = [subcat for cat_subcats in subcats for subcat in cat_subcats]  # Flatten list of subcategories
+    # Get level entries and sort them
+    if level == "category":
+        cats_in = plot_df["category"].unique()
+        levels = utils.utils_mapping.sort_categories(cats_in)
+    elif level == "sub_category":
+        subcats_in = plot_df["sub_category"].unique()
+        levels = utils.utils_mapping.sort_subcategories(subcats_in)
+    elif level == "question_id":
+        qids_in = plot_df["question_id"].unique()
+        levels = utils.utils_mapping.sort_questions(
+            triplets=[
+                (cat, subcat, qid)
+                for (cat, subcat, qid) in plot_df[plot_df["question_id"].isin(qids_in)][["category", "sub_category", "question_id"]].itertuples(index=False)
+            ],
+            quests=qids_in
+        )
     
-    cats = [cat for cat in cats if cat in list(agg_df[category_col].unique())]
-    cat_to_pos = {cat: idx for idx, cat in enumerate(cats)}
-    agg_df["cat_pos"] = agg_df[category_col].map(cat_to_pos)
+    def flatten_levels(levels):
+        flat = []
+        for item in levels:
+            if isinstance(item, list):
+                flat.extend(flatten_levels(item))
+            elif isinstance(levels, dict):
+                flat.extend(flatten_levels(levels[item]))
+            else:
+                flat.append(item)
+        return flat
+    levels_flat = flatten_levels(levels)
+    
+    # levels = [cat for cat in levels if cat in list(agg_df[level].unique())]
+    # entries_num = np.flatten(levels)
+    level_idx = {level: idx for idx, level in enumerate(levels_flat)}
+    agg_df["level_idx"] = agg_df[level].map(level_idx)
     
     # Build model style
     model_style, family_map = utils.utils_mapping._build_model_style(
@@ -558,13 +537,13 @@ def create_category_accuracy(
 
     # Create figure
     if figsize is None:
-        figsize = (2.5+len(cats), 4)
+        figsize = (2.5+len(levels_flat), 4)
     fig, ax = plt.subplots(figsize=figsize)
 
     # Create violin plot
     sns.violinplot(
         data=agg_df,
-        x="cat_pos",
+        x="level_idx",
         y="mean",
         ax=ax,
         color="0.85",
@@ -573,7 +552,7 @@ def create_category_accuracy(
         cut=0,
         width=1.0,
         linewidth=0.5,
-        order=list(range(len(cats))),
+        order=list(range(len(levels_flat))),
     )
     ax.set_xlabel("")
 
@@ -582,7 +561,7 @@ def create_category_accuracy(
 
     # Plot scatter points with error bars for each family
     for group_name, df_m in agg_df.groupby(group_by):
-        x_vals = df_m["cat_pos"].to_numpy()
+        x_vals = df_m["level_idx"].to_numpy()
         y_vals = df_m["mean"].to_numpy()
         y_min = df_m["min"].to_numpy()
         y_max = df_m["max"].to_numpy()
@@ -624,37 +603,86 @@ def create_category_accuracy(
             zorder=4
         )
 
-    # "#AED6F1"
-    # "#A9DFBF"
-    if category_col == "category" and eval_df["model_mode"].nunique() > 1:
-        for r_x_start, r_x_end, r_color, r_label in ((-0.5,3.5, None, "Image and Video Models"),
-                                                    (3.5,5.6, None, "Video models")):
-            # Add semi-transparent background
-            mid_x = (r_x_start + r_x_end) / 2  # arithmetic mean
-
-            if r_color is not None:
-                ax.axvspan(r_x_start, r_x_end, alpha=0.15, color=r_color, zorder=-1, linewidth=0)
+    # Compute separations
+    regions = []
+    if level == "category":
+        if eval_df["model_mode"].nunique() > 1:
+            regions = [{"xloc": (-0.5,3.5),
+                        "lines": None, 
+                        "linecolor": "#999999", 
+                        "label": "Image and Video Models"},
+                       {"xloc": (3.5,5.6), 
+                        "lines": "left", 
+                        "linecolor": "#999999",
+                        "label": "Video models"}]
+    elif level == "sub_category":
+        x_pos = -0.5
+        for c_idx, cat in enumerate(levels):
+            qids_len = len(levels[cat])
+            regions.append({"xloc": (x_pos, x_pos + qids_len), 
+                            "lines": "left" if c_idx > 0 else None,
+                            "linecolor": "#999999",
+                            "label": utils.utils_mapping.categories.get(cat) if cat != "all" else "Overall",
+                            "textcolor": utils.utils_mapping.mapping_cat_colors.get(cat)+ "CC",
+                            "textfontsize": 10})
+            x_pos += qids_len
+    elif level == "question_id":
+        x_pos = -0.5
+        for c_idx, cat in enumerate(levels):
+            qids_len = len([q for s in levels[cat] for q in levels[cat][s]])
+            cat_color = utils.utils_mapping.mapping_cat_colors.get(cat)
+            regions.append({"xloc": (x_pos, x_pos + qids_len), 
+                            "lines": "left" if c_idx > 0 else None,
+                            "linecolor": "#999999",
+                            "label": utils.utils_mapping.categories.get(cat) if cat != "all" else "Overall",
+                            "textcolor": cat_color + "CC",
+                            "textfontsize": 10})
             
-            # Add vertical lines at boundaries
-            if r_color is None:
-                r_color =  "#999999"
-            ax.axvline(r_x_start, color=r_color, linewidth=2, alpha=0.5, zorder=-1, linestyle='--')
-            ax.axvline(r_x_end, color=r_color, linewidth=2, alpha=0.5, zorder=-1, linestyle='--')
-            ax.text(mid_x, ax.get_ylim()[1] * 0.95, r_label, 
-                    ha='center', va='top', fontsize=12, color='#555555', fontweight='bold')
+            for subcat_idx, subcat in enumerate(levels[cat]):
+                qids_len = len(levels[cat][subcat])
+                regions.append({"xloc": (x_pos, x_pos + qids_len), 
+                                "lines": "left" if subcat_idx > 0 else None,
+                                "linewidth": 1.0,
+                                "linecolor": "#555555",
+                                "label": utils.utils_mapping.subcategories.get(subcat) if subcat != "all" else "Overall",
+                                "textcolor": cat_color + "CC",
+                                "textfontsize": 8,
+                                "texty": 0.80,
+                                "lineymax": 0.85})
+                x_pos += qids_len
 
-    ax.set_xlim(0.-0.5, len(cats) - 1 + 0.5)
-    # Set labels
-    # ax.set_xlabel(fontsize=12, fontweight="bold")
+    for region in regions:
+        r_x_start, r_x_end = region["xloc"]
+        linecolor = region.get("linecolor", "#999999")
+        linewidth = region.get("linewidth", 2)
+        lineymin = region.get("lineymin", 0)
+        lineymax = region.get("lineymax", 1)
+        textcolor = region.get("textcolor", "#555555")
+        textfontsize = region.get("textfontsize", 12)
+        texty = region.get("texty", 0.95)
+        facecolor = region.get("facecolor", None)
+        lines = list([region.get("lines", ["left", "right"])])
+        r_label = region["label"]
+
+        if facecolor:
+            ax.axvspan(r_x_start, r_x_end, alpha=0.15, color=facecolor, zorder=-1, linewidth=0)
+        
+        # Add vertical lines at boundaries
+        if lines and "left" in lines:
+            ax.axvline(r_x_start, color=linecolor, linewidth=linewidth, alpha=0.5, zorder=-1, linestyle='--', ymin=lineymin, ymax=lineymax)
+        if lines and "right" in lines:
+            ax.axvline(r_x_end, color=linecolor, linewidth=linewidth, alpha=0.5, zorder=-1, linestyle='--', ymin=lineymin, ymax=lineymax)
+
+        mid_x = (r_x_start + r_x_end) / 2
+        ax.text(mid_x, ax.get_ylim()[1] * texty, r_label, 
+                ha='center', va='top', fontsize=textfontsize, color=textcolor, fontweight='bold')
+
+    ax.set_xlim(0.-0.5, len(levels_flat) - 1 + 0.5)
     ax.set_ylabel("Accuracy (%)", fontsize=12, fontweight="bold")
     ax.tick_params(axis='both', which='major', labelsize=12)
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
 
-    # ax.set_xlabel(fontsize=12)
-    # ax.spines['left'].set_visible(False)
-
-    # ax.set_title("Model Accuracy by Category", fontsize=14, fontweight="bold")
     ax.grid(axis="y", alpha=0.3)
 
     # Set y-limits
@@ -673,36 +701,24 @@ def create_category_accuracy(
     # Compute mean accuracy per category (averaged across all families)
 
     cat_accuracy = (
-        plot_df.groupby([category_col])["accuracy"]
+        plot_df.groupby([level])["accuracy"]
         .mean()
         .reset_index()
     )
 
-    def get_cat_label(cat):
-        if category_col == "category":
-            label = utils.utils_mapping.mapping_cat.get(cat).replace(" ", "\n")
-        elif category_col == "sub_category":
-            label = utils.utils_mapping.mapping_sub.get(cat).replace(" ", "\n")
-        
-        label += f"\n"
-        label += f"({cat_accuracy.loc[cat_accuracy[category_col] == cat, 'accuracy'].values[0]:.1f}%)"
-        return label
-
-    category_labels = [ get_cat_label(cat) for cat in cats ]
-    # print(category_labels)
-
-    # ax.set_xticklabels(category_labels, rotation=45, ha="right")
-    ax.set_xticks(range(len(cats)))
+    # if level == "category":
+    category_labels = [ utils.utils_graph.get_level_label(level, name) 
+                       + f"\n({cat_accuracy.loc[cat_accuracy[level] == name, 'accuracy'].values[0]:.1f}%)" 
+                       for name in levels_flat ]
+    ax.set_xticks(range(len(levels_flat)))
     ax.set_xticklabels(category_labels, ha='center', fontweight='bold', fontsize=9.5)
+    if len(levels_flat) > 10:
+        plt.setp(ax.get_xticklabels(), rotation=45, ha='right')
 
-    for ticklabel, cat in zip(ax.get_xticklabels(), cats):
-        if category_col == "sub_category":
-            cat_key = plot_df[plot_df["sub_category"] == cat]["category"].values[0]
-        else:
-            cat_key = cat
-        ticklabel.set_color(utils.utils_mapping.mapping_cat_colors.get(cat_key)+"CC")  # Adding transparency
-    # ax.set_xticklabels(category_labels, ha="center")
-
+    for ticklabel, name in zip(ax.get_xticklabels(), levels_flat):
+        cat_key = plot_df[plot_df[level] == name]["category"].values[0]
+        cat_color = utils.utils_mapping.mapping_cat_colors.get(cat_key)
+        ticklabel.set_color(cat_color+"CC")  # Adding transparency
 
     for label in [ax.xaxis.label, ax.yaxis.label]:
         label.set_fontweight("bold")
@@ -935,7 +951,7 @@ def create_material_stiffness_violin_grid(
         ax.set_title(label)
         # ax.set_xlabel("Object Stiffness")
         ax.set_xlabel("")
-        ax.set_ylabel(utils.utils_mapping.mapping_cat.get(cat), color=utils.utils_mapping.mapping_cat_colors.get(cat))
+        ax.set_ylabel(utils.utils_mapping.categories.get(cat), color=utils.utils_mapping.mapping_cat_colors.get(cat))
         ax.grid(axis="y")
         if y_limit_mode == "fixed":
             ax.set_ylim(-10, 110)
@@ -963,7 +979,7 @@ def create_material_stiffness_violin_grid(
         else:
             ax.set_xticklabels([str(v) for v in stiffness_values])
 
-        paperformat(ax, figsize=None)
+        utils_graph.paperformat(ax, figsize=None)
 
     for j in range(len(categories), len(axes)):
         axes[j].set_visible(False)
@@ -1133,7 +1149,7 @@ def create_material_stiffness_violin_grid(
             # ax_cat.set_title(label)
             # ax_cat.set_xlabel("Material stiffness (Young's modulus level)")
             ax_cat.set_xlabel("")
-            ax_cat.set_ylabel(utils.utils_mapping.mapping_cat.get(cat), color=utils.utils_mapping.mapping_cat_colors.get(cat))
+            ax_cat.set_ylabel(utils.utils_mapping.categories.get(cat), color=utils.utils_mapping.mapping_cat_colors.get(cat))
             ax_cat.grid(axis="y")
             if y_limit_mode == "fixed":
                 ax_cat.set_ylim(-10,110)
@@ -1159,7 +1175,7 @@ def create_material_stiffness_violin_grid(
                 ax_cat.set_xticklabels([str(v) for v in stiffness_values])
 
             fig_cat.tight_layout()
-            paperformat(ax_cat)
+            utils_graph.paperformat(ax_cat)
             safe_cat = _safe_filename(str(cat))
             if category_col == "sub_category":
                 assert plot_df[plot_df[category_col] == cat]["category"].unique().size == 1

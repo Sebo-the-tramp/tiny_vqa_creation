@@ -1,34 +1,23 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import List
 
 import matplotlib.markers as mmarkers
 import numpy as np
 import pandas as pd
 import seaborn as sns
 
-import utils.utils_read
-
-
-mapping_cat = {
+categories = {
+    "material_understanding": "Material Understanding",
     "mechanics": "Mechanics",
     "spatial_reasoning": "Spatial Reasoning",
+    "view_point": "Viewpoint",
     "persistence": "Permanence",
     "temporal": "Temporal Reasoning",
-    "view_point": "Viewpoint",
-    "material_understanding": "Material Understanding"
 }
 
-mapping_cat_order = {
-    "material_understanding": 0,
-    "mechanics": 1,
-    "spatial_reasoning": 2,
-    "view_point": 3,
-    "persistence": 4,
-    "temporal": 5,
-}
-
-mapping_sub = {
+subcategories = {
     # Material understanding
     'density': "Density", 
     'mass': "Mass", 
@@ -50,43 +39,18 @@ mapping_sub = {
     'visibility': "Visibility",
 
     # Permanence
-    'object_persistence': "Object Persistence",
+    'object_identity': "Object Identity",
+    'object_count': "Object Count",
     
     # Temporal reasoning
     'camera_motion': "Camera Motion",
     'event_ordering': "Event Ordering"
 }
 
-mapping_sub_cat_id = {
-    # Material understanding
-    'density': 'material_understanding', 
-    'mass': 'material_understanding', 
-    'material_identification': 'material_understanding', 
-    'poisson_ratio': 'material_understanding', 
-    'young_modulus': 'material_understanding', 
+subcat_to_cat = {}  # Automatically populated during loading of the results
+question_to_subcat = {}  # Automatically populated during loading of the results
 
-    # Mechanics
-    'collision': 'mechanics',
-    'kinematics': 'mechanics',
-
-    # Spatial reasoning
-    'distance': 'spatial_reasoning',
-    'layout': 'spatial_reasoning',
-    'size': 'spatial_reasoning',
-
-    # Viewpoint
-    'camera_characteristics': 'view_point',
-    'visibility': 'view_point',
-
-    # Permanence
-    'object_persistence': 'persistence',
-    # 'object_identity': 'persistence',
-    # 'object_count': 'persistence',
-
-    # Temporal reasoning
-    'camera_motion': 'temporal',
-    'event_ordering': 'temporal'
-}
+questions = {}
 
 mapping_cat_colors = {
     # More vivid pastel-like colors
@@ -99,22 +63,22 @@ mapping_cat_colors = {
 }
 
 mapping_cat_short = {
-    "mechanics": mapping_cat.get("mechanics"),
-    "spatial_reasoning": mapping_cat.get("spatial_reasoning"),
-    "persistence": mapping_cat.get("persistence"),
-    "temporal": mapping_cat.get("temporal"),
-    "view_point": mapping_cat.get("view_point"),
+    "mechanics": categories.get("mechanics"),
+    "spatial_reasoning": categories.get("spatial_reasoning"),
+    "persistence": categories.get("persistence"),
+    "temporal": categories.get("temporal"),
+    "view_point": categories.get("view_point"),
     "material_understanding": "Material Underst."
 }
 
 family_marker = {
     "AquilaVL":		    "o",  # circle
     "InternVLChat":	    ">",  # triangle right
-    "InternVLChat":	    "H",  # hexagon (flat)
+    "InternVLChat2":    "H",  # hexagon (flat)
     "LLaVAVideo":		"h",  # hexagon (pointy)
     "Mantis":			"D",  # diamond
     "MiniCPMV":		    "d",  # thin diamond
-    "MolmoE":			".",  # point
+    "Molmo":			".",  # point
     "Phi":			    "1",  # tri-down tick (approx from image)
     "QwenVLChat":		"3",  # tri-left tick (approx)
     "XinyuanVL":		"P",  # filled plus
@@ -152,6 +116,60 @@ _DEFAULT_MARKERS = [
     "X",
 ]
 
+def sort_categories(cats: List[str] = None) -> List[str]:
+    if cats is None:
+        cats = list(categories.keys())
+    
+    cat_order = {k: i for i, k in enumerate(categories.keys())}
+    return sorted(cats, key=lambda sub: cat_order.get(sub, float("inf")))
+
+def sort_subcategories(subcats: List[str] = None, flatten: bool = False) -> List[str]:
+    if subcats is None:
+        subcats = list(subcategories.keys())
+    
+    categories = sort_categories()
+    subcats_out = {}
+    for cat in categories:
+        cat_subcats = [subcat for subcat, cat_subcat in subcat_to_cat.items() if cat_subcat == cat and subcat in subcats]
+        sub_order = {k: i for i, k in enumerate(subcategories.keys())}
+        cat_subcats_sorted = sorted(cat_subcats, key=lambda sub: sub_order.get(sub, float("inf")))
+        
+        if len(cat_subcats_sorted) > 0:
+            subcats_out[cat] = cat_subcats_sorted
+    
+    if flatten:
+        return [subcat for cat_subcats in subcats_out.values() for subcat in cat_subcats]
+    else:
+        return subcats_out
+
+def sort_questions(triplets: List[List[str]], quests: List[str] = None, flatten: bool = False) -> List[str]:
+    # To avoid storing all questions ID in mapping, the strategy differs here.
+    # triplets is a list of (category, sub_category, question_id) triplets, 
+    # which is used to infer the mapping between question_id and subcategories.
+    if quests is None:
+        quests = [qid for cat, subcat, qid in triplets]
+
+    triplets_subcats = [subcat for cat, subcat, qid in triplets]
+    subcats = sort_subcategories(triplets_subcats)  # This will also do the sanity check on categories and subcategories
+
+    qs = {}
+    for cat in subcats:
+        qs[cat] = {}
+        for subcat in subcats[cat]:
+            subcat_qids = [qid for c, s, qid in triplets if s == subcat]
+            subcat_qids_sorted = sorted(np.unique(subcat_qids).tolist())  # Assuming question IDs can be sorted lexicographically
+
+            if len(subcat_qids_sorted) > 0:
+                qs[cat][subcat] = subcat_qids_sorted
+
+        if len(qs[cat]) == 0:
+            del qs[cat]
+
+    if flatten:
+        return [qid for cat_subcats in qs.values() for subcat_qids in cat_subcats.values() for qid in subcat_qids]
+    else:
+        return qs
+
 def _build_model_style(
     metadata_path: str | Path | None,
     *,
@@ -159,6 +177,8 @@ def _build_model_style(
     family_marker_mode: str = "distinct",
 ) -> tuple[dict[str, tuple[str, object, float]], dict[str, str]]:
     assert group_by in {"model_id", "model_family"}, "group_by must be 'model_id' or 'model_family'"
+
+    import utils.utils_read
 
     group_ids = []
     palette = []

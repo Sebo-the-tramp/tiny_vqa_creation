@@ -1,11 +1,13 @@
 import json
 from pathlib import Path
 import re
+import time
 from typing import List
 import tqdm
 
 import pandas as pd
 
+from utils import utils_mapping
 from utils import utils_graph
 
 
@@ -81,7 +83,9 @@ def build_eval_df(
         base_path: str | Path, 
         vqa_set: str = "10K",
         metadata_path: str | Path = "utils/metadata.json",
-        excluded_questions: list[str] = ["F_OCCLUSION_PERCENTAGE_OBJECT", "F_MATERIAL_IDENTIFICATION_SIMILAR_OBJECT"],
+        excluded_questions: list[str] = ["F_OCCLUSION_PERCENTAGE_OBJECT", "F_MATERIAL_IDENTIFICATION_OBJECT_LEVEL_3", "F_CAMERA_ZOOM_BEHAVIOR"],
+        # could also be excluded: F_MATERIAL_IDENTIFICATION_OBJECT_LEVEL_2
+        # could also be excluded: F_CAMERA_ZOOM_BEHAVIOR
         return_paths: dict | None = None,
         columns: list[str] = [],  # Columns to preserve
         cache: bool = True,
@@ -166,7 +170,7 @@ def build_eval_df(
     
     if excluded_questions is not None:
         print(f"[WARNING] Excluding questions: {excluded_questions} => Dropping {len(eval_df[eval_df['question_id'].isin(excluded_questions)])} entries.")
-        eval_df = eval_df[~eval_df["question_id"].isin(excluded_questions)]
+        eval_df = eval_df.loc[~eval_df["question_id"].isin(excluded_questions), :].copy()  # Important to copy, to avoid caveats in pandas slices
     
     # Convert accuracy column
     assert any(col in eval_df.columns for col in ["accuracy", "is_correct"]), "Expected 'accuracy' or 'is_correct' column in eval_df"
@@ -181,6 +185,44 @@ def build_eval_df(
         )
 
     eval_df = eval_df[~missing_acc]
+
+    # Fix some incorrect mappings
+    object_identity_qids = ("F_PERSISTENCE_OBJECT_PRESENT", "F_PERSISTENCE_OBJECT_DISAPPEAR")
+    eval_df.loc[eval_df["question_id"].isin(object_identity_qids), "sub_category"] = "object_identity"
+    
+    object_count_qids = ("F_PERSISTENCE_OBJECT_TOTAL_COUNT", "F_PERSISTENCE_OBJECT_TOTAL_COUNT_HIDDEN")
+    eval_df.loc[eval_df["question_id"].isin(object_count_qids), "sub_category"] = "object_count"
+    
+    # Assert and update mappings: category <=> subcategory <=> question
+    questions_map = (
+        eval_df[["question_id", "sub_category", "category"]]
+        .drop_duplicates("question_id")
+        .set_index("question_id")
+    )
+    for qid, row in questions_map.iterrows():
+        subcat = row["sub_category"]
+        cat = row["category"]
+
+        # Verify mapping is consistent
+        assert utils_mapping.question_to_subcat.get(qid, subcat) == subcat, f"Inconsistent mapping for question {qid}: previously mapped to subcat {utils_mapping.question_to_subcat[qid]}, now getting {subcat}"
+        assert utils_mapping.subcat_to_cat.get(subcat, cat) == cat, f"Inconsistent mapping for subcategory {subcat}: previously mapped to category {utils_mapping.subcat_to_cat[subcat]}, now getting {cat}"
+        
+        # Verify keys exist in the main mapping dictionaries
+        assert cat in utils_mapping.categories, f"Category {cat} not in predefined categories utils_mapping.categories: {utils_mapping.categories}"
+        assert cat in utils_mapping.mapping_cat_colors, f"Category {cat} not in predefined categories utils_mapping.mapping_cat_colors: {utils_mapping.mapping_cat_colors}"
+        assert cat in utils_mapping.mapping_cat_short, f"Category {cat} not in predefined categories utils_mapping.mapping_cat_short: {utils_mapping.mapping_cat_short}"
+        assert subcat in utils_mapping.subcategories, f"Subcategory {subcat} not in predefined subcategories utils_mapping.subcategories: {utils_mapping.subcategories}"
+
+        # Populate the mappings
+        utils_mapping.question_to_subcat[qid] = subcat
+        utils_mapping.subcat_to_cat[subcat] = cat
+
+    # Assert family mappings
+    family = eval_df["model_family"].unique()
+    for fam in family:
+        assert fam in utils_mapping.family_marker, f"Family {fam} not in predefined families utils_mapping.family_marker: {utils_mapping.family_marker}"
+    
+    print(f"Loaded {eval_df['idx'].nunique()} VQA ({eval_df['question_id'].nunique()} questions types) with {len(eval_df)} answers, {eval_df['model_id'].nunique()} models, {eval_df['model_family'].nunique()} families.")
     return eval_df
 
 def load_results(
@@ -616,7 +658,7 @@ def select_eval_df(
 ) -> list[tuple[str, pd.DataFrame]]:
     if mode == "all":
         slices = iter_mode_slices(eval_df)
-        slices.append(("mixed", eval_df))
+        slices.insert(0, ("mixed", eval_df))
         return slices
     
     if mode == "mixed":

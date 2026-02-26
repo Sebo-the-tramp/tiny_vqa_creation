@@ -12,45 +12,13 @@ import pandas as pd
 import seaborn as sns
 from matplotlib.lines import Line2D
 from matplotlib.ticker import FuncFormatter
-import utils.utils_mapping
+from utils import (
+    utils_graph,
+    utils_mapping,
+    utils_read
+)
 
 warnings.filterwarnings("ignore", message=".*edgecolor.*unfilled marker.*")
-
-def paperformat(ax, figsize=(4, 3.1), ylim=None, ticks_step=10, grid=["x", "y"], minor=True):
-    fig = ax.get_figure()
-    if figsize is not None:
-        fig.set_size_inches(*figsize)
-
-    ax.set_title("")
-    for label in ax.get_xticklabels():
-        label.set_fontsize(13)
-        label.set_ha('center')
-        label.set_fontweight('bold')  # or 'normal', 'light', etc.
-    
-    for label in ax.get_yticklabels():
-        label.set_fontsize(13)
-        label.set_fontweight('bold')  # or 'normal', 'light', etc.
-
-    for label in [ax.xaxis.label, ax.yaxis.label]:
-        label.set_fontsize(14)
-        label.set_fontweight("bold")
-
-    ax.spines['right'].set_visible(False)
-    ax.spines['top'].set_visible(False)
-    if ylim is not None:
-        ax.set_ylim(ylim)
-    
-    import matplotlib.ticker as mticker
-    ax.yaxis.set_major_locator(mticker.MultipleLocator(ticks_step))
-    if minor:
-        ax.yaxis.set_minor_locator(mticker.MultipleLocator(ticks_step//2))
-
-    ax.grid(False)
-    if grid:
-        for axis in grid:
-            ax.grid(axis=axis, which="major", linestyle="-", alpha=0.5)
-            ax.grid(axis=axis, which="minor", linestyle="-", alpha=0.1)
-        
 
 def _safe_filename(label: str) -> str:
     return label.replace("/", "_").replace("\\", "_").replace(" ", "_")
@@ -92,7 +60,7 @@ def create_variance_curve(
     # Convert accuracy to percentage
     plot_df = eval_df.copy()
     plot_df["accuracy"] = plot_df["accuracy"] * 100
-    plot_df = utils.utils_read.macro_accuracy(plot_df, level="model_id", group_by=["vqa_set", "vqa_set_count"])
+    plot_df = utils_read.macro_accuracy(plot_df, level="model_id", group_by=["vqa_set", "vqa_set_count"])
 
     # Compute group stats (mean and std) across vqa_set_count
     stats_df = (
@@ -101,7 +69,7 @@ def create_variance_curve(
         .reset_index()
     )
 
-    model_style, family_map = utils.utils_mapping._build_model_style(
+    model_style, family_map = utils_mapping._build_model_style(
         metadata_path,
         group_by=group_by,
         family_marker_mode="distinct",
@@ -140,8 +108,8 @@ def create_variance_curve(
         assert eval_df[category_column].nunique() == 1, f"Expected exactly one unique category in eval_df for category='{category}'"
         cat = eval_df[category_column].iloc[0]
 
-        ylabel = utils.utils_mapping.mapping_cat_short.get(cat)
-        ylabel_color = utils.utils_mapping.mapping_cat_colors.get(cat)+"CC"
+        ylabel = utils_mapping.mapping_cat_short.get(cat)
+        ylabel_color = utils_mapping.mapping_cat_colors.get(cat)+"CC"
     
     ax.set_ylabel(ylabel.capitalize(), color=ylabel_color)
     # ax.axhline(y=25, color="gray", linestyle="--", linewidth=1)
@@ -160,7 +128,7 @@ def create_variance_curve(
     thousands_formatter = FuncFormatter(_format_thousands_tick)
     ax.xaxis.set_major_formatter(thousands_formatter)
 
-    paperformat(ax, grid=["y"], minor=True, figsize=None)
+    utils_graph.paperformat(ax, grid=["y"], minor=True, figsize=None)
 
     # Save
     if output_dir is not None:

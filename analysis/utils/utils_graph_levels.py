@@ -14,41 +14,6 @@ warnings.filterwarnings("ignore", message=".*edgecolor.*unfilled marker.*")
 
 # /data0/sebastian.cavada/compositional-physics/tiny_vqa_deterministic/output/run_11_general_levels
 
-def paperformat(ax, figsize=(4, 3.1), ylim=None, ticks_step=10, grid=["x", "y"], minor=True):
-    fig = ax.get_figure()
-    if figsize is not None:
-        fig.set_size_inches(*figsize)
-
-    ax.set_title("")
-    for label in ax.get_xticklabels():
-        label.set_fontsize(13)
-        label.set_ha('center')
-        label.set_fontweight('bold')  # or 'normal', 'light', etc.
-    
-    for label in ax.get_yticklabels():
-        label.set_fontsize(13)
-        label.set_fontweight('bold')  # or 'normal', 'light', etc.
-
-    for label in [ax.xaxis.label, ax.yaxis.label]:
-        label.set_fontsize(14)
-        label.set_fontweight("bold")
-
-    ax.spines['right'].set_visible(False)
-    ax.spines['top'].set_visible(False)
-    if ylim is not None:
-        ax.set_ylim(ylim)
-    
-    import matplotlib.ticker as mticker
-    ax.yaxis.set_major_locator(mticker.MultipleLocator(ticks_step))
-    if minor:
-        ax.yaxis.set_minor_locator(mticker.MultipleLocator(ticks_step//2))
-
-    ax.grid(False)
-    if grid:
-        for axis in grid:
-            ax.grid(axis=axis, which="major", linestyle="-", alpha=0.5)
-            ax.grid(axis=axis, which="minor", linestyle="-", alpha=0.1)
-        
 def _safe_filename(label: str) -> str:
     return label.replace("/", "_").replace("\\", "_").replace(" ", "_")
 
@@ -302,7 +267,7 @@ def create_scatter_by_family(
         ax.grid(True, linestyle="--", alpha=0.5)
 
         fig.tight_layout()
-        paperformat(ax, figsize=(4, 3.5), grid=["y"])
+        utils_graph.paperformat(ax, figsize=(4, 3.5), grid=["y"])
 
         run = run_name or globals().get("RUN_NAME", "default")
         out_dir = Path(output_dir) if output_dir is not None else Path("output") / run
@@ -411,7 +376,7 @@ def create_scatter_by_family(
         ax.grid(True, linestyle="--", alpha=0.5)
 
         fig.tight_layout()
-        paperformat(ax, figsize=(4.5, 3), grid=["y"], minor=False)
+        utils_graph.paperformat(ax, figsize=(4.5, 3), grid=["y"], minor=False)
 
         yticks = np.arange(-2, 10, 2)
         ax.set_yticks(yticks)

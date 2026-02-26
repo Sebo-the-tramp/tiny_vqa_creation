@@ -16,7 +16,7 @@ if not Path("/scratch/project/eu-25-92/composite_physics/dataset/simulation_v4/"
 import utils.utils_graph as utils_graph
 import utils.utils_graph_correlation as utils_graph_correlation
 from utils.utils_graph_correlation import (
-    create_category_accuracy,
+    create_accuracy,
     create_num_objects_violin_grid
 )
 
@@ -41,7 +41,7 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    output_dir = Path("output") / args.run_name / args.vqa_set / "category"
+    output_dir = Path("output") / args.run_name / args.vqa_set / "categorical"
     output_dir.mkdir(parents=True, exist_ok=True)
 
     eval_df = utils.utils_read.build_eval_df(args.run_name, args.base_path, vqa_set=args.vqa_set)
@@ -56,13 +56,12 @@ def main() -> None:
             cur_df, group_by = utils.utils_read.apply_group(mode_df, group)
             
             print(f"Processing mode: {mode_label}, grouping by {group_by}: with {len(cur_df)} entries")
-            
-            for cat_col in ["category", "sub_category"]:
-                create_category_accuracy(
+            for level in ["category", "sub_category", "question_id"]:
+                create_accuracy(
                     cur_df,
                     output_dir=cur_output_dir,
-                    category_col=cat_col,
-                    filename=f"acc_{cat_col}_{group}.png",
+                    level=level,
+                    filename=f"acc_{level}_{group}.png",
                     y_limit_mode="",
                     group_by=group_by,
                     show_legend=True,

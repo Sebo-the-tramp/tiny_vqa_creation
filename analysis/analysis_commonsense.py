@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
+from matplotlib import pyplot as plt
 import numpy as np
 import pandas as pd
 
@@ -82,6 +83,8 @@ def main() -> None:
     #     acc_mat_multi, output_path=str(output_dir / "heatmap_table_multi.txt")
     # )
 
+    benchmarks = ["all", "MMBench V1.1", "MMStar", "MMMU", "MathVista", "HallusionBench Avg.", "AI2D", "OCRBench", "MMVet"]
+    
     for mode_label, mode_df in utils.utils_read.select_eval_df(
         eval_df, mode=args.mode
     ):
@@ -93,46 +96,61 @@ def main() -> None:
 
             # Use subdirectory for family-specific results
             cur_output_dir = cur_output_dir / f"family_{args.family}"
-        
         cur_output_dir.mkdir(parents=True, exist_ok=True)
+        
+        # Compute the matrix for all categories only once
+        create_graph_from_eval_balanced(
+            eval_base=mode_df,
+            index_to_use="sub_category",
+            filename=f"accuracy_matrix.png",
+            color_by_mode=True,
+            show=False,
+            out_dir=cur_output_dir,
+        )
         
         categories = mode_df["category"].unique()
         # print("Categories:", categories)
         for cat in np.hstack([categories, "all"]):
-            print("Processing:", cat)
+            print(" Processing:", cat)
             if cat == "all":
-                cat_df = mode_df.copy()
-            else:
-                cat_df = mode_df[mode_df["category"] == cat].copy()
-
-            if cat == "all":
-                create_graph_from_eval_balanced(
-                    eval_base=cat_df,
-                    index_to_use="sub_category",
-                    filename=f"accuracy_matrix{'_' + cat if cat != 'all' else ''}.png",
-                    color_by_mode=True,
-                    show=False,
-                    out_dir=cur_output_dir,
-                )
-
-            if cat == "all":
+                cat_df = mode_df
                 cat_label = "Overall accuracy (%)"
             else:
+                cat_df = mode_df[mode_df["category"] == cat]
                 cat_label = utils.utils_mapping.mapping_cat_short.get(cat)
-            create_accuracy_bench_vs_common_sense(
-                cat_df,
-                out_filename="cs_" + cat + ".png" if cat != "all" else "cs_correlation.png",
-                show_legend=cat == "all",
-                group_by="model_id",
-                ylabel= cat_label,
-                legend_fontsize=12 if cat != "all" else 10,
-                show_xlabel= cat == "all",
-                figsize=(6, 2.5) if cat == "all" else (4, 2.5),
-                out_dir=cur_output_dir,
-                # ylim=(0, 60)
-            )
+            
+            for bench in benchmarks:
+                print("     Bench:", bench)
 
-    
+                fpath = utils_graph.get_benchmark_filepath(cur_output_dir, cat, bench)
+                # if fpath.exists():
+                #     print(f"         {fpath} already exists, skipping...")
+                #     continue
+
+                fpath.parent.mkdir(parents=True, exist_ok=True)
+                create_accuracy_bench_vs_common_sense(
+                    cat_df,
+                    out_filename=fpath.name ,
+                    show_legend=cat == "all",
+                    group_by="model_id",
+                    ylabel= cat_label,
+                    legend_fontsize=12 if cat != "all" else 10,
+                    show_xlabel= cat == "all",
+                    figsize=(6, 2.5) if cat == "all" else (4, 2.5),
+                    out_dir=fpath.parent,
+                    # ylim=(0, 60)
+                    benchmark=bench,
+                )
+
+        utils_graph.create_benchmarks_violin(
+            mode_df,
+            output_dir=cur_output_dir,
+            filename="benchmarks_violin.png",
+            benchmarks=benchmarks,
+            figsize=(8.5, 4),
+        )
+
+
 
 if __name__ == "__main__":
     main()

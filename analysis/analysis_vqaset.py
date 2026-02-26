@@ -17,7 +17,7 @@ if not Path("/scratch/project/eu-25-92/composite_physics/dataset/simulation_v4/"
 import utils.utils_graph as utils_graph
 import utils.utils_graph_correlation as utils_graph_correlation
 from utils.utils_graph_correlation import (
-    create_category_accuracy,
+    create_accuracy,
     create_num_objects_violin_grid
 )
 
@@ -94,13 +94,10 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    utils_graph.RUN_NAME = args.run_name
-    utils_graph_correlation.RUN_NAME = args.run_name
-
     output_dir = Path("output") / args.run_name / args.vqa_set / "vqa"
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    eval_df = utils.utils_read.build_eval_df(args.base_path, vqa_set=args.vqa_set)
+    eval_df = utils.utils_read.build_eval_df(args.run_name, args.base_path, vqa_set=args.vqa_set)
 
     for mode_label, mode_df in utils.utils_read.select_eval_df(
         eval_df, mode=args.mode

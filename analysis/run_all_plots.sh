@@ -15,9 +15,9 @@ VARIANCE_SPLITS=3
 
 set -x
 python ./analysis_vqaset.py --base-path ../output --run-name $RUN_NAME --vqa-set $VQA_SET --mode all
-python ./analysis_category.py --base-path ../output --run-name $RUN_NAME --vqa-set $VQA_SET --mode all
-python ./analysis_correlation.py --base-path ../output --run-name $RUN_NAME --vqa-set $VQA_SET --mode all --unbalanced
-python ./analysis_correlation.py --base-path ../output --run-name $RUN_NAME --vqa-set $VQA_SET --mode all --balanced
+python ./analysis_categorical.py --base-path ../output --run-name $RUN_NAME --vqa-set $VQA_SET --mode all
+python ./analysis_numobj.py --base-path ../output --run-name $RUN_NAME --vqa-set $VQA_SET --mode all --unbalanced
+python ./analysis_numobj.py --base-path ../output --run-name $RUN_NAME --vqa-set $VQA_SET --mode all --balanced
 python ./analysis_commonsense.py --base-path ../output --run-name $RUN_NAME --vqa-set $VQA_SET
 python ./analysis_commonsense.py --base-path ../output --run-name $RUN_NAME --vqa-set $VQA_SET --family InternVLChat2
 

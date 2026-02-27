@@ -79,7 +79,7 @@ family_marker = {
     "Mantis":			"D",  # diamond
     "MiniCPMV":		    "d",  # thin diamond
     "Molmo":			".",  # point
-    "Phi":			    "1",  # tri-down tick (approx from image)
+    "Phi":			    "X",  # tri-down tick (approx from image)
     "QwenVLChat":		"3",  # tri-left tick (approx)
     "XinyuanVL":		"P",  # filled plus
     "BLIP2":			"s",  # square

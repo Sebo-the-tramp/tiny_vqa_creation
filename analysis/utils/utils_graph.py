@@ -12,6 +12,7 @@ from matplotlib.patches import Rectangle
 from matplotlib.colors import LinearSegmentedColormap, Normalize, to_hex
 from matplotlib.colors import LogNorm
 from matplotlib.lines import Line2D
+import matplotlib.markers as mmarkers
 import utils.utils_mapping
 
 from pathlib import Path
@@ -105,6 +106,53 @@ def get_benchmark_filepath(dir, cat, bench):
     o_dir.mkdir(parents=True, exist_ok=True)
     o_fname = f"cs_{cat}.png" if cat != "all" else "cs_correlation.png"
     return Path(o_dir) / o_fname
+
+def _build_group_legend_items(
+    plot_df: pd.DataFrame,
+    group_by: str,
+    metadata_path: str,
+) -> tuple[list[Line2D], list[str], str | None]:
+    model_style, family_map = utils.utils_mapping._build_model_style(
+        # metadata_path,
+        group_by=group_by,
+        family_marker_mode="distinct",
+        metadata_path=metadata_path,
+    )
+
+    legend_handles: list[Line2D] = []
+    legend_labels: list[str] = []
+
+    groups = set(plot_df[group_by].astype(str).unique())
+    for group_name, (color, marker, size_val) in model_style.items():
+        if group_name not in groups:
+            continue
+
+        marker_style = mmarkers.MarkerStyle(marker)
+        marker_face = color if marker_style.is_filled() else "none"
+
+        label = group_name
+        
+        models_num = len(plot_df[plot_df[group_by] == group_name]["model_id"].unique())
+        if models_num > 1:
+            label = f"{label} (x{models_num})"
+
+        legend_handles.append(
+            Line2D(
+                [0],
+                [0],
+                marker=marker,
+                color="none",
+                markerfacecolor=marker_face,
+                markeredgecolor=color,
+                markersize=size_val,
+                linestyle="None",
+            )
+        )
+        legend_labels.append(label)
+
+    title_str = {"model_id": "Model", "model_family": "Model Family"}.get(group_by)
+    return legend_handles, legend_labels, title_str
+
 
 def create_benchmarks_violin(
     eval_df: pd.DataFrame,

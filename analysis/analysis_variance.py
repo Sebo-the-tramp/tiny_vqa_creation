@@ -8,16 +8,8 @@ from multiprocessing import Manager
 from pathlib import Path
 
 import pandas as pd
-import tqdm
 
 import utils.utils_read
-
-if not Path("/scratch/project/eu-25-92/composite_physics/dataset/simulation_v4/").exists():
-    utils.utils_read.sim_path_fct = lambda x: x.replace("/scratch/project/eu-25-92/composite_physics/dataset/simulation_v4/", "/nfs/data/workspaces/rdechare/codes/physics-sim/output/sims/v4/")
-
-# from utils.utils_read import load_results, _sanitize_answer
-import utils.utils_graph as utils_graph
-import utils.utils_graph_correlation as utils_graph_correlation
 import utils.utils_graph_variance
 
 def run_load_results(base_path, run_name, vqa_set, sets_to_load):

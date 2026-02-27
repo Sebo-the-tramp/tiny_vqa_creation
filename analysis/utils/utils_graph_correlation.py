@@ -5,67 +5,22 @@ import math
 import warnings
 from pathlib import Path
 
-import matplotlib.markers as mmarkers
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
 from matplotlib.lines import Line2D
-import utils.utils_mapping
-import utils.utils_read
+
+from utils import (
+    utils_mapping,
+    utils_read,
+    utils_graph
+)
 
 warnings.filterwarnings("ignore", message=".*edgecolor.*unfilled marker.*")
 
 def _safe_filename(label: str) -> str:
     return label.replace("/", "_").replace("\\", "_").replace(" ", "_")
-
-
-def _build_group_legend_items(
-    plot_df: pd.DataFrame,
-    group_by: str,
-    metadata_path: str,
-) -> tuple[list[Line2D], list[str], str | None]:
-    model_style, family_map = utils.utils_mapping._build_model_style(
-        # metadata_path,
-        group_by=group_by,
-        family_marker_mode="distinct",
-        metadata_path=metadata_path,
-    )
-
-    legend_handles: list[Line2D] = []
-    legend_labels: list[str] = []
-
-    groups = set(plot_df[group_by].astype(str).unique())
-    for group_name, (color, marker, size_val) in model_style.items():
-        if group_name not in groups:
-            continue
-
-        marker_style = mmarkers.MarkerStyle(marker)
-        marker_face = color if marker_style.is_filled() else "none"
-
-        models_num = len(plot_df[plot_df[group_by] == group_name]["model_id"].unique())
-        if models_num > 1:
-            label = f"{group_name} (x{models_num})"
-        else:
-            label = group_name
-
-        legend_handles.append(
-            Line2D(
-                [0],
-                [0],
-                marker=marker,
-                color="none",
-                markerfacecolor=marker_face,
-                markeredgecolor=color,
-                markersize=size_val,
-                linestyle="None",
-            )
-        )
-        legend_labels.append(label)
-
-    title_str = {"model_id": "Model", "model_family": "Model Family"}.get(group_by)
-    return legend_handles, legend_labels, title_str
-
 
 def create_num_objects_category_curve(
     eval_df: pd.DataFrame,
@@ -90,7 +45,7 @@ def create_num_objects_category_curve(
 
     # Convert accuracy to percentage
     plot_df["accuracy"] = plot_df["accuracy"] * 100
-    plot_df = utils.utils_read.macro_accuracy(plot_df, level=category_column, group_by=["object_count"])
+    plot_df = utils_read.macro_accuracy(plot_df, level=category_column, group_by=["object_count"])
 
     # Aggregate: mean accuracy per (category, object_count)
     agg_df = (
@@ -103,15 +58,15 @@ def create_num_objects_category_curve(
     fig, ax = plt.subplots(figsize=(7, 3.5))
 
     categories = list(plot_df[category_column].unique())
-    categories_sorted = utils.utils_mapping.sort_categories(categories)
+    categories_sorted = utils_mapping.sort_categories(categories)
     for i, cat in enumerate(categories_sorted):
         df_cat = agg_df[agg_df[category_column] == cat]
         if df_cat.empty:
             continue
         x = df_cat["object_count"].values
         y = df_cat["accuracy"].values
-        cat_label = utils.utils_mapping.mapping_cat_short.get(cat)
-        cat_color = utils.utils_mapping.mapping_cat_colors.get(cat)
+        cat_label = utils_mapping.mapping_cat_short.get(cat)
+        cat_color = utils_mapping.mapping_cat_colors.get(cat)
         if scatter:
             ax.scatter(x, y, color=cat_color, s=60, alpha=0.8, label=cat_label)
         else:
@@ -183,7 +138,7 @@ def create_num_objects_cat_violin(
         ax.set_visible(False)
         return
 
-    model_style, family_map = utils.utils_mapping._build_model_style(
+    model_style, family_map = utils_mapping._build_model_style(
         metadata_path,
         group_by=group_by,
         family_marker_mode="distinct",
@@ -206,8 +161,8 @@ def create_num_objects_cat_violin(
     )
     ax.set_ylabel("Accuracy")
     if cat != "all":
-        ylabel = utils.utils_mapping.mapping_cat_short.get(cat)
-        ylabel_color = utils.utils_mapping.mapping_cat_colors.get(cat)+"CC"
+        ylabel = utils_mapping.mapping_cat_short.get(cat)
+        ylabel_color = utils_mapping.mapping_cat_colors.get(cat)+"CC"
     else:
         ylabel = "Overall accuracy"
         ylabel_color = "black"
@@ -236,9 +191,9 @@ def create_num_objects_cat_violin(
         )
 
     if category_column == "category":
-        label = utils.utils_mapping.categories.get(cat)
+        label = utils_mapping.categories.get(cat)
     elif category_column == "sub_category":
-        label = utils.utils_mapping.subcategories.get(cat)
+        label = utils_mapping.subcategories.get(cat)
     ax.set_title(label)
     ax.set_xlabel("Number of Objects")
     # ax.set_ylabel("Accuracy")
@@ -281,7 +236,7 @@ def create_num_objects_violin_grid(
     plot_df = eval_df.copy()
     plot_df["accuracy"] *= 100
     
-    plot_df = utils.utils_read.macro_accuracy(plot_df, level=category_column, group_by=["object_count"])
+    plot_df = utils_read.macro_accuracy(plot_df, level=category_column, group_by=["object_count"])
     
     cats = pd.unique(plot_df[category_column])
     if cats.size == 0:
@@ -354,7 +309,7 @@ def create_num_objects_violin_grid(
             axes[j].set_visible(False)
 
     # Plot legend
-    legend_handles, legend_labels, title_str = _build_group_legend_items(
+    legend_handles, legend_labels, title_str = utils_graph._build_group_legend_items(
         plot_df,
         group_by=group_by,
         metadata_path=metadata_path
@@ -486,7 +441,7 @@ def create_accuracy(
     plot_df = eval_df.copy()
     plot_df["accuracy"] *= 100
 
-    plot_df = utils.utils_read.macro_accuracy(plot_df, level=level)
+    plot_df = utils_read.macro_accuracy(plot_df, level=level)
 
     agg_df = (
         plot_df.groupby([group_by, level], observed=True)["accuracy"]
@@ -497,13 +452,13 @@ def create_accuracy(
     # Get level entries and sort them
     if level == "category":
         cats_in = plot_df["category"].unique()
-        levels = utils.utils_mapping.sort_categories(cats_in)
+        levels = utils_mapping.sort_categories(cats_in)
     elif level == "sub_category":
         subcats_in = plot_df["sub_category"].unique()
-        levels = utils.utils_mapping.sort_subcategories(subcats_in)
+        levels = utils_mapping.sort_subcategories(subcats_in)
     elif level == "question_id":
         qids_in = plot_df["question_id"].unique()
-        levels = utils.utils_mapping.sort_questions(
+        levels = utils_mapping.sort_questions(
             triplets=[
                 (cat, subcat, qid)
                 for (cat, subcat, qid) in plot_df[plot_df["question_id"].isin(qids_in)][["category", "sub_category", "question_id"]].itertuples(index=False)
@@ -529,7 +484,7 @@ def create_accuracy(
     agg_df["level_idx"] = agg_df[level].map(level_idx)
     
     # Build model style
-    model_style, family_map = utils.utils_mapping._build_model_style(
+    model_style, family_map = utils_mapping._build_model_style(
         metadata_path,
         group_by=group_by
     )
@@ -622,19 +577,19 @@ def create_accuracy(
             regions.append({"xloc": (x_pos, x_pos + qids_len), 
                             "lines": "left" if c_idx > 0 else None,
                             "linecolor": "#999999",
-                            "label": utils.utils_mapping.categories.get(cat) if cat != "all" else "Overall",
-                            "textcolor": utils.utils_mapping.mapping_cat_colors.get(cat)+ "CC",
+                            "label": utils_mapping.categories.get(cat) if cat != "all" else "Overall",
+                            "textcolor": utils_mapping.mapping_cat_colors.get(cat)+ "CC",
                             "textfontsize": 10})
             x_pos += qids_len
     elif level == "question_id":
         x_pos = -0.5
         for c_idx, cat in enumerate(levels):
             qids_len = len([q for s in levels[cat] for q in levels[cat][s]])
-            cat_color = utils.utils_mapping.mapping_cat_colors.get(cat)
+            cat_color = utils_mapping.mapping_cat_colors.get(cat)
             regions.append({"xloc": (x_pos, x_pos + qids_len), 
                             "lines": "left" if c_idx > 0 else None,
                             "linecolor": "#999999",
-                            "label": utils.utils_mapping.categories.get(cat) if cat != "all" else "Overall",
+                            "label": utils_mapping.categories.get(cat) if cat != "all" else "Overall",
                             "textcolor": cat_color + "CC",
                             "textfontsize": 10})
             
@@ -644,7 +599,7 @@ def create_accuracy(
                                 "lines": "left" if subcat_idx > 0 else None,
                                 "linewidth": 1.0,
                                 "linecolor": "#555555",
-                                "label": utils.utils_mapping.subcategories.get(subcat) if subcat != "all" else "Overall",
+                                "label": utils_mapping.subcategories.get(subcat) if subcat != "all" else "Overall",
                                 "textcolor": cat_color + "CC",
                                 "textfontsize": 8,
                                 "texty": 0.80,
@@ -707,7 +662,7 @@ def create_accuracy(
     )
 
     # if level == "category":
-    category_labels = [ utils.utils_graph.get_level_label(level, name) 
+    category_labels = [ utils_graph.get_level_label(level, name) 
                        + f"\n({cat_accuracy.loc[cat_accuracy[level] == name, 'accuracy'].values[0]:.1f}%)" 
                        for name in levels_flat ]
     ax.set_xticks(range(len(levels_flat)))
@@ -717,7 +672,7 @@ def create_accuracy(
 
     for ticklabel, name in zip(ax.get_xticklabels(), levels_flat):
         cat_key = plot_df[plot_df[level] == name]["category"].values[0]
-        cat_color = utils.utils_mapping.mapping_cat_colors.get(cat_key)
+        cat_color = utils_mapping.mapping_cat_colors.get(cat_key)
         ticklabel.set_color(cat_color+"CC")  # Adding transparency
 
     for label in [ax.xaxis.label, ax.yaxis.label]:
@@ -725,7 +680,7 @@ def create_accuracy(
 
     # Add legend if requested
     if show_legend:
-        legend_handles, legend_labels, title_str = _build_group_legend_items(
+        legend_handles, legend_labels, title_str = utils_graph._build_group_legend_items(
             plot_df,
             group_by=group_by,
             metadata_path=metadata_path
@@ -825,7 +780,7 @@ def create_material_stiffness_violin_grid(
     if categories.size == 0:
         raise ValueError("No sub_category values found after filtering.")
 
-    model_style, family_map = utils.utils_mapping._build_model_style(
+    model_style, family_map = utils_mapping._build_model_style(
         # plot_df,
         metadata_path,
         group_by=group_by,
@@ -951,7 +906,7 @@ def create_material_stiffness_violin_grid(
         ax.set_title(label)
         # ax.set_xlabel("Object Stiffness")
         ax.set_xlabel("")
-        ax.set_ylabel(utils.utils_mapping.categories.get(cat), color=utils.utils_mapping.mapping_cat_colors.get(cat))
+        ax.set_ylabel(utils_mapping.categories.get(cat), color=utils_mapping.mapping_cat_colors.get(cat))
         ax.grid(axis="y")
         if y_limit_mode == "fixed":
             ax.set_ylim(-10, 110)
@@ -1149,7 +1104,7 @@ def create_material_stiffness_violin_grid(
             # ax_cat.set_title(label)
             # ax_cat.set_xlabel("Material stiffness (Young's modulus level)")
             ax_cat.set_xlabel("")
-            ax_cat.set_ylabel(utils.utils_mapping.categories.get(cat), color=utils.utils_mapping.mapping_cat_colors.get(cat))
+            ax_cat.set_ylabel(utils_mapping.categories.get(cat), color=utils_mapping.mapping_cat_colors.get(cat))
             ax_cat.grid(axis="y")
             if y_limit_mode == "fixed":
                 ax_cat.set_ylim(-10,110)
@@ -1264,7 +1219,7 @@ def create_num_objects_violin_per_question_id(
     if question_ids.size == 0:
         raise ValueError("No question_id values found after filtering.")
 
-    model_style, family_map = utils.utils_mapping._build_model_style(
+    model_style, family_map = utils_mapping._build_model_style(
         # plot_df,
         metadata_path,
         group_by=group_by,

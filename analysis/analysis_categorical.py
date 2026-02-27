@@ -4,17 +4,7 @@ import argparse
 from fileinput import filename
 from pathlib import Path
 
-import pandas as pd
-import tqdm
-
 import utils.utils_read
-
-if not Path("/scratch/project/eu-25-92/composite_physics/dataset/simulation_v4/").exists():
-    utils.utils_read.sim_path_fct = lambda x: x.replace("/scratch/project/eu-25-92/composite_physics/dataset/simulation_v4/", "/nfs/data/workspaces/rdechare/codes/physics-sim/output/sims/v4/")
-
-# from utils.utils_read import load_results, _sanitize_answer
-import utils.utils_graph as utils_graph
-import utils.utils_graph_correlation as utils_graph_correlation
 from utils.utils_graph_correlation import (
     create_accuracy,
     create_num_objects_violin_grid

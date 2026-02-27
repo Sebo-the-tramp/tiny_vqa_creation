@@ -11,6 +11,10 @@ from utils import utils_mapping
 from utils import utils_graph
 
 
+SIM_PATH_MODIFIER = lambda x: x.replace("simulation.json", "simulation_kinematics_min.json")
+if not Path("/scratch/project/eu-25-92/composite_physics/dataset/simulation_v4/").exists():
+    SIM_PATH_MODIFIER = lambda x: x.replace("/scratch/project/eu-25-92/composite_physics/dataset/simulation_v4/", "/nfs/data/workspaces/rdechare/codes/physics-sim/output/sims/v4/")
+
 # _ANSWER_RE = re.compile(r"(?i)^\s*([a-d])(?:[^a-z0-9]|$)")
 # _ANSWER_RE = re.compile(r"\b([A-D])\s*[\.\,\:\)]")
 _ANSWER_RE = re.compile(r"(?:^([A-D])\b|\b([A-D])\b\s*[\.\,\:\)]?$)", re.IGNORECASE)
@@ -451,14 +455,15 @@ def load_results_levels(
 
     return df
 
-def macro_accuracy(df: pd.DataFrame, level: str, group_by: list[str] = None) -> pd.DataFrame:
+def macro_accuracy(df: pd.DataFrame, level: str, group_by: list[str]|str = None) -> pd.DataFrame:
     levels = ["question_id", "sub_category", "category", "model_id", "model_family"]
     if "run_name" in df.columns:
         levels = levels + ["run_name"]
     assert level in levels, "Invalid value for 'level' argument"
 
     if group_by is not None:
-        levels = levels + [g for g in list(group_by) if g not in levels]
+        group_by = [group_by] if isinstance(group_by, str) else group_by
+        levels = levels + [g for g in group_by if g not in levels]
         
 
     level_df = df
@@ -482,11 +487,10 @@ def macro_accuracy(df: pd.DataFrame, level: str, group_by: list[str] = None) -> 
 
     return None
 
-sim_path_fct = lambda x: x.replace("simulation.json", "simulation_kinematics_min.json")
 def read_simulation_metadata(
     simulation_json_path: str | Path, verbose: bool = False
 ) -> dict:
-    simulation_json_path = Path(sim_path_fct(simulation_json_path))
+    simulation_json_path = Path(SIM_PATH_MODIFIER(simulation_json_path))
     
     cache_key = str(simulation_json_path)
     cached = _SIM_METADATA_CACHE.get(cache_key)
@@ -520,10 +524,10 @@ def find_interested_object_pixels_count(
     verbose: bool = False,
 ) -> dict:
     last_file_name = file_names[-1]
-    render_name = last_file_name.split("/")[-1].replace(".png", "")
+    render_name = Path(last_file_name).stem.split("_")[0]  # We split by "_" to handle ablation filenames (eg, "001211_F_MASS_make-a-match.png")
     final_timestep = get_timestep_from_idx(int(render_name))
 
-    simulation_json_path = Path(sim_path_fct(simulation_json_path))
+    simulation_json_path = Path(SIM_PATH_MODIFIER(simulation_json_path))
     cache_key = str(simulation_json_path)
     cached = _SIM_METADATA_CACHE.get(cache_key)
     if cached is not None:
@@ -593,6 +597,9 @@ def load_model_answers(results_dir: str | Path, wide: bool = False) -> pd.DataFr
     for path in sorted(results_dir.glob("*_val.json")):
         model = path.stem.replace("_val", "")
         df = pd.read_json(path)
+        if df.empty:
+            print(f"Skipping {model} at path {path} has an empty answers file.")
+            continue
         df["model"] = model
         df["og_answer"] = df["answer"]
         df["answer"] = df["answer"].apply(

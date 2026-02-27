@@ -3,12 +3,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-import pandas as pd
-
 import utils.utils_read
-if not Path("/scratch/project/eu-25-92/composite_physics/dataset/simulation_v4/").exists():
-    utils.utils_read.sim_path_fct = lambda x: x.replace("/scratch/project/eu-25-92/composite_physics/dataset/simulation_v4/", "/nfs/data/workspaces/rdechare/codes/physics-sim/output/sims/v4/")
-
 import utils.utils_graph as utils_graph
 from utils.utils_graph_correlation import (
     create_material_stiffness_violin_grid,

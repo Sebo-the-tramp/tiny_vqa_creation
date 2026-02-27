@@ -681,7 +681,7 @@ GROUPINGS = [
     "family_bestmat", 
     "family_biggest", 
     "model", 
-    # "family"  # not making sense to average by family
+    "family"  # not making sense to average by family
 ]
 
 def apply_group(df: pd.DataFrame, group_by: str) -> pd.DataFrame:
@@ -692,12 +692,14 @@ def apply_group(df: pd.DataFrame, group_by: str) -> pd.DataFrame:
     # group_by = "model_id"cat_acc_df
 
     if group_by in ["family_best", "family_bestmat"]:
+        cat_acc_df = macro_accuracy(df, level="category", group_by=["model_family", "model_id"])
+        
         # Compute category accuracy for each model
-        cat_acc_df = (
-            df.groupby(["category", "model_family", "model_id"], observed=True)["accuracy"]
-            .mean()
-            .reset_index()
-        )
+        # cat_acc_df = (
+        #     df.groupby(["category", "model_family", "model_id"], observed=True)["accuracy"]
+        #     .mean()
+        #     .reset_index()
+        # )
         
         if group_by == "family_bestmat":
             cat_acc_df = cat_acc_df[cat_acc_df["category"] == "material_understanding"]
@@ -737,6 +739,24 @@ def apply_group(df: pd.DataFrame, group_by: str) -> pd.DataFrame:
         df = df[df['model_id'].isin(family_biggest_all["model_id"])]
         group_by = "model_id"
     elif group_by == "model":
+        group_by = "model_id"
+    elif re.fullmatch(r"model_best-([0-9]+)", group_by) is not None:
+        top_k = int(re.fullmatch(r"model_best-([0-9]+)", group_by).group(1))
+        
+        # Compute category accuracy for each model
+        cat_acc_df = (
+            df.groupby(["category", "model_family", "model_id"], observed=True)["accuracy"]
+            .mean()
+            .reset_index()
+        )
+        
+        if group_by == "family_bestmat":
+            cat_acc_df = cat_acc_df[cat_acc_df["category"] == "material_understanding"]
+        
+        # Macro-accuracy: average across categories
+        model_accuracy = cat_acc_df.groupby(['model_family', 'model_id'])['accuracy'].mean().reset_index()
+        best_models = model_accuracy.loc[model_accuracy.groupby('model_family')['accuracy'].idxmax()]
+        df = df[df['model_id'].isin(best_models['model_id'])]
         group_by = "model_id"
     elif group_by == "family":
         group_by = "model_family"

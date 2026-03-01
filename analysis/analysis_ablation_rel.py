@@ -513,7 +513,7 @@ def collect_runs(ablation_runs: list[str], base_path: Path, vqa_set: str) -> pd.
 #     print(f"Saved object-count scatter plot: {output_path}")
 
 
-def plot_ablation_scatter(
+def plot_ablation(
     runs_df: pd.DataFrame, 
     output_dir: Path, 
     ablations_runs: list[str],
@@ -636,14 +636,77 @@ def plot_ablation_scatter(
             marker=marker,
             zorder=zorder
         )
+        # if improve:
+        #     ax.plot(
+        #         x_vals[x_vals.argsort()],
+        #         y_vals[x_vals.argsort()],
+        #         color=color,
+        #         alpha=0.5,
+        #         linewidth=1.5,
+        #         zorder=3
+        #     )
 
     ax.set_xticks(list(range(len(ablations_tags))))
+
+    def xtick_label(abl_tags):
+        if abl_tags == ["Name"]:
+            return "Name\n(baseline)"
+
+        label = "\n".join([t for t in abl_tags])
+        abl_mask = None
+        for tag in tags:
+            tag_mask = agg_df[f"run_tag_{tag.lower()}"] == (True if tag in abl_tags else False)
+            abl_mask = tag_mask if abl_mask is None else (abl_mask & tag_mask)
+        
+        return label
+
+    def xtick_stats(abl_tags):
+        abl_mask = None
+        for tag in tags:
+            tag_mask = agg_df[f"run_tag_{tag.lower()}"] == (True if tag in abl_tags else False)
+            abl_mask = tag_mask if abl_mask is None else (abl_mask & tag_mask)
+
+        rel_change = agg_df.loc[abl_mask, "accuracy_rel_change"]
+        up = int((rel_change >= change_rel_threshold).sum())
+        down = int((rel_change <= -change_rel_threshold).sum())
+        flat = int(((rel_change > -change_rel_threshold) & (rel_change < change_rel_threshold)).sum())
+        return up, down, flat
+
+    xtick_items = list(ablations_tags.items())
+    xtick_labels = [xtick_label(abl_tags) for _, abl_tags in xtick_items]
+    xtick_stats_values = [xtick_stats(abl_tags) for _, abl_tags in xtick_items]
+
     ax.set_xticklabels(
-        ["Name\n(baseline)" if abl_tags == ["Name"] else 
-         "\n".join([t for t in abl_tags])
-         for abl, abl_tags in ablations_tags.items()],
+        xtick_labels,
         ha="center",
     )
+
+    stats_fontsize = 5
+    for x, (up, down, flat) in enumerate(xtick_stats_values):
+        if x == 0:
+            continue # skip baseline stats
+        stats_y = -0.08 - 0.04 * xtick_labels[x].count("\n")
+        ax.text(
+            x - 0.17, stats_y,
+            f"↗{up}",
+            transform=ax.get_xaxis_transform(),
+            ha="right", va="top",
+            fontsize=stats_fontsize, color="tab:green"
+        )
+        ax.text(
+            x, stats_y,
+            f"≈{flat}",
+            transform=ax.get_xaxis_transform(),
+            ha="center", va="top",
+            fontsize=stats_fontsize, color="#666666"
+        )
+        ax.text(
+            x + 0.15, stats_y,
+            f"↘{down}",
+            transform=ax.get_xaxis_transform(),
+            ha="left", va="top",
+            fontsize=stats_fontsize, color="tab:red"
+        )
     ax.set_xlabel("", fontsize=1)
     # ax.axvline(0.5, color="#666666", linewidth=1, alpha=0.5, zorder=-1, linestyle='--')
 
@@ -721,7 +784,8 @@ def plot_ablation_scatter(
             borderaxespad=0.0,
             fontsize=8, 
             title_fontsize=9, 
-            markerscale=0.7
+            markerscale=0.7,
+            ncol=2 if len(group_handles)>20 else 1
         )
         ax.add_artist(leg)
         legend_artists.append(leg)
@@ -837,7 +901,7 @@ def main() -> None:
             print(f"Processing: grouping by {group_by}: with {len(cur_df)} entries")
             # for accuracy_mode in ["baseline_change", "baseline_rel_change", "absolute"]:
             for accuracy_mode in ["absolute"]:
-                plot_ablation_scatter(
+                plot_ablation(
                     cur_df,
                     cur_output_dir,
                     group_by=group_by,

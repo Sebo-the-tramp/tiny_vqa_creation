@@ -1,0 +1,1130 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Run 28 General Viewer</title>
+  <style>
+    :root {
+      --bg: #f4f1ea;
+      --card: #ffffff;
+      --ink: #1f2937;
+      --muted: #5d6878;
+      --line: #d6dbe3;
+      --accent: #0f766e;
+      --accent-2: #8b5e34;
+      --soft: #eef6f5;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: radial-gradient(circle at top right, #fbfaf7 0%, var(--bg) 35%, #ebe6dc 100%);
+      font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+    }
+
+    header {
+      padding: 22px 20px 8px;
+    }
+
+    h1 {
+      margin: 0;
+      font-family: "Georgia", "Times New Roman", serif;
+      font-size: 28px;
+      letter-spacing: 0.2px;
+    }
+
+    .subtitle {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .controls {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      padding: 14px 20px 16px;
+    }
+
+    .control {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px;
+    }
+
+    .control.actions {
+      display: flex;
+      align-items: end;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .control label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 12px;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    select, input, button {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 9px 10px;
+      font-size: 14px;
+      background: #fff;
+      color: var(--ink);
+    }
+
+    button {
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    .btn-secondary {
+      background: #fff;
+    }
+
+    details.scene-filter {
+      grid-column: 1 / -1;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    details.scene-filter summary {
+      padding: 10px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .scene-inner {
+      padding: 0 10px 10px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .scene-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .scene-actions button {
+      width: auto;
+      padding: 7px 10px;
+      font-size: 12px;
+    }
+
+    .scene-list {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      max-height: 250px;
+      overflow: auto;
+      padding: 8px;
+      display: grid;
+      gap: 6px;
+    }
+
+    .scene-option {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 8px;
+      align-items: start;
+      padding: 5px;
+      border-radius: 7px;
+    }
+
+    .scene-option:hover {
+      background: #f7f6f2;
+    }
+
+    .scene-meta {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .status {
+      padding: 0 20px 8px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .pagination {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 20px 14px;
+      flex-wrap: wrap;
+    }
+
+    .pagination button {
+      width: auto;
+      padding: 8px 12px;
+    }
+
+    #pageInfo {
+      font-weight: 600;
+      color: var(--muted);
+      margin-right: 8px;
+    }
+
+    main {
+      padding: 0 20px 28px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 14px;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+      animation: show 0.22s ease;
+    }
+
+    @keyframes show {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .row-head {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .badge {
+      padding: 4px 9px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      background: #f0f4f8;
+      color: #334155;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(300px, 52%) 1fr;
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .visual-panel, .text-panel {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fff;
+      padding: 10px;
+    }
+
+    .single-image {
+      width: 100%;
+      min-height: 300px;
+      max-height: 520px;
+      object-fit: contain;
+      background: #f5f7f9;
+      border-radius: 8px;
+      border: 1px solid #e7ecf1;
+    }
+
+    .single-image.lazy-pending {
+      opacity: 0.25;
+      filter: blur(6px);
+      transition: opacity 0.2s ease, filter 0.2s ease;
+    }
+
+    .frame-controls {
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .frame-controls button {
+      width: auto;
+      padding: 6px 10px;
+      font-size: 12px;
+    }
+
+    .frame-label {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .frame-jump {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+      margin-top: 6px;
+    }
+
+    .frame-chip {
+      width: auto;
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 999px;
+      padding: 4px 8px;
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    .frame-chip.active {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    .question {
+      border: 1px dashed #c8d1dc;
+      border-radius: 8px;
+      background: #fafbfc;
+      padding: 10px;
+      line-height: 1.45;
+      font-size: 15px;
+      white-space: pre-wrap;
+    }
+
+    .question-line.correct {
+      font-weight: 800;
+      color: #0f5132;
+      background: var(--soft);
+      border-radius: 6px;
+      padding: 1px 4px;
+      display: inline-block;
+    }
+
+    .answer {
+      margin-top: 10px;
+      font-size: 15px;
+      background: #f7f9fb;
+      border: 1px solid #dde4ec;
+      border-radius: 8px;
+      padding: 8px;
+    }
+
+    .card-actions {
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .download-link {
+      text-decoration: none;
+      display: inline-block;
+      width: auto;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--accent-2);
+      color: #fff;
+      background: var(--accent-2);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .download-link:hover {
+      filter: brightness(0.95);
+    }
+
+    .empty {
+      padding: 20px;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    @media (max-width: 1080px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+      .single-image {
+        min-height: 240px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Run 28 General Viewer</h1>
+    <div class="subtitle">Server-side paging and exact filters (`idx`, `question_id`, `object_count`, scenes)</div>
+  </header>
+
+  <section class="controls">
+    <div class="control">
+      <label for="questionIdFilter">Question ID</label>
+      <select id="questionIdFilter">
+        <option value="">All</option>
+      </select>
+    </div>
+
+    <div class="control">
+      <label for="objectCountFilter">Object Count</label>
+      <select id="objectCountFilter">
+        <option value="">All</option>
+      </select>
+    </div>
+
+    <div class="control">
+      <label for="idxFilter">Exact idx</label>
+      <input id="idxFilter" placeholder="Example: 102_g" />
+    </div>
+
+    <div class="control">
+      <label for="pageSizeSelect">Page Size</label>
+      <select id="pageSizeSelect">
+        <option value="25" selected>25</option>
+        <option value="50">50</option>
+        <option value="100">100</option>
+      </select>
+    </div>
+
+    <div class="control actions">
+      <button id="applyBtn" class="btn-primary" type="button">Apply Filters</button>
+      <button id="resetBtn" class="btn-secondary" type="button">Reset</button>
+    </div>
+
+    <details class="control scene-filter" id="sceneFilterDetails">
+      <summary id="sceneFilterSummary">Scene filter</summary>
+      <div class="scene-inner">
+        <input id="sceneSearch" placeholder="Search scene id, name, batch, comment" />
+        <div class="scene-actions">
+          <button type="button" id="sceneSelectVisible">Select visible</button>
+          <button type="button" id="sceneUnselectVisible">Unselect visible</button>
+          <button type="button" id="sceneSelectAll">Select all</button>
+          <button type="button" id="sceneClearAll">Clear all</button>
+        </div>
+        <div class="scene-list" id="sceneList">
+          <div>Loading scenes...</div>
+        </div>
+      </div>
+    </details>
+  </section>
+
+  <div class="status" id="status">Loading metadata...</div>
+  <div class="pagination">
+    <button id="prevBtn" type="button">Prev</button>
+    <button id="nextBtn" type="button">Next</button>
+    <span id="pageInfo">Page 1 / 1</span>
+  </div>
+
+  <main id="results"></main>
+
+  <script>
+    const LAZY_VIEW_DELAY_MS = 1000;
+    const REQUEST_TIMEOUT_MS = 30000;
+    const IMAGE_PREVIEW = {
+      width: 420,
+      quality: 60,
+      format: "jpeg",
+    };
+
+    const state = {
+      page: 1,
+      pageSize: 25,
+      total: 0,
+      pageCount: 1,
+      rowsWithAvailableImages: 0,
+      rowsWithoutAvailableImages: 0,
+      questionIds: [],
+      objectCounts: [],
+      sceneOptions: [],
+      defaultSelectedScenes: [],
+      selectedSceneIds: new Set(),
+      requestSeq: 0,
+      activeController: null,
+      isLoading: false,
+    };
+
+    const lazyState = {
+      observer: null,
+      visible: new WeakMap(),
+      timers: new WeakMap(),
+    };
+
+    const el = {
+      questionIdFilter: document.getElementById("questionIdFilter"),
+      objectCountFilter: document.getElementById("objectCountFilter"),
+      idxFilter: document.getElementById("idxFilter"),
+      pageSizeSelect: document.getElementById("pageSizeSelect"),
+      applyBtn: document.getElementById("applyBtn"),
+      resetBtn: document.getElementById("resetBtn"),
+      sceneFilterSummary: document.getElementById("sceneFilterSummary"),
+      sceneSearch: document.getElementById("sceneSearch"),
+      sceneList: document.getElementById("sceneList"),
+      sceneSelectVisible: document.getElementById("sceneSelectVisible"),
+      sceneUnselectVisible: document.getElementById("sceneUnselectVisible"),
+      sceneSelectAll: document.getElementById("sceneSelectAll"),
+      sceneClearAll: document.getElementById("sceneClearAll"),
+      status: document.getElementById("status"),
+      prevBtn: document.getElementById("prevBtn"),
+      nextBtn: document.getElementById("nextBtn"),
+      pageInfo: document.getElementById("pageInfo"),
+      results: document.getElementById("results"),
+    };
+
+    function setStatus(text) {
+      el.status.textContent = text;
+    }
+
+    async function fetchJson(url, options = {}) {
+      const timeoutController = new AbortController();
+      let timedOut = false;
+      let externalAbortListener = null;
+
+      const timeoutId = setTimeout(() => {
+        timedOut = true;
+        timeoutController.abort();
+      }, REQUEST_TIMEOUT_MS);
+
+      if (options.signal) {
+        if (options.signal.aborted) {
+          timeoutController.abort();
+        } else {
+          externalAbortListener = () => timeoutController.abort();
+          options.signal.addEventListener("abort", externalAbortListener, { once: true });
+        }
+      }
+
+      try {
+        const response = await fetch(url, { ...options, signal: timeoutController.signal });
+        if (!response.ok) {
+          const body = await response.text();
+          throw new Error(`HTTP ${response.status}: ${body}`);
+        }
+        return response.json();
+      } catch (err) {
+        if (timedOut) {
+          throw new Error(`Request timed out after ${Math.round(REQUEST_TIMEOUT_MS / 1000)}s`);
+        }
+        throw err;
+      } finally {
+        clearTimeout(timeoutId);
+        if (externalAbortListener && options.signal) {
+          options.signal.removeEventListener("abort", externalAbortListener);
+        }
+      }
+    }
+
+    function imageUrl(path) {
+      const params = new URLSearchParams();
+      params.set("path", path);
+      params.set("width", String(IMAGE_PREVIEW.width));
+      params.set("quality", String(IMAGE_PREVIEW.quality));
+      params.set("fmt", IMAGE_PREVIEW.format);
+      return `/api/image?${params.toString()}`;
+    }
+
+    function setQueryParam(url, key, value) {
+      const marker = `${encodeURIComponent(key)}=`;
+      if (!url.includes(marker)) {
+        return `${url}${url.includes("?") ? "&" : "?"}${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
+      }
+      const regex = new RegExp(`([?&])${encodeURIComponent(key)}=[^&]*`);
+      return url.replace(regex, `$1${encodeURIComponent(key)}=${encodeURIComponent(value)}`);
+    }
+
+    function ensureLazyObserver() {
+      if (lazyState.observer) return;
+      lazyState.observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          const img = entry.target;
+          if (!(img instanceof HTMLImageElement)) return;
+
+          lazyState.visible.set(img, entry.isIntersecting);
+          if (!entry.isIntersecting) {
+            const timer = lazyState.timers.get(img);
+            if (timer) {
+              clearTimeout(timer);
+              lazyState.timers.delete(img);
+            }
+            return;
+          }
+
+          if (img.dataset.loaded === "1" || img.dataset.requested === "1") {
+            return;
+          }
+
+          if (lazyState.timers.get(img)) {
+            return;
+          }
+
+          const timer = setTimeout(() => {
+            lazyState.timers.delete(img);
+            if (!lazyState.visible.get(img)) return;
+            loadLazyImage(img);
+          }, LAZY_VIEW_DELAY_MS);
+          lazyState.timers.set(img, timer);
+        });
+      }, { threshold: 0.1 });
+    }
+
+    function bindLazyEvents(img) {
+      if (img.dataset.lazyBound === "1") return;
+      img.dataset.lazyBound = "1";
+
+      img.addEventListener("load", () => {
+        img.dataset.loaded = "1";
+        img.classList.remove("lazy-pending");
+        if (lazyState.observer) lazyState.observer.unobserve(img);
+        const timer = lazyState.timers.get(img);
+        if (timer) {
+          clearTimeout(timer);
+          lazyState.timers.delete(img);
+        }
+      });
+
+      img.addEventListener("error", () => {
+        const stage = Number(img.dataset.errorStage || "0");
+        if (stage === 0 && img.dataset.srcFallback1) {
+          img.dataset.errorStage = "1";
+          img.dataset.requested = "1";
+          img.src = img.dataset.srcFallback1;
+          return;
+        }
+        if (stage === 1 && img.dataset.srcFallback2) {
+          img.dataset.errorStage = "2";
+          img.dataset.requested = "1";
+          img.src = img.dataset.srcFallback2;
+          return;
+        }
+        img.classList.remove("lazy-pending");
+      });
+    }
+
+    function setLazySource(img, src) {
+      bindLazyEvents(img);
+      ensureLazyObserver();
+
+      img.dataset.src = src;
+      img.dataset.srcFallback1 = setQueryParam(src, "fmt", "jpeg");
+      img.dataset.srcFallback2 = setQueryParam(src, "fmt", "orig");
+      img.dataset.loaded = "0";
+      img.dataset.requested = "0";
+      img.dataset.errorStage = "0";
+      img.classList.add("lazy-pending");
+      img.removeAttribute("src");
+
+      if (lazyState.observer) {
+        lazyState.observer.observe(img);
+      }
+    }
+
+    function loadLazyImage(img, force = false) {
+      const src = img.dataset.src || "";
+      if (!src) return;
+      if (!force && img.dataset.requested === "1") return;
+      img.dataset.requested = "1";
+      img.src = src;
+    }
+
+    function clearChildren(node) {
+      while (node.firstChild) {
+        node.removeChild(node.firstChild);
+      }
+    }
+
+    function clearRenderedImageLoads() {
+      const renderedImages = el.results.querySelectorAll("img");
+      renderedImages.forEach((img) => {
+        if (lazyState.observer) {
+          lazyState.observer.unobserve(img);
+        }
+        const timer = lazyState.timers.get(img);
+        if (timer) {
+          clearTimeout(timer);
+          lazyState.timers.delete(img);
+        }
+        lazyState.visible.delete(img);
+        img.removeAttribute("src");
+      });
+    }
+
+    function stripImageTags(question) {
+      return String(question || "").replace(/<image>/g, "").trim();
+    }
+
+    function sceneMetaText(scene) {
+      const parts = [];
+      if (scene.name) parts.push(`name: ${scene.name}`);
+      if (scene.batch) parts.push(`batch: ${scene.batch}`);
+      if (scene.comment) parts.push(`comment: ${scene.comment}`);
+      return parts.join(" | ");
+    }
+
+    function updateSceneSummary() {
+      const selected = state.selectedSceneIds.size;
+      const total = state.sceneOptions.length;
+      el.sceneFilterSummary.textContent = `Scene filter (${selected} selected of ${total})`;
+    }
+
+    function visibleSceneOptions() {
+      const needle = (el.sceneSearch.value || "").trim().toLowerCase();
+      if (!needle) return state.sceneOptions;
+      return state.sceneOptions.filter((scene) => {
+        const haystack = `${scene.scene_id} ${scene.name || ""} ${scene.batch || ""} ${scene.comment || ""}`.toLowerCase();
+        return haystack.includes(needle);
+      });
+    }
+
+    function renderSceneList() {
+      clearChildren(el.sceneList);
+      const filtered = visibleSceneOptions();
+      if (!filtered.length) {
+        const empty = document.createElement("div");
+        empty.textContent = "No scenes match the search.";
+        el.sceneList.appendChild(empty);
+        updateSceneSummary();
+        return;
+      }
+
+      const frag = document.createDocumentFragment();
+      filtered.forEach((scene) => {
+        const label = document.createElement("label");
+        label.className = "scene-option";
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.value = scene.scene_id;
+        checkbox.checked = state.selectedSceneIds.has(scene.scene_id);
+        checkbox.addEventListener("change", () => {
+          if (checkbox.checked) {
+            state.selectedSceneIds.add(scene.scene_id);
+          } else {
+            state.selectedSceneIds.delete(scene.scene_id);
+          }
+          updateSceneSummary();
+          state.page = 1;
+          loadPage();
+        });
+
+        const textWrap = document.createElement("div");
+        const title = document.createElement("div");
+        title.textContent = scene.scene_id;
+        title.style.fontWeight = "700";
+
+        const meta = document.createElement("div");
+        meta.className = "scene-meta";
+        meta.textContent = sceneMetaText(scene) || "No extra metadata";
+
+        textWrap.appendChild(title);
+        textWrap.appendChild(meta);
+        label.appendChild(checkbox);
+        label.appendChild(textWrap);
+        frag.appendChild(label);
+      });
+
+      el.sceneList.appendChild(frag);
+      updateSceneSummary();
+    }
+
+    function populateSelect(selectEl, values) {
+      const current = selectEl.value;
+      clearChildren(selectEl);
+
+      const all = document.createElement("option");
+      all.value = "";
+      all.textContent = "All";
+      selectEl.appendChild(all);
+
+      values.forEach((value) => {
+        const option = document.createElement("option");
+        option.value = value;
+        option.textContent = value;
+        selectEl.appendChild(option);
+      });
+
+      if ([...selectEl.options].some((opt) => opt.value === current)) {
+        selectEl.value = current;
+      }
+    }
+
+    function buildQuery() {
+      const params = new URLSearchParams();
+      params.set("page", String(state.page));
+      params.set("page_size", String(state.pageSize));
+
+      const idx = (el.idxFilter.value || "").trim();
+      const questionId = (el.questionIdFilter.value || "").trim();
+      const objectCount = (el.objectCountFilter.value || "").trim();
+
+      if (idx) params.set("idx", idx);
+      if (questionId) params.set("question_id", questionId);
+      if (objectCount) params.set("object_count", objectCount);
+      params.set("include_missing_images", "1");
+
+      const selectedScenes = Array.from(state.selectedSceneIds).sort();
+      if (selectedScenes.length > 0 && selectedScenes.length < state.sceneOptions.length) {
+        selectedScenes.forEach((sceneId) => params.append("scene_id", sceneId));
+      }
+      return params.toString();
+    }
+
+    function renderQuestion(questionWrap, questionText, correctAnswer) {
+      clearChildren(questionWrap);
+      const cleaned = stripImageTags(questionText);
+      const lines = cleaned.split("\n");
+      lines.forEach((line) => {
+        const row = document.createElement("div");
+        row.className = "question-line";
+        row.textContent = line;
+        const trimmed = line.trim();
+        if (correctAnswer && trimmed.startsWith(`${correctAnswer}.`)) {
+          row.classList.add("correct");
+        }
+        questionWrap.appendChild(row);
+      });
+    }
+
+    function createSingleVisual(fileName) {
+      const panel = document.createElement("div");
+      panel.className = "visual-panel";
+      if (!fileName) {
+        const missing = document.createElement("div");
+        missing.className = "empty";
+        missing.textContent = "Missing image path.";
+        panel.appendChild(missing);
+        return panel;
+      }
+      const img = document.createElement("img");
+      img.className = "single-image";
+      img.loading = "lazy";
+      img.decoding = "async";
+      panel.appendChild(img);
+      setLazySource(img, imageUrl(fileName));
+      return panel;
+    }
+
+    function createCarouselVisual(fileNames) {
+      const panel = document.createElement("div");
+      panel.className = "visual-panel";
+      if (!fileNames.length) {
+        const missing = document.createElement("div");
+        missing.className = "empty";
+        missing.textContent = "Missing image path.";
+        panel.appendChild(missing);
+        return panel;
+      }
+
+      let current = 0;
+
+      const img = document.createElement("img");
+      img.className = "single-image";
+      img.loading = "lazy";
+      img.decoding = "async";
+      panel.appendChild(img);
+      setLazySource(img, imageUrl(fileNames[current]));
+
+      const controls = document.createElement("div");
+      controls.className = "frame-controls";
+      const prev = document.createElement("button");
+      prev.type = "button";
+      prev.textContent = "Prev";
+      const next = document.createElement("button");
+      next.type = "button";
+      next.textContent = "Next";
+      const label = document.createElement("span");
+      label.className = "frame-label";
+      controls.appendChild(prev);
+      controls.appendChild(next);
+      controls.appendChild(label);
+      panel.appendChild(controls);
+
+      const jump = document.createElement("div");
+      jump.className = "frame-jump";
+      panel.appendChild(jump);
+
+      const chips = fileNames.map((_, index) => {
+        const chip = document.createElement("button");
+        chip.type = "button";
+        chip.className = "frame-chip";
+        chip.textContent = String(index + 1);
+        chip.addEventListener("click", () => {
+          setFrame(index);
+        });
+        jump.appendChild(chip);
+        return chip;
+      });
+
+      function setFrame(index, forceLoad = false) {
+        if (!fileNames.length) return;
+        current = (index + fileNames.length) % fileNames.length;
+        setLazySource(img, imageUrl(fileNames[current]));
+        if (forceLoad) {
+          loadLazyImage(img, true);
+        }
+        label.textContent = `Frame ${current + 1}/${fileNames.length}`;
+        chips.forEach((chip, chipIdx) => {
+          chip.classList.toggle("active", chipIdx === current);
+        });
+      }
+
+      prev.addEventListener("click", () => setFrame(current - 1, true));
+      next.addEventListener("click", () => setFrame(current + 1, true));
+      setFrame(0, false);
+      return panel;
+    }
+
+    function renderItems(items) {
+      clearChildren(el.results);
+      if (!items.length) {
+        const empty = document.createElement("div");
+        empty.className = "empty";
+        empty.textContent = "No questions match the current filters.";
+        el.results.appendChild(empty);
+        return;
+      }
+
+      const frag = document.createDocumentFragment();
+      items.forEach((item) => {
+        const card = document.createElement("article");
+        card.className = "card";
+
+        const head = document.createElement("div");
+        head.className = "row-head";
+        [
+          `idx: ${item.idx || "-"}`,
+          `question_id: ${item.question_id || "-"}`,
+          `object_count: ${item.object_count || "-"}`,
+          `scene: ${item.scene || "-"}`,
+          `images: ${item.available_image_count || 0}/${item.image_count || 0}`,
+          (Number(item.image_count || 0) > 1 ? "view: carousel (1 image loaded at a time)" : "view: single frame"),
+        ].forEach((text) => {
+          const badge = document.createElement("span");
+          badge.className = "badge";
+          badge.textContent = text;
+          head.appendChild(badge);
+        });
+        card.appendChild(head);
+
+        const layout = document.createElement("div");
+        layout.className = "layout";
+
+        const files = Array.isArray(item.file_name) ? item.file_name : [];
+        const left = files.length > 1 ? createCarouselVisual(files) : createSingleVisual(files[0]);
+        layout.appendChild(left);
+
+        const textPanel = document.createElement("div");
+        textPanel.className = "text-panel";
+
+        const question = document.createElement("div");
+        question.className = "question";
+        renderQuestion(question, item.question, item.correct_answer);
+        textPanel.appendChild(question);
+
+        const answer = document.createElement("div");
+        answer.className = "answer";
+        answer.append("Correct answer: ");
+        const strong = document.createElement("strong");
+        strong.textContent = item.correct_answer || "N/A";
+        answer.appendChild(strong);
+        textPanel.appendChild(answer);
+
+        const actions = document.createElement("div");
+        actions.className = "card-actions";
+        if (item.idx) {
+          const downloadLink = document.createElement("a");
+          downloadLink.className = "download-link";
+          downloadLink.href = `/api/download?idx=${encodeURIComponent(item.idx)}`;
+          downloadLink.textContent = "Download question bundle";
+          actions.appendChild(downloadLink);
+        }
+        textPanel.appendChild(actions);
+
+        layout.appendChild(textPanel);
+        card.appendChild(layout);
+        frag.appendChild(card);
+      });
+
+      el.results.appendChild(frag);
+    }
+
+    function updatePager() {
+      el.pageInfo.textContent = `Page ${state.page} / ${state.pageCount}`;
+      el.prevBtn.disabled = state.isLoading || state.page <= 1;
+      el.nextBtn.disabled = state.isLoading || state.page >= state.pageCount;
+    }
+
+    function setLoading(loading) {
+      state.isLoading = Boolean(loading);
+      el.applyBtn.disabled = state.isLoading;
+      el.applyBtn.textContent = state.isLoading ? "Loading..." : "Apply Filters";
+      el.resetBtn.disabled = state.isLoading;
+      el.pageSizeSelect.disabled = state.isLoading;
+      el.idxFilter.disabled = state.isLoading;
+      el.questionIdFilter.disabled = state.isLoading;
+      el.objectCountFilter.disabled = state.isLoading;
+      updatePager();
+    }
+
+    async function loadPage() {
+      if (state.activeController) {
+        state.activeController.abort();
+      }
+      clearRenderedImageLoads();
+      clearChildren(el.results);
+      const requestId = ++state.requestSeq;
+      const controller = new AbortController();
+      state.activeController = controller;
+
+      setLoading(true);
+      setStatus("Loading page...");
+      try {
+        const payload = await fetchJson(`/api/questions?${buildQuery()}`, { signal: controller.signal });
+        if (requestId !== state.requestSeq) return;
+
+        state.page = Number(payload.page) || 1;
+        state.pageCount = Number(payload.page_count) || 1;
+        state.total = Number(payload.total) || 0;
+        updatePager();
+        const items = Array.isArray(payload.items) ? payload.items : [];
+        if (state.total === 0) {
+          setStatus("No rows matched this filter. Try clearing idx or scene filters.");
+        } else {
+          setStatus(`Showing ${items.length} items (total: ${state.total})`);
+        }
+        renderItems(items);
+      } catch (err) {
+        if (err && err.name === "AbortError") return;
+        if (requestId !== state.requestSeq) return;
+        setStatus(`Error loading questions: ${err.message}`);
+      } finally {
+        if (requestId === state.requestSeq) {
+          setLoading(false);
+          state.activeController = null;
+        }
+      }
+    }
+
+    async function loadMetadata() {
+      setStatus("Loading metadata...");
+      const metadata = await fetchJson("/api/metadata");
+      state.questionIds = Array.isArray(metadata.question_ids) ? metadata.question_ids : [];
+      state.objectCounts = Array.isArray(metadata.object_counts) ? metadata.object_counts : [];
+      state.sceneOptions = Array.isArray(metadata.scene_options) ? metadata.scene_options : [];
+      state.rowsWithAvailableImages = Number(metadata.rows_with_available_images || 0);
+      state.rowsWithoutAvailableImages = Number(metadata.rows_without_available_images || 0);
+
+      state.defaultSelectedScenes = Array.isArray(metadata.default_selected_scene_ids)
+        ? metadata.default_selected_scene_ids
+        : state.sceneOptions.map((scene) => scene.scene_id);
+      state.selectedSceneIds = new Set(state.defaultSelectedScenes);
+
+      populateSelect(el.questionIdFilter, state.questionIds);
+      populateSelect(el.objectCountFilter, state.objectCounts);
+      renderSceneList();
+      const total = Number(metadata.total || 0);
+      setStatus(`Loaded metadata. Total: ${total} | with image files: ${state.rowsWithAvailableImages} | missing-image rows (placeholder): ${state.rowsWithoutAvailableImages}`);
+    }
+
+    function resetFilters() {
+      el.idxFilter.value = "";
+      el.questionIdFilter.value = "";
+      el.objectCountFilter.value = "";
+      state.selectedSceneIds = new Set(state.defaultSelectedScenes);
+      renderSceneList();
+      state.page = 1;
+      loadPage();
+    }
+
+    function applyCurrentFilters() {
+      state.page = 1;
+      loadPage();
+    }
+
+    el.applyBtn.addEventListener("click", () => {
+      applyCurrentFilters();
+    });
+
+    el.resetBtn.addEventListener("click", resetFilters);
+
+    el.idxFilter.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        state.page = 1;
+        loadPage();
+      }
+    });
+
+    el.pageSizeSelect.addEventListener("change", () => {
+      state.pageSize = Number(el.pageSizeSelect.value) || 50;
+      applyCurrentFilters();
+    });
+
+    el.questionIdFilter.addEventListener("change", applyCurrentFilters);
+    el.objectCountFilter.addEventListener("change", applyCurrentFilters);
+
+    el.prevBtn.addEventListener("click", () => {
+      if (state.page > 1) {
+        state.page -= 1;
+        loadPage();
+      }
+    });
+
+    el.nextBtn.addEventListener("click", () => {
+      if (state.page < state.pageCount) {
+        state.page += 1;
+        loadPage();
+      }
+    });
+
+    el.sceneSearch.addEventListener("input", renderSceneList);
+
+    el.sceneSelectVisible.addEventListener("click", () => {
+      visibleSceneOptions().forEach((scene) => state.selectedSceneIds.add(scene.scene_id));
+      renderSceneList();
+      applyCurrentFilters();
+    });
+
+    el.sceneUnselectVisible.addEventListener("click", () => {
+      visibleSceneOptions().forEach((scene) => state.selectedSceneIds.delete(scene.scene_id));
+      renderSceneList();
+      applyCurrentFilters();
+    });
+
+    el.sceneSelectAll.addEventListener("click", () => {
+      state.sceneOptions.forEach((scene) => state.selectedSceneIds.add(scene.scene_id));
+      renderSceneList();
+      applyCurrentFilters();
+    });
+
+    el.sceneClearAll.addEventListener("click", () => {
+      state.selectedSceneIds = new Set();
+      renderSceneList();
+      applyCurrentFilters();
+    });
+
+    async function init() {
+      try {
+        await loadMetadata();
+        await loadPage();
+      } catch (err) {
+        setStatus(`Initialization error: ${err.message}`);
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>

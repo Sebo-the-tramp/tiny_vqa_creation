@@ -525,7 +525,7 @@ def plot_ablation_scatter(
     baseline_name: str="roi_ablation_baseline",
     group_by: str = "model_id",
     metadata_path: str | Path | None = "utils/metadata.json",
-    legend_mode: str = "models_improved"  # models_improved, all
+    legend_mode: list[str] = ["all"]  # improved, worsened, all
 ) -> None:
     plot_df = runs_df.copy()
     plot_df["accuracy"] *= 100
@@ -571,6 +571,31 @@ def plot_ablation_scatter(
     
     for tag in tags:
         agg_df[f"run_has_{tag}"] = agg_df["run_name"].apply(lambda run: run_has_tag(run, tag))
+    
+    # Compute change for each group
+    groups_tags_change = {}
+    for group in agg_df[group_by].unique():
+        group_mask = agg_df[group_by] == group
+        baseline_mask = (agg_df["run_name"] == baseline_runname) & group_mask
+        assert baseline_mask.sum() == 1
+        baseline_acc = agg_df.loc[baseline_mask, "mean"].values[0]
+
+        tags_improve = []
+        tags_worsen = []
+        for t in tags:
+            if t == "name":
+                continue  # skip "name" tag for legend labeling
+            t_mask = agg_df[f"run_has_{t}"] & group_mask
+            t_mask = t_mask & agg_df[f"run_has_name"]  # exclude runs with no "name" tag
+            if any( ((agg_df[t_mask]["mean"] - baseline_acc) / baseline_acc) > 0.05 ):
+                tags_improve.append(t)
+            if any( ((agg_df[t_mask]["mean"] - baseline_acc) / baseline_acc) < -0.05 ):
+                tags_worsen.append(t)
+
+        groups_tags_change[group] = {
+            "improve": tags_improve,
+            "worsen": tags_worsen,
+        }
 
     if accuracy_mode == "absolute":
         groups_df = (
@@ -607,7 +632,6 @@ def plot_ablation_scatter(
             groups_df["layout_acc"] = layout_acc
         pass
     
-    
     # Keep only ablations existing in the agg_df
     ablations_runs = {abl: run for abl, run in ablations_runs.items() if run in agg_df["run_name"].unique()}
     ablations_labels = {abl: name for abl, name in ablations_labels.items() if abl in ablations_runs}
@@ -623,7 +647,7 @@ def plot_ablation_scatter(
         group_by=group_by
     )
     rng = np.random.default_rng(42)
-
+    
     for group_name, df_m in agg_df.groupby(group_by):
         # Remove baseline points if not plotting baseline
         # if not plot_baseline:
@@ -635,21 +659,28 @@ def plot_ablation_scatter(
         if x_vals.size == 0:
             continue
 
-        jitter = rng.uniform(-0.15, 0.15, size=x_vals.size)
+        jitter = rng.uniform(-0.20, 0.20, size=x_vals.size)
         x_jittered = x_vals + jitter
         color, marker, size = model_style[group_name]
         
+        if groups_tags_change[group_name]["improve"]:
+            alpha = 1.0
+            zorder = 5
+        else:
+            alpha = 0.15
+            zorder = 4
+
         # Plot scatter points
         ax.scatter(
             x_jittered,
             y_vals,
             color=color,
             s=size**2,
-            alpha=0.8,
+            alpha=alpha,
             edgecolor="white",
             linewidth=1,
             marker=marker,
-            zorder=4
+            zorder=zorder
         )
 
     ax.set_xticks(list(range(len(ablations_labels))))
@@ -675,32 +706,60 @@ def plot_ablation_scatter(
         metadata_path=metadata_path
     )
 
+    improved = [] 
+    worsen = [] 
     for i, (handle, label, group) in enumerate(zip(legend_handles, legend_labels, legend_groups)):
-        group_mask = agg_df[group_by] == group
-        baseline_mask = (agg_df["run_name"] == baseline_runname) & group_mask
-        assert baseline_mask.sum() == 1
-        baseline_acc = agg_df.loc[baseline_mask, "mean"].values[0]
+        tags_improve = groups_tags_change[group]["improve"]
+        tags_worsen = groups_tags_change[group]["worsen"]
 
-        tags_improve = []
-        tags_worsen = []
-        for t in tags:
-            if t == "name":
-                continue  # skip "name" tag for legend labeling
-            t_mask = agg_df[f"run_has_{t}"] & group_mask
-            # t_improve = any(agg_df[t_mask]["mean"] > baseline_acc)
-            if any( ((agg_df[t_mask]["mean"] - baseline_acc) / baseline_acc) > 0.05 ):
-                tags_improve.append(t)
-            if any( ((agg_df[t_mask]["mean"] - baseline_acc) / baseline_acc) < -0.05 ):
-                tags_worsen.append(t)
-        
         if tags_improve:
-            label += " +" + ",".join([f"+{t[0].capitalize()}" for t in tags_improve])
+            label += " (" + ", ".join([t.capitalize() for t in tags_improve])+")"
+            # label += " +" + ",".join([f"+{t[0].capitalize()}" for t in tags_improve])
+            improved.append(i)
         elif tags_worsen:
-            label += " -" + ",".join([f"+{t[0].capitalize()}" for t in tags_worsen])
+            label += " (" + ", ".join([t.capitalize() for t in tags_worsen])+")"
+            # label += " -" + ",".join([f"-{t[0].capitalize()}" for t in tags_worsen])+")"
+            worsen.append(i)
         
         legend_labels[i] = label
 
-    ax.legend(legend_handles, legend_labels, title=title_str, bbox_to_anchor=(1.05, 1), loc='upper left', fontsize=8, title_fontsize=9, markerscale=0.7)
+    groups = {}
+    if "improved" in legend_mode or "all" in legend_mode:
+        groups["Models improved"] = improved
+    if "worsened" in legend_mode or "all" in legend_mode:
+        groups["Models worsened"] = worsen
+    
+    l_pos = (1.05, 1.0)
+    legend_artists = []
+    for title, items in groups.items():
+        group_handles = [legend_handles[i] for i in items]
+        group_labels  = [legend_labels[i] for i in items]
+        print("Group:", title, "Items:", group_labels)
+
+        leg = ax.legend(
+            group_handles, group_labels,
+            title=title,
+            loc="upper left",
+            bbox_to_anchor=l_pos,
+            frameon=True,
+            borderaxespad=0.0,
+            fontsize=8, 
+            title_fontsize=9, 
+            markerscale=0.7
+        )
+        ax.add_artist(leg)
+        legend_artists.append(leg)
+        # l_pos = (l_pos[0], l_pos[1] - 0.1 - 0.1 * len(group_handles))  # vertical spacing between groups
+        l_pos = (l_pos[0] + 1.1, l_pos[1])  # vertical spacing between groups
+    
+    # ax.legend(legend_handles, 
+    #           legend_labels, 
+    #           title=title_str, 
+    #           bbox_to_anchor=(1.05, 1), 
+    #           loc='upper left', 
+    #           fontsize=8, 
+    #           title_fontsize=9, 
+    #           markerscale=0.7)
 
     utils_graph.paperformat(ax, ticks_step=ticks_step)
     if accuracy_mode in ["baseline_change", "baseline_rel_change"]:
@@ -718,7 +777,9 @@ def plot_ablation_scatter(
 
     fig.savefig(fname, 
                 dpi=300, 
-                bbox_inches="tight")
+                bbox_inches="tight",
+                bbox_extra_artists=legend_artists
+                )
     plt.close(fig)
 
     print(f"Saved plot to: {fname}")
@@ -840,7 +901,7 @@ def main() -> None:
         
         print(f"Processing: grouping by {group_by}: with {len(cur_df)} entries")
         # for accuracy_mode in ["baseline_change", "baseline_rel_change", "absolute"]:
-        for accuracy_mode in ["baseline_change"]:
+        for accuracy_mode in ["absolute"]:
             plot_ablation_scatter(
                 cur_df,
                 cur_output_dir,
@@ -851,7 +912,7 @@ def main() -> None:
                 ablations_runs=ablations_runs,
                 ablations_labels=ablations_labels,
                 baseline_name=baseline_name,
-                legend_mode="models_improved"  # or all
+                legend_mode=["all"]  # or all
             )
 
 

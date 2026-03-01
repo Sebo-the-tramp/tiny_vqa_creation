@@ -3,6 +3,7 @@ import json
 import hashlib
 import re
 from typing import Any, Callable
+from matplotlib.legend import Legend
 import numpy as np
 import pandas as pd
 from prompt_toolkit import prompt
@@ -73,8 +74,11 @@ def paperformat(ax, figsize=(4, 3.1), ylim=None, ticks_step=10, grid=["x", "y"],
             ax.grid(axis=axis, which="major", linestyle="-", alpha=0.5)
             ax.grid(axis=axis, which="minor", linestyle="-", alpha=0.1)
     
-    leg = ax.get_legend()
-    if leg is not None:
+    for artist in ax.get_children() + list(ax.get_figure().legends):
+        if not artist or not isinstance(artist, Legend):
+            continue
+        
+        leg = artist
         leg.get_title().set_fontsize(12)
         leg.get_title().set_fontweight("bold")
         plt.setp(leg.get_texts(), fontsize=10)      # all entry labels

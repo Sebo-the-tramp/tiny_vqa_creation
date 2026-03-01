@@ -408,35 +408,35 @@ def remove_objects_ablation(
 
                 object_name = value["choice"]["name"]
                 pattern = re.compile(re.escape('"' + object_name + '"'), re.IGNORECASE)
-                if text:
-                    # Modify the question text to include ROI reference.
-                    if layout_position:
-                        zone_to_focus = get_object_zone(
-                            world_state, object_id, int(render_name.replace(".png", ""))
-                        )
-                        new_question = pattern.sub(
-                            f"\"{object_name}\" (circled in red and located at the {zone_to_focus})",
-                            question["question"],
-                        )
-                    else:
-                        new_question = pattern.sub(
-                            f"\"{object_name}\" (circled in red)", question["question"]
-                        )
-                else:
-                    if layout_position:
-                        # append after the name of the object that it is circled in the image
-                        zone_to_focus = get_object_zone(
-                            world_state, object_id, int(render_name.replace(".png", ""))
-                        )
-                        new_question = pattern.sub(
-                            f"object circled in red (located at the {zone_to_focus})",
-                            question["question"],
-                        )
-                    else:
-                        # append after the name of the object that it is circled in the image
-                        new_question = pattern.sub(
-                            "object circled in red", question["question"]
-                        )
+                # if text:
+                #     # Modify the question text to include ROI reference.
+                #     if layout_position:
+                #         zone_to_focus = get_object_zone(
+                #             world_state, object_id, int(render_name.replace(".png", ""))
+                #         )
+                #         new_question = pattern.sub(
+                #             f"\"{object_name}\" (circled in red and located at the {zone_to_focus})",
+                #             question["question"],
+                #         )
+                #     else:
+                #         new_question = pattern.sub(
+                #             f"\"{object_name}\" (circled in red)", question["question"]
+                #         )
+                # else:
+                #     if layout_position:
+                #         # append after the name of the object that it is circled in the image
+                #         zone_to_focus = get_object_zone(
+                #             world_state, object_id, int(render_name.replace(".png", ""))
+                #         )
+                #         new_question = pattern.sub(
+                #             f"object circled in red (located at the {zone_to_focus})",
+                #             question["question"],
+                #         )
+                #     else:
+                #         # append after the name of the object that it is circled in the image
+                #         new_question = pattern.sub(
+                #             "object circled in red", question["question"]
+                #         )
 
         if object_name is None:
             continue

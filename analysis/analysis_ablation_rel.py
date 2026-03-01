@@ -689,11 +689,11 @@ def plot_ablation_scatter(
                 tags_worsen.append(tag)
 
         if tags_improve:
-            label += " (" + ", ".join([t for t in tags_improve])+")"
+            # label += " (" + ", ".join([t for t in tags_improve])+")"
             # label += " +" + ",".join([f"+{t[0].capitalize()}" for t in tags_improve])
             improved.append(i)
         elif tags_worsen:
-            label += " (" + ", ".join([t for t in tags_worsen])+")"
+            # label += " (" + ", ".join([t for t in tags_worsen])+")"
             # label += " -" + ",".join([f"-{t[0].capitalize()}" for t in tags_worsen])+")"
             worsen.append(i)
         

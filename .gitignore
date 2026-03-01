@@ -24,3 +24,5 @@ main_parallel.build/
 
 rsync*
 tmp_parallel.sh
+
+visualization_3/*

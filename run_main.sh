@@ -4,7 +4,7 @@ set -euo pipefail
 
 source ../tiny_vqa_creation/.venv/bin/activate
 
-GENERAL_RUN_COUNT=26
+GENERAL_RUN_COUNT=28
 PER_OBJECT_COUNT=300
 MATERIAL_SUBSAMPLE_COUNT=2000
 MATERIAL_OBJECTS_PER_COUNT=300

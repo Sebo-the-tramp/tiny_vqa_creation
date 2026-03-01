@@ -82,6 +82,7 @@ RUNNING_RUNS = set(range(1, 7))
 QUEUED_RUNS = set(range(7, 17))
 STARTED_MODELS = {"InternVL2-76B", "InternVL2_5-78B"}
 STARTED_RUNS = set(range(1, 11))
+QUEUED_BIG_RUNS = set(range(11, 17))
 NEVER_RUN_MODELS = set()
 
 
@@ -96,15 +97,7 @@ def normalize_model_name(filename: str) -> str:
 def status_for(model: str, run_num: int, has_json: bool) -> str:
     if has_json:
         return "✅"
-    if model in STARTED_MODELS and run_num in STARTED_RUNS:
-        return "🏃"
-    if model in NEVER_RUN_MODELS:
-        return "❌"
-    if model in RUNNING_MODELS and run_num in RUNNING_RUNS:
-        return "🏃"
-    if model in RUNNING_MODELS and run_num in QUEUED_RUNS:
-        return "⏳"
-    return "❌"
+    return "⏳"
 
 
 def main() -> int:

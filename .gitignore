@@ -26,3 +26,4 @@ rsync*
 tmp_parallel.sh
 
 visualization_3/*
+supp_material_scripts/figures

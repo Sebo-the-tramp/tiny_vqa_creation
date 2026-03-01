@@ -354,8 +354,8 @@ def load_model_answers(results_dir: str | Path, wide: bool = False) -> pd.DataFr
         if df.empty:
             frames.append(pd.DataFrame())
             continue
-        print(f"Loaded model answers from {path}, shape: {df.shape}")
-        print(df.head().to_string())
+        # print(f"Loaded model answers from {path}, shape: {df.shape}")
+        # print(df.head().to_string())
         df["model"] = path.stem.replace("_val", "")
         df["og_answer"] = df["answer"]
         df["answer"] = df["answer"].apply(

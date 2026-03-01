@@ -2,9 +2,10 @@ import json
 import plotly.graph_objects as go
 
 # Paths
-PATH_DATA = "/data0/sebastian.cavada/compositional-physics/tiny_vqa_creation/output/run_24_general/test_run_24_general.json"
-
-PERCENT_MODE = "entry"  # change to "parent" if you prefer
+# PATH_DATA = "/data0/sebastian.cavada/compositional-physics/tiny_vqa_creation/output/run_24_general/test_run_24_general.json"
+PATH_DATA = "/Users/sebastiancavada/Desktop/tmp_paris/tiny_vqa_creation/output/run_28_general/test_run_28_general.json"
+PERCENT_MODE = "parent"  # change to "parent" if you prefer
+INCLUDE_QIDS = False     # Set to True for 3 layers, False for 2 layer
 
 # Label mappings
 mapping_sub = {
@@ -104,15 +105,17 @@ for main_cat, sub_counts in subs_for_main.items():
         id_to_maincat[sub_id] = main_cat
 
 # Add Question IDs (3rd level)
-for (main_cat, sub_cat), qid_counts in qids_for_sub.items():
-    parent_id = f"cat::{main_cat}::sub::{sub_cat}"
-    for qid, total in qid_counts.items():
-        qid_id = f"{parent_id}::qid::{qid}"
-        ids.append(qid_id)
-        labels.append(qid)
-        parents.append(parent_id)
-        values.append(total)
-        id_to_maincat[qid_id] = main_cat
+
+if INCLUDE_QIDS:
+    for (main_cat, sub_cat), qid_counts in qids_for_sub.items():
+        parent_id = f"cat::{main_cat}::sub::{sub_cat}"
+        for qid, total in qid_counts.items():
+            qid_id = f"{parent_id}::qid::{qid}"
+            ids.append(qid_id)
+            labels.append(qid)
+            parents.append(parent_id)
+            values.append(total)
+            id_to_maincat[qid_id] = main_cat
 
 values[0] = sum(main_totals.values())
 

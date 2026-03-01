@@ -136,7 +136,10 @@ def _build_group_legend_items(
         marker_style = mmarkers.MarkerStyle(marker)
         marker_face = color if marker_style.is_filled() else "none"
 
-        label = group
+        if group_by == "model_id":
+            label = utils.utils_mapping.model_name_format(group)
+        else:
+            label = group
         
         models_num = len(plot_df[plot_df[group_by] == group]["model_id"].unique())
         if models_num > 1:

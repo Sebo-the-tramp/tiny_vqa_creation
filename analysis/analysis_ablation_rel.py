@@ -539,25 +539,28 @@ def plot_ablation_scatter(
     )
 
     baseline_runname = ablations_runs.get(baseline_name)
+    agg_df["accuracy_change"] = agg_df.apply(
+        lambda row: row["mean"] - agg_df[
+            (agg_df[group_by] == row[group_by]) & (agg_df["run_name"] == baseline_runname)
+        ]["mean"].values[0],
+        axis=1,
+    )
+    agg_df["accuracy_rel_change"] = agg_df.apply(
+        lambda row: (row["mean"] - agg_df[
+            (agg_df[group_by] == row[group_by]) & (agg_df["run_name"] == baseline_runname)
+        ]["mean"].values[0]) / agg_df[
+            (agg_df[group_by] == row[group_by]) & (agg_df["run_name"] == baseline_runname)
+        ]["mean"].values[0] * 100,
+        axis=1,
+    )
+
     if accuracy_mode == "absolute":
         agg_df["accuracy_plot"] = agg_df["mean"]
     elif accuracy_mode == "baseline_change":
-        agg_df["accuracy_plot"] = agg_df.apply(
-            lambda row: row["mean"] - agg_df[
-                (agg_df[group_by] == row[group_by]) & (agg_df["run_name"] == baseline_runname)
-            ]["mean"].values[0],
-            axis=1,
-        )
+        agg_df["accuracy_plot"] = agg_df["accuracy_change"]
     elif accuracy_mode == "baseline_rel_change":
-        agg_df["accuracy_plot"] = agg_df.apply(
-            lambda row: (row["mean"] - agg_df[
-                (agg_df[group_by] == row[group_by]) & (agg_df["run_name"] == baseline_runname)
-            ]["mean"].values[0]) / agg_df[
-                (agg_df[group_by] == row[group_by]) & (agg_df["run_name"] == baseline_runname)
-            ]["mean"].values[0] * 100,
-            axis=1,
-        )
-
+        agg_df["accuracy_plot"] = agg_df["accuracy_rel_change"]
+    
     # Extract all run tags (eg, "circle", "layout", "name") from the ablation labels
     tags = np.hstack([v for k,v in ablations_tags.items()])
     tags = np.unique(tags)
@@ -571,66 +574,8 @@ def plot_ablation_scatter(
     for tag in tags:
         agg_df[f"run_tag_{tag.lower()}"] = agg_df["run_name"].apply(lambda run: run_has_tag(run, tag))
     
-    # Compute change for each group
-    groups_tags_change = {}
-    change_rel_threshold = 0.05  # 5% relative change threshold for improvement/worsening
-    for group in agg_df[group_by].unique():
-        group_mask = agg_df[group_by] == group
-        baseline_mask = (agg_df["run_name"] == baseline_runname) & group_mask
-        assert baseline_mask.sum() == 1
-        baseline_acc = agg_df.loc[baseline_mask, "mean"].values[0]
-
-        tags_improve = []
-        tags_worsen = []
-        for t in tags:
-            if t.lower() == "name":
-                continue  # skip "name" tag for legend labeling
-            t_mask = agg_df[f"run_tag_{t.lower()}"] & group_mask
-            t_mask = t_mask & agg_df[f"run_tag_name"]  # exclude runs with no "name" tag
-            if any( ((agg_df[t_mask]["mean"] - baseline_acc) / baseline_acc) > change_rel_threshold ):
-                tags_improve.append(t)
-            if any( ((agg_df[t_mask]["mean"] - baseline_acc) / baseline_acc) < -change_rel_threshold ):
-                tags_worsen.append(t)
-
-        groups_tags_change[group] = {
-            "improve": tags_improve,
-            "worsen": tags_worsen,
-        }
-
-    # if accuracy_mode == "absolute":
-    #     groups_df = (
-    #         agg_df[agg_df["run_name"] == baseline_runname].groupby(group_by, observed=True)["mean"]
-    #         .mean()
-    #         .sort_values(ascending=False)
-    #         .reset_index(name="mean_accuracy")
-    #     )
-
-    #     groups = groups_df[group_by].tolist()  # sorted group list
-    #     for group in groups:
-    #         group_mask = agg_df[group_by] == group
-    #         baseline_mask = (agg_df["run_name"] == baseline_runname) & group_mask
-    #         name_mask = agg_df["run_tag_name"] & group_mask
-    #         circle_mask = agg_df["run_tag_circle"] & group_mask
-    #         layout_mask = agg_df["run_tag_layout"] & group_mask
-
-    #         name_acc = agg_df.loc[name_mask, "mean"].mean()
-    #         circle_acc = agg_df.loc[circle_mask, "mean"].mean()
-    #         layout_acc = agg_df.loc[layout_mask, "mean"].mean()
-            
-    #         circle_only = agg_df[agg_df["run_name"].isin([ablations_runs["roi_circling_no_text"]]) & group_mask]
-    #         circle_only_acc = circle_only["mean"].values[0]
-
-    #         baseline_acc = agg_df.loc[baseline_mask, "mean"].mean()
-    #         change_fct = lambda acc: f"{(acc - baseline_acc):.1f}" if acc <= baseline_acc else f"+{(acc - baseline_acc):.1f}"
-
-    #         circle_change = circle_only_acc - baseline_acc
-    #         print(f"{group}:        Baseline: {baseline_acc:.2f}%, Name acc: {change_fct(name_acc)}%, Circle acc: {change_fct(circle_acc)}%, Layout acc: {change_fct(layout_acc)}%", f"circle change: {circle_change:.2f}%", ("*** IMPROVED ***" if circle_change > 1 else ("*** WORSENED ***" if circle_change < -1 else "not improved")))
-
-    #         groups_df["baseline"] = baseline_acc
-    #         groups_df["name_acc"] = name_acc
-    #         groups_df["circle_acc"] = circle_acc
-    #         groups_df["layout_acc"] = layout_acc
-    #     pass
+    # Mark runs as improved or worsened compared to baseline
+    change_rel_threshold = 5  # 5% relative change threshold for improvement/worsening
     
     # Keep only ablations existing in the agg_df
     ablations_runs = {abl: run for abl, run in ablations_runs.items() if run in agg_df["run_name"].unique()}
@@ -648,7 +593,7 @@ def plot_ablation_scatter(
     )
     rng = np.random.default_rng(42)
     
-    for group_name, df_m in agg_df.groupby(group_by):
+    for group, df_m in agg_df.groupby(group_by):
         # Remove baseline points if not plotting baseline
         # if not plot_baseline:
         #     df_m = df_m[df_m["run_name"] != baseline_runname]
@@ -661,10 +606,19 @@ def plot_ablation_scatter(
 
         jitter = rng.uniform(-0.20, 0.20, size=x_vals.size)
         x_jittered = x_vals + jitter
-        color, marker, size = model_style[group_name]
+        color, marker, size = model_style[group]
         
-        if groups_tags_change[group_name]["improve"]:
-            alpha = 1.0
+        improve = any(agg_df[agg_df[group_by] == group]["accuracy_rel_change"] >= change_rel_threshold)
+        if improve:
+            alphas = []
+            for _, r in df_m.iterrows():
+                if r["run_name"] == baseline_runname:
+                    alphas.append(1.0)
+                elif r["accuracy_rel_change"] >= change_rel_threshold:
+                    alphas.append(1.0)
+                else:
+                    alphas.append(0.1)
+            alpha = alphas
             zorder = 5
         else:
             alpha = 0.10
@@ -685,12 +639,13 @@ def plot_ablation_scatter(
 
     ax.set_xticks(list(range(len(ablations_tags))))
     ax.set_xticklabels(
-        ["Name\n(baseline)" if abl_tags == ["name"] else 
+        ["Name\n(baseline)" if abl_tags == ["Name"] else 
          "\n".join([t for t in abl_tags])
          for abl, abl_tags in ablations_tags.items()],
         ha="center",
     )
     ax.set_xlabel("", fontsize=1)
+    # ax.axvline(0.5, color="#666666", linewidth=1, alpha=0.5, zorder=-1, linestyle='--')
 
     if runs_df["category"].nunique() == 1:
         cat = runs_df["category"].unique()[0]
@@ -722,8 +677,16 @@ def plot_ablation_scatter(
     improved = [] 
     worsen = [] 
     for i, (handle, label, group) in enumerate(zip(legend_handles, legend_labels, legend_groups)):
-        tags_improve = groups_tags_change[group]["improve"]
-        tags_worsen = groups_tags_change[group]["worsen"]
+        group_mask = agg_df[group_by] == group
+
+        tags_improve = []
+        tags_worsen = []
+        for tag in tags:
+            group_tag_mask = group_mask & (agg_df[f"run_tag_{tag.lower()}"] == True)
+            if any(agg_df[group_tag_mask]["accuracy_rel_change"] >= change_rel_threshold):
+                tags_improve.append(tag)
+            if any(agg_df[group_tag_mask]["accuracy_rel_change"] <= -change_rel_threshold):
+                tags_worsen.append(tag)
 
         if tags_improve:
             label += " (" + ", ".join([t for t in tags_improve])+")"
@@ -747,7 +710,7 @@ def plot_ablation_scatter(
     for title, items in groups.items():
         group_handles = [legend_handles[i] for i in items]
         group_labels  = [legend_labels[i] for i in items]
-        print("Group:", title, "Items:", group_labels)
+        # print("Group:", title, "Items:", group_labels)
 
         leg = ax.legend(
             group_handles, group_labels,
@@ -785,30 +748,37 @@ def plot_ablation_scatter(
     for ticklabel in ax.get_xticklabels():
         ticklabel.set_fontsize(ticklabel.get_fontsize()*0.50)
     
-    fname = Path(output_dir) / filename
-    fname.parent.mkdir(parents=True, exist_ok=True)
+    output_dir = Path(output_dir)
+    fpath = output_dir / filename
+    fpath.parent.mkdir(parents=True, exist_ok=True)
 
-    fig.savefig(fname, 
+    fig.savefig(fpath, 
                 dpi=300, 
                 bbox_inches="tight",
                 bbox_extra_artists=legend_artists
                 )
     plt.close(fig)
 
-    print(f"Saved plot to: {fname}")
+    print(f"Saved plot to: {fpath}")
 
 
 def main() -> None:
-    ablations_tags = {
-        f"roi_ablation_baseline": ["Name"],
-        f"roi_circling_text": ["Name", "ROI"],
-        f"no_roi_circling_yes_text_layout_position": ["Name", "Location"],
-        f"roi_circling_text_layout_position": ["Name", "ROI", "Location"],
-        f"roi_circling_no_text_layout_position": ["ROI", "Location"],
-        f"roi_circling_no_text": ["ROI"],
-        f"no_roi_circling_no_text_layout_position": ["Location"],
-        # f"ablation_physics_duration_text": ["Name", "duration"],
-        # f"ablation_physics_mass_text": ["Name", "mass"],
+    ablations = {
+        "spatial": {
+            "roi_ablation_baseline": ["Name"],
+            "roi_circling_text": ["Name", "ROI"],
+            "no_roi_circling_yes_text_layout_position": ["Name", "Location"],
+            "roi_circling_text_layout_position": ["Name", "ROI", "Location"],
+            "roi_circling_no_text_layout_position": ["ROI", "Location"],
+            "roi_circling_no_text": ["ROI"],
+            "no_roi_circling_no_text_layout_position": ["Location"],
+        },
+        "physics": {
+            "roi_ablation_baseline": ["Name"],
+            "ablation_physics_duration_text": ["Name", "Duration"],
+            "ablation_physics_mass_approx_text": ["Name", "Approx. Mass"],
+            "ablation_physics_mass_text": ["Name", "Exact Mass"],
+        }
     }
 
     parser = argparse.ArgumentParser(
@@ -820,8 +790,8 @@ def main() -> None:
     parser.add_argument("--run-name", default="run_28")
     parser.add_argument("--base-path", type=Path, default="../output")
     parser.add_argument("--metadata-path", type=Path, default=Path("utils/metadata.json"))
-    parser.add_argument("--ablations-runs", nargs="*", default=list(ablations_tags.keys()))
-    parser.add_argument("--ablations-tags", nargs="*", default=list(ablations_tags.values()))
+    # parser.add_argument("--ablations-runs", nargs="*", default=list(ablations_tags.keys()))
+    # parser.add_argument("--ablations-tags", nargs="*", default=list(ablations_tags.values()))
     parser.add_argument(
         "--vqa-set",
         default="10K",
@@ -842,91 +812,44 @@ def main() -> None:
     args = parser.parse_args()
 
     run_name = args.run_name
-    
-    if args.ablations_runs or args.ablations_tags:
-        if len(args.ablations_runs) != len(args.ablations_tags):
-            raise ValueError("Number of ablation runs and tags must match.")
-        ablations_tags = dict(zip(args.ablations_runs, args.ablations_tags))
+    for ablation_set_name, ablation_set in ablations.items():
+        ablations_tags = ablation_set
+        ablations_runs = {abl: run_name + "_" + abl for abl in list(ablations_tags.keys())}
+        eval_df = collect_runs(ablations_runs.values(), args.base_path, args.vqa_set)
 
-    ablations_runs = {abl: run_name + "_" + abl for abl in args.ablations_runs}
-    eval_df = collect_runs(ablations_runs.values(), args.base_path, args.vqa_set)
+        baseline_name = args.baseline_run or list(ablations_tags.keys())[0]
 
-    baseline_name = args.baseline_run or list(ablations_tags.keys())[0]
+        output_dir = args.output_dir / (run_name + "_ablations") / args.vqa_set
+        cur_output_dir = output_dir
 
-    output_dir = args.output_dir / (run_name + "_ablations") / args.vqa_set
-    cur_output_dir = output_dir
+        if args.family is not None:
+            print("Filtering to family:", args.family)
+            eval_df = eval_df[eval_df['model_family'] == args.family]
+            assert eval_df['idx'].nunique() > 0, f"No entries found for family {args.family} in eval_df after filtering. Check if family name is correct and if there are entries for that family."
 
-    if args.family is not None:
-        print("Filtering to family:", args.family)
-        eval_df = eval_df[eval_df['model_family'] == args.family]
-        assert eval_df['idx'].nunique() > 0, f"No entries found for family {args.family} in eval_df after filtering. Check if family name is correct and if there are entries for that family."
+            # Use subdirectory for family-specific results
+            cur_output_dir = output_dir / f"family_{args.family}"
+        cur_output_dir.mkdir(parents=True, exist_ok=True)
 
-        # Use subdirectory for family-specific results
-        cur_output_dir = output_dir / f"family_{args.family}"
-    cur_output_dir.mkdir(parents=True, exist_ok=True)
-
-    # object_count_df = aggregate_by_object_count(full_df, metadata_map)
-    # object_count_change_df = add_accuracy_change_pp(
-    #     object_count_df,
-    #     value_col="macro_accuracy",
-    #     baseline_run_name=baseline_run_name,
-    #     group_cols=["model_id", "object_count"],
-    # )
-    # macro_df = aggregate_macro_by_model(
-    #     full_df, metadata_map, min_object_count=args.min_object_count
-    # )
-    # macro_change_df = add_accuracy_change_pp(
-    #     macro_df,
-    #     value_col="macro_accuracy",
-    #     baseline_run_name=baseline_name,
-    #     group_cols=["model_id"],
-    # )
-
-    # args.output_dir.mkdir(parents=True, exist_ok=True)
-    # object_count_csv = args.output_dir / "macro_by_model_object_count_change_pp.csv"
-    # macro_csv = args.output_dir / "macro_by_model_change_pp.csv"
-    # family_csv = args.output_dir / "family_macro_by_run_change_pp.csv"
-
-    # object_count_change_df.to_csv(object_count_csv, index=False)
-    # macro_change_df.to_csv(macro_csv, index=False)
-    # family_summary = (
-    #     macro_change_df.groupby(["run_name", "family_label"], observed=True)[
-    #         "accuracy_change_pp"
-    #     ]
-    #     .mean()
-    #     .reset_index()
-    # )
-    # family_summary.to_csv(family_csv, index=False)
-
-    # print(f"Saved CSV: {object_count_csv}")
-    # print(f"Saved CSV: {macro_csv}")
-    # print(f"Saved CSV: {family_csv}")
-
-    # plot_object_count_scatter(
-    #     full_df,
-    #     metadata_map,
-    #     args.output_dir / "accuracy_change_pp_by_object_count_scatter.png",
-    #     baseline_name=baseline_name,
-    # )
-    # for group in utils_read.GROUPINGS:
-    for group in ["model"]:
-        cur_df, group_by = utils_read.apply_group(eval_df, group)
-        
-        print(f"Processing: grouping by {group_by}: with {len(cur_df)} entries")
-        # for accuracy_mode in ["baseline_change", "baseline_rel_change", "absolute"]:
-        for accuracy_mode in ["absolute"]:
-            plot_ablation_scatter(
-                cur_df,
-                cur_output_dir,
-                group_by=group_by,
-                accuracy_mode=accuracy_mode,
-                filename=f"ablation_{accuracy_mode}_{group}.png",
-                plot_baseline=accuracy_mode == "absolute",
-                ablations_runs=ablations_runs,
-                ablations_tags=ablations_tags,
-                baseline_name=baseline_name,
-                legend_mode=["improved"]  # or all
-            )
+        for group in ["model"]:
+            cur_df, group_by = utils_read.apply_group(eval_df, group)
+            
+            print(f"Processing: grouping by {group_by}: with {len(cur_df)} entries")
+            # for accuracy_mode in ["baseline_change", "baseline_rel_change", "absolute"]:
+            for accuracy_mode in ["absolute"]:
+                plot_ablation_scatter(
+                    cur_df,
+                    cur_output_dir,
+                    group_by=group_by,
+                    accuracy_mode=accuracy_mode,
+                    filename=f"ablation_{ablation_set_name}_{accuracy_mode}_{group}.png",
+                    plot_baseline=accuracy_mode == "absolute",
+                    ablations_runs=ablations_runs,
+                    ablations_tags=ablations_tags,
+                    baseline_name=baseline_name,
+                    legend_mode=["improved"]  # or all
+                    # legend_mode=["None"]  # or all
+                )
 
 
 if __name__ == "__main__":

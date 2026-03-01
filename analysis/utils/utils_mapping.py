@@ -258,3 +258,17 @@ def _build_model_style(
     model_style = {k: model_style[k] for k in sorted(model_style)}
 
     return model_style, family_map
+
+def model_name_format(model: str) -> str:
+    model = model.replace("2_5", "2.5")
+    model = model.replace("V1-5", "V1.5")
+    model = model.replace("-241014", "")
+    model = model.replace("-241101", "")
+    model = model.removesuffix("-hf")
+    model = model.removesuffix("-quantable")
+    model = model.replace("-", " ")
+    model = model.replace(" dpo", " DPO")
+    model = model.replace("vila ", "Vila ")
+    model = model.replace("llava ", "LLaVA ")
+
+    return model

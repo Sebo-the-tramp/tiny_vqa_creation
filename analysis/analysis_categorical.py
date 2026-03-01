@@ -5,10 +5,7 @@ from fileinput import filename
 from pathlib import Path
 
 import utils.utils_read
-from utils.utils_graph_correlation import (
-    create_accuracy,
-    create_num_objects_violin_grid
-)
+from utils import utils_graph_correlation
 
 
 def main() -> None:
@@ -42,21 +39,30 @@ def main() -> None:
         cur_output_dir = output_dir / mode_label
         cur_output_dir.mkdir(parents=True, exist_ok=True)
         
-        for group in utils.utils_read.GROUPINGS:
-            cur_df, group_by = utils.utils_read.apply_group(mode_df, group)
+        # for group in utils.utils_read.GROUPINGS + ["model_bestmat10"]:
+        #     cur_df, group_by = utils.utils_read.apply_group(mode_df, group)
             
-            print(f"Processing mode: {mode_label}, grouping by {group_by}: with {len(cur_df)} entries")
-            for level in ["category", "sub_category", "question_id"]:
-                create_accuracy(
-                    cur_df,
-                    output_dir=cur_output_dir,
-                    level=level,
-                    filename=f"acc_{level}_{group}.png",
-                    y_limit_mode="",
-                    group_by=group_by,
-                    show_legend=True,
-                    bars=False,
-                )
+        #     print(f"Processing mode: {mode_label}, grouping by {group_by}: with {len(cur_df)} entries")
+        #     for level in ["category", "sub_category", "question_id"]:
+        #         utils_graph_correlation.create_accuracy(
+        #             cur_df,
+        #             output_dir=cur_output_dir,
+        #             level=level,
+        #             filename=f"acc_{level}_{group}.png",
+        #             y_limit_mode="",
+        #             group_by=group_by,
+        #             show_legend=True,
+        #             bars=False,
+        #         )
+        
+        utils_graph_correlation.create_model_rank(
+            mode_df,
+            bins_num=10,
+            output_dir=cur_output_dir/"modelranks",
+            filename=f"acc_category_per_rank.png",
+            y_limit_mode="",
+            # group_by="model_id",
+        )
 
 
 if __name__ == "__main__":

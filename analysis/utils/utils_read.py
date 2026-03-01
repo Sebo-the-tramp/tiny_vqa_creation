@@ -87,12 +87,14 @@ def build_eval_df(
         base_path: str | Path, 
         vqa_set: str = "10K",
         metadata_path: str | Path = "utils/metadata.json",
-        excluded_questions: list[str] = ["F_OCCLUSION_PERCENTAGE_OBJECT", "F_MATERIAL_IDENTIFICATION_OBJECT_LEVEL_3", "F_CAMERA_ZOOM_BEHAVIOR"],
-        # could also be excluded: F_MATERIAL_IDENTIFICATION_OBJECT_LEVEL_2
-        # could also be excluded: F_CAMERA_ZOOM_BEHAVIOR
         return_paths: dict | None = None,
         columns: list[str] = [],  # Columns to preserve
         cache: bool = True,
+        *,
+        excluded_questions: list[str] = ["F_OCCLUSION_PERCENTAGE_OBJECT", "F_MATERIAL_IDENTIFICATION_OBJECT_LEVEL_3", "F_CAMERA_ZOOM_BEHAVIOR", "F_FOCAL_LENGTH_CLASS"],
+        # could also be excluded: F_MATERIAL_IDENTIFICATION_OBJECT_LEVEL_2
+        # could also be excluded: F_CAMERA_ZOOM_BEHAVIOR
+        exclude_models: list[str] = ["MiniCPM-V2.5"]
     ) -> pd.DataFrame:
     base = Path(base_path)
 
@@ -172,9 +174,12 @@ def build_eval_df(
     elif "mode" in eval_df.columns:
         eval_df["mode_y"] = eval_df["mode"]
     
-    if excluded_questions is not None:
+    if excluded_questions:
         print(f"[WARNING] Excluding questions: {excluded_questions} => Dropping {len(eval_df[eval_df['question_id'].isin(excluded_questions)])} entries.")
         eval_df = eval_df.loc[~eval_df["question_id"].isin(excluded_questions), :].copy()  # Important to copy, to avoid caveats in pandas slices
+    if exclude_models:
+        print(f"[WARNING] Excluding models: {exclude_models} => Dropping {len(eval_df[eval_df['model_id'].isin(exclude_models)])} entries.")
+        eval_df = eval_df.loc[~eval_df["model_id"].isin(exclude_models), :].copy()  # Important to copy, to avoid caveats in pandas slices
     
     # Convert accuracy column
     assert any(col in eval_df.columns for col in ["accuracy", "is_correct"]), "Expected 'accuracy' or 'is_correct' column in eval_df"
@@ -681,7 +686,7 @@ GROUPINGS = [
     "family_bestmat", 
     "family_biggest", 
     "model", 
-    "family"  # not making sense to average by family
+    # "family"  # not making sense to average by family
 ]
 
 def apply_group(df: pd.DataFrame, group_by: str) -> pd.DataFrame:
@@ -690,16 +695,11 @@ def apply_group(df: pd.DataFrame, group_by: str) -> pd.DataFrame:
     # best_models = model_accuracy.loc[model_accuracy.groupby('model_family')['accuracy'].idxmax()]
     # df = df[df['model_id'].isin(best_models['model_id'])]
     # group_by = "model_id"cat_acc_df
+    model_best_re = r"model_best([0-9]+)"
+    model_bestmat_re = r"model_bestmat([0-9]+)"
 
     if group_by in ["family_best", "family_bestmat"]:
         cat_acc_df = macro_accuracy(df, level="category", group_by=["model_family", "model_id"])
-        
-        # Compute category accuracy for each model
-        # cat_acc_df = (
-        #     df.groupby(["category", "model_family", "model_id"], observed=True)["accuracy"]
-        #     .mean()
-        #     .reset_index()
-        # )
         
         if group_by == "family_bestmat":
             cat_acc_df = cat_acc_df[cat_acc_df["category"] == "material_understanding"]
@@ -740,22 +740,18 @@ def apply_group(df: pd.DataFrame, group_by: str) -> pd.DataFrame:
         group_by = "model_id"
     elif group_by == "model":
         group_by = "model_id"
-    elif re.fullmatch(r"model_best-([0-9]+)", group_by) is not None:
-        top_k = int(re.fullmatch(r"model_best-([0-9]+)", group_by).group(1))
+    elif re.fullmatch(model_best_re, group_by) is not None or re.fullmatch(model_bestmat_re, group_by) is not None:
+        match_best = re.fullmatch(model_best_re, group_by)
+        match_bestmat = re.fullmatch(model_bestmat_re, group_by)
+        if match_best is not None:
+            top_k = int(match_best.group(1))
+        elif match_bestmat is not None:
+            top_k = int(match_bestmat.group(1))
+            df = df[df["category"] == "material_understanding"]
         
-        # Compute category accuracy for each model
-        cat_acc_df = (
-            df.groupby(["category", "model_family", "model_id"], observed=True)["accuracy"]
-            .mean()
-            .reset_index()
-        )
+        cat_acc_df = macro_accuracy(df, level="model_id", group_by=["model_family", "model_id"])
         
-        if group_by == "family_bestmat":
-            cat_acc_df = cat_acc_df[cat_acc_df["category"] == "material_understanding"]
-        
-        # Macro-accuracy: average across categories
-        model_accuracy = cat_acc_df.groupby(['model_family', 'model_id'])['accuracy'].mean().reset_index()
-        best_models = model_accuracy.loc[model_accuracy.groupby('model_family')['accuracy'].idxmax()]
+        best_models = cat_acc_df.sort_values("accuracy", ascending=False).iloc[0:top_k]
         df = df[df['model_id'].isin(best_models['model_id'])]
         group_by = "model_id"
     elif group_by == "family":

@@ -125,6 +125,154 @@ def create_num_objects_category_curve(
         plt.close(fig)
 
     return fig
+
+def create_model_rank(
+    eval_df: pd.DataFrame,
+    bins_num = 10,
+    *,
+    metadata_path: str | Path | None = "utils/metadata.json",
+    category_column: str = "category",
+    categories: list[str] | None = None,
+    output_dir: str | Path | None = None,
+    run_name: str | None = None,
+    filename: str = "model_percentile_curve.png",
+    y_pad: float = 0.05,
+    y_limit_mode: str = "zero_to_max",
+    legend_loc: str = "best",
+) -> plt.Figure:
+    """
+    Plot accuracy (in %) vs num_objects, one curve per category (6 total).
+    """
+    plot_df = eval_df.copy()
+
+    # Convert accuracy to percentage
+    plot_df["accuracy"] = plot_df["accuracy"] * 100
+    plot_df = utils_read.macro_accuracy(plot_df, level=category_column, group_by=["model_id"])
+
+    # First, compute the top-rank (0=best, 1=second best, etc.) for each model based on overall accuracy
+    models_acc_df = plot_df.groupby("model_id", observed=True)["accuracy"].mean().sort_values(ascending=False)
+    models_acc_df = models_acc_df.to_frame(name="accuracy")
+    models_acc_df["top_rank"] = np.arange(0, len(models_acc_df))
+
+    # Compute the top_bin for each model 
+    # (e.g., 5 bins: 
+    # bin 0 models in top_rank [0, 20%[, 
+    # bin 1 models in top_rank [20%, 40%[, ..., 
+    # bin 4 models in top_rank [80%, 100%[ )
+    models_num = len(models_acc_df)
+    bins_edges = (np.arange(bins_num + 1) * models_num // bins_num).astype(int)
+
+    models_acc_df["top_bin"] = ((models_acc_df["top_rank"] * bins_num) // models_num).astype(int)
+    plot_df["top_bin"] = plot_df["model_id"].map(models_acc_df["top_bin"])
+    
+    # Compute per-category, per-bin accuracy
+    agg_df = (
+        plot_df.groupby(["top_bin", "category"], observed=True)["accuracy"]
+        .agg(["mean", "min", "max", "std", "count"])
+        .reset_index()
+    )
+
+    # Prepare plot
+    figsize = (5, 3.5)
+    fig, ax = plt.subplots(figsize=figsize)
+
+    categories = list(agg_df[category_column].unique())
+    categories_sorted = utils_mapping.sort_categories(categories)
+    for i, cat in enumerate(categories_sorted):
+        df_cat = agg_df[agg_df[category_column] == cat]
+        if df_cat.empty:
+            continue
+        x = df_cat["top_bin"].values
+        y = df_cat["mean"].values
+        std = df_cat["std"].values
+        cat_label = utils_mapping.mapping_cat_short.get(cat)
+        cat_color = utils_mapping.mapping_cat_colors.get(cat)
+
+        ax.plot(x, y, marker="o", color=cat_color, linewidth=2, alpha=0.85, label=cat_label)
+        ax.fill_between(x, y - std, y + std, color=cat_color, alpha=0.15)
+
+
+        # Annotations
+        offsets_y = [-8, 4, 6, 0, 6, 3]
+        offset = (5, offsets_y[i])
+        low_val = df_cat[df_cat["top_bin"]==bins_num-1]["mean"].values[0]
+        high_val = df_cat[df_cat["top_bin"]==0]["mean"].values[0]
+        change = high_val - low_val
+        label = ("+" if change > 0 else "") + f"{round(change)}%"
+        xy = [0, high_val]
+        ax.annotate(
+            label,
+            xy=(xy[0], xy[1]),
+            xytext=(offset[0], offset[1]),
+            textcoords="offset points",
+            color=cat_color,
+            va="center",
+            ha="left",
+            fontweight="bold",
+            fontsize=10,
+            arrowprops=dict(
+                arrowstyle="-",      # plain line
+                color=cat_color,
+                lw=1.0,
+                mutation_scale=10,
+                shrinkA=2,
+                shrinkB=2,
+                # connectionstyle="arc3,rad=0.0",
+            ),
+        )
+
+    ax.set_xlabel("Top Bin", fontsize=12, fontweight="bold")
+    ax.set_ylabel("Accuracy (%)", fontsize=12, fontweight="bold")
+    # ax.set_title("Accuracy vs Number of Objects by Category", fontsize=14, fontweight="bold")
+    legend = ax.legend(loc=legend_loc, 
+                fontsize=9.5, 
+                ncol=2, 
+                markerscale=0.5,
+                handletextpad=0.2,
+                columnspacing=0.5,
+                borderpad=0.2,
+                frameon=True,
+                handlelength=1.3 )
+    for text, handle in zip(legend.get_texts(), legend.legend_handles):
+        if hasattr(handle, "get_color"):
+            text.set_color(handle.get_color())
+            text.set_fontweight("bold")
+        elif hasattr(handle, "get_facecolor"):
+            text.set_color(handle.get_facecolor()[0])
+    ax.grid(axis="y", alpha=0.3)
+
+    # Set y limits
+    y_min = agg_df["mean"].min()
+    y_max = agg_df["mean"].max()
+    if y_limit_mode == "zero_to_max":
+        ax.set_ylim(0, y_max + y_pad * max(1e-6, y_max))
+    elif y_limit_mode == "fit":
+        pad = y_pad * max(1e-6, y_max - y_min)
+        ax.set_ylim(y_min - pad, y_max + pad)
+    elif y_limit_mode == "fixed":
+        ax.set_ylim(15, 55)
+    
+    fig.tight_layout()
+    utils_graph.paperformat(figsize=figsize, ax=ax, grid=["y"], minor=True)
+
+    ax.set_xlim(bins_num-0.5, -0.5)
+    ax.set_xticks(range(0, bins_num))
+    format_rank = lambda x: f"{x}"+({1: "st", 2: "nd", 3: "rd"}.get(x - 10*(x//10), f"th") if not (10 < x < 20) else "th")
+    ax.set_xticklabels([f"{format_rank(bins_edges[b+1])}\n-\n{format_rank(bins_edges[b]+1)}" for b in range(bins_num)], ha='center', fontsize=8)
+    ax.set_xlabel("Models rank")
+
+    # Save
+    if output_dir is not None:
+        run = run_name
+        out_dir = Path(output_dir)
+        out_dir.mkdir(parents=True, exist_ok=True)
+        f_out = out_dir / filename
+        fig.savefig(f_out, dpi=300, bbox_inches="tight", pad_inches=0.05)
+        print(f"Plot saved to: {f_out}")
+
+    return fig
+
+
 def create_num_objects_cat_violin(
                                   ax,
                                   plot_df, 
@@ -309,7 +457,7 @@ def create_num_objects_violin_grid(
             axes[j].set_visible(False)
 
     # Plot legend
-    legend_handles, legend_labels, title_str = utils_graph._build_group_legend_items(
+    legend_handles, legend_labels, legend_groups, title_str = utils_graph._build_group_legend_items(
         plot_df,
         group_by=group_by,
         metadata_path=metadata_path
@@ -680,7 +828,7 @@ def create_accuracy(
 
     # Add legend if requested
     if show_legend:
-        legend_handles, legend_labels, title_str = utils_graph._build_group_legend_items(
+        legend_handles, legend_labels, legend_groups, title_str = utils_graph._build_group_legend_items(
             plot_df,
             group_by=group_by,
             metadata_path=metadata_path

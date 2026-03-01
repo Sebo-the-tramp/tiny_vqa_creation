@@ -10,12 +10,6 @@ import pandas as pd
 from utils.utils_graph_levels import _load_model_metadata
 from utils.utils_read import load_results, _sanitize_answer
 import utils.utils_graph as utils_graph
-from utils.utils_graph import (
-    create_graph_from_eval_balanced,
-    create_sub_categories_summary,
-    create_correlation_common_sense,
-    create_accuracy_bench_vs_common_sense
-)
 
 from utils.utils_paper import print_heatmap_table_latex
 import utils.utils_mapping
@@ -51,7 +45,7 @@ def main() -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
 
     # eval_df_single_image = eval_df[eval_df["idx"].astype(str).str.contains("_i")]
-    # acc_mat_single, _ = create_graph_from_eval_balanced(
+    # acc_mat_single, _ = utils_graph.create_graph_from_eval_balanced(
     #     eval_base=eval_df_single_image,
     #     index_to_use="question_id",
     #     title="Balanced accuracy by question_id and general models - single-image task",
@@ -128,7 +122,7 @@ def main() -> None:
                 #     continue
 
                 fpath.parent.mkdir(parents=True, exist_ok=True)
-                create_accuracy_bench_vs_common_sense(
+                utils_graph.create_accuracy_bench_vs_common_sense(
                     cat_df,
                     out_filename=fpath.name ,
                     show_legend=cat == "all",

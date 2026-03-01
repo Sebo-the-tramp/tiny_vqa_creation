@@ -6,6 +6,7 @@ import math
 import re
 from pathlib import Path
 
+from matplotlib.lines import Line2D
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -524,11 +525,12 @@ def plot_ablation_scatter(
     baseline_name: str="roi_ablation_baseline",
     group_by: str = "model_id",
     metadata_path: str | Path | None = "utils/metadata.json",
+    legend_mode: str = "models_improved"  # models_improved, all
 ) -> None:
     plot_df = runs_df.copy()
     plot_df["accuracy"] *= 100
     
-    plot_df = utils_read.macro_accuracy(plot_df, level="model_id")
+    plot_df = utils_read.macro_accuracy(plot_df, level="model_id", group_by=["run_name"])
 
     agg_df = (
         plot_df.groupby([group_by, "run_name"], observed=True)["accuracy"]
@@ -556,10 +558,56 @@ def plot_ablation_scatter(
             axis=1,
         )
 
-    # Remove baseline points if not plotting baseline
-    if not plot_baseline:
-        agg_df = agg_df[agg_df["run_name"] != baseline_runname].copy()
+    # Extract all run tags (eg, "circle", "layout", "name") from the ablation labels
+    tag_extract_fct = lambda v: re.sub(r"[^A-Za-z0-9+\-.]+", "", v).lower().split("+")
+    tags = np.hstack([tag_extract_fct(v) for k,v in ablations_labels.items()])
+    tags = np.unique(tags)
+    print("Found run tags:", tags)
+    
+    def run_has_tag(run:str, tag:str):
+        run_short = [k for k, v in ablations_runs.items() if v == run][0]
+        label = ablations_labels[run_short]
+        return tag in tag_extract_fct(label)
+    
+    for tag in tags:
+        agg_df[f"run_has_{tag}"] = agg_df["run_name"].apply(lambda run: run_has_tag(run, tag))
 
+    if accuracy_mode == "absolute":
+        groups_df = (
+            agg_df[agg_df["run_name"] == baseline_runname].groupby(group_by, observed=True)["mean"]
+            .mean()
+            .sort_values(ascending=False)
+            .reset_index(name="mean_accuracy")
+        )
+
+        groups = groups_df[group_by].tolist()  # sorted group list
+        for group in groups:
+            group_mask = agg_df[group_by] == group
+            baseline_mask = (agg_df["run_name"] == baseline_runname) & group_mask
+            name_mask = agg_df["run_has_name"] & group_mask
+            circle_mask = agg_df["run_has_circle"] & group_mask
+            layout_mask = agg_df["run_has_layout"] & group_mask
+
+            name_acc = agg_df.loc[name_mask, "mean"].mean()
+            circle_acc = agg_df.loc[circle_mask, "mean"].mean()
+            layout_acc = agg_df.loc[layout_mask, "mean"].mean()
+            
+            circle_only = agg_df[agg_df["run_name"].isin([ablations_runs["roi_circling_no_text"]]) & group_mask]
+            circle_only_acc = circle_only["mean"].values[0]
+
+            baseline_acc = agg_df.loc[baseline_mask, "mean"].mean()
+            change_fct = lambda acc: f"{(acc - baseline_acc):.1f}" if acc <= baseline_acc else f"+{(acc - baseline_acc):.1f}"
+
+            circle_change = circle_only_acc - baseline_acc
+            print(f"{group}:        Baseline: {baseline_acc:.2f}%, Name acc: {change_fct(name_acc)}%, Circle acc: {change_fct(circle_acc)}%, Layout acc: {change_fct(layout_acc)}%", f"circle change: {circle_change:.2f}%", ("*** IMPROVED ***" if circle_change > 1 else ("*** WORSENED ***" if circle_change < -1 else "not improved")))
+
+            groups_df["baseline"] = baseline_acc
+            groups_df["name_acc"] = name_acc
+            groups_df["circle_acc"] = circle_acc
+            groups_df["layout_acc"] = layout_acc
+        pass
+    
+    
     # Keep only ablations existing in the agg_df
     ablations_runs = {abl: run for abl, run in ablations_runs.items() if run in agg_df["run_name"].unique()}
     ablations_labels = {abl: name for abl, name in ablations_labels.items() if abl in ablations_runs}
@@ -577,12 +625,16 @@ def plot_ablation_scatter(
     rng = np.random.default_rng(42)
 
     for group_name, df_m in agg_df.groupby(group_by):
+        # Remove baseline points if not plotting baseline
+        # if not plot_baseline:
+        #     df_m = df_m[df_m["run_name"] != baseline_runname]
+        
         x_vals = df_m["run_idx"].to_numpy()
         y_vals = df_m["accuracy_plot"].to_numpy()
         
         if x_vals.size == 0:
             continue
-        
+
         jitter = rng.uniform(-0.15, 0.15, size=x_vals.size)
         x_jittered = x_vals + jitter
         color, marker, size = model_style[group_name]
@@ -617,11 +669,37 @@ def plot_ablation_scatter(
         ax.set_ylabel("Accuracy wrt baseline\n(rel. %)")
         ticks_step = 5.0
         
-    legend_handles, legend_labels, title_str = utils_graph._build_group_legend_items(
+    legend_handles, legend_labels, legend_groups, title_str = utils_graph._build_group_legend_items(
         plot_df,
         group_by=group_by,
         metadata_path=metadata_path
     )
+
+    for i, (handle, label, group) in enumerate(zip(legend_handles, legend_labels, legend_groups)):
+        group_mask = agg_df[group_by] == group
+        baseline_mask = (agg_df["run_name"] == baseline_runname) & group_mask
+        assert baseline_mask.sum() == 1
+        baseline_acc = agg_df.loc[baseline_mask, "mean"].values[0]
+
+        tags_improve = []
+        tags_worsen = []
+        for t in tags:
+            if t == "name":
+                continue  # skip "name" tag for legend labeling
+            t_mask = agg_df[f"run_has_{t}"] & group_mask
+            # t_improve = any(agg_df[t_mask]["mean"] > baseline_acc)
+            if any( ((agg_df[t_mask]["mean"] - baseline_acc) / baseline_acc) > 0.05 ):
+                tags_improve.append(t)
+            if any( ((agg_df[t_mask]["mean"] - baseline_acc) / baseline_acc) < -0.05 ):
+                tags_worsen.append(t)
+        
+        if tags_improve:
+            label += " +" + ",".join([f"+{t[0].capitalize()}" for t in tags_improve])
+        elif tags_worsen:
+            label += " -" + ",".join([f"+{t[0].capitalize()}" for t in tags_worsen])
+        
+        legend_labels[i] = label
+
     ax.legend(legend_handles, legend_labels, title=title_str, bbox_to_anchor=(1.05, 1), loc='upper left', fontsize=8, title_fontsize=9, markerscale=0.7)
 
     utils_graph.paperformat(ax, ticks_step=ticks_step)
@@ -651,8 +729,8 @@ def main() -> None:
         f"roi_ablation_baseline": "Name",
         f"roi_circling_text": "Name\n+Circle",
         f"no_roi_circling_yes_text_layout_position": "Name\n+Layout",
-        f"roi_circling_text_layout_position": "Name\n+Circle\n+Layout",
-        f"roi_circling_no_text_layout_position": "Circle\n+Layout",
+        # f"roi_circling_text_layout_position": "Name\n+Circle\n+Layout",
+        # f"roi_circling_no_text_layout_position": "Circle\n+Layout",
         f"roi_circling_no_text": "Circle",
         f"no_roi_circling_no_text_layout_position": "Layout",
         # f"ablation_physics_duration_text": "Name\n+Duration",
@@ -756,11 +834,13 @@ def main() -> None:
     #     args.output_dir / "accuracy_change_pp_by_object_count_scatter.png",
     #     baseline_name=baseline_name,
     # )
-    for group in utils_read.GROUPINGS:
+    # for group in utils_read.GROUPINGS:
+    for group in ["model"]:
         cur_df, group_by = utils_read.apply_group(eval_df, group)
         
         print(f"Processing: grouping by {group_by}: with {len(cur_df)} entries")
-        for accuracy_mode in ["baseline_change", "absolute", "baseline_rel_change"]:
+        # for accuracy_mode in ["baseline_change", "baseline_rel_change", "absolute"]:
+        for accuracy_mode in ["baseline_change"]:
             plot_ablation_scatter(
                 cur_df,
                 cur_output_dir,
@@ -771,6 +851,7 @@ def main() -> None:
                 ablations_runs=ablations_runs,
                 ablations_labels=ablations_labels,
                 baseline_name=baseline_name,
+                legend_mode="models_improved"  # or all
             )
 
 

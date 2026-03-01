@@ -2,6 +2,7 @@ import os
 import json
 import hashlib
 import re
+from typing import Any, Callable
 import numpy as np
 import pandas as pd
 from prompt_toolkit import prompt
@@ -111,7 +112,7 @@ def _build_group_legend_items(
     plot_df: pd.DataFrame,
     group_by: str,
     metadata_path: str,
-) -> tuple[list[Line2D], list[str], str | None]:
+) -> tuple[list[Line2D], list[str], list[str], str | None]:
     model_style, family_map = utils.utils_mapping._build_model_style(
         # metadata_path,
         group_by=group_by,
@@ -121,23 +122,23 @@ def _build_group_legend_items(
 
     legend_handles: list[Line2D] = []
     legend_labels: list[str] = []
+    legend_groups: list[str] = []
 
     groups = set(plot_df[group_by].astype(str).unique())
-    for group_name, (color, marker, size_val) in model_style.items():
-        if group_name not in groups:
+    for group, (color, marker, size_val) in model_style.items():
+        if group not in groups:
             continue
 
         marker_style = mmarkers.MarkerStyle(marker)
         marker_face = color if marker_style.is_filled() else "none"
 
-        label = group_name
+        label = group
         
-        models_num = len(plot_df[plot_df[group_by] == group_name]["model_id"].unique())
+        models_num = len(plot_df[plot_df[group_by] == group]["model_id"].unique())
         if models_num > 1:
             label = f"{label} (x{models_num})"
 
-        legend_handles.append(
-            Line2D(
+        handle = Line2D(
                 [0],
                 [0],
                 marker=marker,
@@ -147,11 +148,13 @@ def _build_group_legend_items(
                 markersize=size_val,
                 linestyle="None",
             )
-        )
+        
+        legend_handles.append(handle)
         legend_labels.append(label)
+        legend_groups.append(group)
 
     title_str = {"model_id": "Model", "model_family": "Model Family"}.get(group_by)
-    return legend_handles, legend_labels, title_str
+    return legend_handles, legend_labels, legend_groups, title_str
 
 
 def create_benchmarks_violin(
@@ -1028,7 +1031,7 @@ def create_accuracy_bench_vs_common_sense(
     )
 
     # 5. Modified Legend
-    # legend_handles, legend_labels, title_str = _build_group_legend_items(
+    # legend_handles, legend_labels, legend_groups, title_str = _build_group_legend_items(
     #     plot_df,
     #     group_by=group_by,
     #     metadata_path=metadata_path

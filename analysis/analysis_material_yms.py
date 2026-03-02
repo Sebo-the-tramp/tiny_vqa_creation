@@ -29,12 +29,12 @@ def main() -> None:
     output_dir = Path("output") / args.run_name / args.vqa_set / "yms" / "mixed"
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    eval_df = utils.utils_read.build_eval_df(args.base_path, vqa_set=args.vqa_set, columns=["object-yms"])
+    eval_df = utils.utils_read.build_eval_df(args.run_name, args.base_path, vqa_set=args.vqa_set, columns=["object-yms"])
 
     # print(eval_df.head().to_string())
     for group in utils.utils_read.GROUPINGS:
         print(f"Analyzing YMS group by: {group}")
-        fname = f"yms_violin_{group}.png"
+        fname = f"yms_{group}.png"
         cur_df, group_by = utils.utils_read.apply_group(eval_df, group)
         
         # for category_col in ["category", "sub_category"]:
@@ -43,17 +43,11 @@ def main() -> None:
             fig = create_material_stiffness_violin_grid(
                 cur_df,
                 output_dir=output_dir,
-                run_name=args.run_name,
                 show=False,
-                save_per_category=True,
                 save_grid=True,
-                save_legend=True,
                 y_limit_mode="fit",
                 group_by=group_by,  # model_id or family
                 category_col=category_col,  # sub_category or category
-                show_legend=False,        
-                # stiffness_labels=("Soft\n($\\text{yms} \leq 2e4$)", "Medium\n($2e4 > \\text{yms} \leq 1e6$)", "Stiff\n($\\text{yms} > 1e6$)"),
-                stiffness_labels=("Soft", "Medium", "Stiff"),
                 filename=fname
             )
 

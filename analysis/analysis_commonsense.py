@@ -7,12 +7,11 @@ from matplotlib import pyplot as plt
 import numpy as np
 import pandas as pd
 
-from utils.utils_graph_levels import _load_model_metadata
-from utils.utils_read import load_results, _sanitize_answer
-import utils.utils_graph as utils_graph
-
-from utils.utils_paper import print_heatmap_table_latex
-import utils.utils_mapping
+from utils import (
+    utils_read,
+    utils_graph,
+    utils_mapping,
+)
 
 def main() -> None:
     parser = argparse.ArgumentParser()
@@ -39,7 +38,7 @@ def main() -> None:
     parser.add_argument("--run-name", default="run_28_general")
     args = parser.parse_args()
 
-    eval_df = utils.utils_read.build_eval_df(args.run_name, args.base_path, vqa_set=args.vqa_set)
+    eval_df = utils_read.build_eval_df(args.run_name, args.base_path, vqa_set=args.vqa_set)
 
     output_dir = Path("output") / args.run_name / args.vqa_set / "commonsense"
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -79,7 +78,7 @@ def main() -> None:
 
     benchmarks = ["all", "MMBench V1.1", "MMStar", "MMMU", "MathVista", "HallusionBench Avg.", "AI2D", "OCRBench", "MMVet"]
     
-    for mode_label, mode_df in utils.utils_read.select_eval_df(
+    for mode_label, mode_df in utils_read.select_eval_df(
         eval_df, mode=args.mode
     ):
         cur_output_dir = output_dir / mode_label
@@ -93,7 +92,7 @@ def main() -> None:
         cur_output_dir.mkdir(parents=True, exist_ok=True)
         
         # Compute the matrix for all categories only once
-        create_graph_from_eval_balanced(
+        utils_graph.create_graph_from_eval_balanced(
             eval_base=mode_df,
             index_to_use="sub_category",
             filename=f"accuracy_matrix.png",
@@ -111,7 +110,7 @@ def main() -> None:
                 cat_label = "Overall accuracy (%)"
             else:
                 cat_df = mode_df[mode_df["category"] == cat]
-                cat_label = utils.utils_mapping.mapping_cat_short.get(cat)
+                cat_label = utils_mapping.mapping_cat_short.get(cat)
             
             for bench in benchmarks:
                 print("     Bench:", bench)

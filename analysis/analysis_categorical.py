@@ -39,10 +39,10 @@ def main() -> None:
         cur_output_dir = output_dir / mode_label
         cur_output_dir.mkdir(parents=True, exist_ok=True)
         
-        for group in utils.utils_read.GROUPINGS + ["model_bestmat10"]:
+        for group in ["model_bestmat10"]:
+        # for group in utils.utils_read.GROUPINGS + ["model_bestmat10"]:
             cur_df, group_by = utils.utils_read.apply_group(mode_df, group)
             
-            print(f"Processing mode: {mode_label}, grouping by {group_by}: with {len(cur_df)} entries")
             for level in ["category", "sub_category", "question_id"]:
                 utils_graph_correlation.create_accuracy(
                     cur_df,

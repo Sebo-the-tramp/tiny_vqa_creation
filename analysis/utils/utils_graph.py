@@ -3,6 +3,7 @@ import json
 import hashlib
 import re
 from typing import Any, Callable
+import unicodedata
 from matplotlib.legend import Legend
 import numpy as np
 import pandas as pd
@@ -34,11 +35,14 @@ for _name in ("Dark2", "tab10"):
     _cmap = plt.get_cmap(_name)
     _SUBCATEGORY_PALETTE.extend(to_hex(_cmap(i)) for i in range(_cmap.N))
 
-
-def _color_for_subcategory(sub_category: str, palette: list[str]) -> str:
-    digest = hashlib.md5(sub_category.encode("utf-8")).hexdigest()
-    idx = int(digest, 16) % len(palette)
-    return palette[idx]
+def safe_name(name: str, repl: str = "_") -> str:
+    # normalize unicode (é -> e, etc.)
+    name = unicodedata.normalize("NFKD", name).encode("ascii", "ignore").decode("ascii")
+    name = name.strip().lower()
+    name = re.sub(r"\s+", repl, name)                 # spaces -> _
+    name = re.sub(r"[^a-zA-Z0-9_-]", repl, name)    # remove special chars
+    name = re.sub(rf"{repl}+", repl, name).strip(repl)
+    return name or "untitled"
 
 def paperformat(ax, figsize=(4, 3.1), ylim=None, ticks_step=10, grid=["x", "y"], minor=True):
     fig = ax.get_figure()
@@ -108,7 +112,7 @@ def get_level_label(level, name):
 
 
 def get_benchmark_filepath(dir, cat, bench):
-    o_dir = dir if bench == "all" else (dir / f"bench_{bench.lower().replace(' ', '_')}")
+    o_dir = dir if bench == "all" else (dir / f"bench_{safe_name(bench)}")
     o_dir.mkdir(parents=True, exist_ok=True)
     o_fname = f"cs_{cat}.png" if cat != "all" else "cs_correlation.png"
     return Path(o_dir) / o_fname
@@ -894,8 +898,6 @@ def create_accuracy_bench_vs_common_sense(
     cs_accuracy = {}
     cs_methods = common_sense_df["Method"].values
     for model_id in model_unique_ids:
-        model_row = model_df[model_df["model_id"] == model_id].iloc[0]
-
         #Prioritize open, then close, then any match
         cs_mask = None
         for suffix in ["Open", "Close", ""]:
@@ -919,7 +921,7 @@ def create_accuracy_bench_vs_common_sense(
     
     cs_found = [model for model, cs_model in model_cs_mapping.items() if cs_model is not None]
     cs_not_found = [model for model, cs_model in model_cs_mapping.items() if cs_model is None]
-    print(f"CS Model mapping found ({len(cs_found)}/{len(model_cs_mapping)}): ", cs_found)
+    # print(f"CS Model mapping found ({len(cs_found)}/{len(model_cs_mapping)}): ", cs_found)
     print(f"CS Model mapping NOT found ({len(cs_not_found)}/{len(model_cs_mapping)}): ", cs_not_found)
     
     # Save mapping for reference

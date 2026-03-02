@@ -18,6 +18,8 @@ if not Path("/scratch/project/eu-25-92/composite_physics/dataset/simulation_v4/"
 # _ANSWER_RE = re.compile(r"(?i)^\s*([a-d])(?:[^a-z0-9]|$)")
 # _ANSWER_RE = re.compile(r"\b([A-D])\s*[\.\,\:\)]")
 _ANSWER_RE = re.compile(r"(?:^([A-D])\b|\b([A-D])\b\s*[\.\,\:\)]?$)", re.IGNORECASE)
+_IDX_RE = r"([0-9]+_[gi])"
+_LEVEL_RE = r"([0-9]+_[gi])(_level_([^_]+))?"
 
 try:
     import orjson
@@ -292,6 +294,15 @@ def load_results(
 
     df_test = _read_json_dataframe(test_path)
     df_val = _read_json_dataframe(val_path)
+
+    if any(df_test["idx"].apply(lambda x: re.fullmatch(_LEVEL_RE, x))):
+        print("Level answers detected. Duplicating val to match models idx.")
+        levels_string = df_test["idx"].apply(lambda x: re.fullmatch(_LEVEL_RE, x).groups()[1])
+        levels_unique = levels_string.unique()
+        
+        df_val = pd.concat([df_val.assign(idx=df_val["idx"] + level) for level in levels_unique], ignore_index=True)
+
+
 
     # FOR AGENT Keep the hardcoded columns #
     # print("Processing columns...")
@@ -624,10 +635,26 @@ def load_model_answers(results_dir: str | Path, wide: bool = False) -> pd.DataFr
     if not wide:
         return df_all
 
+    # Check if idx are standards
+    if not all(df_all["idx"].apply(lambda x: re.fullmatch(_IDX_RE, x))):
+        if any(df_all["idx"].apply(lambda x: re.fullmatch(_LEVEL_RE, x))):
+            print("Level answers detected. Reformatting the idx column to extract levels.")
+
+            dups = df_all.duplicated(subset=["idx", "model"], keep=False)
+            if dups.any():
+                print(f"Found {dups.sum()} duplicate (idx, model) pairs found in model answers. This is a known bug, attempting to auto-fix.")
+                dups_answers = df_all.duplicated(subset=["idx", "model", "answer", "og_answer"], keep=False)
+                if dups.sum() == dups_answers.sum():
+                    print(" Auto-fix worked: duplicates have the same answer. Keeping only one entry per (idx, model) pair.")
+                    df_all = df_all.drop_duplicates(
+                        subset=["idx", "model", "answer", "og_answer"],
+                        keep="first",
+                    ).copy().reset_index()
+            
     # Check for duplicates before pivoting
     dups = df_all.duplicated(subset=["idx", "model"], keep=False)
     if dups.any():
-        print("Duplicate (idx, model) pairs found in model answers:")
+        print(f"Found {dups.sum()} duplicate (idx, model) pairs found in model answers:")
         print(df_all[dups])
         raise ValueError("There are duplicates (idx, model) rows, printed above. Cannot pivot to wide format.")
 
@@ -687,6 +714,7 @@ GROUPINGS = [
     "family_biggest", 
     "model", 
     # "family"  # not making sense to average by family
+    # "model_best10"
 ]
 
 def apply_group(df: pd.DataFrame, group_by: str) -> pd.DataFrame:
@@ -755,6 +783,7 @@ def apply_group(df: pd.DataFrame, group_by: str) -> pd.DataFrame:
         df = df[df['model_id'].isin(best_models['model_id'])]
         group_by = "model_id"
     elif group_by == "family":
+        print("/!\ Model family grouping may be misleading, as it averages models with different capabilities and performance. Consider using 'family_best' or 'family_biggest' to select a single representative model per family.")
         group_by = "model_family"
     else:
         raise ValueError(f"Unknown group_by: {group_by}")

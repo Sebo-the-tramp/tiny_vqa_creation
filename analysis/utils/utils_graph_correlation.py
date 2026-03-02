@@ -37,6 +37,7 @@ def create_num_objects_category_curve(
     legend_loc: str = "best",
     scatter: bool = False,
     colors: list[str] | None = None,
+    obj_stride: int = 1
 ) -> plt.Figure:
     """
     Plot accuracy (in %) vs num_objects, one curve per category (6 total).
@@ -48,8 +49,11 @@ def create_num_objects_category_curve(
     plot_df = utils_read.macro_accuracy(plot_df, level=category_column, group_by=["object_count"])
 
     # Aggregate: mean accuracy per (category, object_count)
+    
+    # plot_df["object_count_plot"] = 1 + ((plot_df["object_count"] - 1) / obj_stride).astype(int) * obj_stride
+    plot_df["object_count_plot"] = (plot_df["object_count"] / obj_stride).astype(int) * obj_stride
     agg_df = (
-        plot_df.groupby([category_column, "object_count"], observed=True)["accuracy"]
+        plot_df.groupby([category_column, "object_count_plot"], observed=True)["accuracy"]
         .mean()
         .reset_index()
     )
@@ -63,7 +67,7 @@ def create_num_objects_category_curve(
         df_cat = agg_df[agg_df[category_column] == cat]
         if df_cat.empty:
             continue
-        x = df_cat["object_count"].values
+        x = df_cat["object_count_plot"].values
         y = df_cat["accuracy"].values
         cat_label = utils_mapping.mapping_cat_short.get(cat)
         cat_color = utils_mapping.mapping_cat_colors.get(cat)
@@ -100,14 +104,16 @@ def create_num_objects_category_curve(
     elif y_limit_mode == "fit":
         pad = y_pad * max(1e-6, y_max - y_min)
         ax.set_ylim(y_min - pad, y_max + pad)
-    elif y_limit_mode == "fixed":
-        ax.set_ylim(15, 55)
+    elif isinstance(y_limit_mode, (list, tuple)):
+        ax.set_ylim(y_limit_mode[0], y_limit_mode[1])
 
     fig.tight_layout()
     utils_graph.paperformat(ax, grid=["y"], minor=True)
-
-    ax.set_xticks(range(1, 11))
-    ax.set_xticklabels([str(v) for v in range(1, 11)])
+    
+    objs = sorted(plot_df["object_count_plot"].unique())
+    ax.set_xticks(objs)
+    ax.set_xticklabels([str(v) for v in objs])
+    ax.set_xlim(2, 10.2)
 
 
     # Save
@@ -301,7 +307,7 @@ def create_num_objects_cat_violin(
         x="object_count_pos",
         y="accuracy",
         ax=ax,
-        color="0.85",
+        color="0.90",
         inner=None,
         cut=0,
         order=list(range(len(num_values))),
@@ -325,14 +331,14 @@ def create_num_objects_cat_violin(
             continue
         jitter = rng.uniform(-0.2, 0.2, size=x_vals.size)
         x_jittered = x_vals + jitter
-        color, marker, size = model_style[group_id]
+        color, marker, size, edge = model_style[group_id]
         ax.scatter(
             x_jittered,
             y_vals,
             color=color,
             s=size**2,
             alpha=0.8,
-            edgecolor="white",
+            edgecolor=edge,
             linewidth=1,
             marker=marker,
             zorder=4
@@ -370,7 +376,6 @@ def create_num_objects_violin_grid(
     show_legend: bool = True,
     grid_hspace: float | None = 0.6,
     grid_wspace: float | None = None,
-    use_tight_layout: bool = True,
     grid_top: float | None = None,
     grid_bottom: float | None = None,
     y_limit_mode: str = "zero_to_max",
@@ -472,10 +477,6 @@ def create_num_objects_violin_grid(
             ncol=5,
             bbox_to_anchor=(0.5, 1.02),
         )
-        if use_tight_layout and y_limit_mode != "fit":
-            plt.tight_layout(rect=[0, 0, 1, 0.96])
-    elif not use_constrained_layout and use_tight_layout and y_limit_mode != "fit":
-        plt.tight_layout()
     if grid_hspace is not None or grid_wspace is not None:
         fig.subplots_adjust(
             hspace=grid_hspace if grid_hspace is not None else 0.2,
@@ -649,7 +650,7 @@ def create_accuracy(
         x="level_idx",
         y="mean",
         ax=ax,
-        color="0.85",
+        color="0.90",
         # inner="box",
         inner=None,
         cut=0,
@@ -677,7 +678,7 @@ def create_accuracy(
         
         jitter = rng.uniform(-0.15, 0.15, size=x_vals.size)
         x_jittered = x_vals + jitter
-        color, marker, size = model_style[group_name]
+        color, marker, size, edge = model_style[group_name]
         
         # Plot error bars (min to max range)
         # ax.errorbar(
@@ -700,7 +701,7 @@ def create_accuracy(
             color=color,
             s=size**2,
             alpha=0.8,
-            edgecolor="white",
+            edgecolor=edge,
             linewidth=1,
             marker=marker,
             zorder=4
@@ -833,7 +834,7 @@ def create_accuracy(
             group_by=group_by,
             metadata_path=metadata_path
         )
-        ax.legend(legend_handles, legend_labels, title=title_str, bbox_to_anchor=(1.05, 1), loc='upper left', fontsize=8, title_fontsize=9, markerscale=0.7)
+        ax.legend(legend_handles, legend_labels, title=title_str, bbox_to_anchor=(1.05, 1), loc='upper left', fontsize=8, title_fontsize=9, markerscale=0.9)
 
     plt.tight_layout()
 
@@ -852,447 +853,272 @@ def create_accuracy(
 
     return fig
 
+def create_material_stiffness_violin(
+    ax: plt.Axes,
+    eval_df: pd.DataFrame,
+    stiffness_col: str = "object-yms",
+    group_by: str = "model_id",
+    model_style: dict[str, tuple[str, str, float]] = None,
+    category: str = "all",
+    category_col: str = "category",
+) -> plt.Figure:
+    plot_df = eval_df.copy()
+
+    mapping = {"soft": 0, "medium": 1, "stiff": 2}
+    plot_df["stiffness_level"] = plot_df[stiffness_col].map(mapping)
+    plot_df["accuracy"] = plot_df["accuracy"] * 100
+
+    if category == "all":
+        plot_df = utils_read.macro_accuracy(plot_df, level=group_by, group_by=["stiffness_level"])
+    else:
+        plot_df = plot_df[plot_df[category_col] == category].copy()
+        plot_df = utils_read.macro_accuracy(plot_df, level=category_col, group_by=["stiffness_level"])
+    
+    if plot_df.empty:
+        ax.set_visible(False)
+        return ax
+    
+    stiffness_values = sorted(pd.unique(plot_df["stiffness_level"]))
+    stiffness_to_pos = {value: idx for idx, value in enumerate(stiffness_values)}
+    plot_df["stiffness_pos"] = plot_df["stiffness_level"].map(stiffness_to_pos)
+
+    stiffness_labels = ["Soft", "Medium", "Stiff"]
+    stiffness_sublabels = ["$\\text{yms} \leq 2e4$", 
+                        "$2e4 > \\text{yms} \leq 1e6$", 
+                        "$\\text{yms} > 1e6$"]
+    
+    sns.violinplot(
+        data=plot_df,
+        x="stiffness_pos",
+        y="accuracy",
+        ax=ax,
+        color="0.90",
+        # inner="box",
+        inner=None,
+        cut=0,
+        width=1.0,
+        linewidth=0.5,
+        order=list(range(len(stiffness_values))),
+        zorder=3
+    )
+    ax.axhline(y=25, color="gray", linestyle="--", linewidth=1, zorder=2)
+
+    # if y_limit_mode == "zero_to_max":
+    #     label_y = -0.08
+    #     label_transform = ax.get_xaxis_transform()
+    # elif global_limits:
+    #     label_y = global_limits[0] - n_label_offset * max(
+    #         1e-6, global_limits[1] - global_limits[0]
+    #     )
+    #     label_transform = None
+    # else:
+    #     label_y = -0.075
+    #     label_transform = None
+
+    seed = 42
+    rng = np.random.default_rng(seed)
+
+    for group, df_m in plot_df.groupby(group_by):
+        x_vals = df_m["stiffness_pos"].to_numpy()
+        y_vals = df_m["accuracy"].to_numpy()
+        if x_vals.size == 0:
+            continue
+        
+        jitter = rng.uniform(-0.2, 0.2, size=x_vals.size)
+        x_jittered = x_vals + jitter
+
+        color, marker, size, edge = model_style[group]
+        ax.scatter(
+            x_jittered,
+            y_vals,
+            color=color,
+            s=size**2,
+            alpha=0.8,
+            edgecolor=edge,
+            linewidth=1,
+            marker=marker,
+            zorder=4,
+        )
+
+    ax.set_xlabel("")
+    if category == "all":
+        ax.set_ylabel("Overall accuracy (%)", color="#000000")
+    else:
+        ax.set_ylabel(utils_mapping.get_cat_label(category, category_col, format="short"), color=utils_mapping.get_cat_color(category, category_col))
+    ax.grid(axis="y")
+
+    ax.set_xticks(range(len(stiffness_values)))
+    ax.set_xticklabels(stiffness_labels)
+
+    if True:
+        for x, sub in enumerate(stiffness_sublabels):
+            ax.text(
+                x, -0.12,
+                sub,
+                transform=ax.get_xaxis_transform(),
+                ha="center", va="top",
+                fontsize=8, color="#666666"
+            )
+
+    return ax
 
 def create_material_stiffness_violin_grid(
     eval_df: pd.DataFrame,
     *,
     metadata_path: str | Path | None = "utils/metadata.json",
     stiffness_col: str = "object-yms",
-    count_model_substring: str | None = None,
-    subcategory_label_map: dict[str, str] | None = None,
     n_cols: int = 4,
-    col_width: float = 5.0,
-    row_height: float = 4.5,
     seed: int = 0,
     show: bool = False,
     output_dir: str | Path | None = None,
-    run_name: str | None = None,
     filename: str = "yms_violin.png",
     group_by: str = "model_id",
-    save_per_category: bool = False,
-    per_category_dirname: str | None = None,
     save_grid: bool = False,
-    legend_filename: str | None = None,
-    legend_cols: int = 4,
-    legend_figsize: tuple[float, float] | None = None,
     show_legend: bool = True,
     grid_hspace: float | None = 0.5,
     grid_wspace: float | None = None,
-    use_tight_layout: bool = True,
     y_limit_mode: str = "zero_to_max",
     category_col: str = "category",
-    y_pad: float = 0.0,
-    n_label_offset: float = 0.08,
-    stiffness_labels: tuple[str, str, str] = ("Soft\n($\\text{yms} \leq 2e4$)", "Medium\n($2e4 > \\text{yms} \leq 1e6$)", "Stiff\n($\\text{yms} > 1e6$)"),
-    family_marker_mode: str = "distinct",
-    family_marker_base: str = "^",
+    family_marker_mode: str = "distinct"
 ) -> plt.Figure:
-    raise NotImplementedError("This should be updated to use the new macro accuracies")
-    if "sub_category" not in eval_df.columns or "model_id" not in eval_df.columns:
-        raise KeyError("eval_df must include 'sub_category' and 'model_id' columns.")
     if stiffness_col not in eval_df.columns:
         raise KeyError(f"eval_df must include '{stiffness_col}'.")
 
-    plot_df = eval_df.copy()
-    # plot_df["stiffness_level"] = pd.to_numeric(
-    #     plot_df[stiffness_col], errors="coerce"
-    # )
-    mapping = {"soft": 0, "medium": 1, "stiff": 2}
-    plot_df["stiffness_level"] = plot_df[stiffness_col].map(mapping)
-
-    if "accuracy" in plot_df.columns:
-        plot_df["accuracy"] = pd.to_numeric(plot_df["accuracy"], errors="coerce")
-    elif "is_correct" in plot_df.columns:
-        plot_df["accuracy"] = pd.to_numeric(plot_df["is_correct"], errors="coerce")
-    else:
-        raise KeyError("eval_df must include 'accuracy' or 'is_correct'.")
-
-    plot_df["accuracy"] *= 100
-    plot_df = plot_df.dropna(subset=["stiffness_level", "accuracy"])
-
-    if count_model_substring:
-        counts_source = plot_df[
-            plot_df["model_id"]
-            .astype(str)
-            .str.contains(count_model_substring, na=False)
-        ]
-    else:
-        dedup_cols = [
-            c for c in ["idx", "sub_category", "stiffness_level"] if c in plot_df.columns
-        ]
-        counts_source = (
-            plot_df.drop_duplicates(subset=dedup_cols) if dedup_cols else plot_df
-        )
-    
-    categories = pd.unique(plot_df[category_col])
+    categories = pd.unique(eval_df[category_col])
     if categories.size == 0:
         raise ValueError("No sub_category values found after filtering.")
 
     model_style, family_map = utils_mapping._build_model_style(
-        # plot_df,
         metadata_path,
         group_by=group_by,
         family_marker_mode=family_marker_mode,
-        # family_marker_base=family_marker_base,
     )
-    rng = np.random.default_rng(seed)
 
     cols = max(1, n_cols)
     rows = math.ceil(len(categories) / cols)
 
+    col_width = 3.5
+    row_height = 2.5
     fig, axes = plt.subplots(
         rows, cols, figsize=(col_width * cols, row_height * rows)
     )
     axes = np.array(axes).flatten()
 
-    global_limits = None
-    if y_limit_mode == "zero_to_max":
-        if group_by == "model_family":
-            plot_df["group_id"] = plot_df["model_id"].map(family_map).fillna("Other")
-        else:
-            plot_df["group_id"] = plot_df["model_id"].astype(str)
-        agg_all = _macro_avg_by_question(plot_df, ["group_id", "stiffness_level"])
-        if not agg_all.empty:
-            global_limits = (
-                float(agg_all["accuracy"].min()),
-                float(agg_all["accuracy"].max()),
-            )
-
     for i, cat in enumerate(categories):
-        ax = axes[i]
-        df_cat = plot_df[plot_df[category_col] == cat].copy()
-        if df_cat.empty:
-            ax.set_visible(False)
-            continue
-
-        if group_by == "model_family":
-            df_cat["group_id"] = df_cat["model_id"].map(family_map).fillna("Other")
-        else:
-            df_cat["group_id"] = df_cat["model_id"].astype(str)
-
-        agg_df = _macro_avg_by_question(df_cat, ["group_id", "stiffness_level"])
-        if agg_df.empty:
-            ax.set_visible(False)
-            continue
-
-        stiffness_values = sorted(pd.unique(agg_df["stiffness_level"]))
-        stiffness_to_pos = {value: idx for idx, value in enumerate(stiffness_values)}
-        agg_df["stiffness_pos"] = agg_df["stiffness_level"].map(stiffness_to_pos)
-
-        sns.violinplot(
-            data=agg_df,
-            x="stiffness_pos",
-            y="accuracy",
-            ax=ax,
-            color="0.85",
-            # inner="box",
-            inner=None,
-            cut=0,
-            width=1.0,
-            linewidth=0.5,
-            order=list(range(len(stiffness_values))),
-            zorder=3
+        axes[i] = create_material_stiffness_violin(
+            ax=axes[i],
+            eval_df=eval_df,
+            stiffness_col=stiffness_col,
+            group_by=group_by,
+            model_style=model_style,
+            category=cat,
+            category_col=category_col,
         )
-        ax.axhline(y=25, color="gray", linestyle="--", linewidth=1, zorder=2)
 
-        counts_series = (
-            counts_source[counts_source[category_col] == cat]
-            .groupby("stiffness_level", observed=True)["stiffness_level"]
-            .count()
-        )
-        if y_limit_mode == "zero_to_max":
-            label_y = -0.08
-            label_transform = ax.get_xaxis_transform()
-        elif global_limits:
-            label_y = global_limits[0] - n_label_offset * max(
-                1e-6, global_limits[1] - global_limits[0]
-            )
-            label_transform = None
-        else:
-            label_y = -0.075
-            label_transform = None
-        for level, count in counts_series.items():
-            x_pos = stiffness_to_pos.get(level)
-            if x_pos is None:
-                continue
-            # ax.text(
-            #     x_pos,
-            #     label_y,
-            #     f"N:{int(count)}",
-            #     ha="center",
-            #     va="bottom",
-            #     fontsize=9,
-            #     color="black",
-            #     transform=label_transform,
-            # )
+        utils_graph.paperformat(axes[i], figsize=None)
 
-        for group_id, df_m in agg_df.groupby("group_id"):
-            x_vals = df_m["stiffness_pos"].to_numpy()
-            y_vals = df_m["accuracy"].to_numpy()
-            if x_vals.size == 0:
-                continue
-            jitter = rng.uniform(-0.2, 0.2, size=x_vals.size)
-            x_jittered = x_vals + jitter
-            color, marker, size = model_style[group_id]
-            ax.scatter(
-                x_jittered,
-                y_vals,
-                color=color,
-                s=size**2,
-                alpha=0.8,
-                edgecolor="white",
-                linewidth=1,
-                marker=marker,
-                zorder=4,
-            )
+    axes[len(categories)] = create_material_stiffness_violin(
+        ax=axes[len(categories)],
+        eval_df=eval_df,
+        stiffness_col=stiffness_col,
+        group_by=group_by,
+        model_style=model_style,
+        category="all",
+        category_col=category_col,
+    )
+    utils_graph.paperformat(axes[len(categories)], figsize=None)
 
-        label = (
-            subcategory_label_map.get(str(cat), str(cat))
-            if subcategory_label_map
-            else str(cat)
-        )
-        ax.set_title(label)
-        # ax.set_xlabel("Object Stiffness")
-        ax.set_xlabel("")
-        ax.set_ylabel(utils_mapping.categories.get(cat), color=utils_mapping.mapping_cat_colors.get(cat))
-        ax.grid(axis="y")
-        if y_limit_mode == "fixed":
-            ax.set_ylim(-10, 110)
-        elif y_limit_mode == "zero_to_max" and global_limits:
-            y_min, y_max = global_limits
-            pad = y_pad * max(1e-6, y_max - y_min)
-            ax.set_ylim(y_min - n_label_offset * max(1e-6, y_max - y_min), y_max + pad)
-        elif y_limit_mode == "fit":            
-            y_min = agg_df["accuracy"].min()
-            y_max = agg_df["accuracy"].max()
-            pad = y_pad * max(1e-6, y_max - y_min)
-            ax.set_ylim(y_min - pad, y_max + pad)
-        else:
-            y_min = agg_df["accuracy"].min()
-            y_max = agg_df["accuracy"].max()
-            if pd.isna(y_min) or pd.isna(y_max):
-                ax.set_ylim(-10, 110)
-            else:
-                pad = y_pad * max(1e-6, y_max - y_min)
-                ax.set_ylim(y_min - pad, y_max + pad)
-        ax.set_xticks(range(len(stiffness_values)))
-        
-        if len(stiffness_values) == len(stiffness_labels):
-            ax.set_xticklabels(list(stiffness_labels))
-        else:
-            ax.set_xticklabels([str(v) for v in stiffness_values])
-
-        utils_graph.paperformat(ax, figsize=None)
-
-    for j in range(len(categories), len(axes)):
+    for j in range(len(categories)+1, len(axes)):
         axes[j].set_visible(False)
 
-    legend_handles = []
-    legend_labels = []
-    for group_id, (color, marker, size) in model_style.items():
-        marker_style = mmarkers.MarkerStyle(marker)
-        marker_face = color if marker_style.is_filled() else "none"
-        legend_handles.append(
-            Line2D(
-                [0],
-                [0],
-                marker=marker,
-                color="none",
-                markerfacecolor=marker_face,
-                markeredgecolor=color,
-                markersize=size,
-                linestyle="None",
-            )
-        )
-        legend_labels.append(group_id)
+    legend_handles, legend_labels, legend_groups, title_str = utils_graph._build_group_legend_items(
+        eval_df,
+        group_by=group_by,
+        metadata_path=metadata_path
+    )
 
     if show_legend:
         fig.legend(
             legend_handles,
             legend_labels,
             title="Model",
-            loc="upper center",
+            loc="lower center",
             ncol=5,
-            bbox_to_anchor=(0.5, 1.02),
+            bbox_to_anchor=(0.5, 1.),
         )
-        if use_tight_layout:
-            plt.tight_layout(rect=[0, 0, 1, 0.96])
-    elif use_tight_layout:
-        plt.tight_layout()
     if grid_hspace is not None or grid_wspace is not None:
         fig.subplots_adjust(
             hspace=grid_hspace if grid_hspace is not None else 0.2,
             wspace=grid_wspace if grid_wspace is not None else 0.2,
         )
 
-    run = run_name
     out_dir = Path(output_dir)
     # out_dir = out_dir / category_col
     out_dir.mkdir(parents=True, exist_ok=True)
     if save_grid:
         bbox = None if y_limit_mode == "fit" else "tight"
-        print("Saving grid plot to:", out_dir / filename.replace(".png", f"_{category_col}.png"))
+        fname = filename.replace(".png", "_grid.png")
+        fpath = out_dir / fname
         fig.savefig(
-            out_dir / filename.replace(".png", f"_{category_col}.png"),
+            fpath,
             dpi=300,
-            bbox_inches=bbox,
-            pad_inches=0.05,
+            bbox_inches="tight", 
+            pad_inches=0.05
+        )
+        print("Saved grid plot to:", fpath)
+
+    # if save_legend:
+    #     fig_legend = plt.figure(figsize=legend_figsize or (5 * legend_cols, 1.0))
+    #     fig_legend.legend(
+    #         legend_handles,
+    #         legend_labels,
+    #         title="Model",
+    #         loc="center",
+    #         ncol=legend_cols,
+    #         frameon=False,
+    #     )
+    #     fig_legend.tight_layout()
+    #     legend_name = legend_filename or filename.replace(".png", f"_{category_col}_legend.png")
+    #     print("Saving legend to:", out_dir / legend_name)
+    #     fig_legend.savefig(
+    #         out_dir / legend_name,
+    #         dpi=300,
+    #         bbox_inches="tight",
+    #         pad_inches=0.05,
+    #     )
+    #     plt.close(fig_legend)
+
+    per_cat_dir = out_dir / Path(filename).stem
+    for cat in list(categories) + ["all"]:
+        fig_cat, ax_cat = plt.subplots(1, 1, figsize=(4, 3.1))
+        
+        create_material_stiffness_violin(
+            ax=ax_cat,
+            eval_df=eval_df,
+            stiffness_col=stiffness_col,
+            group_by=group_by,
+            model_style=model_style,
+            category=cat,
+            category_col=category_col,
         )
 
-    if save_legend:
-        fig_legend = plt.figure(figsize=legend_figsize or (5 * legend_cols, 1.0))
-        fig_legend.legend(
-            legend_handles,
-            legend_labels,
-            title="Model",
-            loc="center",
-            ncol=legend_cols,
-            frameon=False,
-        )
-        fig_legend.tight_layout()
-        legend_name = legend_filename or filename.replace(".png", f"_{category_col}_legend.png")
-        print("Saving legend to:", out_dir / legend_name)
-        fig_legend.savefig(
-            out_dir / legend_name,
+        utils_graph.paperformat(ax_cat)
+        
+        if cat != "all":
+            fname = f"yms_{_safe_filename(str(cat))}.png"
+        else:
+            fname = "all.png"
+        
+        fpath = per_cat_dir / fname
+        fpath.parent.mkdir(parents=True, exist_ok=True)
+        fig_cat.savefig(
+            fpath,
             dpi=300,
-            bbox_inches="tight",
-            pad_inches=0.05,
+            bbox_inches="tight", 
+            pad_inches=0.05
         )
-        plt.close(fig_legend)
-
-    if save_per_category:
-        per_cat_dir = out_dir / per_category_dirname if per_category_dirname else out_dir
-        per_cat_dir.mkdir(parents=True, exist_ok=True)
-        for cat in categories:
-            fig_cat, ax_cat = plt.subplots(1, 1, figsize=(4, 3.1))
-            df_cat = plot_df[plot_df[category_col] == cat].copy()
-            if df_cat.empty:
-                plt.close(fig_cat)
-                continue
-
-            if group_by == "model_family":
-                df_cat["group_id"] = df_cat["model_id"].map(family_map).fillna("Other")
-            else:
-                df_cat["group_id"] = df_cat["model_id"].astype(str)
-
-            agg_df = _macro_avg_by_question(df_cat, ["group_id", "stiffness_level"])
-            if agg_df.empty:
-                plt.close(fig_cat)
-                continue
-
-            stiffness_values = sorted(pd.unique(agg_df["stiffness_level"]))
-            stiffness_to_pos = {
-                value: idx for idx, value in enumerate(stiffness_values)
-            }
-            agg_df["stiffness_pos"] = agg_df["stiffness_level"].map(stiffness_to_pos)
-
-            sns.violinplot(
-                data=agg_df,
-                x="stiffness_pos",
-                y="accuracy",
-                ax=ax_cat,
-                color="0.85",
-                # inner="box",
-                inner=None,
-                cut=0,
-                width=1.0,
-                linewidth=0.5,
-                order=list(range(len(stiffness_values))),
-                zorder=3
-            )
-            ax_cat.axhline(y=25, color="gray", linestyle="--", linewidth=1, zorder=2)
-
-            counts_series = (
-                counts_source[counts_source[category_col] == cat]
-                .groupby("stiffness_level", observed=True)["stiffness_level"]
-                .count()
-            )
-            label_y = 0.02
-            label_transform = ax_cat.get_xaxis_transform()
-            # for level, count in counts_series.items():
-            #     x_pos = stiffness_to_pos.get(level)
-            #     if x_pos is None:
-            #         continue
-            #     ax_cat.text(
-            #         x_pos,
-            #         label_y,
-            #         f"N:{int(count)}",
-            #         ha="center",
-            #         va="bottom",
-            #         fontsize=9,
-            #         color="black",
-            #         transform=label_transform,
-            #     )
-
-            for group_id, df_m in agg_df.groupby("group_id"):
-                x_vals = df_m["stiffness_pos"].to_numpy()
-                y_vals = df_m["accuracy"].to_numpy()
-                if x_vals.size == 0:
-                    continue
-                jitter = rng.uniform(-0.2, 0.2, size=x_vals.size)
-                x_jittered = x_vals + jitter
-                color, marker, size = model_style[group_id]
-                ax_cat.scatter(
-                    x_jittered,
-                    y_vals,
-                    color=color,
-                    s=size**2,
-                    alpha=0.8,
-                    edgecolor="white",
-                    linewidth=1,
-                    marker=marker,
-                    zorder=4
-                )
-
-            label = (
-                subcategory_label_map.get(str(cat), str(cat))
-                if subcategory_label_map
-                else str(cat)
-            )
-            # ax_cat.set_title(label)
-            # ax_cat.set_xlabel("Material stiffness (Young's modulus level)")
-            ax_cat.set_xlabel("")
-            ax_cat.set_ylabel(utils_mapping.categories.get(cat), color=utils_mapping.mapping_cat_colors.get(cat))
-            ax_cat.grid(axis="y")
-            if y_limit_mode == "fixed":
-                ax_cat.set_ylim(-10,110)
-            elif y_limit_mode == "zero_to_max":
-                y_min = float(agg_df["accuracy"].min())
-                y_max = float(agg_df["accuracy"].max())
-                pad = y_pad * max(1e-6, y_max - y_min)
-                ax_cat.set_ylim(
-                    y_min - n_label_offset * max(1e-6, y_max - y_min), y_max + pad
-                )
-            else:
-                y_min = agg_df["accuracy"].min()
-                y_max = agg_df["accuracy"].max()
-                if pd.isna(y_min) or pd.isna(y_max):
-                    ax_cat.set_ylim(-10,110)
-                else:
-                    pad = y_pad * max(1e-6, y_max - y_min)
-                    ax_cat.set_ylim(y_min - pad, y_max + pad)
-            ax_cat.set_xticks(range(len(stiffness_values)))
-            if len(stiffness_values) == len(stiffness_labels):
-                ax_cat.set_xticklabels(list(stiffness_labels))
-            else:
-                ax_cat.set_xticklabels([str(v) for v in stiffness_values])
-
-            fig_cat.tight_layout()
-            utils_graph.paperformat(ax_cat)
-            safe_cat = _safe_filename(str(cat))
-            if category_col == "sub_category":
-                assert plot_df[plot_df[category_col] == cat]["category"].unique().size == 1
-                safe_cat = plot_df[plot_df[category_col] == cat]["category"].unique()[0] + "_" + safe_cat
-            bbox = None if y_limit_mode == "fit" else "tight"
-            fname = f"{Path(filename).stem}_{safe_cat}.png"
-            print("Saving per-category plot to:", per_cat_dir / fname)
-            fig_cat.savefig(
-                per_cat_dir / fname,
-                dpi=300,
-                bbox_inches=bbox,
-                pad_inches=0.05,
-            )
-            plt.close(fig_cat)
+        print("Saved plot to:", fpath)
+        plt.close(fig_cat)
 
     if show:
         plt.show()
@@ -1396,7 +1222,7 @@ def create_num_objects_violin_per_question_id(
 
     legend_handles = []
     legend_labels = []
-    for group_id, (color, marker, size) in model_style.items():
+    for group_id, (color, marker, size, edge) in model_style.items():
         marker_style = mmarkers.MarkerStyle(marker)
         marker_face = color if marker_style.is_filled() else "none"
         legend_handles.append(
@@ -1406,7 +1232,7 @@ def create_num_objects_violin_per_question_id(
                 marker=marker,
                 color="none",
                 markerfacecolor=marker_face,
-                markeredgecolor=color,
+                markeredgecolor=edge,
                 markersize=size,
                 linestyle="None",
             )
@@ -1454,7 +1280,7 @@ def create_num_objects_violin_per_question_id(
             x="num_objects_pos",
             y="accuracy",
             ax=ax_q,
-            color="0.85",
+            color="0.90",
             inner=None,
             cut=0,
             order=list(range(len(num_values))),
@@ -1510,14 +1336,14 @@ def create_num_objects_violin_per_question_id(
                 continue
             jitter = rng.uniform(-0.2, 0.2, size=x_vals.size)
             x_jittered = x_vals + jitter
-            color, marker, size = model_style[group_id]
+            color, marker, size, edge = model_style[group_id]
             ax_q.scatter(
                 x_jittered,
                 y_vals,
                 color=color,
                 s=size**2,
                 alpha=0.8,
-                edgecolor="white",
+                edgecolor=edge,
                 linewidth=1,
                 marker=marker,
                 zorder=4,

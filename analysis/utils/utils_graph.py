@@ -11,11 +11,12 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from matplotlib.ticker import PercentFormatter
 from matplotlib.patches import Rectangle
-from matplotlib.colors import LinearSegmentedColormap, Normalize, to_hex
+from matplotlib.colors import LinearSegmentedColormap, Normalize, to_hex, to_rgba
 from matplotlib.colors import LogNorm
 from matplotlib.lines import Line2D
 import matplotlib.markers as mmarkers
 import utils.utils_mapping
+import utils.utils_read
 
 from pathlib import Path
 
@@ -116,6 +117,8 @@ def _build_group_legend_items(
     plot_df: pd.DataFrame,
     group_by: str,
     metadata_path: str,
+    *,
+    legend_clustering: str = None
 ) -> tuple[list[Line2D], list[str], list[str], str | None]:
     model_style, family_map = utils.utils_mapping._build_model_style(
         # metadata_path,
@@ -128,8 +131,10 @@ def _build_group_legend_items(
     legend_labels: list[str] = []
     legend_groups: list[str] = []
 
+    items = model_style.items()
+
     groups = set(plot_df[group_by].astype(str).unique())
-    for group, (color, marker, size_val) in model_style.items():
+    for group, (color, marker, size_val, edge) in items:
         if group not in groups:
             continue
 
@@ -145,13 +150,16 @@ def _build_group_legend_items(
         if models_num > 1:
             label = f"{label} (x{models_num})"
 
+        if np.allclose(to_rgba(edge)[:3], (1.0, 1.0, 1.0), atol=1e-3):
+            edge = marker_face
+
         handle = Line2D(
                 [0],
                 [0],
                 marker=marker,
                 color="none",
                 markerfacecolor=marker_face,
-                markeredgecolor=color,
+                markeredgecolor=edge,
                 markersize=size_val,
                 linestyle="None",
             )
@@ -161,7 +169,45 @@ def _build_group_legend_items(
         legend_groups.append(group)
 
     title_str = {"model_id": "Model", "model_family": "Model Family"}.get(group_by)
+    
+    legend_handles, legend_labels, legend_groups = sort_group_legend_items_posthoc(legend_handles, legend_labels, legend_groups, group_by=group_by, metadata_path=metadata_path)
+    # if legend_clustering is not None:
+    #     if legend_clustering == "mode":
+            
     return legend_handles, legend_labels, legend_groups, title_str
+
+
+def sort_group_legend_items_posthoc(
+    legend_handles: list[Line2D],
+    legend_labels: list[str],
+    legend_groups: list[str],
+    *,
+    group_by: str,
+    metadata_df: pd.DataFrame | None = None,
+    metadata_path: str | Path | None = "utils/metadata.json",
+) -> tuple[list[Line2D], list[str], list[str]]:
+    metadata_df = utils.utils_read._load_model_metadata(metadata_path)
+
+    def _sort_key(entry: tuple[Line2D, str, str]) -> tuple[str, float, str]:
+        _, label, group = entry
+        group_str = str(group)
+        current_group = metadata_df[metadata_df[group_by] == group_str]
+
+        family_name = str(current_group["family"].iloc[0])
+        params_b = float(current_group["params_b"].iloc[0])
+        model_id = str(current_group["model_id"].iloc[0])
+
+        return family_name, params_b, model_id
+
+    ordered_entries = sorted(
+        zip(legend_handles, legend_labels, legend_groups),
+        key=_sort_key,
+    )
+    
+    sorted_handles = [h for h, _, _ in ordered_entries]
+    sorted_labels = [l for _, l, _ in ordered_entries]
+    sorted_groups = [g for _, _, g in ordered_entries]
+    return sorted_handles, sorted_labels, sorted_groups
 
 
 def create_benchmarks_violin(
@@ -219,7 +265,7 @@ def create_benchmarks_violin(
         x="cat_pos",
         y="pearson",
         ax=ax,
-        color="0.85",
+        color="0.90",
         inner=None,
         cut=0,
         width=1.0,
@@ -980,7 +1026,7 @@ def create_accuracy_bench_vs_common_sense(
 
     # 3. Scatter Plot
     for model_id, df_m in eval_df_accuracy_total_per_model.groupby("model_id"):
-        color, marker, size = model_style[model_id]
+        color, marker, size, edge = model_style[model_id]
         scatter_kwargs = dict(
             data=df_m,
             x="cs_accuracy",
@@ -990,7 +1036,7 @@ def create_accuracy_bench_vs_common_sense(
             color=color,
             s=size**2,
             marker=marker,
-            edgecolor="w",
+            edgecolor=edge,
             alpha=0.9,
             legend=False,
         )

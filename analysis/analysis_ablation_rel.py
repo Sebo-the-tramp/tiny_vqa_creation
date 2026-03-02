@@ -606,7 +606,7 @@ def plot_ablation(
 
         jitter = rng.uniform(-0.20, 0.20, size=x_vals.size)
         x_jittered = x_vals + jitter
-        color, marker, size = model_style[group]
+        color, marker, size, edge = model_style[group]
         
         improve = any(agg_df[agg_df[group_by] == group]["accuracy_rel_change"] >= change_rel_threshold)
         if improve:
@@ -631,7 +631,7 @@ def plot_ablation(
             color=color,
             s=size**2,
             alpha=alpha,
-            edgecolor="white",
+            edgecolor=edge,
             linewidth=1,
             marker=marker,
             zorder=zorder

@@ -5,14 +5,11 @@ from pathlib import Path
 
 import pandas as pd
 
-import utils.utils_read
-import utils.utils_graph as utils_graph
-import utils.utils_graph_correlation as utils_graph_correlation
-from utils.utils_graph_correlation import (
-    create_num_objects_category_curve,
-    create_num_objects_violin_grid,
+from utils import (
+    utils_read,
+    utils_graph,
+    utils_graph_correlation
 )
-
 
 def main() -> None:
     parser = argparse.ArgumentParser()
@@ -56,10 +53,10 @@ def main() -> None:
     utils_graph.RUN_NAME = args.run_name
     utils_graph_correlation.RUN_NAME = args.run_name
 
-    output_dir = Path("output") / args.run_name / args.vqa_set / "correlation"
+    output_dir = Path("output") / args.run_name / args.vqa_set / "num_objects"
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    eval_df = utils.utils_read.build_eval_df(args.run_name, args.base_path, vqa_set=args.vqa_set)
+    eval_df = utils_read.build_eval_df(args.run_name, args.base_path, vqa_set=args.vqa_set)
 
     if args.family is not None:
         print("Filtering to family:", args.family)
@@ -76,7 +73,7 @@ def main() -> None:
             print(f"    Balancing {mode} models")
             # Create balancing set per mode, to avoid penalizing video models
             mode_df = eval_df[eval_df["model_mode"] == mode]
-            mode_df = utils.utils_read.balanced_split_df(mode_df, ["model_family", "model_id", "object_count"], ["question_id"], max_size=None)
+            mode_df = utils_read.balanced_split_df(mode_df, ["model_family", "model_id", "object_count"], ["question_id"], max_size=None)
             dfs.append(mode_df)
         balanced_df = pd.concat(dfs, ignore_index=True)
 
@@ -90,8 +87,8 @@ def main() -> None:
         print(f"Not balancing; using all {eval_df.shape[0]} rows for the correlation analysis")
         eval_df_src = eval_df
 
-    for category_filter in ["category"]:
-        if category_filter == "*":
+    for category_column in ["category", "sub_category"]:
+        if category_column == "*":
             # Mix all categories to get overall results
             eval_df = eval_df_src.copy()
             eval_df["category"] = "all"
@@ -99,23 +96,31 @@ def main() -> None:
         else:
             eval_df = eval_df_src
 
-        for mode_label, mode_df in utils.utils_read.select_eval_df(
+        for mode_label, mode_df in utils_read.select_eval_df(
             eval_df, mode=args.mode
         ):
             cur_output_dir = output_dir / mode_label / f"{'balanced' if args.balanced else 'unbalanced'}"
             cur_output_dir.mkdir(parents=True, exist_ok=True)
 
-            for group in utils.utils_read.GROUPINGS:
-                cur_df, group_by = utils.utils_read.apply_group(mode_df, group)
+            for group in utils_read.GROUPINGS + ["model_best10"]:
+                cur_df, group_by = utils_read.apply_group(mode_df, group)
                 
-                create_num_objects_violin_grid(
+                utils_graph_correlation.create_num_objects_category_curve(
+                    cur_df,
+                    output_dir=cur_output_dir,
+                    filename = f"numobj_curve_{category_column}_{group}.png",
+                    category_column=category_column if category_column != "*" else "category",
+                    # y_limit_mode=(20, 50)
+                    y_limit_mode="fit"
+                )
+                utils_graph_correlation.create_num_objects_violin_grid(
                     cur_df,
                     group_by=group_by,
                     save_per_category=True,
                     save_grid=True,
                     legend_cols=6,
-                    output_dir=cur_output_dir / f"numobj_{category_filter}_{group}",
-                    category_column=category_filter if category_filter != "*" else "category",
+                    output_dir=cur_output_dir / f"numobj_{category_column}_{group}",
+                    category_column=category_column if category_column != "*" else "category",
                 )
 
 

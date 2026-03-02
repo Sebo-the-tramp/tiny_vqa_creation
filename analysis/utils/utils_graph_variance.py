@@ -87,13 +87,14 @@ def create_variance_curve(
         std = stats_group["std"].values
         # print(f"Group: {group}, x (vqa_set_count): {x}, mean accuracy: {mean}, std: {std}")
 
-        color, marker, size = model_style[group]
+        color, marker, size, edge = model_style[group]
         group_label = group
 
         ax.plot(x, 
                 mean, 
                 marker=marker, 
                 markersize=size, 
+                markeredgecolor=edge,
                 color=color, 
                 linewidth=2, 
                 alpha=0.85, 

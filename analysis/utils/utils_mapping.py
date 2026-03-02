@@ -80,7 +80,7 @@ family_marker = {
     "MiniCPMV":		    "d",  # thin diamond
     "Molmo":			".",  # point
     "Phi":			    "X",  # tri-down tick (approx from image)
-    "QwenVLChat":		"3",  # tri-left tick (approx)
+    "QwenVLChat":		"p",  # filled pentagon
     "XinyuanVL":		"P",  # filled plus
     "BLIP2":			"s",  # square
     "Cambrian":		    "^",  # triangle up
@@ -88,8 +88,8 @@ family_marker = {
     "InstructBlip":	    "<",  # triangle left
     "LLaVA":			"*",  # star
     "LLaVAInterleave":	"8",  # octagon
-    "Owl3":			    "1",  # tick-style (approx)
-    "PaliGemma2":		"3",  # tick-style (approx)
+    "Owl3":			    (7, 0, 0),  # tick-style (approx)
+    "PaliGemma2":		(9, 0, 0),  # tick-style (approx)
     "VILAModel":		"o",  # circle
 }
 
@@ -115,6 +115,25 @@ _DEFAULT_MARKERS = [
     "P",
     "X",
 ]
+
+def get_cat_label(cat: str, cat_type: str, format: str = "normal") -> str:
+    assert cat_type in {"category", "sub_category"}, "cat_type must be 'category' or 'sub_category'"
+    assert format in {"normal", "short"}, "format must be 'normal' or 'short'"
+    if cat_type == "category":
+        if format == "normal":
+            return categories[cat]
+        elif format == "short":
+            return mapping_cat_short[cat]
+    elif cat_type == "sub_category":
+        return subcategories[cat]
+
+def get_cat_color(cat: str, cat_type: str) -> str:
+    assert cat_type in {"category", "sub_category"}, "cat_type must be 'category' or 'sub_category'"
+    if cat_type == "category":
+        return mapping_cat_colors[cat]
+    elif cat_type == "sub_category":
+        parent_cat = subcat_to_cat[cat]
+        return mapping_cat_colors[parent_cat]
 
 def sort_categories(cats: List[str] = None) -> List[str]:
     if cats is None:
@@ -189,6 +208,7 @@ def _build_model_style(
 
     families = []
     params = []
+    modes = []
     family_map = {}
     for model_id in pd.unique(metadata_df["model_id"]):
         if metadata_df is not None and model_id in set(metadata_df["model_id"]):
@@ -202,11 +222,13 @@ def _build_model_style(
         if group_by == "model_id":
             families.append(family)
             params.append(params_b)
+            modes.append(row["mode"])
 
     if group_by == "model_family":
         group_ids = pd.unique(pd.Series(list(family_map.values())))
         families = list(group_ids)
         params = [np.nan] * len(group_ids)
+        modes = ["unknown"] * len(group_ids)
     else:
         group_ids = pd.unique(metadata_df["model_id"])
     
@@ -239,7 +261,7 @@ def _build_model_style(
                  for i, fam in enumerate(unique_families)
         }
     
-
+    
     params = np.array(params, dtype=float)
     valid_params = params[~np.isnan(params)]
     fallback = float(np.nanmedian(valid_params)) if valid_params.size else 5.0
@@ -249,9 +271,11 @@ def _build_model_style(
     sizes = (params - 1.0) / (30.0 - 1.0)
     sizes = 8 + 7 * sizes  # Scale to range [8, 22] for better visibility
 
+    mode_to_edge = {"image-only": "#FFF", "general": "#666", "unknown": "red"}
+
     model_style = {}
-    for group_id, color, fam, size in zip(group_ids, palette, families, sizes):
-        model_style[str(group_id)] = (color, family_markers.get(fam, "o"), float(size))
+    for group_id, color, fam, size, mode in zip(group_ids, palette, families, sizes, modes):
+        model_style[str(group_id)] = (color, family_markers.get(fam, "o"), float(size), mode_to_edge.get(mode, "red"))
 
     # Alphabetically sort family_map and model_style by keys for consistent ordering
     family_map = {k: family_map[k] for k in sorted(family_map)}

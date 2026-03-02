@@ -525,7 +525,8 @@ def plot_ablation(
     baseline_name: str="roi_ablation_baseline",
     group_by: str = "model_id",
     metadata_path: str | Path | None = "utils/metadata.json",
-    legend_mode: list[str] = ["all"]  # improved, worsened, all
+    legend_mode: list[str] = ["all"],  # improved, worsened, all
+    change_rel_threshold: int = 5  # 5% relative change threshold for improvement/worsening
 ) -> None:
     plot_df = runs_df.copy()
     plot_df["accuracy"] *= 100
@@ -574,9 +575,7 @@ def plot_ablation(
     for tag in tags:
         agg_df[f"run_tag_{tag.lower()}"] = agg_df["run_name"].apply(lambda run: run_has_tag(run, tag))
     
-    # Mark runs as improved or worsened compared to baseline
-    change_rel_threshold = 5  # 5% relative change threshold for improvement/worsening
-    
+    # Mark runs as improved or worsened compared to baseline    
     # Keep only ablations existing in the agg_df
     ablations_runs = {abl: run for abl, run in ablations_runs.items() if run in agg_df["run_name"].unique()}
     ablations_tags = {abl: name for abl, name in ablations_tags.items() if abl in ablations_runs}
@@ -585,6 +584,8 @@ def plot_ablation(
 
     run_idx = {run: idx for idx, (abl, run) in enumerate(ablations_runs.items())}
     agg_df["run_idx"] = agg_df["run_name"].map(run_idx)
+
+    agg_baseline_mask = agg_df["run_name"] == baseline_runname
 
     # Build model style
     model_style, family_map = utils_mapping._build_model_style(
@@ -608,7 +609,7 @@ def plot_ablation(
         x_jittered = x_vals + jitter
         color, marker, size, edge = model_style[group]
         
-        improve = any(agg_df[agg_df[group_by] == group]["accuracy_rel_change"] >= change_rel_threshold)
+        improve = any((agg_df[agg_df[group_by] == group]["accuracy_rel_change"] >= change_rel_threshold) & ~agg_baseline_mask)
         if improve:
             alphas = []
             for _, r in df_m.iterrows():
@@ -746,9 +747,9 @@ def plot_ablation(
         tags_worsen = []
         for tag in tags:
             group_tag_mask = group_mask & (agg_df[f"run_tag_{tag.lower()}"] == True)
-            if any(agg_df[group_tag_mask]["accuracy_rel_change"] >= change_rel_threshold):
+            if any((agg_df[group_tag_mask]["accuracy_rel_change"] >= change_rel_threshold) & ~agg_baseline_mask):
                 tags_improve.append(tag)
-            if any(agg_df[group_tag_mask]["accuracy_rel_change"] <= -change_rel_threshold):
+            if any((agg_df[group_tag_mask]["accuracy_rel_change"] <= -change_rel_threshold) & ~agg_baseline_mask):
                 tags_worsen.append(tag)
 
         if tags_improve:
@@ -842,6 +843,10 @@ def main() -> None:
             "ablation_physics_duration_text": ["Name", "Duration"],
             "ablation_physics_mass_approx_text": ["Name", "Approx. Mass"],
             "ablation_physics_mass_text": ["Name", "Exact Mass"],
+        },
+        "llmbias": {
+            "roi_ablation_baseline": ["Name"],
+            "ablation_no_object": ["ROI masked"],
         }
     }
 
@@ -899,20 +904,29 @@ def main() -> None:
             cur_df, group_by = utils_read.apply_group(eval_df, group)
             
             print(f"Processing: grouping by {group_by}: with {len(cur_df)} entries")
-            # for accuracy_mode in ["baseline_change", "baseline_rel_change", "absolute"]:
-            for accuracy_mode in ["absolute"]:
+            
+            accuracy_modes = ["absolute"]
+            # accuracy_modes = ["baseline_change", "baseline_rel_change", "absolute"]
+            change_rel_threshold = 5  # 5% change threshold for improvement/worsening
+
+            if ablation_set_name == "llmbias":
+                accuracy_modes = ["baseline_change"]
+                change_rel_threshold = 0  # any change should be considered
+            
+            for acc_mode in accuracy_modes:
                 plot_ablation(
                     cur_df,
                     cur_output_dir,
                     group_by=group_by,
-                    accuracy_mode=accuracy_mode,
-                    filename=f"ablation_{ablation_set_name}_{accuracy_mode}_{group}.png",
-                    plot_baseline=accuracy_mode == "absolute",
+                    accuracy_mode=acc_mode,
+                    filename=f"ablation_{ablation_set_name}_{acc_mode}_{group}.png",
+                    plot_baseline=acc_mode == "absolute",
                     ablations_runs=ablations_runs,
                     ablations_tags=ablations_tags,
                     baseline_name=baseline_name,
-                    legend_mode=["improved"]  # or all
+                    legend_mode=["improved"],  # or all
                     # legend_mode=["None"]  # or all
+                    change_rel_threshold=change_rel_threshold
                 )
 
 

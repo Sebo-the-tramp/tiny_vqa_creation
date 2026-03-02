@@ -6,10 +6,11 @@
 
 # copy results from karo to local
 rsync -avz -e "ssh -i ~/.ssh/id_rsa_karolina" \
-  --include="*/" \
-  --include="*run_24**" \
+  --include="*run_24_general_yms-variations**" \
+  --include="*run_26_general_levels**" \
+  --include="*run_28**" \
   --exclude="*" \
   it4i-thvu@login3.karolina.it4i.cz:/mnt/proj1/eu-25-92/tiny_vqa_creation/output/ \
-  ./output/
+  ./output_tmp/
 
 # https://rank.opencompass.org.cn/leaderboard-multimodal

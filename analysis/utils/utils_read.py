@@ -19,7 +19,7 @@ if not Path("/scratch/project/eu-25-92/composite_physics/dataset/simulation_v4/"
 # _ANSWER_RE = re.compile(r"\b([A-D])\s*[\.\,\:\)]")
 _ANSWER_RE = re.compile(r"(?:^([A-D])\b|\b([A-D])\b\s*[\.\,\:\)]?$)", re.IGNORECASE)
 _IDX_RE = r"([0-9]+_[gi])"
-_LEVEL_RE = r"([0-9]+_[gi])(_level_([^_]+))?"
+_LEVEL_RE = r"([0-9]+_[gi])(_level_([^_]+))"
 
 try:
     import orjson

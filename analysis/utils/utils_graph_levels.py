@@ -82,7 +82,7 @@ def create_levels_plot(
     if not show_baseline:
         plot_df = plot_df[plot_df["level_idx"] > 0]
     
-    line_styles = ["-", "--", "-.", ":", (0, (3, 1, 1, 1)), (0, (5, 3))]
+    # line_styles = ["-", "--", "-.", ":", (0, (3, 1, 1, 1)), (0, (5, 3))]
     rng = np.random.default_rng(0)
 
     output_name = filename
@@ -99,7 +99,7 @@ def create_levels_plot(
         linewidth=0.5,
         cut=0,
         order=list(range(len(levels))),
-        zorder=2
+        zorder=3
     )
 
     for i, (group, group_df) in enumerate(plot_df.groupby(group_by)):
@@ -159,7 +159,8 @@ def create_levels_plot(
 
     if accuracy_mode == "baseline_change":
         ticks_step = 2
-        # ylabel += " (change %)"
+        # ylabel += " (change)"
+        ax.axhline(0, color="#000", alpha=0.8, zorder=2, linewidth=1)
     elif accuracy_mode == "absolute":
         ticks_step = 5
         ylabel += " (%)"
@@ -167,8 +168,6 @@ def create_levels_plot(
     ax.set_ylabel(ylabel, color=ylabel_color)
 
     utils_graph.paperformat(ax, figsize=(4, 3.5), grid=["y"], ticks_step=ticks_step)
-
-    ax.axhline(0, color="#000", alpha=0.8, zorder=3, linewidth=1)
     
     ax.set_yticks(ax.get_yticks())
     ax.set_yticklabels([f"{'+' if i>0 else ''}{int(i)}" for i in ax.get_yticks()])
@@ -205,121 +204,121 @@ def create_levels_plot(
     else:
         plt.close(fig)
 
-    def _plot_baseline_improvement(
-        plot_df: pd.DataFrame, title_suffix: str, output_name: str
-    ) -> plt.Figure:
-        q_scores = (
-            plot_df.groupby(
-                ["family", question_col, "level", "sub_category"], observed=True
-            )["accuracy"]
-            .mean()
-            .reset_index()
-            .dropna()
-        )
+    # def _plot_baseline_improvement(
+    #     plot_df: pd.DataFrame, title_suffix: str, output_name: str
+    # ) -> plt.Figure:
+    #     q_scores = (
+    #         plot_df.groupby(
+    #             ["family", question_col, "level", "sub_category"], observed=True
+    #         )["accuracy"]
+    #         .mean()
+    #         .reset_index()
+    #         .dropna()
+    #     )
 
-        final_plot_df = (
-            q_scores.groupby(["family", "level"], observed=True)["accuracy"]
-            .agg(mean_accuracy="mean", band_width="sem")
-            .reset_index()
-            .dropna()
-        )
+    #     final_plot_df = (
+    #         q_scores.groupby(["family", "level"], observed=True)["accuracy"]
+    #         .agg(mean_accuracy="mean", band_width="sem")
+    #         .reset_index()
+    #         .dropna()
+    #     )
 
-        level_map = {lvl: i for i, lvl in enumerate(levels)}
-        final_plot_df["level_idx"] = final_plot_df["level"].map(level_map)
+    #     level_map = {lvl: i for i, lvl in enumerate(levels)}
+    #     final_plot_df["level_idx"] = final_plot_df["level"].map(level_map)
 
-        fig, ax = plt.subplots(figsize=(12, 6))
-        # plot_df_model = (
-        #     plot_df.groupby(
-        #         ["model_id", question_col, "level", "sub_category"], observed=True
-        #     )["accuracy"]
-        #     .mean()
-        #     .reset_index()
-        #     .dropna()
-        # )
-        # final_plot_df_model = (
-        #     plot_df_model.groupby(["model_id", "level"], observed=True)["accuracy"]
-        #     .agg(mean_accuracy="mean", band_width="sem")
-        #     .reset_index()
-        #     .dropna()
-        # )
-        # final_plot_df_model["level_idx"] = final_plot_df_model["level"].map(level_map)
-        # sns.violinplot(
-        #     data=final_plot_df_model,
-        #     x="level_idx",
-        #     y="mean_accuracy",
-        #     ax=ax,
-        #     color="0.90",
-        #     # inner="box",
-        #     inner=None,
-        #     cut=0,
-        #     width=1.0,
-        #     linewidth=0.5,
-        #     order=list(range(len(levels_sorted))),
-        # )
+    #     fig, ax = plt.subplots(figsize=(12, 6))
+    #     # plot_df_model = (
+    #     #     plot_df.groupby(
+    #     #         ["model_id", question_col, "level", "sub_category"], observed=True
+    #     #     )["accuracy"]
+    #     #     .mean()
+    #     #     .reset_index()
+    #     #     .dropna()
+    #     # )
+    #     # final_plot_df_model = (
+    #     #     plot_df_model.groupby(["model_id", "level"], observed=True)["accuracy"]
+    #     #     .agg(mean_accuracy="mean", band_width="sem")
+    #     #     .reset_index()
+    #     #     .dropna()
+    #     # )
+    #     # final_plot_df_model["level_idx"] = final_plot_df_model["level"].map(level_map)
+    #     # sns.violinplot(
+    #     #     data=final_plot_df_model,
+    #     #     x="level_idx",
+    #     #     y="mean_accuracy",
+    #     #     ax=ax,
+    #     #     color="0.90",
+    #     #     # inner="box",
+    #     #     inner=None,
+    #     #     cut=0,
+    #     #     width=1.0,
+    #     #     linewidth=0.5,
+    #     #     order=list(range(len(levels_sorted))),
+    #     # )
 
-        for i, (family, fam_data) in enumerate(final_plot_df.groupby("family")):
-            fam_data = fam_data.sort_values("level_idx")
-            if fam_data.empty:
-                continue
+    #     for i, (family, fam_data) in enumerate(final_plot_df.groupby("family")):
+    #         fam_data = fam_data.sort_values("level_idx")
+    #         if fam_data.empty:
+    #             continue
             
-            jitter = rng.uniform(-0.15, 0.15, size=fam_data["level_idx"].values[1:].size)
-            x = fam_data["level_idx"].values[1:] + jitter
-            y = fam_data["mean_accuracy"].values[1:]
-            baseline_acc =fam_data[fam_data["level_idx"] == 0]["mean_accuracy"].values
-            y = y - baseline_acc
+    #         jitter = rng.uniform(-0.15, 0.15, size=fam_data["level_idx"].values[1:].size)
+    #         x = fam_data["level_idx"].values[1:] + jitter
+    #         y = fam_data["mean_accuracy"].values[1:]
+    #         baseline_acc =fam_data[fam_data["level_idx"] == 0]["mean_accuracy"].values
+    #         y = y - baseline_acc
 
-            y_err = fam_data["band_width"].values
-            color, marker, _size = model_style.get(family, ("black", "o", 0.5))
-            ls = line_styles[i % len(line_styles)]
-            # ax.plot(
-            #     x, y, color=color, linestyle=ls, linewidth=2, alpha=0.85, label=family
-            # )
-            ax.scatter(
-                x, y, color=color, marker=marker, s=_size**2, edgecolor="white", linewidth=1, zorder=4, label=family
-            )
-            # if np.isfinite(y_err).any():
-            #     ax.fill_between(x, y - y_err, y + y_err, color=color, alpha=0.12)
+    #         y_err = fam_data["band_width"].values
+    #         color, marker, _size = model_style.get(family, ("black", "o", 0.5))
+    #         ls = line_styles[i % len(line_styles)]
+    #         # ax.plot(
+    #         #     x, y, color=color, linestyle=ls, linewidth=2, alpha=0.85, label=family
+    #         # )
+    #         ax.scatter(
+    #             x, y, color=color, marker=marker, s=_size**2, edgecolor="white", linewidth=1, zorder=4, label=family
+    #         )
+    #         # if np.isfinite(y_err).any():
+    #         #     ax.fill_between(x, y - y_err, y + y_err, color=color, alpha=0.12)
         
-        n = 10
-        y_min, y_max = ax.get_ylim()
-        for i in range(n):
-            ax.axhspan(y_min*(i+1)/n, y_min*i/n, facecolor="#ffcccc", alpha=0.5*i/n, zorder=1)
-        for i in range(n):
-            ax.axhspan(y_max*i/n, y_max*(i+1)/n, facecolor="#ccffcc", alpha=0.5*i/n, zorder=1)
-        ax.set_ylim(y_min, y_max)
-        ax.axhline(0, color="#555555", alpha=1, zorder=3, linewidth=2)
+    #     n = 10
+    #     y_min, y_max = ax.get_ylim()
+    #     for i in range(n):
+    #         ax.axhspan(y_min*(i+1)/n, y_min*i/n, facecolor="#ffcccc", alpha=0.5*i/n, zorder=1)
+    #     for i in range(n):
+    #         ax.axhspan(y_max*i/n, y_max*(i+1)/n, facecolor="#ccffcc", alpha=0.5*i/n, zorder=1)
+    #     ax.set_ylim(y_min, y_max)
+    #     ax.axhline(0, color="#555555", alpha=1, zorder=3, linewidth=2)
 
-        ax.set_xticks(list(range(len(levels)))[1:])
-        nice_labels = [level.capitalize() for level in levels]
-        ax.set_xticklabels(nice_labels[1:], fontsize=11, fontweight="bold", rotation=30)
-        ax.tick_params(axis='x', pad=-2)
-        # ax.set_xlabel("Difficulty Level", fontsize=12)
-        ax.set_ylabel("Change in accuracy", fontsize=12)
-        ax.set_title(f"Performance by Family{title_suffix}", fontsize=14)
-        ax.legend(bbox_to_anchor=(1.05, 1), loc="upper left")
-        ax.grid(True, linestyle="--", alpha=0.5)
+    #     ax.set_xticks(list(range(len(levels)))[1:])
+    #     nice_labels = [level.capitalize() for level in levels]
+    #     ax.set_xticklabels(nice_labels[1:], fontsize=11, fontweight="bold", rotation=30)
+    #     ax.tick_params(axis='x', pad=-2)
+    #     # ax.set_xlabel("Difficulty Level", fontsize=12)
+    #     ax.set_ylabel("Change in accuracy", fontsize=12)
+    #     ax.set_title(f"Performance by Family{title_suffix}", fontsize=14)
+    #     ax.legend(bbox_to_anchor=(1.05, 1), loc="upper left")
+    #     ax.grid(True, linestyle="--", alpha=0.5)
 
-        fig.tight_layout()
-        utils_graph.paperformat(ax, figsize=(4.5, 3), grid=["y"], minor=False)
+    #     fig.tight_layout()
+    #     utils_graph.paperformat(ax, figsize=(4.5, 3), grid=["y"], minor=False)
 
-        yticks = np.arange(-2, 10, 2)
-        ax.set_yticks(yticks)
-        ax.set_yticklabels([f"{'+' if i>0 else ''}{int(i)}" for i in yticks])
-        colors = ["black" if y==0 else ("green" if y > 0 else "red") for y in yticks]
-        for ticklabel, color in zip(ax.get_yticklabels(), colors):
-            ticklabel.set_color(color)
+    #     yticks = np.arange(-2, 10, 2)
+    #     ax.set_yticks(yticks)
+    #     ax.set_yticklabels([f"{'+' if i>0 else ''}{int(i)}" for i in yticks])
+    #     colors = ["black" if y==0 else ("green" if y > 0 else "red") for y in yticks]
+    #     for ticklabel, color in zip(ax.get_yticklabels(), colors):
+    #         ticklabel.set_color(color)
 
-        run = run_name or globals().get("RUN_NAME", "default")
-        out_dir = Path(output_dir) if output_dir is not None else Path("output") / run
-        out_dir.mkdir(parents=True, exist_ok=True)
-        fig.savefig(out_dir / output_name, dpi=300, bbox_inches="tight", pad_inches=0.05)
+    #     run = run_name or globals().get("RUN_NAME", "default")
+    #     out_dir = Path(output_dir) if output_dir is not None else Path("output") / run
+    #     out_dir.mkdir(parents=True, exist_ok=True)
+    #     fig.savefig(out_dir / output_name, dpi=300, bbox_inches="tight", pad_inches=0.05)
 
-        if show:
-            plt.show()
-        else:
-            plt.close(fig)
+    #     if show:
+    #         plt.show()
+    #     else:
+    #         plt.close(fig)
 
-        return fig
+    #     return fig
     
 
     # return _plot_subset(eval_df, "", filename)

@@ -783,7 +783,7 @@ def apply_group(df: pd.DataFrame, group_by: str) -> pd.DataFrame:
         df = df[df['model_id'].isin(best_models['model_id'])]
         group_by = "model_id"
     elif group_by == "family":
-        print("/!\ Model family grouping may be misleading, as it averages models with different capabilities and performance. Consider using 'family_best' or 'family_biggest' to select a single representative model per family.")
+        print("(i) Model family grouping may be misleading, as it averages models with different capabilities and performance. Consider using 'family_best' or 'family_biggest' to select a single representative model per family.")
         group_by = "model_family"
     else:
         raise ValueError(f"Unknown group_by: {group_by}")

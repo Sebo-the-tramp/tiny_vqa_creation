@@ -141,9 +141,11 @@ def create_levels_plot(
 
     ax.set_xlabel("")
 
+    # Levels xticks labels
     levels_idx = sorted(plot_df["level_idx"].unique())
     levels_vis = [levels[i] for i in levels_idx]
     ax.set_xticks(list(levels_idx))
+
     nice_labels = [level.capitalize() for level in levels_vis]
     ax.set_xticklabels(nice_labels, fontsize=11, fontweight="bold", rotation=30)
     ax.tick_params(axis='x', pad=-2)
@@ -173,6 +175,20 @@ def create_levels_plot(
     colors = ["black" if y==0 else ("green" if y > 0 else "red") for y in ax.get_yticks()]
     for ticklabel, color in zip(ax.get_yticklabels(), colors):
         ticklabel.set_color(color)
+
+    legend_handles, legend_labels, legend_groups, title_str = utils_graph._build_group_legend_items(
+        eval_df,
+        group_by=group_by,
+        metadata_path=metadata_path
+    )
+    ax.legend(  legend_handles, 
+                legend_labels, 
+                title=title_str, 
+                bbox_to_anchor=(1.05, 1), 
+                loc='upper left', 
+                fontsize=8, 
+                title_fontsize=9, 
+                markerscale=0.9)
 
     fpath = Path(output_dir) / output_name
     fpath.parent.mkdir(parents=True, exist_ok=True)

@@ -227,8 +227,14 @@ def _build_model_style(
     if group_by == "model_family":
         group_ids = pd.unique(pd.Series(list(family_map.values())))
         families = list(group_ids)
-        params = [np.nan] * len(group_ids)
-        modes = ["unknown"] * len(group_ids)
+
+        params = []
+        modes = []
+        for i, fam in enumerate(group_ids):
+            fam_models = metadata_df[metadata_df["family"] == fam]
+
+            params.append(pd.to_numeric(fam_models["params_b"], errors="coerce").dropna().mean())
+            modes.append(fam_models["mode"].iloc[0] if fam_models["mode"].nunique() == 1 else "unknown")
     else:
         group_ids = pd.unique(metadata_df["model_id"])
     

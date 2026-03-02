@@ -191,13 +191,20 @@ def sort_group_legend_items_posthoc(
     def _sort_key(entry: tuple[Line2D, str, str]) -> tuple[str, float, str]:
         _, label, group = entry
         group_str = str(group)
-        current_group = metadata_df[metadata_df[group_by] == group_str]
 
-        family_name = str(current_group["family"].iloc[0])
-        params_b = float(current_group["params_b"].iloc[0])
-        model_id = str(current_group["model_id"].iloc[0])
+        # If plotting individual models, sort by family first, then by size, then alphabetical model
+        if group_by == "model_id":
+            current_group = metadata_df[metadata_df[group_by] == group_str]
 
-        return family_name, params_b, model_id
+            family_name = str(current_group["family"].iloc[0])
+            params_b = float(current_group["params_b"].iloc[0])
+            model_id = str(current_group["model_id"].iloc[0])
+
+            return family_name, params_b, model_id
+        
+        # If plotting families, sort by family name
+        if group_by == "model_family":
+            return group_str, None, None
 
     ordered_entries = sorted(
         zip(legend_handles, legend_labels, legend_groups),

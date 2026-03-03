@@ -38,7 +38,10 @@ def main() -> None:
     parser.add_argument("--run-name", default="run_28_general")
     args = parser.parse_args()
 
-    eval_df = utils_read.build_eval_df(args.run_name, args.base_path, vqa_set=args.vqa_set)
+    eval_df = utils_read.build_eval_df(args.run_name, 
+                                       args.base_path, 
+                                       vqa_set=args.vqa_set,
+    )
 
     output_dir = Path("output") / args.run_name / args.vqa_set / "commonsense"
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -113,7 +116,7 @@ def main() -> None:
                 cat_label = utils_mapping.mapping_cat_short.get(cat)
             
             for bench in benchmarks:
-                print("     Bench:", bench)
+                print("\n     Bench:", bench)
 
                 fpath = utils_graph.get_benchmark_filepath(cur_output_dir, cat, bench)
                 # if fpath.exists():

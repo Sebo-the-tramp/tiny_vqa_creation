@@ -329,8 +329,9 @@ def create_benchmarks_violin(
 
     ax.legend(
         title="Benchmarks",
-        loc="upper left",
-        bbox_to_anchor=(1.02, 1),
+        loc="lower center",
+        bbox_to_anchor=(0.5, 1.05),
+        ncols=3,
     )
     
     paperformat(ax, figsize=None, grid=["y"], minor=False, ticks_step=0.2)
@@ -1089,7 +1090,7 @@ def create_accuracy_bench_vs_common_sense(
         fontweight="bold",
         verticalalignment="bottom",
         horizontalalignment="left",
-        bbox=dict(boxstyle="round,pad=0.3", fc=cmap(Normalize(0.2, 0.8, clip=True)(r_val)), ec="gray", alpha=0.8),
+        bbox=dict(boxstyle="round,pad=0.3", fc=cmap(Normalize(0.3, 0.8, clip=True)(r_val)), ec="gray", alpha=0.8),
     )
 
     # 5. Modified Legend

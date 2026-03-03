@@ -26,7 +26,7 @@ def plot_row_counts_by_column(
     df: pd.DataFrame,
     column: str,
     *,
-    top_n: int | None = 20,
+    top_n: int | None = None,
     dropna: bool = False,
     sort_desc: bool = True,
     figsize: tuple[float, float] | None = None,
@@ -102,6 +102,7 @@ def main() -> None:
     for mode_label, mode_df in utils.utils_read.select_eval_df(
         eval_df, mode=args.mode
     ):
+        print(f"\nEval `{mode_label}`: {mode_df['idx'].nunique()} VQA ({mode_df['question_id'].nunique()} questions) with {len(mode_df)} answers, {mode_df['model_id'].nunique()} models, {mode_df['model_family'].nunique()} families,  {mode_df['model_mode'].nunique()} modes.")
         cur_output_dir = output_dir / mode_label
         cur_output_dir.mkdir(parents=True, exist_ok=True)
         
@@ -109,7 +110,7 @@ def main() -> None:
             fig, _, _ = plot_row_counts_by_column(
                 mode_df,
                 col,
-                top_n=1000,
+                top_n=None,
             )
             fig.savefig(cur_output_dir / f"hist_{col}.png", dpi=300, bbox_inches="tight")
             plt.close(fig)

@@ -16,7 +16,7 @@ def main() -> None:
         "--base-path",
         default="../output",
     )
-    parser.add_argument("--run-name", default="run_24_general_yms-variations")
+    parser.add_argument("--run-name", default="run_24_general_yms_variations")
     parser.add_argument(
         "--vqa-set",
         default="10K",

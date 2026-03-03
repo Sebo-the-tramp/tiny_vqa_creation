@@ -525,9 +525,11 @@ def plot_ablation(
     baseline_name: str="roi_ablation_baseline",
     group_by: str = "model_id",
     metadata_path: str | Path | None = "utils/metadata.json",
-    legend_mode: list[str] = ["all"],  # improved, worsened, all
+    legend: list[str]|bool = ["all"],  # improved, worsened, all
     change_rel_threshold: int = 5  # 5% relative change threshold for improvement/worsening
 ) -> None:
+    print("LEEEGEND:", legend)
+
     plot_df = runs_df.copy()
     plot_df["accuracy"] *= 100
     
@@ -731,68 +733,68 @@ def plot_ablation(
     
     ax.set_ylabel(ylabel, color=ylabel_color)
 
-
-    legend_handles, legend_labels, legend_groups, title_str = utils_graph._build_group_legend_items(
-        plot_df,
-        group_by=group_by,
-        metadata_path=metadata_path
-    )
-
-    improved = [] 
-    worsen = [] 
-    for i, (handle, label, group) in enumerate(zip(legend_handles, legend_labels, legend_groups)):
-        group_mask = agg_df[group_by] == group
-
-        tags_improve = []
-        tags_worsen = []
-        for tag in tags:
-            group_tag_mask = group_mask & (agg_df[f"run_tag_{tag.lower()}"] == True)
-            if any((agg_df[group_tag_mask]["accuracy_rel_change"] >= change_rel_threshold) & ~agg_baseline_mask):
-                tags_improve.append(tag)
-            if any((agg_df[group_tag_mask]["accuracy_rel_change"] <= -change_rel_threshold) & ~agg_baseline_mask):
-                tags_worsen.append(tag)
-
-        if tags_improve:
-            # label += " (" + ", ".join([t for t in tags_improve])+")"
-            # label += " +" + ",".join([f"+{t[0].capitalize()}" for t in tags_improve])
-            improved.append(i)
-        elif tags_worsen:
-            # label += " (" + ", ".join([t for t in tags_worsen])+")"
-            # label += " -" + ",".join([f"-{t[0].capitalize()}" for t in tags_worsen])+")"
-            worsen.append(i)
-        
-        legend_labels[i] = label
-
-    groups = {}
-    if "improved" in legend_mode or "all" in legend_mode:
-        groups["Models improved"] = improved
-    if "worsened" in legend_mode or "all" in legend_mode:
-        groups["Models worsened"] = worsen
-    
-    l_pos = (1.05, 1.0)
     legend_artists = []
-    for title, items in groups.items():
-        group_handles = [legend_handles[i] for i in items]
-        group_labels  = [legend_labels[i] for i in items]
-        # print("Group:", title, "Items:", group_labels)
-
-        leg = ax.legend(
-            group_handles, group_labels,
-            title=title,
-            loc="upper left",
-            bbox_to_anchor=l_pos,
-            frameon=True,
-            borderaxespad=0.0,
-            fontsize=8, 
-            title_fontsize=9, 
-            markerscale=0.7,
-            ncol=2 if len(group_handles)>20 else 1
+    if legend:
+        legend_handles, legend_labels, legend_groups, title_str = utils_graph._build_group_legend_items(
+            plot_df,
+            group_by=group_by,
+            metadata_path=metadata_path
         )
-        ax.add_artist(leg)
-        legend_artists.append(leg)
-        # l_pos = (l_pos[0], l_pos[1] - 0.1 - 0.1 * len(group_handles))  # vertical spacing between groups
-        l_pos = (l_pos[0] + 1.1, l_pos[1])  # vertical spacing between groups
-    
+
+        improved = [] 
+        worsen = [] 
+        for i, (handle, label, group) in enumerate(zip(legend_handles, legend_labels, legend_groups)):
+            group_mask = agg_df[group_by] == group
+
+            tags_improve = []
+            tags_worsen = []
+            for tag in tags:
+                group_tag_mask = group_mask & (agg_df[f"run_tag_{tag.lower()}"] == True)
+                if any((agg_df[group_tag_mask]["accuracy_rel_change"] >= change_rel_threshold) & ~agg_baseline_mask):
+                    tags_improve.append(tag)
+                if any((agg_df[group_tag_mask]["accuracy_rel_change"] <= -change_rel_threshold) & ~agg_baseline_mask):
+                    tags_worsen.append(tag)
+
+            if tags_improve:
+                # label += " (" + ", ".join([t for t in tags_improve])+")"
+                # label += " +" + ",".join([f"+{t[0].capitalize()}" for t in tags_improve])
+                improved.append(i)
+            elif tags_worsen:
+                # label += " (" + ", ".join([t for t in tags_worsen])+")"
+                # label += " -" + ",".join([f"-{t[0].capitalize()}" for t in tags_worsen])+")"
+                worsen.append(i)
+            
+            legend_labels[i] = label
+
+        groups = {}
+        if "improved" in legend or "all" in legend:
+            groups["Models improved"] = improved
+        if "worsened" in legend or "all" in legend:
+            groups["Models worsened"] = worsen
+        
+        l_pos = (1.05, 1.0)
+        for title, items in groups.items():
+            group_handles = [legend_handles[i] for i in items]
+            group_labels  = [legend_labels[i] for i in items]
+            # print("Group:", title, "Items:", group_labels)
+
+            leg = ax.legend(
+                group_handles, group_labels,
+                title=title,
+                loc="upper left",
+                bbox_to_anchor=l_pos,
+                frameon=True,
+                borderaxespad=0.0,
+                fontsize=8, 
+                title_fontsize=9, 
+                markerscale=0.7,
+                ncol=2 if len(group_handles)>20 else 1
+            )
+            ax.add_artist(leg)
+            legend_artists.append(leg)
+            # l_pos = (l_pos[0], l_pos[1] - 0.1 - 0.1 * len(group_handles))  # vertical spacing between groups
+            l_pos = (l_pos[0] + 1.1, l_pos[1])  # vertical spacing between groups
+        
     # ax.legend(legend_handles, 
     #           legend_labels, 
     #           title=title_str, 
@@ -904,15 +906,17 @@ def main() -> None:
             cur_df, group_by = utils_read.apply_group(eval_df, group)
             
             print(f"Processing: grouping by {group_by}: with {len(cur_df)} entries")
-            
-            accuracy_modes = ["absolute"]
-            # accuracy_modes = ["baseline_change", "baseline_rel_change", "absolute"]
-            change_rel_threshold = 5  # 5% change threshold for improvement/worsening
+        
 
             if ablation_set_name == "llmbias":
                 accuracy_modes = ["baseline_change"]
                 change_rel_threshold = 0  # any change should be considered
-            
+            else:
+                # accuracy_modes = ["absolute"]
+                # accuracy_modes = ["baseline_change", "baseline_rel_change", "absolute"]
+                accuracy_modes = ["baseline_change", "absolute"]
+                change_rel_threshold = 5  # 5% change threshold for improvement/worsening
+
             for acc_mode in accuracy_modes:
                 plot_ablation(
                     cur_df,
@@ -924,7 +928,7 @@ def main() -> None:
                     ablations_runs=ablations_runs,
                     ablations_tags=ablations_tags,
                     baseline_name=baseline_name,
-                    legend_mode=["improved"],  # or all
+                    legend=["improved"] if ablation_set_name != "physics" else False,  # or all
                     # legend_mode=["None"]  # or all
                     change_rel_threshold=change_rel_threshold
                 )

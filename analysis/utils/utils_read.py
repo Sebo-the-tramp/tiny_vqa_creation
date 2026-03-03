@@ -68,8 +68,8 @@ def _curate_invalid_and_unanswered(eval_df: pd.DataFrame) -> pd.DataFrame:
     )
     if models_empty.sum() > 0:
         invalid_df = models_empty[models_empty].index.tolist()
-        for fam, mid in invalid_df:
-            print(f"[WARNING] Removing model {fam}, {mid} having ONLY empty answers.")
+        for fam, mod in invalid_df:
+            print(f"[WARNING] Removing model {mod} having ONLY empty answers.")
 
         eval_df = eval_df[~eval_df.set_index(["model_family", "model_id"]).index.isin(invalid_df)]
 
@@ -96,7 +96,8 @@ def build_eval_df(
         excluded_questions: list[str] = ["F_OCCLUSION_PERCENTAGE_OBJECT", "F_MATERIAL_IDENTIFICATION_OBJECT_LEVEL_3", "F_CAMERA_ZOOM_BEHAVIOR", "F_FOCAL_LENGTH_CLASS"],
         # could also be excluded: F_MATERIAL_IDENTIFICATION_OBJECT_LEVEL_2
         # could also be excluded: F_CAMERA_ZOOM_BEHAVIOR
-        exclude_models: list[str] = ["MiniCPM-V2.5"]
+        exclude_models: list[str] = []
+        # exclude_models: list[str] = ["MiniCPM-V2.5"]
     ) -> pd.DataFrame:
     base = Path(base_path)
 
@@ -233,7 +234,7 @@ def build_eval_df(
     for fam in family:
         assert fam in utils_mapping.family_marker, f"Family {fam} not in predefined families utils_mapping.family_marker: {utils_mapping.family_marker}"
     
-    print(f"Loaded {eval_df['idx'].nunique()} VQA ({eval_df['question_id'].nunique()} questions types) with {len(eval_df)} answers, {eval_df['model_id'].nunique()} models, {eval_df['model_family'].nunique()} families.")
+    print(f"Loaded {eval_df['idx'].nunique()} VQA ({eval_df['question_id'].nunique()} questions) with {len(eval_df)} answers, {eval_df['model_id'].nunique()} models, {eval_df['model_family'].nunique()} families, {eval_df['model_mode'].unique()} modes.")
     return eval_df
 
 def load_results(
@@ -717,19 +718,19 @@ GROUPINGS = [
     # "model_best10"
 ]
 
-def apply_group(df: pd.DataFrame, group_by: str) -> pd.DataFrame:
+def apply_group(df: pd.DataFrame, group: str) -> pd.DataFrame:
     # Best average across question (no balancing)
     # model_accuracy = df.groupby(['model_family', 'model_id'])['accuracy'].mean().reset_index()
     # best_models = model_accuracy.loc[model_accuracy.groupby('model_family')['accuracy'].idxmax()]
     # df = df[df['model_id'].isin(best_models['model_id'])]
-    # group_by = "model_id"cat_acc_df
+    # group = "model_id"cat_acc_df
     model_best_re = r"model_best([0-9]+)"
     model_bestmat_re = r"model_bestmat([0-9]+)"
 
-    if group_by in ["family_best", "family_bestmat"]:
+    if group in ["family_best", "family_bestmat"]:
         cat_acc_df = macro_accuracy(df, level="category", group_by=["model_family", "model_id"])
         
-        if group_by == "family_bestmat":
+        if group == "family_bestmat":
             cat_acc_df = cat_acc_df[cat_acc_df["category"] == "material_understanding"]
         
         # Macro-accuracy: average across categories
@@ -737,7 +738,7 @@ def apply_group(df: pd.DataFrame, group_by: str) -> pd.DataFrame:
         best_models = model_accuracy.loc[model_accuracy.groupby('model_family')['accuracy'].idxmax()]
         df = df[df['model_id'].isin(best_models['model_id'])]
         group_by = "model_id"
-    elif group_by in ["family_biggest"]:
+    elif group in ["family_biggest"]:
         # We select the biggest (primary) most recent (tie-breaker) model per family, 
         # and also check that there are no duplicates (same family, same params, same priority) 
         # among the winners.
@@ -766,28 +767,31 @@ def apply_group(df: pd.DataFrame, group_by: str) -> pd.DataFrame:
 
         df = df[df['model_id'].isin(family_biggest_all["model_id"])]
         group_by = "model_id"
-    elif group_by == "model":
+    elif group == "model":
         group_by = "model_id"
-    elif re.fullmatch(model_best_re, group_by) is not None or re.fullmatch(model_bestmat_re, group_by) is not None:
-        match_best = re.fullmatch(model_best_re, group_by)
-        match_bestmat = re.fullmatch(model_bestmat_re, group_by)
+    elif re.fullmatch(model_best_re, group) is not None or re.fullmatch(model_bestmat_re, group) is not None:
+        match_best = re.fullmatch(model_best_re, group)
+        match_bestmat = re.fullmatch(model_bestmat_re, group)
+
         if match_best is not None:
             top_k = int(match_best.group(1))
+            df_eval = df
         elif match_bestmat is not None:
             top_k = int(match_bestmat.group(1))
-            df = df[df["category"] == "material_understanding"]
+            df_eval = df[df["category"] == "material_understanding"]
         
-        cat_acc_df = macro_accuracy(df, level="model_id", group_by=["model_family", "model_id"])
+        cat_acc_df = macro_accuracy(df_eval, level="model_id", group_by=["model_family", "model_id"])
         
         best_models = cat_acc_df.sort_values("accuracy", ascending=False).iloc[0:top_k]
         df = df[df['model_id'].isin(best_models['model_id'])]
         group_by = "model_id"
-    elif group_by == "family":
+    elif group == "family":
         print("(i) Model family grouping may be misleading, as it averages models with different capabilities and performance. Consider using 'family_best' or 'family_biggest' to select a single representative model per family.")
         group_by = "model_family"
     else:
-        raise ValueError(f"Unknown group_by: {group_by}")
+        raise ValueError(f"Unknown group: {group}")
 
+    print(f"\nGroup `{group}`: {df['idx'].nunique()} VQA ({df['question_id'].nunique()} questions) with {len(df)} answers, {df['model_id'].nunique()} models, {df['model_family'].nunique()} families,  {df['model_mode'].nunique()} modes.")
     return df, group_by
 
 def balanced_split_df(df: pd.DataFrame, 

@@ -6,7 +6,7 @@
 
 # copy results from karo to local
 rsync -avz -e "ssh -i ~/.ssh/id_rsa_karolina" \
-  --include="*run_24_general_yms-variations**" \
+  --include="*run_24_general_yms_variations**" \
   --include="*run_26_general_levels**" \
   --include="*run_28**" \
   --exclude="*" \

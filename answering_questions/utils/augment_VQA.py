@@ -445,6 +445,8 @@ def remove_objects_ablation(
             file, question["_question_key"], object_name
         )
 
+        print("CHECKING NEW FILE NAME:", new_file_name)
+
         if save_images:
             # print("New path name", new_file_name)
             augmented_image = Image.fromarray(augmented_image)

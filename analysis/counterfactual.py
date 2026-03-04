@@ -211,10 +211,10 @@ def _resolve_object_count_column(df: pd.DataFrame) -> str | None:
 
 
 def build_eval_df(base_path: Path, run_name: str) -> pd.DataFrame:
-    results_dir = base_path / run_name / f"results_{run_name}_sanitized"
+    results_dir = base_path / run_name / f"results_{run_name}"
     if not results_dir.exists():
         raise FileNotFoundError(
-            f"Missing sanitized results directory for {run_name}: {results_dir}"
+            f"Missing results directory for {run_name}: {results_dir}"
         )
 
     model_cols = sorted(
@@ -222,7 +222,7 @@ def build_eval_df(base_path: Path, run_name: str) -> pd.DataFrame:
     )
     if not model_cols:
         raise FileNotFoundError(
-            f"No model result files found in sanitized directory: {results_dir}"
+            f"No model result files found in directory: {results_dir}"
         )
 
     try:

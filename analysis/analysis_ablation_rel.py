@@ -582,7 +582,14 @@ def plot_ablation(
     ablations_runs = {abl: run for abl, run in ablations_runs.items() if run in agg_df["run_name"].unique()}
     ablations_tags = {abl: name for abl, name in ablations_tags.items() if abl in ablations_runs}
 
-    fig, ax = plt.subplots(figsize=(6.0, 4.0))
+    sx = 0.2 + len(tags)
+    if not plot_baseline:
+        sx -= 0.5
+    if legend:
+        sx += 1.2
+    figsize = (sx, 3.1)
+    print("figsize:", figsize)
+    fig, ax = plt.subplots(figsize=figsize)
 
     run_idx = {run: idx for idx, (abl, run) in enumerate(ablations_runs.items())}
     agg_df["run_idx"] = agg_df["run_name"].map(run_idx)
@@ -598,8 +605,8 @@ def plot_ablation(
     
     for group, df_m in agg_df.groupby(group_by):
         # Remove baseline points if not plotting baseline
-        # if not plot_baseline:
-        #     df_m = df_m[df_m["run_name"] != baseline_runname]
+        if not plot_baseline:
+            df_m = df_m[df_m["run_name"] != baseline_runname]
         
         x_vals = df_m["run_idx"].to_numpy()
         y_vals = df_m["accuracy_plot"].to_numpy()
@@ -611,13 +618,13 @@ def plot_ablation(
         x_jittered = x_vals + jitter
         color, marker, size, edge = model_style[group]
         
-        improve = any((agg_df[agg_df[group_by] == group]["accuracy_rel_change"] >= change_rel_threshold) & ~agg_baseline_mask)
+        improve = any((agg_df[agg_df[group_by] == group]["accuracy_rel_change"] > change_rel_threshold) & ~agg_baseline_mask)
         if improve:
             alphas = []
             for _, r in df_m.iterrows():
                 if r["run_name"] == baseline_runname:
                     alphas.append(1.0)
-                elif r["accuracy_rel_change"] >= change_rel_threshold:
+                elif r["accuracy_rel_change"] > change_rel_threshold:
                     alphas.append(1.0)
                 else:
                     alphas.append(0.1)
@@ -649,7 +656,6 @@ def plot_ablation(
         #         zorder=3
         #     )
 
-    ax.set_xticks(list(range(len(ablations_tags))))
 
     def xtick_label(abl_tags):
         if abl_tags == ["Name"]:
@@ -670,25 +676,33 @@ def plot_ablation(
             abl_mask = tag_mask if abl_mask is None else (abl_mask & tag_mask)
 
         rel_change = agg_df.loc[abl_mask, "accuracy_rel_change"]
-        up = int((rel_change >= change_rel_threshold).sum())
-        down = int((rel_change <= -change_rel_threshold).sum())
-        flat = int(((rel_change > -change_rel_threshold) & (rel_change < change_rel_threshold)).sum())
+        up = int((rel_change > change_rel_threshold).sum())
+        down = int((rel_change < -change_rel_threshold).sum())
+        flat = int(((rel_change >= -change_rel_threshold) & (rel_change <= change_rel_threshold)).sum())
         return up, down, flat
 
+    xticks = list(range(len(ablations_tags)))
     xtick_items = list(ablations_tags.items())
+    if not plot_baseline:
+        xticks = [x for x, t in zip(xticks, ablations_tags.values()) if t != ["Name"]]
+        xtick_items = [x for x, t in zip(xtick_items, ablations_tags.values()) if t != ["Name"]]
+
     xtick_labels = [xtick_label(abl_tags) for _, abl_tags in xtick_items]
     xtick_stats_values = [xtick_stats(abl_tags) for _, abl_tags in xtick_items]
 
+    if len(xticks) == 1:
+        ax.set_xlim(xticks[0] - 0.7, xticks[0] + 0.7)
+    ax.set_xticks(xticks)
     ax.set_xticklabels(
         xtick_labels,
         ha="center",
     )
 
-    stats_fontsize = 5
-    for x, (up, down, flat) in enumerate(xtick_stats_values):
-        if x == 0:
+    stats_fontsize = 6
+    for i, (x, (up, down, flat)) in enumerate(zip(xticks, xtick_stats_values)):
+        if plot_baseline and x == 0:
             continue # skip baseline stats
-        stats_y = -0.08 - 0.04 * xtick_labels[x].count("\n")
+        stats_y = -0.08 - 0.04 * xtick_labels[i].count("\n")
         ax.text(
             x - 0.17, stats_y,
             f"↗{up}",
@@ -750,9 +764,9 @@ def plot_ablation(
             tags_worsen = []
             for tag in tags:
                 group_tag_mask = group_mask & (agg_df[f"run_tag_{tag.lower()}"] == True)
-                if any((agg_df[group_tag_mask]["accuracy_rel_change"] >= change_rel_threshold) & ~agg_baseline_mask):
+                if any((agg_df[group_tag_mask]["accuracy_rel_change"] > change_rel_threshold) & ~agg_baseline_mask):
                     tags_improve.append(tag)
-                if any((agg_df[group_tag_mask]["accuracy_rel_change"] <= -change_rel_threshold) & ~agg_baseline_mask):
+                if any((agg_df[group_tag_mask]["accuracy_rel_change"] < -change_rel_threshold) & ~agg_baseline_mask):
                     tags_worsen.append(tag)
 
             if tags_improve:
@@ -766,14 +780,20 @@ def plot_ablation(
             
             legend_labels[i] = label
 
-        groups = {}
+        groups = []
         if "improved" in legend or "all" in legend:
-            groups["Models improved"] = improved
+            title = f"Model improved\n($\greater$ {change_rel_threshold}% rel. change)"
+            if change_rel_threshold == 0:
+                title = "Model improved\n($>$ 0% rel. change)"
+            groups.append((title, improved))
         if "worsened" in legend or "all" in legend:
-            groups["Models worsened"] = worsen
+            title = f"Model worsened\n($\less$ {(-change_rel_threshold)}% rel. change)"
+            if change_rel_threshold == 0:
+                title = "Model worsened\n($<$ 0% rel. change)"
+            groups.append((title, worsen))
         
         l_pos = (1.05, 1.0)
-        for title, items in groups.items():
+        for title, items in groups:
             group_handles = [legend_handles[i] for i in items]
             group_labels  = [legend_labels[i] for i in items]
             # print("Group:", title, "Items:", group_labels)
@@ -790,6 +810,8 @@ def plot_ablation(
                 markerscale=0.7,
                 ncol=2 if len(group_handles)>20 else 1
             )
+            leg.get_title().set_ha("center")
+            leg.get_title().set_multialignment("center")
             ax.add_artist(leg)
             legend_artists.append(leg)
             # l_pos = (l_pos[0], l_pos[1] - 0.1 - 0.1 * len(group_handles))  # vertical spacing between groups
@@ -804,7 +826,7 @@ def plot_ablation(
     #           title_fontsize=9, 
     #           markerscale=0.7)
 
-    utils_graph.paperformat(ax, ticks_step=ticks_step)
+    utils_graph.paperformat(ax, figsize=figsize, ticks_step=ticks_step)
     if accuracy_mode in ["baseline_change", "baseline_rel_change"]:
         ax.axhline(0, color="#000000", linestyle="-", linewidth=1.5, zorder=3)
 
@@ -848,7 +870,7 @@ def main() -> None:
         },
         "llmbias": {
             "roi_ablation_baseline": ["Name"],
-            "ablation_no_object": ["ROI masked"],
+            "ablation_no_object": ["Name", "ROI masked"],
         }
     }
 

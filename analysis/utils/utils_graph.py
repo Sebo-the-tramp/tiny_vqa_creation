@@ -843,46 +843,30 @@ def create_correlation_common_sense(
 
     return corr_sorted
 
+def _standardize_model_label(model_id: str) -> str:
+    label = model_id
+    label = label.replace("2_5", "2.5")
+    label = label.replace("V1-5-", "V1.5-")
+    label = label.replace("InternVL2-76B", "InternVL2-Llama3-76B")
+    label = label.replace("-quantable", "")
+    label = label.replace("MiniCPM-V2.5", "MiniCPM-Llama3-V2.5")
+    label = label.replace("MolmoE-7B-", "Molmo-7B-")
+    label = label.replace("Phi-3-vision-128k-instruct", "Phi-3-Vision")
+    label = label.replace("instructblip-vicuna-7b", "InstructBLIP-7B")
+    label = label.replace("llava-interleave-qwen", "LLaVA-Next-Interleave")
+    label = label.replace("llava-v1.6-", "LLaVA-Next-")
+    label = label.replace("vila-1.5-8b", "Llama-3-VILA1.5-8B")
+    label = label.removesuffix("-hf")
+    label = label.replace("_", "-")
+    label = re.sub(
+        r"(\d+(?:\.\d+)?)b\b",
+        lambda m: f"{m.group(1)}B",
+        label,
+        flags=re.IGNORECASE,
+    )
+    return label
 
-def create_accuracy_bench_vs_common_sense(
-        eval_df: pd.DataFrame, 
-        out_filename: str = "accuracy_vs_common_sense.png",
-        show_legend: bool = True,
-        family_marker_mode: str = "distinct",
-        group_by: str = "model_family",
-        ylabel: str = "Accuracy (%)",
-        label_fontsize = 12,
-        tick_fontsize = 12,
-        legend_fontsize = 10,
-        ylim = None,
-        show_xlabel: bool = True,
-        figsize: tuple = (4, 2.5),
-        out_dir: str = None,
-        benchmark: str = "all",
-    ):
-    def _standardize_model_label(model_id: str) -> str:
-        label = model_id
-        label = label.replace("2_5", "2.5")
-        label = label.replace("V1-5-", "V1.5-")
-        label = label.replace("InternVL2-76B", "InternVL2-Llama3-76B")
-        label = label.replace("-quantable", "")
-        label = label.replace("MiniCPM-V2.5", "MiniCPM-Llama3-V2.5")
-        label = label.replace("MolmoE-7B-", "Molmo-7B-")
-        label = label.replace("Phi-3-vision-128k-instruct", "Phi-3-Vision")
-        label = label.replace("instructblip-vicuna-7b", "InstructBLIP-7B")
-        label = label.replace("llava-interleave-qwen", "LLaVA-Next-Interleave")
-        label = label.replace("llava-v1.6-", "LLaVA-Next-")
-        label = label.replace("vila-1.5-8b", "Llama-3-VILA1.5-8B")
-        label = label.removesuffix("-hf")
-        label = label.replace("_", "-")
-        label = re.sub(
-            r"(\d+(?:\.\d+)?)b\b",
-            lambda m: f"{m.group(1)}B",
-            label,
-            flags=re.IGNORECASE,
-        )
-        return label
-
+def _build_commonsense_mapping(eval_df: pd.DataFrame, field: str) -> dict:
     with open("./utils/common_sense.json", "r") as file:
         common_sense_df = pd.DataFrame(json.load(file))
     with open("./utils/metadata.json", "r") as file:
@@ -893,7 +877,7 @@ def create_accuracy_bench_vs_common_sense(
     model_unique_ids = eval_df["model_id"].unique()
     model_df = utils.utils_read.macro_accuracy(eval_df, level="model_id")
 
-    benchmark_field = "Avg. Score" if benchmark == "all" else benchmark
+    benchmark_field = "Avg. Score" if field == "all" else field
     
     model_cs_mapping = {}
     cs_accuracy = {}
@@ -924,12 +908,38 @@ def create_accuracy_bench_vs_common_sense(
     cs_not_found = [model for model, cs_model in model_cs_mapping.items() if cs_model is None]
     # print(f"CS Model mapping found ({len(cs_found)}/{len(model_cs_mapping)}): ", cs_found)
     print(f"CS Model mapping NOT found ({len(cs_not_found)}/{len(model_cs_mapping)}): ", cs_not_found)
+
+    return model_cs_mapping, cs_accuracy
+
+def create_accuracy_bench_vs_common_sense(
+        eval_df: pd.DataFrame, 
+        out_filename: str = "accuracy_vs_common_sense.png",
+        show_legend: bool = True,
+        family_marker_mode: str = "distinct",
+        group_by: str = "model_family",
+        ylabel: str = "Accuracy (%)",
+        label_fontsize = 12,
+        tick_fontsize = 12,
+        legend_fontsize = 10,
+        ylim = None,
+        show_xlabel: bool = True,
+        figsize: tuple = (4, 2.5),
+        out_dir: str = None,
+        benchmark: str = "all",
+    ):
+    model_df = utils.utils_read.macro_accuracy(eval_df, level="model_id")
+
+    benchmark_field = "Avg. Score" if benchmark == "all" else benchmark
+    model_cs_mapping, cs_accuracy = _build_commonsense_mapping(eval_df, benchmark_field)
     
     # Save mapping for reference
     pd.Series(model_cs_mapping, name="cs_model") \
     .rename_axis("model_id") \
     .reset_index() \
     .to_json( f"{out_dir}/model_cs_mapping.json", orient="records", indent=2, force_ascii=False)
+
+    with open("./utils/metadata.json", "r") as file:
+        metadata_models = pd.DataFrame(json.load(file))
 
     # Retrieve styles
     model_style, family_map = utils.utils_mapping._build_model_style(

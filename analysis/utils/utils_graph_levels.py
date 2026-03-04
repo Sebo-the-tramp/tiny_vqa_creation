@@ -67,6 +67,14 @@ def create_levels_plot(
         ]["accuracy"].values[0],
         axis=1,
     )
+    plot_df["accuracy_rel_change"] = plot_df.apply(
+        lambda row: (row["accuracy"] - plot_df[
+            (plot_df[group_by] == row[group_by]) & (plot_df["level_idx"] == 0)
+        ]["accuracy"].values[0]) / plot_df[
+            (plot_df[group_by] == row[group_by]) & (plot_df["level_idx"] == 0)
+        ]["accuracy"].values[0] * 100,
+        axis=1,
+    )
 
     model_style, family_map = utils_mapping._build_model_style(
         metadata_path=metadata_path,
@@ -99,9 +107,10 @@ def create_levels_plot(
         linewidth=0.5,
         cut=0,
         order=list(range(len(levels))),
-        zorder=3
+        zorder=2
     )
 
+    change_rel_threshold = 5
     for i, (group, group_df) in enumerate(plot_df.groupby(group_by)):
         group_df = group_df.sort_values("level_idx")
         if group_df.empty:
@@ -111,6 +120,8 @@ def create_levels_plot(
         x_jitter = group_df["level_idx"].values + jitter
 
         y = group_df[accuracy_col].values
+
+        y_rel_change_improve = group_df["accuracy_rel_change"].values >= change_rel_threshold
 
         color, marker, _size, edge = model_style[group]
         # ls = line_styles[i % len(line_styles)]
@@ -125,7 +136,8 @@ def create_levels_plot(
             s=_size**2, 
             edgecolor=edge, 
             linewidth=1, 
-            zorder=4
+            zorder=4 if any(y_rel_change_improve) else 3,  # put on top if there's improvement
+            alpha=[0.9 if x else 0.2 for x in y_rel_change_improve],  # more opaque if there's improvement
         )
         # if np.isfinite(y_err).any():
         #     ax.fill_between(x, y - y_err, y + y_err, color=color, alpha=0.12)
@@ -147,8 +159,8 @@ def create_levels_plot(
     ax.set_xticks(list(levels_idx))
 
     nice_labels = [level.capitalize() for level in levels_vis]
-    ax.set_xticklabels(nice_labels, fontsize=11, fontweight="bold", rotation=30)
-    ax.tick_params(axis='x', pad=-2)
+    ax.set_xticklabels(nice_labels, fontsize=11, fontweight="bold", rotation=20, ha="right")
+    ax.tick_params(axis='x', pad=-3)
 
     fig.tight_layout()
 
@@ -167,6 +179,37 @@ def create_levels_plot(
 
     ax.set_ylabel(ylabel, color=ylabel_color)
 
+    legend_handles, legend_labels, legend_groups, title_str = utils_graph._build_group_legend_items(
+        eval_df,
+        group_by=group_by,
+        metadata_path=metadata_path
+    )
+    
+    new_handles, new_labels, new_groups = [], [], []
+    plot_baseline_mask = plot_df["level_idx"] == 0
+    for i, (handle, label, group) in enumerate(zip(legend_handles, legend_labels, legend_groups)):
+        group_mask = plot_df[group_by] == group
+
+        group_tag_mask = group_mask
+        if any((plot_df[group_tag_mask]["accuracy_rel_change"] >= change_rel_threshold) & ~plot_baseline_mask):
+            new_handles.append(handle)
+            new_labels.append(label)
+            new_groups.append(group)
+
+    legend_handles, legend_labels, legend_groups = new_handles, new_labels, new_groups
+
+    legend = ax.legend(  legend_handles,
+                         legend_labels,
+                         title=f"Model improved\n($\geq$ {change_rel_threshold}% rel. change)",
+                         bbox_to_anchor=(1.05, 1),
+                         loc='upper left',
+                         fontsize=8,
+                         title_fontsize=9,
+                         markerscale=0.9,
+                         ncols=2,)
+    legend.get_title().set_ha("center")
+    legend.get_title().set_multialignment("center")
+
     utils_graph.paperformat(ax, figsize=(4, 3.5), grid=["y"], ticks_step=ticks_step)
     
     ax.set_yticks(ax.get_yticks())
@@ -174,21 +217,7 @@ def create_levels_plot(
     colors = ["black" if y==0 else ("green" if y > 0 else "red") for y in ax.get_yticks()]
     for ticklabel, color in zip(ax.get_yticklabels(), colors):
         ticklabel.set_color(color)
-
-    legend_handles, legend_labels, legend_groups, title_str = utils_graph._build_group_legend_items(
-        eval_df,
-        group_by=group_by,
-        metadata_path=metadata_path
-    )
-    ax.legend(  legend_handles, 
-                legend_labels, 
-                title=title_str, 
-                bbox_to_anchor=(1.05, 1), 
-                loc='upper left', 
-                fontsize=8, 
-                title_fontsize=9, 
-                markerscale=0.9)
-
+    
     fpath = Path(output_dir) / output_name
     fpath.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(

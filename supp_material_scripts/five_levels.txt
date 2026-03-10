@@ -1,0 +1,56 @@
+% Paste your macros here!
+\suppquestion{F\_PHYSICS\_PROPERTY\_DENSITY\_OBJECT\_RELATIVE}
+{Considering all frames, which object, visible in the last frame, has the highest effective density?}
+{Looking at all the pictures, if all the visible objects had the same size which one would be the heaviest?}
+{Looking at all the pictures, which object visible in the last frame do you think is the heaviest compared to how big it looks?}
+{Considering the full image sequence, which object visible in the last frame would have the highest mass relative to its volume?}
+{Based on the entire frame sequence, which object visible in the final frame is likely to have the highest effective density (mass per unit volume)?}
+{Considering the entire temporal frame sequence, which visible object visible in the final frame has the highest effective density?}
+
+\suppquestion{F\_PHYSICS\_PROPERTY\_YOUNG\_MODULUS\_OBJECT\_SIMILAR}
+{Considering all frames, which object, visible in the last frame, has a Young's Modulus most similar to that of the <OBJECT>?}
+{Looking at all the pictures, which object you can still see at the end is just as hard to bend or squishe as the <OBJECT>?}
+{Looking at all the pictures, which object visible in the last frame would feel about as stiff or stretchy as the <OBJECT> if you tried to bend it?}
+{Considering the full image sequence, which object visible in the last frame appearas to have a similar stiffness (Young’s modulus) to the <OBJECT>?}
+{Based on the entire frame sequence, which object visible in the final frame would you expect to have a Young’s modulus closest to that of the <OBJECT>?}
+{Considering the entire temporal frame sequence, which visible object visible in the final frame would you infer to have a Young’s modulus most similar to that of the <OBJECT>?}
+
+\suppquestion{F\_PHYSICS\_PROPERTY\_YOUNG\_MODULUS\_OBJECT\_SIMILAR\_NON\_TECHNICAL}
+{Considering all frames, which object, visible in the last frame, has a softness most similar to that of the <OBJECT>?}
+{Looking at all the pictures, which object you can still see at the end feels squishy or hard in the same way as the <OBJECT>?}
+{Looking at all the pictures, which object visible in the last frame would feel about as soft or hard as the <OBJECT>?}
+{Considering the full image sequence, which object visible in the last frame appears to have a similar softness to the <OBJECT>?}
+{Based on the entire frame sequence, which object visible in the final frame would you expect to have a softness most similar to that of the <OBJECT>?}
+{Considering the entire temporal frame sequence, which object visible in the final frame would you infer to have a comparable effective softness to the <OBJECT>, based on its deformation or response to interaction?}
+
+\suppquestion{F\_PHYSICS\_PROPERTY\_YOUNG\_MODULUS\_HIGHEST}
+{Considering all frames, which object, visible in the last frame, exhibits the highest Young's Modulus?}
+{Looking at all the pictures, which object you can still see at the end is the hardest and least bendy?}
+{After watching all the frames, which object visible in the last frame seems the stiffest or hardest to bend?}
+{Considering the full image sequence, which object visible in the last frame appears to be the stiffest?}
+{Based on the entire frame sequence, which object visible in the final frame would you expect to have the highest Young’s modulus?}
+{Considering the entire temporal frame sequence, which object visible in the final frame would you infer to exhibit the highest Young’s modulus, assuming linear elastic behavior under comparable loading?}
+
+\suppquestion{F\_PHYSICS\_PROPERTY\_POISSON\_RATIO\_OBJECT\_SIMILAR}
+{Considering all frames, which visible object has a Poisson ratio most similar to that of the <OBJECT> visible in the last frame?}
+{Looking at all the pictures, which object you can still see at the end is as elastic as the <OBJECT> you see at the end?}
+{After watching all the frames, which object visible in the last frame changes its width in a similar way to the <OBJECT> in the last frame when it is squeezed or stretched?}
+{Considering the full image sequence, which object visible in the last frame shows a similar width change under stretching or compression as the <OBJECT> in the last frame?}
+{Based on the entire frame sequence, which object visible in the final frame would you expect to have a Poisson ratio closest to that of the <OBJECT> visible in the final frame?}
+{Considering the entire temporal frame sequence, which object visible in the final frame would you infer to have a Poisson ratio most similar to that of the <OBJECT> visible in the final frame, based on comparable transverse-to-axial strain behavior?}
+
+\suppquestion{F\_PHYSICS\_PROPERTY\_POISSON\_RATIO\_HIGHEST}
+{Considering all frames, which object, visible in the last frame, exhibits the largest Poisson ratio?}
+{Looking at all the pictures, which object you can still see at the end spreads out the most on the sides when it is squished?}
+{After watching all the frames, which object visible in the last frame gets the widest on the sides when it is squeezed?}
+{Considering the full image sequence, which object visible in the last frame shows the greatest sideways expansion when compressed?}
+{Based on the entire frame sequence, which object visible in the final frame would you expect to have the largest Poisson ratio?}
+{Considering the entire temporal frame sequence, which object visible in the final frame would you infer to exhibit the largest Poisson ratio, based on maximal transverse strain relative to axial strain?}
+
+\suppquestion{F\_PHYSICS\_PROPERTY\_POISSON\_HIGH\_LEVEL}
+{Considering all frames, if the <OBJECT>, visible in the last frame, were compressed vertically, how would its horizontal dimensions change?}
+{Looking at all the pictures, if you squish the <OBJECT> you see at the end from top to bottom, how would it change?}
+{After watching all the frames, if the <OBJECT> in the last frame were pressed down, how would its width change?}
+{Considering the full image sequence, if the <OBJECT> visible in the last frame were compressed vertically, how would its horizontal size change?}
+{Based on the entire frame sequence, if the <OBJECT> visible in the final frame were subjected to vertical compression, how would its horizontal dimensions be expected to respond?}
+{Given the full temporal sequence, if the <OBJECT> visible in the final frame were compressed along the vertical axis, how would its transverse (horizontal) dimensions change as dictated by its Poisson response?}

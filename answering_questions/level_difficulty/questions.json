@@ -7,7 +7,7 @@
             "undegrad": "Considering the full image sequence, which object visible in the last frame would have the highest mass relative to its volume?",
             "graduate": "Based on the entire frame sequence, which object visible in the final frame is likely to have the highest effective density (mass per unit volume)?",
             "expert": "Considering the entire temporal frame sequence, which visible object visible in the final frame has the highest effective density?"
-        },        
+        }, 
         "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR": {
             "og": "Considering all frames, which object, visible in the last frame, has a Young's Modulus most similar to that of the <OBJECT>?",
             "child": "Looking at all the pictures, which object you can still see at the end is just as hard to bend or squishe as the <OBJECT>?",

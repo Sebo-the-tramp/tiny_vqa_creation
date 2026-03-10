@@ -25,5 +25,9 @@ main_parallel.build/
 rsync*
 tmp_parallel.sh
 
+supp_material_scripts/figures
+
+supp_material_scripts/questions_paper/**
+supp_material_scripts/questions_paper_site/**
 visualization_3/*
 supp_material_scripts/figures

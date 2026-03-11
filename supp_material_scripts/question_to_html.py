@@ -74,18 +74,8 @@ def infer_model_family(model_label: str) -> str:
     return label.split("-", 1)[0]
 
 
-def infer_model_size(model_label: str) -> str:
-    match = re.search(r"(\d+(?:\.\d+)?B(?:-[A-Z])?)", model_label, re.I)
-    if match:
-        return match.group(1)
-    match = re.search(r"(xxl|xl)", model_label, re.I)
-    if match:
-        return match.group(1).upper()
-    return "unknown"
-
-
 def model_tooltip(model_label: str) -> str:
-    return f"{model_label}, {infer_model_size(model_label)} (family: {infer_model_family(model_label)})"
+    return f"{model_label} (family: {infer_model_family(model_label)})"
 
 
 def ask_override(path: Path) -> None:
@@ -112,18 +102,22 @@ def load_qid_order() -> tuple[list[str], dict[str, str], dict[str, str]]:
     return qid_order, qid_to_category, qid_to_sub_category
 
 
-def parse_question_block(text: str) -> tuple[str, list[tuple[str, str]]]:
+def parse_question_block(text: str) -> tuple[str, list[tuple[str, str]], bool]:
     lines = [line.strip() for line in text.splitlines() if line.strip()]
     prompt_lines: list[str] = []
     choices: list[tuple[str, str]] = []
+    has_image_choices = False
     for line in lines:
         if len(line) > 2 and line[0] in "ABCD" and line[1] in ".)":
-            choices.append((line[0], line[2:].strip()))
+            choice_text = line[2:].strip()
+            if "<image>" in choice_text:
+                has_image_choices = True
+            choices.append((line[0], choice_text))
         else:
             prompt_lines.append(line)
     prompt = " ".join(prompt_lines).replace("<image>", " ")
     prompt = " ".join(prompt.split())
-    return prompt, choices
+    return prompt, choices, has_image_choices
 
 
 def media_entries(question_dir: Path, data: dict[str, Any]) -> list[Path]:
@@ -166,8 +160,9 @@ def extract_answer_letter(text: str) -> str | None:
     return None
 
 
-def load_model_predictions() -> tuple[dict[str, dict[str, str]], dict[str, Path], dict[str, str]]:
+def load_model_predictions() -> tuple[dict[str, dict[str, str]], dict[str, list[str]], dict[str, Path], dict[str, str]]:
     predictions_by_idx: dict[str, dict[str, str]] = {}
+    invalid_by_idx: dict[str, list[str]] = {}
     marker_by_model: dict[str, Path] = {
         normalize_model_name(path.stem): path for path in MARKERS_DIR.glob("*.png")
     }
@@ -181,21 +176,22 @@ def load_model_predictions() -> tuple[dict[str, dict[str, str]], dict[str, Path]
             idx = str(item["idx"])
             answer = extract_answer_letter(str(item["answer"]))
             if answer is None:
+                invalid_by_idx.setdefault(idx, []).append(model_name)
                 continue
             predictions_by_idx.setdefault(idx, {})[model_name] = answer
-    return predictions_by_idx, marker_by_model, label_by_model
+    return predictions_by_idx, invalid_by_idx, marker_by_model, label_by_model
 
 
 def load_entries() -> list[dict[str, Any]]:
     qid_order, qid_to_category, qid_to_sub_category = load_qid_order()
-    predictions_by_idx, marker_by_model, label_by_model = load_model_predictions()
+    predictions_by_idx, invalid_by_idx, marker_by_model, label_by_model = load_model_predictions()
     qid_rank = {qid: i for i, qid in enumerate(qid_order)}
     entries: list[dict[str, Any]] = []
     for question_file in QUESTIONS_DIR.glob("folder_*/question.json"):
         data = json.loads(question_file.read_text())
         idx = str(data["idx"])
         qid = str(data["question_id"])
-        prompt, choices = parse_question_block(str(data["question"]))
+        prompt, choices, has_image_choices = parse_question_block(str(data["question"]))
         item_type = "single" if idx.endswith("_i") else "multi" if idx.endswith("_g") else str(data.get("item_type", "unknown"))
         entries.append(
             {
@@ -207,8 +203,10 @@ def load_entries() -> list[dict[str, Any]]:
                 "item_type": item_type,
                 "prompt": prompt,
                 "choices": choices,
+                "has_image_choices": has_image_choices,
                 "correct_answer": str(data["correct_answer"]),
                 "model_predictions": predictions_by_idx.get(idx, {}),
+                "invalid_models": invalid_by_idx.get(idx, []),
                 "marker_by_model": marker_by_model,
                 "label_by_model": label_by_model,
                 "media": media_entries(question_file.parent, data),
@@ -234,13 +232,18 @@ def copy_media(entries: list[dict[str, Any]]) -> None:
             copied.append(f"{MEDIA_DIR_NAME}/{entry['idx']}/{source.name}")
             copied_paths.append(destination)
         gif_path = None
-        if entry["item_type"] == "multi" and len(copied_paths) > 1:
+        if entry["item_type"] == "multi" and len(copied_paths) > 1 and not entry["has_image_choices"]:
             gif_path = entry_dir / "animation.gif"
             create_gif(copied_paths, gif_path)
+        question_gif_path = None
+        if entry["has_image_choices"] and len(copied_paths) == 8:
+            question_gif_path = entry_dir / "question_animation.gif"
+            create_gif(copied_paths[:4], question_gif_path)
         entry["copied_media"] = copied
         entry["copied_gif"] = None if gif_path is None else f"{MEDIA_DIR_NAME}/{entry['idx']}/{gif_path.name}"
+        entry["copied_question_gif"] = None if question_gif_path is None else f"{MEDIA_DIR_NAME}/{entry['idx']}/{question_gif_path.name}"
         entry["copied_markers"] = {}
-        for model_name in entry["model_predictions"]:
+        for model_name in set(entry["model_predictions"]) | set(entry["invalid_models"]):
             marker_path = entry["marker_by_model"].get(model_name)
             if marker_path is None:
                 continue
@@ -276,7 +279,42 @@ def render_media(entry: dict[str, Any]) -> str:
             blocks.append(f'<img class="media-main" src="{safe_path}" alt="" />')
     if len(blocks) == 1:
         return '<div class="media-box">' + blocks[0] + "</div>"
-    return '<div class="media-grid">' + "".join(f'<div class="media-box">{block}</div>' for block in blocks) + "</div>"
+    if entry["has_image_choices"] and len(blocks) == 8:
+        answer_blocks = []
+        for i, block in enumerate(blocks[4:]):
+            label = ["A", "B", "C", "D"][i]
+            answer_blocks.append(
+                f'<div class="media-box-grid-labeled"><div class="media-inner">{block}</div><div class="media-label">{label}</div></div>'
+            )
+        gif_html = ""
+        if entry["copied_question_gif"] is not None:
+            gif_html = (
+                '<div class="media-grid-wrap">'
+                '<div class="media-box">'
+                f'<img class="media-main" src="{html.escape(entry["copied_question_gif"])}" alt="" />'
+                "</div></div>"
+            )
+        return (
+            gif_html
+            + '<div class="media-grid-wrap"><div class="media-grid-answers">'
+            + "".join(answer_blocks)
+            + "</div></div>"
+        )
+    if entry["has_image_choices"] and len(blocks) in {4, 8}:
+        labels = ["A", "B", "C", "D"]
+        labeled_blocks: list[str] = []
+        for i, block in enumerate(blocks):
+            label = ""
+            if len(blocks) == 4:
+                label = labels[i]
+            elif i >= 4:
+                label = labels[i - 4]
+            label_html = f'<div class="media-label">{label}</div>' if label else '<div class="media-label-empty"></div>'
+            labeled_blocks.append(f'<div class="media-box-grid-labeled"><div class="media-inner">{block}</div>{label_html}</div>')
+        grid_class = "media-grid-4" if len(blocks) == 4 else "media-grid-8"
+        return f'<div class="media-grid-wrap"><div class="{grid_class}">' + "".join(labeled_blocks) + "</div></div>"
+    grid_class = "media-grid-4" if len(blocks) == 4 else "media-grid-8" if len(blocks) == 8 else "media-grid"
+    return f'<div class="media-grid-wrap"><div class="{grid_class}">' + "".join(f'<div class="media-box-grid">{block}</div>' for block in blocks) + "</div></div>"
 
 
 def render_choices(choices: list[tuple[str, str]], correct_answer: str) -> str:
@@ -299,6 +337,13 @@ def render_choices_with_models(entry: dict[str, Any]) -> str:
             if model_name in entry["copied_markers"]
         )
         items.append(f'<div class="choice-row"><div>{label}) {safe_text}</div><div class="choice-markers">{marker_html}</div></div>')
+    invalid_marker_html = "".join(
+        f'<img src="{html.escape(entry["copied_markers"][model_name])}" title="{html.escape(model_tooltip(entry["label_by_model"].get(model_name, model_name)))}" alt="{html.escape(entry["label_by_model"].get(model_name, model_name))}" class="model-marker" />'
+        for model_name in sorted(entry["invalid_models"])
+        if model_name in entry["copied_markers"]
+    )
+    if invalid_marker_html:
+        items.append(f'<div class="choice-row"><div><i>Invalid answers</i></div><div class="choice-markers">{invalid_marker_html}</div></div>')
     return "".join(items)
 
 
@@ -336,7 +381,16 @@ def render_html(entries: list[dict[str, Any]]) -> str:
         ".compact{width:34px;padding:4px;text-align:center;vertical-align:middle;}"
         ".rot{writing-mode:vertical-rl;transform:rotate(180deg);white-space:nowrap;font-size:12px;}"
         ".media-grid{display:grid;grid-template-columns:repeat(2, 1fr);gap:6px;}"
+        ".media-grid-wrap{width:100%;max-width:420px;margin:0 auto;}"
+        ".media-grid-4{display:grid;grid-template-columns:repeat(2, 1fr);gap:6px;height:320px;}"
+        ".media-grid-8{display:grid;grid-template-columns:repeat(4, 1fr);gap:6px;height:320px;}"
+        ".media-grid-answers{display:grid;grid-template-columns:repeat(4, 1fr);gap:6px;height:160px;margin-top:6px;}"
         ".media-box{width:100%;height:320px;display:flex;align-items:center;justify-content:center;overflow:hidden;}"
+        ".media-box-grid{width:100%;height:100%;display:flex;align-items:center;justify-content:center;overflow:hidden;}"
+        ".media-box-grid-labeled{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;}"
+        ".media-inner{flex:1;min-height:0;width:100%;display:flex;align-items:center;justify-content:center;overflow:hidden;}"
+        ".media-label{padding-top:4px;font-weight:bold;line-height:1;}"
+        ".media-label-empty{height:1em;padding-top:4px;}"
         ".media-main{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;}"
         ".media-button{width:100%;padding:8px 0;}"
         ".filters{display:flex;gap:12px;align-items:center;margin:12px 0;}"

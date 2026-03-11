@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import html
 import json
+import re
 import shutil
 from pathlib import Path
 from typing import Any
@@ -13,7 +14,10 @@ from PIL import Image
 QUESTIONS_DIR = Path("/Users/sebastiancavada/Desktop/tmp_paris/tiny_vqa_creation/supp_material_scripts/questions_paper")
 SIMPLE_VQA_PATH = Path("/Users/sebastiancavada/Desktop/tmp_paris/tiny_vqa_creation/simple_vqa.json")
 OUTPUT_DIR = Path("/Users/sebastiancavada/Desktop/tmp_paris/tiny_vqa_creation/supp_material_scripts/questions_paper_site")
+RESULTS_DIR = Path("/Users/sebastiancavada/Desktop/tmp_paris/tiny_vqa_creation/output/run_28_general/results_run_28_general-all")
+MARKERS_DIR = Path("/Users/sebastiancavada/Desktop/tmp_paris/tiny_vqa_creation/supp_material_scripts/markers/models")
 MEDIA_DIR_NAME = "media"
+MARKERS_DIR_NAME = "markers"
 GIF_DURATION_MS = 350
 VQA_PAGE_NAME = "vqa.html"
 MAPPING_CAT_COLORS = {
@@ -32,6 +36,56 @@ VIDEO_SUFFIXES = {".mp4", ".webm", ".mov", ".m4v"}
 
 def title_case(text: str) -> str:
     return text.replace("_", " ").title()
+
+
+def normalize_model_name(text: str) -> str:
+    return text.lower().replace("_", "-")
+
+
+def infer_model_family(model_label: str) -> str:
+    label = model_label.lower()
+    families = [
+        "internvl-chat",
+        "internvl2_5",
+        "internvl2",
+        "llava-next-video",
+        "llava-interleave",
+        "llava-v1.6",
+        "llava-1.5",
+        "mantis",
+        "minicpm",
+        "molmoe",
+        "mplug-owl3",
+        "paligemma2",
+        "instructblip",
+        "blip2",
+        "phi-3.5",
+        "phi-3",
+        "deepseek",
+        "vila-1.5",
+        "qwen-vl",
+        "aquila-vl",
+        "xinyuan-vl",
+        "cambrian",
+    ]
+    for family in families:
+        if label.startswith(family):
+            return family
+    return label.split("-", 1)[0]
+
+
+def infer_model_size(model_label: str) -> str:
+    match = re.search(r"(\d+(?:\.\d+)?B(?:-[A-Z])?)", model_label, re.I)
+    if match:
+        return match.group(1)
+    match = re.search(r"(xxl|xl)", model_label, re.I)
+    if match:
+        return match.group(1).upper()
+    return "unknown"
+
+
+def model_tooltip(model_label: str) -> str:
+    return f"{model_label}, {infer_model_size(model_label)} (family: {infer_model_family(model_label)})"
 
 
 def ask_override(path: Path) -> None:
@@ -97,8 +151,44 @@ def create_gif(image_paths: list[Path], gif_path: Path) -> None:
     )
 
 
+def extract_answer_letter(text: str) -> str | None:
+    clean = str(text).strip()
+    patterns = [
+        r"^\s*([A-D])\s*$",
+        r"^\s*([A-D])[\.\):,-]",
+        r"\b(?:correct answer|answer|option|choice)\s*(?:is|:)?\s*([A-D])\b",
+        r"\b([A-D])[\.\):,-]",
+    ]
+    for pattern in patterns:
+        match = re.search(pattern, clean, re.I)
+        if match:
+            return match.group(1).upper()
+    return None
+
+
+def load_model_predictions() -> tuple[dict[str, dict[str, str]], dict[str, Path], dict[str, str]]:
+    predictions_by_idx: dict[str, dict[str, str]] = {}
+    marker_by_model: dict[str, Path] = {
+        normalize_model_name(path.stem): path for path in MARKERS_DIR.glob("*.png")
+    }
+    label_by_model: dict[str, str] = {}
+    for result_file in sorted(RESULTS_DIR.glob("*.json")):
+        model_label = result_file.stem.removesuffix("_val")
+        model_name = normalize_model_name(model_label)
+        label_by_model[model_name] = model_label
+        data = json.loads(result_file.read_text())
+        for item in data:
+            idx = str(item["idx"])
+            answer = extract_answer_letter(str(item["answer"]))
+            if answer is None:
+                continue
+            predictions_by_idx.setdefault(idx, {})[model_name] = answer
+    return predictions_by_idx, marker_by_model, label_by_model
+
+
 def load_entries() -> list[dict[str, Any]]:
     qid_order, qid_to_category, qid_to_sub_category = load_qid_order()
+    predictions_by_idx, marker_by_model, label_by_model = load_model_predictions()
     qid_rank = {qid: i for i, qid in enumerate(qid_order)}
     entries: list[dict[str, Any]] = []
     for question_file in QUESTIONS_DIR.glob("folder_*/question.json"):
@@ -118,6 +208,9 @@ def load_entries() -> list[dict[str, Any]]:
                 "prompt": prompt,
                 "choices": choices,
                 "correct_answer": str(data["correct_answer"]),
+                "model_predictions": predictions_by_idx.get(idx, {}),
+                "marker_by_model": marker_by_model,
+                "label_by_model": label_by_model,
                 "media": media_entries(question_file.parent, data),
             }
         )
@@ -126,6 +219,8 @@ def load_entries() -> list[dict[str, Any]]:
 
 def copy_media(entries: list[dict[str, Any]]) -> None:
     media_root = OUTPUT_DIR / MEDIA_DIR_NAME
+    markers_root = OUTPUT_DIR / MARKERS_DIR_NAME
+    copied_markers: dict[str, str] = {}
     for entry in entries:
         copied: list[str] = []
         copied_paths: list[Path] = []
@@ -144,6 +239,17 @@ def copy_media(entries: list[dict[str, Any]]) -> None:
             create_gif(copied_paths, gif_path)
         entry["copied_media"] = copied
         entry["copied_gif"] = None if gif_path is None else f"{MEDIA_DIR_NAME}/{entry['idx']}/{gif_path.name}"
+        entry["copied_markers"] = {}
+        for model_name in entry["model_predictions"]:
+            marker_path = entry["marker_by_model"].get(model_name)
+            if marker_path is None:
+                continue
+            if model_name not in copied_markers:
+                destination = markers_root / marker_path.name
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(marker_path, destination)
+                copied_markers[model_name] = f"{MARKERS_DIR_NAME}/{marker_path.name}"
+            entry["copied_markers"][model_name] = copied_markers[model_name]
 
 
 def render_media(entry: dict[str, Any]) -> str:
@@ -174,12 +280,25 @@ def render_media(entry: dict[str, Any]) -> str:
 
 
 def render_choices(choices: list[tuple[str, str]], correct_answer: str) -> str:
+    return "".join(f"<div>{label}) {('<b>' + html.escape(text) + '</b>') if label == correct_answer else html.escape(text)}</div>" for label, text in choices)
+
+
+def render_choices_with_models(entry: dict[str, Any]) -> str:
+    grouped: dict[str, list[str]] = {"A": [], "B": [], "C": [], "D": []}
+    for model_name, answer in sorted(entry["model_predictions"].items()):
+        if answer in grouped:
+            grouped[answer].append(model_name)
     items: list[str] = []
-    for label, text in choices:
+    for label, text in entry["choices"]:
         safe_text = html.escape(text)
-        if label == correct_answer:
+        if label == entry["correct_answer"]:
             safe_text = f"<b>{safe_text}</b>"
-        items.append(f"<div>{label}) {safe_text}</div>")
+        marker_html = "".join(
+            f'<img src="{html.escape(entry["copied_markers"][model_name])}" title="{html.escape(model_tooltip(entry["label_by_model"].get(model_name, model_name)))}" alt="{html.escape(entry["label_by_model"].get(model_name, model_name))}" class="model-marker" />'
+            for model_name in grouped[label]
+            if model_name in entry["copied_markers"]
+        )
+        items.append(f'<div class="choice-row"><div>{label}) {safe_text}</div><div class="choice-markers">{marker_html}</div></div>')
     return "".join(items)
 
 
@@ -205,7 +324,7 @@ def render_html(entries: list[dict[str, Any]]) -> str:
             f'<td class="compact" style="background:{html.escape(color)}22;"><div class="rot">{html.escape(entry["qid"])}</div></td>'
             f'<td style="vertical-align: top; white-space: nowrap;">{html.escape(entry["item_type"])}</td>'
             f'<td style="vertical-align: top; min-width: 420px;">{render_media(entry)}</td>'
-            f'<td style="vertical-align: top;"><div style="margin-bottom:8px;"><b>{html.escape(entry["prompt"])}</b></div>{render_choices(entry["choices"], entry["correct_answer"])}</td>'
+            f'<td style="vertical-align: top;"><div style="margin-bottom:8px;"><b>{html.escape(entry["prompt"])}</b></div>{render_choices_with_models(entry)}</td>'
             "</tr>"
         )
     return (
@@ -221,6 +340,9 @@ def render_html(entries: list[dict[str, Any]]) -> str:
         ".media-main{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;}"
         ".media-button{width:100%;padding:8px 0;}"
         ".filters{display:flex;gap:12px;align-items:center;margin:12px 0;}"
+        ".choice-row{display:flex;justify-content:flex-start;gap:8px;align-items:center;margin:4px 0;}"
+        ".choice-markers{display:flex;flex-wrap:wrap;justify-content:flex-start;gap:4px;}"
+        ".model-marker{width:16px;height:16px;object-fit:contain;}"
         "</style>"
         "<script>"
         "function toggleGif(button, imageId){"

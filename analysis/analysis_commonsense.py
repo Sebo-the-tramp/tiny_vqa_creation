@@ -132,7 +132,7 @@ def main() -> None:
                     ylabel= cat_label,
                     legend_fontsize=12 if cat != "all" else 10,
                     show_xlabel= cat == "all",
-                    figsize=(6, 2.5) if cat == "all" else (4, 2.5),
+                    figsize=(6, 2.3) if cat == "all" else (4, 2.4),
                     out_dir=fpath.parent,
                     # ylim=(0, 60)
                     benchmark=bench,

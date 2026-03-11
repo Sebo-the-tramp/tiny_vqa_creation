@@ -13,6 +13,9 @@ LEVELS_VQA_SET="10K"
 ABLATIONS_RUN_NAME="run_28"
 ABLATIONS_VQA_SET="10K"
 
+CF_RUN_NAME="run_28"
+CF_VQA_SET="10K"
+
 BASE_PATH="../output"
 
 RUN_IN_BACKGROUND=0
@@ -44,6 +47,9 @@ run_cmd python ./analysis_levels.py --base-path $BASE_PATH --run-name $LEVELS_RU
 
 # Ablations
 run_cmd python ./analysis_ablation_rel.py --base-path $BASE_PATH --run-name $ABLATIONS_RUN_NAME --vqa-set $ABLATIONS_VQA_SET
+
+# Counterfactuals
+run_cmd python ./analysis_counterfact.py --base-path $BASE_PATH --run-name $CF_RUN_NAME --counterfactual-vqa-set $CF_VQA_SET --vqa-set $VQA_SET
 
 # Variance study with sampling
 for sampling in $(seq 0.03 0.03 0.30); do  #  sampling roughly 5k (~0.03)

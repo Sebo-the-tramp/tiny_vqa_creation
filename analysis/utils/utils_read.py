@@ -17,7 +17,6 @@ if not Path("/scratch/project/eu-25-92/composite_physics/dataset/simulation_v4/"
 
 # _ANSWER_RE = re.compile(r"(?i)^\s*([a-d])(?:[^a-z0-9]|$)")
 # _ANSWER_RE = re.compile(r"\b([A-D])\s*[\.\,\:\)]")
-_ANSWER_RE = re.compile(r"(?:^([A-D])\b|\b([A-D])\b\s*[\.\,\:\)]?$)", re.IGNORECASE)
 _IDX_RE = r"([0-9]+_[gi])"
 _LEVEL_RE = r"([0-9]+_[gi])(_level_([^_]+))"
 
@@ -178,8 +177,11 @@ def build_eval_df(
         eval_df["mode_y"] = eval_df["mode"]
     
     if excluded_questions:
-        print(f"[WARNING] Excluding questions: {excluded_questions} => Dropping {len(eval_df[eval_df['question_id'].isin(excluded_questions)])} entries.")
-        eval_df = eval_df.loc[~eval_df["question_id"].isin(excluded_questions), :].copy()  # Important to copy, to avoid caveats in pandas slices
+        print(f"[WARNING] Excluding questions: {excluded_questions} (including CF versions) => Dropping {len(eval_df[eval_df['question_id'].isin(excluded_questions)])} entries.")
+        cf_excluded_questions = [ "CF" + q[1:] for q in excluded_questions]  # Counterfactual versions
+
+        eval_df = eval_df.loc[~eval_df["question_id"].isin(excluded_questions) & 
+                              ~eval_df["question_id"].isin(cf_excluded_questions), :].copy()  # Important to copy, to avoid caveats in pandas slices
     if exclude_models:
         print(f"[WARNING] Excluding models: {exclude_models} => Dropping {len(eval_df[eval_df['model_id'].isin(exclude_models)])} entries.")
         eval_df = eval_df.loc[~eval_df["model_id"].isin(exclude_models), :].copy()  # Important to copy, to avoid caveats in pandas slices
@@ -620,7 +622,7 @@ def load_model_answers(results_dir: str | Path, wide: bool = False) -> pd.DataFr
         df["model"] = model
         df["og_answer"] = df["answer"]
         df["answer"] = df["answer"].apply(
-            lambda a: _sanitize_answer(a)
+            lambda a: _sanitize_answer(a, log_path=path)
         )
         frames.append(df)
 
@@ -668,10 +670,20 @@ def get_timestep_from_idx(idx: int) -> str:
     return f"{TIMESTART + float(idx) * RENDER_STEP:08.3f}"
 
 
-def _sanitize_answer(answer: object) -> str | None:
+_ANSWER_RE_OLD = re.compile(r"(?:^([A-D])\b|\b([A-D])\b\s*[\.\,\:\)]?$)", re.IGNORECASE)
+_ANSWER_RE = re.compile(r"\b(?:(?:[Tt]he|[Cc]orrect|[Ff]inal)\s+)?(?:[Aa]nswer|[Oo]ption|[Cc]hoice)\s*(?:[Ii]s|:)?\s*([ABCD])\b|^\s*\(?([ABCD])\)?\b|\b([ABCD])[\.\,\)]|\b([ABCD])\:?\s*$", re.IGNORECASE)
+def _sanitize_answer(answer: object, log_path: Path | None = None) -> str | None:
     if answer is None or (isinstance(answer, float) and pd.isna(answer)):
         return ""
     match = _ANSWER_RE.search(str(answer))
+    if True:
+        match_old = _ANSWER_RE_OLD.search(str(answer))
+        old_ans = set([g for g in match_old.groups() if g is not None]) if match_old else set()
+        new_ans = set([g for g in match.groups() if g is not None]) if match else set()
+        if old_ans != new_ans:
+            with open("log_answers.txt", "a", encoding="utf-8") as f:
+                f.write(f"\n# {log_path}\n")
+                f.write(f"answer={answer}\nmatch={new_ans}\nold_match={old_ans}\n")
     if not match:
         return "?"
     answer = next((group for group in match.groups() if group), None)

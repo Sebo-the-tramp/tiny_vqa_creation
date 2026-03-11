@@ -25,16 +25,26 @@ def plot_highlight_violin(
     exclude_categories: list[str] | None = None,
     seed: int = 0,
     title: str | None = None,
+    commonsense_df: pd.DataFrame | None = None
 ) -> None:
     plot_df = eval_df.copy()
     plot_df["accuracy"] *= 100
 
-    highlight_categories = ["material_understanding", "mechanics"]
-    exclude_set = exclude_categories
-    plot_df = plot_df[~plot_df["category"].isin(exclude_set)]
-
     plot_subcat_df = utils_read.macro_accuracy(plot_df, level="sub_category", group_by=group_by)
     plot_cat_df = utils_read.macro_accuracy(plot_df, level="category", group_by=group_by)
+
+    # print("\nData for star plotting:")
+    # for cat in plot_cat_df["category"].unique().tolist():
+    #     print(f"'{cat}': {{'label': '{utils_mapping.categories[cat]}', 'color': '{utils_mapping.get_cat_color(cat, 'category')}', 'accuracy': {plot_cat_df[plot_cat_df['category'] == cat]['accuracy'].values.tolist()}}},")
+    # print("\n")
+
+    highlight_categories = ["material_understanding", "mechanics"]
+    exclude_set = exclude_categories
+
+    # Filter out categories that are not in the highlight set or the exclude set
+    plot_df = plot_df[~plot_df["category"].isin(exclude_set)]
+    plot_cat_df = plot_cat_df[~plot_cat_df["category"].isin(exclude_set)]
+    plot_subcat_df = plot_subcat_df[~plot_subcat_df["category"].isin(exclude_set)]
 
     cat_to_subcats_visible = {cat: [sub for sub, c in utils_mapping.subcat_to_cat.items() if c == cat and sub in plot_df["sub_category"].unique().tolist()] for cat in highlight_categories}
 
@@ -83,6 +93,7 @@ def plot_highlight_violin(
         inner=None,
         cut=0,
         linewidth=1.0,
+        width=0.95,
         ax=ax,
         zorder=2
     )
@@ -154,16 +165,16 @@ def plot_highlight_violin(
             fontweight="bold",
         )
     ax.grid(False)
-    ax.text(
-        20,
-        y_max - 1.49,
-        "Random",
-        ha="left",
-        va="bottom",
-        fontsize=tick_fontsize,
-        color="#d62728",
-        rotation=90,
-    )
+    # ax.text(
+    #     20,
+    #     y_max - 1.49,
+    #     "Random",
+    #     ha="left",
+    #     va="bottom",
+    #     fontsize=tick_fontsize,
+    #     color="#d62728",
+    #     rotation=90,
+    # )
     top_end = len(group_keys) - 0.5
     label_x = 0.04
     for cat in highlight_categories:
@@ -197,7 +208,7 @@ def plot_highlight_violin(
             va="center",
             ha="center",
             fontsize=label_fontsize-4,
-            color="gray",
+            color="#333333",
             transform=ax.get_yaxis_transform(),
         )
         ax.axhspan(bottom, top_end, color=color, alpha=0.08, zorder=-2)
@@ -242,6 +253,10 @@ def plot_commonsense_violin(
 
     models_df = models_df[models_df["cs_accuracy"].notnull()]
 
+    # print("\nData for star plotting:")
+    # print(f"'commonsense': {{'label': 'Common Sense', 'color': '#1F1BEE', 'accuracy': {models_df['cs_accuracy'].values.tolist()}}},")
+    # print("\n")
+
     group_keys = ["commonsense"]
     group_labels = ["Common Sense"]
     group_types = ["cs"]
@@ -267,7 +282,7 @@ def plot_commonsense_violin(
         linewidth=1.0,
         ax=ax,
         zorder=2,
-        width=0.7
+        width=0.6
     )
 
     model_style, family_map = utils_mapping._build_model_style(
@@ -338,16 +353,16 @@ def plot_commonsense_violin(
     #         fontweight="bold",
     #     )
     ax.grid(False)
-    # ax.text(
-    #     20,
-    #     y_max - 1.49,
-    #     "Random",
-    #     ha="left",
-    #     va="bottom",
-    #     fontsize=tick_fontsize,
-    #     color="#d62728",
-    #     rotation=90,
-    # )
+    ax.text(
+        20,
+        y_max-0.1,
+        "Random",
+        ha="left",
+        va="top",
+        fontsize=tick_fontsize,
+        color="#d62728",
+        rotation=90,
+    )
     top_end = len(group_keys) - 0.5
     label_x = 0.06
     for cat in group_keys:
@@ -378,7 +393,7 @@ def plot_commonsense_violin(
             va="center",
             ha="center",
             fontsize=label_fontsize-4,
-            color="gray",
+            color="#333333",
             transform=ax.get_yaxis_transform(),
         )
         ax.axhspan(bottom, top_end, color=color, alpha=0.08, zorder=-2)
@@ -396,6 +411,8 @@ def plot_commonsense_violin(
     print("Saved plot to:", output_path)
     plt.close(fig)
 
+    return models_df
+
 
 
 def main() -> None:
@@ -404,7 +421,7 @@ def main() -> None:
         "--base-path",
         default="../output/",
     )
-    parser.add_argument("--run-name", default="run_24_general_yms_variations")
+    parser.add_argument("--run-name", default="run_28_general")
     parser.add_argument(
         "--mode",
         choices=["all", "general", "image-only", "mixed"],
@@ -413,7 +430,7 @@ def main() -> None:
     )
     parser.add_argument(
         "--vqa-set",
-        default="10K",
+        default="150K",
         help="VQA set to use (e.g., 10K, 30K, karo_5K).",
     )
     args = parser.parse_args()
@@ -437,6 +454,14 @@ def main() -> None:
         safe_category = str(args.top_category).replace("/", "_").replace(" ", "_")
         output_path = cur_output_dir 
 
+        cs_models_df = None
+        cs_models_df = plot_commonsense_violin(
+            mode_df,
+            output_path=output_path / f"commonsense_model.png",
+            group_by="model_id",
+            seed=args.seed,
+            # title=args.title,
+        )
         plot_highlight_violin(
             mode_df,
             top_category=args.top_category,
@@ -445,13 +470,7 @@ def main() -> None:
             exclude_categories=[c for c in mode_df["category"].unique().tolist() if c not in ["material_understanding", "mechanics"]],
             seed=args.seed,
             # title=args.title,
-        )
-        plot_commonsense_violin(
-            mode_df,
-            output_path=output_path / f"commonsense_model.png",
-            group_by="model_id",
-            seed=args.seed,
-            # title=args.title,
+            commonsense_df=cs_models_df
         )
 
 

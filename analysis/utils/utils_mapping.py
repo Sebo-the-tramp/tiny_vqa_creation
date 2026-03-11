@@ -64,9 +64,9 @@ mapping_cat_colors = {
 
 mapping_cat_short = {
     "mechanics": categories.get("mechanics"),
-    "spatial_reasoning": categories.get("spatial_reasoning"),
+    "spatial_reasoning": "Spatial Reason.",
     "persistence": categories.get("persistence"),
-    "temporal": categories.get("temporal"),
+    "temporal": "Temporal Reason.",
     "view_point": categories.get("view_point"),
     "material_understanding": "Material Underst."
 }
@@ -235,12 +235,14 @@ def _build_model_style(
 
             params.append(pd.to_numeric(fam_models["params_b"], errors="coerce").dropna().mean())
             modes.append(fam_models["mode"].iloc[0] if fam_models["mode"].nunique() == 1 else "unknown")
-    else:
+
+        palette = ["#444"] * len(group_ids)
+    elif group_by == "model_id":
         group_ids = pd.unique(metadata_df["model_id"])
+        palette = sns.color_palette("tab20", len(group_ids))
     
     unique_families = list(dict.fromkeys(families)) if families else ["Other"]
     unique_families = sorted(unique_families)
-    palette = sns.color_palette("tab20", len(group_ids))
     if family_marker_mode not in {"distinct", "rotated"}:
         raise ValueError(
             f"family_marker_mode must be 'distinct' or 'rotated', got {family_marker_mode}"

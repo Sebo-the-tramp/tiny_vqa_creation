@@ -39,8 +39,8 @@ def main() -> None:
         cur_output_dir = output_dir / mode_label
         cur_output_dir.mkdir(parents=True, exist_ok=True)
         
-        for group in ["model_bestmat10"]:
-        # for group in utils.utils_read.GROUPINGS + ["model_bestmat10"]:
+        # for group in ["model_bestmat10"]:
+        for group in utils.utils_read.GROUPINGS + ["model_bestmat10"]:
             cur_df, group_by = utils.utils_read.apply_group(mode_df, group)
             
             for level in ["category", "sub_category", "question_id"]:
@@ -51,9 +51,21 @@ def main() -> None:
                     filename=f"acc_{level}_{group}.png",
                     y_limit_mode="",
                     group_by=group_by,
-                    show_legend=True,
-                    bars=False,
+                    legend=True,
                 )
+            
+            # Plot only physics categories for sub_category level
+            level = "sub_category"
+            physics_cat = ["material_understanding", "mechanics"]
+            utils_graph_correlation.create_accuracy(
+                cur_df[cur_df["category"].isin(physics_cat)],
+                output_dir=cur_output_dir,
+                level=level,
+                filename=f"acc_physics_{level}_{group}.png",
+                y_limit_mode="",
+                group_by=group_by,
+                legend="model_family",
+            )
         
         utils_graph_correlation.create_model_rank(
             mode_df,
@@ -61,6 +73,7 @@ def main() -> None:
             output_dir=cur_output_dir/"modelranks",
             filename=f"acc_category_per_rank.png",
             y_limit_mode="",
+            # legend_loc="upper center",
             # group_by="model_id",
         )
 

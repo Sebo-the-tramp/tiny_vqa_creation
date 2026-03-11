@@ -214,7 +214,7 @@ def plot_subcategory_violin(
         y="group_label",
         x="accuracy",
         order=group_order,
-        color="0.85",
+        color="0.90",
         inner=None,
         cut=0,
         linewidth=1.0,
@@ -232,14 +232,14 @@ def plot_subcategory_violin(
             style_key = str(row["family"])
         else:
             style_key = str(row["model_id"])
-        color, marker, size = model_style[style_key]
+        color, marker, size, edge = model_style[style_key]
         ax.scatter(
             row["accuracy"],
             y_pos + jitter,
             color=color,
             s=size**2,
             alpha=0.85,
-            edgecolor="white",
+            edgecolor=edge,
             linewidth=0.7,
             marker=marker,
         )

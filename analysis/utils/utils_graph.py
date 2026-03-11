@@ -124,6 +124,13 @@ def _build_group_legend_items(
     *,
     legend_clustering: str = None
 ) -> tuple[list[Line2D], list[str], list[str], str | None]:
+    # If grouping by model_family but all families have only one model, switch to model_id to get more informative legend entries
+    if group_by == "model_family":
+        groups_len = [plot_df[plot_df[group_by] == group]["model_id"].nunique() for group in plot_df[group_by].unique()]
+        if all([l == 1 for l in groups_len]):
+            group_by = "model_id"
+
+
     model_style, family_map = utils.utils_mapping._build_model_style(
         # metadata_path,
         group_by=group_by,
@@ -328,9 +335,9 @@ def create_benchmarks_violin(
             ticklabel.set_color(utils.utils_mapping.mapping_cat_colors.get(cat)+"CC")  # Adding transparency
 
     ax.legend(
-        title="Benchmarks",
+        title="Common sense benchmarks",
         loc="lower center",
-        bbox_to_anchor=(0.5, 1.05),
+        bbox_to_anchor=(0.5, 1.02),
         ncols=3,
     )
     
@@ -339,7 +346,7 @@ def create_benchmarks_violin(
         ticklabel.set_fontsize(ticklabel.get_fontsize()*0.85)
     
     output_dir.mkdir(parents=True, exist_ok=True)
-    plt.savefig(f"{output_dir}/{filename}", dpi=300, bbox_inches="tight")
+    plt.savefig(f"{output_dir}/{filename}", dpi=300, bbox_inches="tight", pad_inches=0.00)
     print(f"Plot saved to: {output_dir}/{filename}")
 
 
@@ -1078,15 +1085,20 @@ def create_accuracy_bench_vs_common_sense(
     ax.set_ylabel(ylabel, fontsize=label_fontsize, fontweight="bold", color=ylabel_color)
     if ylim is not None:
         ax.set_ylim(ylim[0], ylim[1])
+    if ax.get_ylim()[0] < 0.0:
+        ax.set_ylim(0, ax.get_ylim()[1])
+    
     ax.tick_params(axis="both", labelsize=tick_fontsize)
     # ax.grid(False)
     
     import matplotlib.ticker as mticker
     # yticks = list(range(int(ax.get_ylim()[0])//5*5, int(ax.get_ylim()[1])//5*5 + 5, 5))  # [10, 20, ..., 100]
     # ax.set_yticks(yticks)
-    ax.yaxis.set_major_locator(mticker.MultipleLocator(5))
+    ax.yaxis.set_major_locator(mticker.MultipleLocator(10))
     # ax.grid(axis="y", which="major", alpha=0.3)
     ax.grid(axis="y", alpha=0.3)
+
+    paperformat(ax, figsize=None, grid=["y"], minor=True, ticks_step=10)
 
     # 4. Display Pearson Correlation on the plot
     # transform=ax.transAxes uses relative coordinates (0,0 is bottom-left, 1,1 is top-right)
@@ -1111,34 +1123,36 @@ def create_accuracy_bench_vs_common_sense(
     # )
 
     # 6. Annotations
-    annotate_df = eval_df_accuracy_total_per_model.dropna(
-        subset=["cs_accuracy", "our_accuracy"]
-    ).sort_values("our_accuracy", ascending=False)
-    annotate_df["model_label"] = annotate_df["model_id"].map(_standardize_model_label)
-    label_texts = []
-    for _, r in annotate_df.iterrows():
-        label = r["model_label"]
-        versionname = metadata_models.loc[metadata_models["id"] == r["model_id"], "versionname"].values[0]
-        # print(r["model_id"])
-        offset = (0, 10)
-        # ha = "left" if r["cs_accuracy"] < 45 else "right"
-        if r["cs_accuracy"] < 45:
-            offset = (offset[0]+10*(45-r["cs_accuracy"])/(45-35), offset[1])
-        ha = "center"
-        # if label in {"InternVL2.5-4B", "InternVL2.5-2B"}:
-        #     offset = (-10, 0)
-        #     ha = "right"
-        label_texts.append(
-            ax.annotate(
-                versionname,
-                xy=(r["cs_accuracy"], r["our_accuracy"]),
-                xytext=offset,
-                textcoords="offset points",
-                va="center",
-                ha=ha,
-                fontsize=8,
+    annotate = False
+    if annotate:
+        annotate_df = eval_df_accuracy_total_per_model.dropna(
+            subset=["cs_accuracy", "our_accuracy"]
+        ).sort_values("our_accuracy", ascending=False)
+        annotate_df["model_label"] = annotate_df["model_id"].map(_standardize_model_label)
+        label_texts = []
+        for _, r in annotate_df.iterrows():
+            label = r["model_label"]
+            versionname = metadata_models.loc[metadata_models["id"] == r["model_id"], "versionname"].values[0]
+            # print(r["model_id"])
+            offset = (0, 10)
+            # ha = "left" if r["cs_accuracy"] < 45 else "right"
+            if r["cs_accuracy"] < 45:
+                offset = (offset[0]+10*(45-r["cs_accuracy"])/(45-35), offset[1])
+            ha = "center"
+            # if label in {"InternVL2.5-4B", "InternVL2.5-2B"}:
+            #     offset = (-10, 0)
+            #     ha = "right"
+            label_texts.append(
+                ax.annotate(
+                    versionname,
+                    xy=(r["cs_accuracy"], r["our_accuracy"]),
+                    xytext=offset,
+                    textcoords="offset points",
+                    va="center",
+                    ha=ha,
+                    fontsize=8,
+                )
             )
-        )
 
     if adjust_text is not None and label_texts:
         adjust_text(

@@ -166,8 +166,8 @@ def create_levels_plot(
 
     assert eval_df["category"].nunique() == 1
     cat = eval_df["category"].unique()[0]
-    ylabel = utils_mapping.mapping_cat_short[cat]
-    ylabel_color = utils_mapping.mapping_cat_colors[cat]+"CC"
+    ylabel = utils_mapping.get_cat_label(cat, "category")
+    ylabel_color = utils_mapping.get_cat_color(cat, "category")+"CC"
 
     if accuracy_mode == "baseline_change":
         ticks_step = 2

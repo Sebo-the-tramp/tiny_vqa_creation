@@ -179,7 +179,7 @@ def create_model_rank(
     )
 
     # Prepare plot
-    figsize = (5, 3.5)
+    figsize = (4.5, 4)
     fig, ax = plt.subplots(figsize=figsize)
 
     categories = list(agg_df[category_column].unique())
@@ -191,8 +191,8 @@ def create_model_rank(
         x = df_cat["top_bin"].values
         y = df_cat["mean"].values
         std = df_cat["std"].values
-        cat_label = utils_mapping.mapping_cat_short.get(cat)
-        cat_color = utils_mapping.mapping_cat_colors.get(cat)
+        cat_label = utils_mapping.get_cat_label(cat, category_column)
+        cat_color = utils_mapping.get_cat_color(cat, category_column)
 
         ax.plot(x, y, marker="o", color=cat_color, linewidth=2, alpha=0.85, label=cat_label)
         ax.fill_between(x, y - std, y + std, color=cat_color, alpha=0.15)
@@ -215,7 +215,7 @@ def create_model_rank(
             va="center",
             ha="left",
             fontweight="bold",
-            fontsize=10,
+            fontsize=12,
             arrowprops=dict(
                 arrowstyle="-",      # plain line
                 color=cat_color,
@@ -232,7 +232,7 @@ def create_model_rank(
     # ax.set_title("Accuracy vs Number of Objects by Category", fontsize=14, fontweight="bold")
     legend = ax.legend(loc=legend_loc, 
                 fontsize=9.5, 
-                ncol=2, 
+                ncol=1, 
                 markerscale=0.5,
                 handletextpad=0.2,
                 columnspacing=0.5,
@@ -264,7 +264,8 @@ def create_model_rank(
     ax.set_xlim(bins_num-0.5, -0.5)
     ax.set_xticks(range(0, bins_num))
     format_rank = lambda x: f"{x}"+({1: "st", 2: "nd", 3: "rd"}.get(x - 10*(x//10), f"th") if not (10 < x < 20) else "th")
-    ax.set_xticklabels([f"{format_rank(bins_edges[b+1])}\n-\n{format_rank(bins_edges[b]+1)}" for b in range(bins_num)], ha='center', fontsize=8)
+    # ax.set_xticklabels([f"{format_rank(bins_edges[b+1])}\n-\n{format_rank(bins_edges[b]+1)}" for b in range(bins_num)], ha='center', fontsize=8)
+    ax.set_xticklabels([f"{format_rank(bins_edges[b]+1)}" for b in range(bins_num)], ha='center', fontsize=8)
     ax.set_xlabel("Models rank")
 
     # Save
@@ -273,7 +274,7 @@ def create_model_rank(
         out_dir = Path(output_dir)
         out_dir.mkdir(parents=True, exist_ok=True)
         f_out = out_dir / filename
-        fig.savefig(f_out, dpi=300, bbox_inches="tight", pad_inches=0.05)
+        fig.savefig(f_out, dpi=300, bbox_inches="tight", pad_inches=0)
         print(f"Plot saved to: {f_out}")
 
     return fig
@@ -569,11 +570,9 @@ def create_accuracy(
     output_dir: str | Path | None = None,
     filename: str = "accuracy_by_level.png",
     figsize: tuple[float, float] = None,
-    show_legend: bool = False,
+    legend: bool|str = False,
     y_limit_mode: str = "fixed",
-    y_pad: float = 0.05,
     group_by: str = "model_id",
-    bars: bool = False,
 ) -> plt.Figure:
     """
     Create a violin plot showing model accuracy by level.
@@ -657,11 +656,12 @@ def create_accuracy(
         width=1.0,
         linewidth=0.5,
         order=list(range(len(levels_flat))),
+        zorder=2
     )
     ax.set_xlabel("")
 
     # Add reference line at chance level
-    # ax.axhline(y=25, color="gray", linestyle="--", linewidth=1, label="Chance")
+    ax.axhline(y=25, color="gray", linestyle="--", linewidth=1, label="Random", zorder=1)
 
     # Plot scatter points with error bars for each family
     for group_name, df_m in agg_df.groupby(group_by):
@@ -828,13 +828,13 @@ def create_accuracy(
         label.set_fontweight("bold")
 
     # Add legend if requested
-    if show_legend:
+    if legend:
         legend_handles, legend_labels, legend_groups, title_str = utils_graph._build_group_legend_items(
             plot_df,
-            group_by=group_by,
+            group_by=group_by if isinstance(legend, bool) else legend,
             metadata_path=metadata_path
         )
-        ax.legend(legend_handles, legend_labels, title=title_str, bbox_to_anchor=(1.05, 1), loc='upper left', fontsize=8, title_fontsize=9, markerscale=0.9)
+        ax.legend(legend_handles, legend_labels, title=title_str, bbox_to_anchor=(1.00, 1), loc='upper left', fontsize=8, title_fontsize=9, markerscale=0.9)
 
     plt.tight_layout()
 
@@ -843,7 +843,7 @@ def create_accuracy(
         out_dir = Path(output_dir)
         out_dir.mkdir(parents=True, exist_ok=True)
         f_out = out_dir / filename
-        fig.savefig(f_out, dpi=300, bbox_inches="tight")
+        fig.savefig(f_out, dpi=300, bbox_inches="tight", pad_inches=0)
         print(f"Plot saved to: {f_out}")
 
     if show:

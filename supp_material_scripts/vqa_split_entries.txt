@@ -2,11 +2,11 @@
 \vqaSplitEntry{F\_DISTANCE\_OBJECT\_OBJECT}
     {Spatial Reasoning}
     {Distance}
-    {figures/supp/questions_paper/folder_37157_i/images/image_01.png}
-    {\stripEight{figures/supp/questions_paper/folder_37157_g/images/image_01.png}{figures/supp/questions_paper/folder_37157_g/images/image_02.png}{figures/supp/questions_paper/folder_37157_g/images/image_03.png}{figures/supp/questions_paper/folder_37157_g/images/image_04.png}
-                {figures/supp/questions_paper/folder_37157_g/images/image_05.png}{figures/supp/questions_paper/folder_37157_g/images/image_06.png}{figures/supp/questions_paper/folder_37157_g/images/image_07.png}{figures/supp/questions_paper/folder_37157_g/images/image_08.png}}
-    {Based on the image, what is the real-world distance between "box of Samsung C406S cartridge" and the "black orca toy"? \opts{1.22 meters}{2.97 meters}{\textbf{0.35 meters}}{2.10 meters}}
-    {Considering all frames, what is the real-world distance between "box of Samsung C406S cartridge" and the "black orca toy" in the last frame? \opts{1.22 meters}{2.97 meters}{\textbf{0.35 meters}}{2.10 meters}}
+    {figures/supp/questions_paper/folder_59022_i/images/00_000028.png}
+    {\stripEight{figures/supp/questions_paper/folder_59022_g/images/00_000000.png}{figures/supp/questions_paper/folder_59022_g/images/01_000004.png}{figures/supp/questions_paper/folder_59022_g/images/02_000008.png}{figures/supp/questions_paper/folder_59022_g/images/03_000012.png}
+                {figures/supp/questions_paper/folder_59022_g/images/04_000016.png}{figures/supp/questions_paper/folder_59022_g/images/05_000020.png}{figures/supp/questions_paper/folder_59022_g/images/06_000024.png}{figures/supp/questions_paper/folder_59022_g/images/07_000028.png}}
+    {Based on the image, what is the real-world distance between "CLUE board game box" and the "boxed Monopoly Hotels board game"? \opts{0.49 meters}{2.14 meters}{\textbf{1.59 meters}}{1.04 meters}}
+    {Considering all frames, what is the real-world distance between "CLUE board game box" and the "boxed Monopoly Hotels board game" in the last frame? \opts{0.49 meters}{2.14 meters}{\textbf{1.59 meters}}{1.04 meters}}
 
 % --- ENTRY F_CLOSEST_OBJECT_OBJECT ---
 \vqaSplitEntry{F\_CLOSEST\_OBJECT\_OBJECT}
@@ -22,31 +22,31 @@
 \vqaSplitEntry{F\_DISTANCE\_\allowbreak OBJECT\_CAMERA\_DISTANCE}
     {Spatial Reasoning}
     {Distance}
-    {figures/supp/questions_paper/folder_4605_i/images/image_01.png}
-    {\stripEight{figures/supp/questions_paper/folder_4605_g/images/image_01.png}{figures/supp/questions_paper/folder_4605_g/images/image_02.png}{figures/supp/questions_paper/folder_4605_g/images/image_03.png}{figures/supp/questions_paper/folder_4605_g/images/image_04.png}
-                {figures/supp/questions_paper/folder_4605_g/images/image_05.png}{figures/supp/questions_paper/folder_4605_g/images/image_06.png}{figures/supp/questions_paper/folder_4605_g/images/image_07.png}{figures/supp/questions_paper/folder_4605_g/images/image_08.png}}
-    {Based on the image, what is the real-world distance between the "shelf bin" and the camera? \opts{1.32 meters}{2.05 meters}{\textbf{2.79 meters}}{0.58 meters}}
-    {Considering all frames, what is the real-world distance between the "shelf bin" and the camera in the last frame? \opts{1.32 meters}{2.05 meters}{\textbf{2.79 meters}}{0.58 meters}}
+    {figures/supp/questions_paper/folder_9147_i/images/00_000012.png}
+    {\stripEight{figures/supp/questions_paper/folder_9147_g/images/00_000005.png}{figures/supp/questions_paper/folder_9147_g/images/01_000006.png}{figures/supp/questions_paper/folder_9147_g/images/02_000007.png}{figures/supp/questions_paper/folder_9147_g/images/03_000008.png}
+                {figures/supp/questions_paper/folder_9147_g/images/04_000009.png}{figures/supp/questions_paper/folder_9147_g/images/05_000010.png}{figures/supp/questions_paper/folder_9147_g/images/06_000011.png}{figures/supp/questions_paper/folder_9147_g/images/07_000012.png}}
+    {Based on the image, what is the real-world distance between the "218-piece dark LEGO City box" and the camera? \opts{8.33 meters}{5.88 meters}{3.43 meters}{\textbf{0.98 meters}}}
+    {Considering all frames, what is the real-world distance between the "218-piece dark LEGO City box" and the camera in the last frame? \opts{8.33 meters}{5.88 meters}{3.43 meters}{\textbf{0.98 meters}}}
 
 % --- ENTRY F_CLOSEST_OBJECT_CAMERA ---
 \vqaSplitEntry{F\_CLOSEST\_OBJECT\_CAMERA}
     {Spatial Reasoning}
     {Distance}
-    {figures/supp/questions_paper/folder_729_i/images/image_01.png}
-    {\stripEight{figures/supp/questions_paper/folder_729_g/images/image_01.png}{figures/supp/questions_paper/folder_729_g/images/image_02.png}{figures/supp/questions_paper/folder_729_g/images/image_03.png}{figures/supp/questions_paper/folder_729_g/images/image_04.png}
-                {figures/supp/questions_paper/folder_729_g/images/image_05.png}{figures/supp/questions_paper/folder_729_g/images/image_06.png}{figures/supp/questions_paper/folder_729_g/images/image_07.png}{figures/supp/questions_paper/folder_729_g/images/image_08.png}}
-    {Based on the image, which object is the closest to the camera in real-world distance? \opts{white soccer shoe}{CLUE board game box}{\textbf{blue backpack}}{Teenage Mutant Ninja Turtles action figurine}}
-    {Considering all frames, which object is the closest to the camera in real-world distance in the last frame? \opts{white soccer shoe}{CLUE board game box}{\textbf{blue backpack}}{Teenage Mutant Ninja Turtles action figurine}}
+    {figures/supp/questions_paper/folder_88303_i/images/00_000007.png}
+    {\stripEight{figures/supp/questions_paper/folder_88303_g/images/00_000000.png}{figures/supp/questions_paper/folder_88303_g/images/01_000001.png}{figures/supp/questions_paper/folder_88303_g/images/02_000002.png}{figures/supp/questions_paper/folder_88303_g/images/03_000003.png}
+                {figures/supp/questions_paper/folder_88303_g/images/04_000004.png}{figures/supp/questions_paper/folder_88303_g/images/05_000005.png}{figures/supp/questions_paper/folder_88303_g/images/06_000006.png}{figures/supp/questions_paper/folder_88303_g/images/07_000007.png}}
+    {Based on the image, which object is the closest to the camera in real-world distance? \opts{\textbf{CLUE board game box}}{boxed LIFE board game}{kid backpack with dinosaurs}{boxed Monopoly Hotels board game}}
+    {Considering all frames, which object is the closest to the camera in real-world distance in the last frame? \opts{\textbf{CLUE board game box}}{boxed LIFE board game}{kid backpack with dinosaurs}{boxed Monopoly Hotels board game}}
 
 % --- ENTRY F_SIZE_OBJECT ---
 \vqaSplitEntry{F\_SIZE\_OBJECT}
     {Spatial Reasoning}
     {Size}
-    {figures/supp/questions_paper/folder_15989_i/images/00_000022.png}
-    {\stripEight{figures/supp/questions_paper/folder_15989_g/images/00_000001.png}{figures/supp/questions_paper/folder_15989_g/images/01_000004.png}{figures/supp/questions_paper/folder_15989_g/images/02_000007.png}{figures/supp/questions_paper/folder_15989_g/images/03_000010.png}
-                {figures/supp/questions_paper/folder_15989_g/images/04_000013.png}{figures/supp/questions_paper/folder_15989_g/images/05_000016.png}{figures/supp/questions_paper/folder_15989_g/images/06_000019.png}{figures/supp/questions_paper/folder_15989_g/images/07_000022.png}}
-    {Based on the image, what are the real-world dimensions of the "turquoise mermaid-design backpack"? \opts{0.62m x 0.53m x 0.43m}{\textbf{0.41m x 0.35m x 0.28m}}{0.74m x 0.63m x 0.51m}{0.83m x 0.71m x 0.57m}}
-    {Considering all frames, what are the real-world dimensions of the "turquoise mermaid-design backpack" in the last frame? \opts{0.62m x 0.53m x 0.43m}{\textbf{0.41m x 0.35m x 0.28m}}{0.74m x 0.63m x 0.51m}{0.83m x 0.71m x 0.57m}}
+    {figures/supp/questions_paper/folder_17386_i/images/00_000029.png}
+    {\stripEight{figures/supp/questions_paper/folder_17386_g/images/00_000001.png}{figures/supp/questions_paper/folder_17386_g/images/01_000005.png}{figures/supp/questions_paper/folder_17386_g/images/02_000009.png}{figures/supp/questions_paper/folder_17386_g/images/03_000013.png}
+                {figures/supp/questions_paper/folder_17386_g/images/04_000017.png}{figures/supp/questions_paper/folder_17386_g/images/05_000021.png}{figures/supp/questions_paper/folder_17386_g/images/06_000025.png}{figures/supp/questions_paper/folder_17386_g/images/07_000029.png}}
+    {Based on the image, what are the real-world dimensions of the "black orca toy"? \opts{\textbf{0.69m x 0.35m x 0.25m}}{1.04m x 0.54m x 0.38m}{1.25m x 0.65m x 0.46m}{1.40m x 0.72m x 0.51m}}
+    {Considering all frames, what are the real-world dimensions of the "black orca toy" in the last frame? \opts{\textbf{0.69m x 0.35m x 0.25m}}{1.04m x 0.54m x 0.38m}{1.25m x 0.65m x 0.46m}{1.40m x 0.72m x 0.51m}}
 
 % --- ENTRY F_SIZE_OBJECT_BIGGER ---
 \vqaSplitEntry{F\_SIZE\_OBJECT\_BIGGER}
@@ -73,30 +73,30 @@
     {Mechanics}
     {Kinematics}
     {}
-    {\stripEight{figures/supp/questions_paper/folder_909_g/images/00_000003.png}{figures/supp/questions_paper/folder_909_g/images/01_000004.png}{figures/supp/questions_paper/folder_909_g/images/02_000005.png}{figures/supp/questions_paper/folder_909_g/images/03_000006.png}
-                {figures/supp/questions_paper/folder_909_g/images/04_000007.png}{figures/supp/questions_paper/folder_909_g/images/05_000008.png}{figures/supp/questions_paper/folder_909_g/images/06_000009.png}{figures/supp/questions_paper/folder_909_g/images/07_000010.png}}
+    {\stripEight{figures/supp/questions_paper/folder_37063_g/images/00_000000.png}{figures/supp/questions_paper/folder_37063_g/images/01_000003.png}{figures/supp/questions_paper/folder_37063_g/images/02_000006.png}{figures/supp/questions_paper/folder_37063_g/images/03_000009.png}
+                {figures/supp/questions_paper/folder_37063_g/images/04_000012.png}{figures/supp/questions_paper/folder_37063_g/images/05_000015.png}{figures/supp/questions_paper/folder_37063_g/images/06_000018.png}{figures/supp/questions_paper/folder_37063_g/images/07_000021.png}}
     {\textbf{No question provided/possible}}
-    {Considering all frames, what is the real-world speed of the "12-pack Fresca soda carton" at the time of the last frame? \opts{7.71 m/s}{1.95 m/s}{\textbf{3.87 m/s}}{5.79 m/s}}
+    {Considering all frames, what is the real-world speed of the "woven straw fedora hat" at the time of the last frame? \opts{\textbf{1.9 m/s}}{1.27 m/s}{0.65 m/s}{2.53 m/s}}
 
 % --- ENTRY F_KINEMATICS_ACCEL_OBJECT ---
 \vqaSplitEntry{F\_KINEMATICS\_ACCEL\_OBJECT}
     {Mechanics}
     {Kinematics}
     {}
-    {\stripEight{figures/supp/questions_paper/folder_24206_g/images/image_01.png}{figures/supp/questions_paper/folder_24206_g/images/image_02.png}{figures/supp/questions_paper/folder_24206_g/images/image_03.png}{figures/supp/questions_paper/folder_24206_g/images/image_04.png}
-                {figures/supp/questions_paper/folder_24206_g/images/image_05.png}{figures/supp/questions_paper/folder_24206_g/images/image_06.png}{figures/supp/questions_paper/folder_24206_g/images/image_07.png}{figures/supp/questions_paper/folder_24206_g/images/image_08.png}}
+    {\stripEight{figures/supp/questions_paper/folder_37763_g/images/00_000003.png}{figures/supp/questions_paper/folder_37763_g/images/01_000006.png}{figures/supp/questions_paper/folder_37763_g/images/02_000009.png}{figures/supp/questions_paper/folder_37763_g/images/03_000012.png}
+                {figures/supp/questions_paper/folder_37763_g/images/04_000015.png}{figures/supp/questions_paper/folder_37763_g/images/05_000018.png}{figures/supp/questions_paper/folder_37763_g/images/06_000021.png}{figures/supp/questions_paper/folder_37763_g/images/07_000024.png}}
     {\textbf{No question provided/possible}}
-    {Considering all frames, what is the real-world magnitude of acceleration of the "brown boat shoe" at the time of the last frame? \opts{\textbf{9.79 m/s\textasciicircum{}2}}{5.05 m/s\textasciicircum{}2}{0.32 m/s\textasciicircum{}2}{14.53 m/s\textasciicircum{}2}}
+    {Considering all frames, what is the real-world magnitude of acceleration of the "Cootie board game in a box" at the time of the last frame? \opts{1.15 m/s\textasciicircum{}2}{\textbf{9.82 m/s\textasciicircum{}2}}{4.04 m/s\textasciicircum{}2}{6.93 m/s\textasciicircum{}2}}
 
 % --- ENTRY F_KINEMATICS_DISTANCE_TRAVELED_INTERVAL ---
 \vqaSplitEntry{F\_KINEMATICS\_\allowbreak DISTANCE\_TRAVELED\_INTERVAL}
     {Mechanics}
     {Kinematics}
     {}
-    {\stripEight{figures/supp/questions_paper/folder_3379_g/images/00_000000.png}{figures/supp/questions_paper/folder_3379_g/images/01_000002.png}{figures/supp/questions_paper/folder_3379_g/images/02_000004.png}{figures/supp/questions_paper/folder_3379_g/images/03_000006.png}
-                {figures/supp/questions_paper/folder_3379_g/images/04_000008.png}{figures/supp/questions_paper/folder_3379_g/images/05_000010.png}{figures/supp/questions_paper/folder_3379_g/images/06_000012.png}{figures/supp/questions_paper/folder_3379_g/images/07_000014.png}}
+    {\stripEight{figures/supp/questions_paper/folder_16419_g/images/00_000000.png}{figures/supp/questions_paper/folder_16419_g/images/01_000002.png}{figures/supp/questions_paper/folder_16419_g/images/02_000004.png}{figures/supp/questions_paper/folder_16419_g/images/03_000006.png}
+                {figures/supp/questions_paper/folder_16419_g/images/04_000008.png}{figures/supp/questions_paper/folder_16419_g/images/05_000010.png}{figures/supp/questions_paper/folder_16419_g/images/06_000012.png}{figures/supp/questions_paper/folder_16419_g/images/07_000014.png}}
     {\textbf{No question provided/possible}}
-    {Considering all frames, what is the real-world displacement of the centroid of the "blue sport-design kid backpack" from the first to the last frame? \opts{2.7 meters}{0.5 meters}{3.7 meters}{\textbf{1.6 meters}}}
+    {Considering all frames, what is the real-world displacement of the centroid of the "box of Brother PC-501 print cartridge" from the first to the last frame? \opts{0.1 meters}{0.5 meters}{\textbf{1.2 meters}}{0.8 meters}}
 
 % --- ENTRY F_KINEMATICS_SYSTEM_STABILITY ---
 \vqaSplitEntry{F\_KINEMATICS\_SYSTEM\_STABILITY}
@@ -112,9 +112,9 @@
 \vqaSplitEntry{F\_COLLISION\_OBJECT\_\allowbreak OBJECT\_FRAME\_SINGLE}
     {Mechanics}
     {Collision}
-    {figures/supp/questions_paper/folder_25812_i/images/image_01.png}
+    {figures/supp/questions_paper/folder_27464_i/images/00_000008.png}
     {}
-    {Based on the image, which visible object is the "dark ballet flat shoe" colliding with? \opts{\textbf{shelf bin}}{white soccer shoe}{colored cactus balancing toy}{empty purple and green pencil case}}
+    {Based on the image, which visible object is the "motorcycle helmet" colliding with? \opts{256-piece LEGO Fusion boxed set}{blue backpack}{white soccer shoe}{\textbf{boxed SLIDERS board game}}}
     {\textbf{No question provided/possible}}
 
 % --- ENTRY F_COLLISION_OBJECT_OBJECT_FRAME_MULTI ---
@@ -122,38 +122,38 @@
     {Mechanics}
     {Collision}
     {}
-    {\stripFour{figures/supp/questions_paper/folder_34061_g/images/image_01.png}{figures/supp/questions_paper/folder_34061_g/images/image_02.png}{figures/supp/questions_paper/folder_34061_g/images/image_03.png}{figures/supp/questions_paper/folder_34061_g/images/image_04.png}}
+    {\stripFour{figures/supp/questions_paper/folder_48714_g/images/00_000029.png}{figures/supp/questions_paper/folder_48714_g/images/01_000025.png}{figures/supp/questions_paper/folder_48714_g/images/02_000033.png}{figures/supp/questions_paper/folder_48714_g/images/03_000021.png}}
     {\textbf{No question provided/possible}}
-    {In which frame is the "12-pack carton of diet pepsi cans" most likely colliding with another object? \opts{A}{B}{C}{\textbf{D}}}
+    {In which frame is the "boxed My Monopoly board game" most likely colliding with another object? \opts{A}{B}{\textbf{C}}{D}}
 
 % --- ENTRY F_COLLISION_OBJECT_SCENE_FRAME_MULTI ---
 \vqaSplitEntry{F\_COLLISION\_OBJECT\_\allowbreak SCENE\_FRAME\_MULTI}
     {Mechanics}
     {Collision}
     {}
-    {\stripFour{figures/supp/questions_paper/folder_3_g/images/image_01.png}{figures/supp/questions_paper/folder_3_g/images/image_02.png}{figures/supp/questions_paper/folder_3_g/images/image_03.png}{figures/supp/questions_paper/folder_3_g/images/image_04.png}}
+    {\stripFour{figures/supp/questions_paper/folder_16312_g/images/00_000008.png}{figures/supp/questions_paper/folder_16312_g/images/01_000012.png}{figures/supp/questions_paper/folder_16312_g/images/02_000016.png}{figures/supp/questions_paper/folder_16312_g/images/03_000004.png}}
     {\textbf{No question provided/possible}}
-    {In which frame is the "boxed My Monopoly board game" most likely colliding with the static scene? \opts{\textbf{A}}{B}{C}{D}}
+    {In which frame is the "brown dinosaur toy figurine" most likely colliding with the static scene? \opts{A}{B}{\textbf{C}}{D}}
 
 % --- ENTRY F_MASS_OBJECT ---
 \vqaSplitEntry{F\_MASS\_OBJECT}
     {Material Understanding}
     {Mass}
-    {figures/supp/questions_paper/folder_15839_i/images/00_000040.png}
-    {\stripEight{figures/supp/questions_paper/folder_15839_g/images/00_000012.png}{figures/supp/questions_paper/folder_15839_g/images/01_000016.png}{figures/supp/questions_paper/folder_15839_g/images/02_000020.png}{figures/supp/questions_paper/folder_15839_g/images/03_000024.png}
-                {figures/supp/questions_paper/folder_15839_g/images/04_000028.png}{figures/supp/questions_paper/folder_15839_g/images/05_000032.png}{figures/supp/questions_paper/folder_15839_g/images/06_000036.png}{figures/supp/questions_paper/folder_15839_g/images/07_000040.png}}
-    {Based on the image, what is the mass of the "army-design lunch bag"? \opts{2.00 kgs}{\textbf{3.12 kgs}}{4.24 kgs}{0.89 kgs}}
-    {Considering all frames, what is the mass of the "army-design lunch bag"? \opts{2.00 kgs}{\textbf{3.12 kgs}}{4.24 kgs}{0.89 kgs}}
+    {figures/supp/questions_paper/folder_35553_i/images/00_000025.png}
+    {\stripEight{figures/supp/questions_paper/folder_35553_g/images/00_000004.png}{figures/supp/questions_paper/folder_35553_g/images/01_000007.png}{figures/supp/questions_paper/folder_35553_g/images/02_000010.png}{figures/supp/questions_paper/folder_35553_g/images/03_000013.png}
+                {figures/supp/questions_paper/folder_35553_g/images/04_000016.png}{figures/supp/questions_paper/folder_35553_g/images/05_000019.png}{figures/supp/questions_paper/folder_35553_g/images/06_000022.png}{figures/supp/questions_paper/folder_35553_g/images/07_000025.png}}
+    {Based on the image, what is the mass of the "motorcycle helmet"? \opts{4.93 kgs}{3.40 kgs}{0.32 kgs}{\textbf{1.86 kgs}}}
+    {Considering all frames, what is the mass of the "motorcycle helmet"? \opts{4.93 kgs}{3.40 kgs}{0.32 kgs}{\textbf{1.86 kgs}}}
 
 % --- ENTRY F_MASS_HEAVIEST_OBJECT ---
 \vqaSplitEntry{F\_MASS\_HEAVIEST\_OBJECT}
     {Material Understanding}
     {Mass}
-    {figures/supp/questions_paper/folder_1517_i/images/00_000029.png}
-    {\stripEight{figures/supp/questions_paper/folder_1517_g/images/00_000001.png}{figures/supp/questions_paper/folder_1517_g/images/01_000005.png}{figures/supp/questions_paper/folder_1517_g/images/02_000009.png}{figures/supp/questions_paper/folder_1517_g/images/03_000013.png}
-                {figures/supp/questions_paper/folder_1517_g/images/04_000017.png}{figures/supp/questions_paper/folder_1517_g/images/05_000021.png}{figures/supp/questions_paper/folder_1517_g/images/06_000025.png}{figures/supp/questions_paper/folder_1517_g/images/07_000029.png}}
-    {Based on the image, which visible single object has the greatest mass? \opts{boxed Frozen board game}{Teenage Mutant Ninja Turtles action figurine}{woven straw fedora hat}{\textbf{12-pack carton of Pepsi MAX cans}}}
-    {Considering all frames, which single object, visible in the last frame, has the greatest mass? \opts{boxed Frozen board game}{Teenage Mutant Ninja Turtles action figurine}{woven straw fedora hat}{\textbf{12-pack carton of Pepsi MAX cans}}}
+    {figures/supp/questions_paper/folder_36274_i/images/00_000024.png}
+    {\stripEight{figures/supp/questions_paper/folder_36274_g/images/00_000003.png}{figures/supp/questions_paper/folder_36274_g/images/01_000006.png}{figures/supp/questions_paper/folder_36274_g/images/02_000009.png}{figures/supp/questions_paper/folder_36274_g/images/03_000012.png}
+                {figures/supp/questions_paper/folder_36274_g/images/04_000015.png}{figures/supp/questions_paper/folder_36274_g/images/05_000018.png}{figures/supp/questions_paper/folder_36274_g/images/06_000021.png}{figures/supp/questions_paper/folder_36274_g/images/07_000024.png}}
+    {Based on the image, which visible single object has the greatest mass? \opts{white jar of proteins}{empty purple and green pencil case}{\textbf{colored cactus balancing toy}}{shelf bin}}
+    {Considering all frames, which single object, visible in the last frame, has the greatest mass? \opts{white jar of proteins}{empty purple and green pencil case}{\textbf{colored cactus balancing toy}}{shelf bin}}
 
 % --- ENTRY F_MASS_LIGHTEST_OBJECT ---
 \vqaSplitEntry{F\_MASS\_LIGHTEST\_OBJECT}
@@ -189,31 +189,31 @@
 \vqaSplitEntry{F\_PHYSICS\_PROPERTY\_YOUNG\_\allowbreak MODULUS\_OBJECT\_METRIC\_PREFIX}
     {Material Understanding}
     {Young Modulus}
-    {figures/supp/questions_paper/folder_38626_i/images/00_000012.png}
-    {\stripEight{figures/supp/questions_paper/folder_38626_g/images/00_000005.png}{figures/supp/questions_paper/folder_38626_g/images/01_000006.png}{figures/supp/questions_paper/folder_38626_g/images/02_000007.png}{figures/supp/questions_paper/folder_38626_g/images/03_000008.png}
-                {figures/supp/questions_paper/folder_38626_g/images/04_000009.png}{figures/supp/questions_paper/folder_38626_g/images/05_000010.png}{figures/supp/questions_paper/folder_38626_g/images/06_000011.png}{figures/supp/questions_paper/folder_38626_g/images/07_000012.png}}
-    {Based on the image, what is the Young's modulus of the "boxed Aggravation board game"? \opts{0,032 MPa}{3,15 MPa}{0,315 MPa}{\textbf{315,00 MPa}}}
-    {Considering all frames, what is the Young's modulus of the "boxed Aggravation board game"? \opts{0,032 MPa}{3,15 MPa}{0,315 MPa}{\textbf{315,00 MPa}}}
+    {figures/supp/questions_paper/folder_69118_i/images/00_000009.png}
+    {\stripEight{figures/supp/questions_paper/folder_69118_g/images/00_000002.png}{figures/supp/questions_paper/folder_69118_g/images/01_000003.png}{figures/supp/questions_paper/folder_69118_g/images/02_000004.png}{figures/supp/questions_paper/folder_69118_g/images/03_000005.png}
+                {figures/supp/questions_paper/folder_69118_g/images/04_000006.png}{figures/supp/questions_paper/folder_69118_g/images/05_000007.png}{figures/supp/questions_paper/folder_69118_g/images/06_000008.png}{figures/supp/questions_paper/folder_69118_g/images/07_000009.png}}
+    {Based on the image, what is the Young's modulus of the "box of Samsung C406S cartridge"? \opts{0,400 MPa}{4,00 MPa}{\textbf{40,00 MPa}}{0,040 MPa}}
+    {Considering all frames, what is the Young's modulus of the "box of Samsung C406S cartridge"? \opts{0,400 MPa}{4,00 MPa}{\textbf{40,00 MPa}}{0,040 MPa}}
 
 % --- ENTRY F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR ---
 \vqaSplitEntry{F\_PHYSICS\_PROPERTY\_\allowbreak YOUNG\_MODULUS\_OBJECT\_SIMILAR}
     {Material Understanding}
     {Young Modulus}
-    {figures/supp/questions_paper/folder_36939_i/images/00_000008.png}
-    {\stripEight{figures/supp/questions_paper/folder_36939_g/images/00_000001.png}{figures/supp/questions_paper/folder_36939_g/images/01_000002.png}{figures/supp/questions_paper/folder_36939_g/images/02_000003.png}{figures/supp/questions_paper/folder_36939_g/images/03_000004.png}
-                {figures/supp/questions_paper/folder_36939_g/images/04_000005.png}{figures/supp/questions_paper/folder_36939_g/images/05_000006.png}{figures/supp/questions_paper/folder_36939_g/images/06_000007.png}{figures/supp/questions_paper/folder_36939_g/images/07_000008.png}}
-    {Based on the image, which visible object has a Young's Modulus most similar to that of the "boxed Clue board game"? \opts{\textbf{boxed purple Operation board game}}{Teenage Mutant Ninja Turtles action figurine}{orange Transformers action figure}{box of Samsung C406S cartridge}}
-    {Considering all frames, which object, visible in the last frame, has a Young's Modulus most similar to that of the "boxed Clue board game"? \opts{\textbf{boxed purple Operation board game}}{Teenage Mutant Ninja Turtles action figurine}{orange Transformers action figure}{box of Samsung C406S cartridge}}
+    {figures/supp/questions_paper/folder_50156_i/images/00_000030.png}
+    {\stripEight{figures/supp/questions_paper/folder_50156_g/images/00_000002.png}{figures/supp/questions_paper/folder_50156_g/images/01_000006.png}{figures/supp/questions_paper/folder_50156_g/images/02_000010.png}{figures/supp/questions_paper/folder_50156_g/images/03_000014.png}
+                {figures/supp/questions_paper/folder_50156_g/images/04_000018.png}{figures/supp/questions_paper/folder_50156_g/images/05_000022.png}{figures/supp/questions_paper/folder_50156_g/images/06_000026.png}{figures/supp/questions_paper/folder_50156_g/images/07_000030.png}}
+    {Based on the image, which visible object has a Young's Modulus most similar to that of the "12-pack Fresca soda carton"? \opts{orange and black basketball shoe}{256-piece LEGO Fusion boxed set}{gray fedora hat}{\textbf{orange Transformers action figure}}}
+    {Considering all frames, which object, visible in the last frame, has a Young's Modulus most similar to that of the "12-pack Fresca soda carton"? \opts{orange and black basketball shoe}{256-piece LEGO Fusion boxed set}{gray fedora hat}{\textbf{orange Transformers action figure}}}
 
 % --- ENTRY F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR_NON_TECHNICAL ---
 \vqaSplitEntry{F\_PHYSICS\_PROPERTY\_YOUNG\_\allowbreak MODULUS\_OBJECT\_SIMILAR\_NON\_TECHNICAL}
     {Material Understanding}
     {Young Modulus}
-    {figures/supp/questions_paper/folder_39758_i/images/00_000008.png}
-    {\stripEight{figures/supp/questions_paper/folder_39758_g/images/00_000001.png}{figures/supp/questions_paper/folder_39758_g/images/01_000002.png}{figures/supp/questions_paper/folder_39758_g/images/02_000003.png}{figures/supp/questions_paper/folder_39758_g/images/03_000004.png}
-                {figures/supp/questions_paper/folder_39758_g/images/04_000005.png}{figures/supp/questions_paper/folder_39758_g/images/05_000006.png}{figures/supp/questions_paper/folder_39758_g/images/06_000007.png}{figures/supp/questions_paper/folder_39758_g/images/07_000008.png}}
-    {Based on the image, which visible object has a softness most similar to that of the "jar of Twinlab protein powder"? \opts{painted toy castle made of stacked blocks}{boxed LIFE board game}{\textbf{futuristic dinosaur robot figure}}{boxed Connect 4 Launchers game}}
-    {Considering all frames, which object, visible in the last frame, has a softness most similar to that of the "jar of Twinlab protein powder"? \opts{painted toy castle made of stacked blocks}{boxed LIFE board game}{\textbf{futuristic dinosaur robot figure}}{boxed Connect 4 Launchers game}}
+    {figures/supp/questions_paper/folder_46640_i/images/00_000019.png}
+    {\stripEight{figures/supp/questions_paper/folder_46640_g/images/00_000005.png}{figures/supp/questions_paper/folder_46640_g/images/01_000007.png}{figures/supp/questions_paper/folder_46640_g/images/02_000009.png}{figures/supp/questions_paper/folder_46640_g/images/03_000011.png}
+                {figures/supp/questions_paper/folder_46640_g/images/04_000013.png}{figures/supp/questions_paper/folder_46640_g/images/05_000015.png}{figures/supp/questions_paper/folder_46640_g/images/06_000017.png}{figures/supp/questions_paper/folder_46640_g/images/07_000019.png}}
+    {Based on the image, which visible object has a softness most similar to that of the "gray elephant toy"? \opts{\textbf{stuffed dog toy}}{boxed Tetris Link board game}{Teenage Mutant Ninja Turtles action figurine}{boxed Frozen board game}}
+    {Considering all frames, which object, visible in the last frame, has a softness most similar to that of the "gray elephant toy"? \opts{\textbf{stuffed dog toy}}{boxed Tetris Link board game}{Teenage Mutant Ninja Turtles action figurine}{boxed Frozen board game}}
 
 % --- ENTRY F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST ---
 \vqaSplitEntry{F\_PHYSICS\_PROPERTY\_\allowbreak YOUNG\_MODULUS\_HIGHEST}
@@ -239,21 +239,21 @@
 \vqaSplitEntry{F\_PHYSICS\_PROPERTY\_YOUNG\_\allowbreak MODULUS\_OBJECT\_HIGH\_LEVEL}
     {Material Understanding}
     {Young Modulus}
-    {figures/supp/questions_paper/folder_4550_i/images/00_000018.png}
-    {\stripEight{figures/supp/questions_paper/folder_4550_g/images/00_000004.png}{figures/supp/questions_paper/folder_4550_g/images/01_000006.png}{figures/supp/questions_paper/folder_4550_g/images/02_000008.png}{figures/supp/questions_paper/folder_4550_g/images/03_000010.png}
-                {figures/supp/questions_paper/folder_4550_g/images/04_000012.png}{figures/supp/questions_paper/folder_4550_g/images/05_000014.png}{figures/supp/questions_paper/folder_4550_g/images/06_000016.png}{figures/supp/questions_paper/folder_4550_g/images/07_000018.png}}
-    {Based on the image, which attribute best describes the "boxed Aggravation board game" in terms of deformability? \opts{\textbf{Rigid (Holds shape perfectly)}}{Flexible (Bendable but tough)}{Soft (Deformable like stiff foam)}{Very Soft (No resistance, like a plush toy)}}
-    {Considering all frames, which attribute best describes the "boxed Aggravation board game", visible in the last frame, in terms of deformability? \opts{\textbf{Rigid (Holds shape perfectly)}}{Flexible (Bendable but tough)}{Soft (Deformable like stiff foam)}{Very Soft (No resistance, like a plush toy)}}
+    {figures/supp/questions_paper/folder_56620_i/images/00_000017.png}
+    {\stripEight{figures/supp/questions_paper/folder_56620_g/images/00_000003.png}{figures/supp/questions_paper/folder_56620_g/images/01_000005.png}{figures/supp/questions_paper/folder_56620_g/images/02_000007.png}{figures/supp/questions_paper/folder_56620_g/images/03_000009.png}
+                {figures/supp/questions_paper/folder_56620_g/images/04_000011.png}{figures/supp/questions_paper/folder_56620_g/images/05_000013.png}{figures/supp/questions_paper/folder_56620_g/images/06_000015.png}{figures/supp/questions_paper/folder_56620_g/images/07_000017.png}}
+    {Based on the image, which attribute best describes the "green Avengers figuring with cape" in terms of deformability? \opts{Rigid (Holds shape perfectly)}{Soft (Deformable like stiff foam)}{\textbf{Flexible (Bendable but tough)}}{Very Soft (No resistance, like a plush toy)}}
+    {Considering all frames, which attribute best describes the "green Avengers figuring with cape", visible in the last frame, in terms of deformability? \opts{Rigid (Holds shape perfectly)}{Soft (Deformable like stiff foam)}{\textbf{Flexible (Bendable but tough)}}{Very Soft (No resistance, like a plush toy)}}
 
 % --- ENTRY F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT ---
 \vqaSplitEntry{F\_PHYSICS\_PROPERTY\_\allowbreak POISSON\_RATIO\_OBJECT}
     {Material Understanding}
     {Poisson Ratio}
-    {figures/supp/questions_paper/folder_3670_i/images/00_000007.png}
-    {\stripEight{figures/supp/questions_paper/folder_3670_g/images/00_000000.png}{figures/supp/questions_paper/folder_3670_g/images/01_000001.png}{figures/supp/questions_paper/folder_3670_g/images/02_000002.png}{figures/supp/questions_paper/folder_3670_g/images/03_000003.png}
-                {figures/supp/questions_paper/folder_3670_g/images/04_000004.png}{figures/supp/questions_paper/folder_3670_g/images/05_000005.png}{figures/supp/questions_paper/folder_3670_g/images/06_000006.png}{figures/supp/questions_paper/folder_3670_g/images/07_000007.png}}
-    {Based on the image, what is the Poisson ratio of the "jar of Twinlab protein powder"? \opts{0.10}{0.20}{0.40}{\textbf{0.30}}}
-    {Considering all frames, what is the Poisson ratio of the "jar of Twinlab protein powder"? \opts{0.10}{0.20}{0.40}{\textbf{0.30}}}
+    {figures/supp/questions_paper/folder_35501_i/images/00_000009.png}
+    {\stripEight{figures/supp/questions_paper/folder_35501_g/images/00_000002.png}{figures/supp/questions_paper/folder_35501_g/images/01_000003.png}{figures/supp/questions_paper/folder_35501_g/images/02_000004.png}{figures/supp/questions_paper/folder_35501_g/images/03_000005.png}
+                {figures/supp/questions_paper/folder_35501_g/images/04_000006.png}{figures/supp/questions_paper/folder_35501_g/images/05_000007.png}{figures/supp/questions_paper/folder_35501_g/images/06_000008.png}{figures/supp/questions_paper/folder_35501_g/images/07_000009.png}}
+    {Based on the image, what is the Poisson ratio of the "green and white art kit box"? \opts{0.47}{0.23}{\textbf{0.35}}{0.12}}
+    {Considering all frames, what is the Poisson ratio of the "green and white art kit box"? \opts{0.47}{0.23}{\textbf{0.35}}{0.12}}
 
 % --- ENTRY F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR ---
 \vqaSplitEntry{F\_PHYSICS\_PROPERTY\_\allowbreak POISSON\_RATIO\_OBJECT\_SIMILAR}
@@ -289,11 +289,11 @@
 \vqaSplitEntry{F\_PHYSICS\_PROPERTY\_POISSON\_\allowbreak RATIO\_HIGHEST\_NON\_TECHNICAL}
     {Material Understanding}
     {Poisson Ratio}
-    {figures/supp/questions_paper/folder_27240_i/images/00_000030.png}
-    {\stripEight{figures/supp/questions_paper/folder_27240_g/images/00_000002.png}{figures/supp/questions_paper/folder_27240_g/images/01_000006.png}{figures/supp/questions_paper/folder_27240_g/images/02_000010.png}{figures/supp/questions_paper/folder_27240_g/images/03_000014.png}
-                {figures/supp/questions_paper/folder_27240_g/images/04_000018.png}{figures/supp/questions_paper/folder_27240_g/images/05_000022.png}{figures/supp/questions_paper/folder_27240_g/images/06_000026.png}{figures/supp/questions_paper/folder_27240_g/images/07_000030.png}}
-    {Based on the image, which visible object bulges out the most when you press on it? \opts{white-striped purple pencil case}{white soccer shoe}{Teenage Mutant Ninja Turtles action figurine}{\textbf{green ogre toy figurine}}}
-    {Considering all frames, which object, visible in the last frame, bulges out the most when you press on it? \opts{white-striped purple pencil case}{white soccer shoe}{Teenage Mutant Ninja Turtles action figurine}{\textbf{green ogre toy figurine}}}
+    {figures/supp/questions_paper/folder_36908_i/images/00_000008.png}
+    {\stripEight{figures/supp/questions_paper/folder_36908_g/images/00_000001.png}{figures/supp/questions_paper/folder_36908_g/images/01_000002.png}{figures/supp/questions_paper/folder_36908_g/images/02_000003.png}{figures/supp/questions_paper/folder_36908_g/images/03_000004.png}
+                {figures/supp/questions_paper/folder_36908_g/images/04_000005.png}{figures/supp/questions_paper/folder_36908_g/images/05_000006.png}{figures/supp/questions_paper/folder_36908_g/images/06_000007.png}{figures/supp/questions_paper/folder_36908_g/images/07_000008.png}}
+    {Based on the image, which visible object bulges out the most when you press on it? \opts{\textbf{black lace-up boot}}{white soccer shoe}{Teenage Mutant Ninja Turtles action figurine}{gray shark toy}}
+    {Considering all frames, which object, visible in the last frame, bulges out the most when you press on it? \opts{\textbf{black lace-up boot}}{white soccer shoe}{Teenage Mutant Ninja Turtles action figurine}{gray shark toy}}
 
 % --- ENTRY F_PHYSICS_PROPERTY_POISSON_HIGH_LEVEL ---
 \vqaSplitEntry{F\_PHYSICS\_PROPERTY\_\allowbreak POISSON\_HIGH\_LEVEL}
@@ -339,11 +339,11 @@
 \vqaSplitEntry{F\_MATERIAL\_IDENTIFICATION\_\allowbreak OBJECT\_LEVEL\_3}
     {Material Understanding}
     {Material Identification}
-    {figures/supp/questions_paper/folder_2067_i/images/00_000024.png}
-    {\stripEight{figures/supp/questions_paper/folder_2067_g/images/00_000003.png}{figures/supp/questions_paper/folder_2067_g/images/01_000006.png}{figures/supp/questions_paper/folder_2067_g/images/02_000009.png}{figures/supp/questions_paper/folder_2067_g/images/03_000012.png}
-                {figures/supp/questions_paper/folder_2067_g/images/04_000015.png}{figures/supp/questions_paper/folder_2067_g/images/05_000018.png}{figures/supp/questions_paper/folder_2067_g/images/06_000021.png}{figures/supp/questions_paper/folder_2067_g/images/07_000024.png}}
-    {Based on the image, what material is the "Princess Celestia pony figurine toy" made of? \opts{metal}{\textbf{plastic}}{paper/cardboard}{ceramic}}
-    {Considering all frames, what material is the "Princess Celestia pony figurine toy" made of? \opts{metal}{\textbf{plastic}}{paper/cardboard}{ceramic}}
+    {figures/supp/questions_paper/folder_37473_i/images/00_000008.png}
+    {\stripEight{figures/supp/questions_paper/folder_37473_g/images/00_000001.png}{figures/supp/questions_paper/folder_37473_g/images/01_000002.png}{figures/supp/questions_paper/folder_37473_g/images/02_000003.png}{figures/supp/questions_paper/folder_37473_g/images/03_000004.png}
+                {figures/supp/questions_paper/folder_37473_g/images/04_000005.png}{figures/supp/questions_paper/folder_37473_g/images/05_000006.png}{figures/supp/questions_paper/folder_37473_g/images/06_000007.png}{figures/supp/questions_paper/folder_37473_g/images/07_000008.png}}
+    {Based on the image, what material is the "gift box" made of? \opts{leather}{wicker/rattan}{\textbf{paper/cardboard}}{fabric/textile}}
+    {Considering all frames, what material is the "gift box" made of? \opts{leather}{wicker/rattan}{\textbf{paper/cardboard}}{fabric/textile}}
 
 % --- ENTRY F_VISIBILITY_OBJECT ---
 \vqaSplitEntry{F\_VISIBILITY\_OBJECT}
@@ -359,21 +359,21 @@
 \vqaSplitEntry{F\_OCCLUSION\_PERCENTAGE\_OBJECT}
     {View Point}
     {Visibility}
-    {figures/supp/questions_paper/folder_25758_i/images/00_000022.png}
-    {\stripEight{figures/supp/questions_paper/folder_25758_g/images/00_000001.png}{figures/supp/questions_paper/folder_25758_g/images/01_000004.png}{figures/supp/questions_paper/folder_25758_g/images/02_000007.png}{figures/supp/questions_paper/folder_25758_g/images/03_000010.png}
-                {figures/supp/questions_paper/folder_25758_g/images/04_000013.png}{figures/supp/questions_paper/folder_25758_g/images/05_000016.png}{figures/supp/questions_paper/folder_25758_g/images/06_000019.png}{figures/supp/questions_paper/folder_25758_g/images/07_000022.png}}
-    {Based on the image, how much of the "orange Transformers action figure" is occluded? \opts{\textbf{Fully Visible (>95\% visible)}}{Partially Occluded (25-65\% visible)}{Slightly Occluded (65-95\% visible)}{Severely Occluded (0-25\% visible)}}
-    {Considering all frames, how much of the "orange Transformers action figure" is occluded in the last frame? \opts{\textbf{Fully Visible (>95\% visible)}}{Partially Occluded (25-65\% visible)}{Slightly Occluded (65-95\% visible)}{Severely Occluded (0-25\% visible)}}
+    {figures/supp/questions_paper/folder_37894_i/images/00_000022.png}
+    {\stripEight{figures/supp/questions_paper/folder_37894_g/images/00_000001.png}{figures/supp/questions_paper/folder_37894_g/images/01_000004.png}{figures/supp/questions_paper/folder_37894_g/images/02_000007.png}{figures/supp/questions_paper/folder_37894_g/images/03_000010.png}
+                {figures/supp/questions_paper/folder_37894_g/images/04_000013.png}{figures/supp/questions_paper/folder_37894_g/images/05_000016.png}{figures/supp/questions_paper/folder_37894_g/images/06_000019.png}{figures/supp/questions_paper/folder_37894_g/images/07_000022.png}}
+    {Based on the image, how much of the "motorcycle helmet" is occluded? \opts{\textbf{Slightly Occluded (65-95\% visible)}}{Fully Visible (>95\% visible)}{Partially Occluded (25-65\% visible)}{Severely Occluded (0-25\% visible)}}
+    {Considering all frames, how much of the "motorcycle helmet" is occluded in the last frame? \opts{\textbf{Slightly Occluded (65-95\% visible)}}{Fully Visible (>95\% visible)}{Partially Occluded (25-65\% visible)}{Severely Occluded (0-25\% visible)}}
 
 % --- ENTRY F_VISIBILITY_OBJECT_COUNT ---
 \vqaSplitEntry{F\_VISIBILITY\_OBJECT\_COUNT}
     {View Point}
     {Visibility}
-    {figures/supp/questions_paper/folder_2219_i/images/00_000011.png}
-    {\stripEight{figures/supp/questions_paper/folder_2219_g/images/00_000004.png}{figures/supp/questions_paper/folder_2219_g/images/01_000005.png}{figures/supp/questions_paper/folder_2219_g/images/02_000006.png}{figures/supp/questions_paper/folder_2219_g/images/03_000007.png}
-                {figures/supp/questions_paper/folder_2219_g/images/04_000008.png}{figures/supp/questions_paper/folder_2219_g/images/05_000009.png}{figures/supp/questions_paper/folder_2219_g/images/06_000010.png}{figures/supp/questions_paper/folder_2219_g/images/07_000011.png}}
-    {Based on the image, how many objects are visible? \opts{7}{4}{5}{\textbf{6}}}
-    {Considering all frames, how many objects are visible in the last frame? \opts{7}{4}{5}{\textbf{6}}}
+    {figures/supp/questions_paper/folder_27025_i/images/00_000024.png}
+    {\stripEight{figures/supp/questions_paper/folder_27025_g/images/00_000003.png}{figures/supp/questions_paper/folder_27025_g/images/01_000006.png}{figures/supp/questions_paper/folder_27025_g/images/02_000009.png}{figures/supp/questions_paper/folder_27025_g/images/03_000012.png}
+                {figures/supp/questions_paper/folder_27025_g/images/04_000015.png}{figures/supp/questions_paper/folder_27025_g/images/05_000018.png}{figures/supp/questions_paper/folder_27025_g/images/06_000021.png}{figures/supp/questions_paper/folder_27025_g/images/07_000024.png}}
+    {Based on the image, how many objects are visible? \opts{4}{1}{2}{\textbf{3}}}
+    {Considering all frames, how many objects are visible in the last frame? \opts{4}{1}{2}{\textbf{3}}}
 
 % --- ENTRY F_VIEWPOINT_CAMERA_ANGLE ---
 \vqaSplitEntry{F\_VIEWPOINT\_CAMERA\_ANGLE}
@@ -400,27 +400,27 @@
     {Temporal}
     {Event Ordering}
     {}
-    {\stripFour{figures/supp/questions_paper/folder_19100_g/images/00_000005.png}{figures/supp/questions_paper/folder_19100_g/images/01_000013.png}{figures/supp/questions_paper/folder_19100_g/images/02_000017.png}{figures/supp/questions_paper/folder_19100_g/images/03_000009.png}}
+    {\stripFour{figures/supp/questions_paper/folder_26596_g/images/00_000006.png}{figures/supp/questions_paper/folder_26596_g/images/01_000018.png}{figures/supp/questions_paper/folder_26596_g/images/02_000010.png}{figures/supp/questions_paper/folder_26596_g/images/03_000014.png}}
     {\textbf{No question provided/possible}}
-    {Given the four unordered frames (A, B, C, D) of the same scene, what is the correct temporal ordering of the events? \opts{A-C-B-D}{\textbf{A-D-B-C}}{C-D-B-A}{C-A-B-D}}
+    {Given the four unordered frames (A, B, C, D) of the same scene, what is the correct temporal ordering of the events? \opts{A-B-C-D}{D-B-A-C}{C-D-A-B}{\textbf{A-C-D-B}}}
 
 % --- ENTRY F_TEMPORAL_PREDICTION_NEXT_IMAGE_GRANULARITY_1 ---
 \vqaSplitEntry{F\_TEMPORAL\_PREDICTION\_\allowbreak NEXT\_IMAGE\_GRANULARITY\_1}
     {Temporal}
     {Event Ordering}
     {}
-    {\stripEight{figures/supp/questions_paper/folder_5003_g/images/00_000007.png}{figures/supp/questions_paper/folder_5003_g/images/01_000008.png}{figures/supp/questions_paper/folder_5003_g/images/02_000009.png}{figures/supp/questions_paper/folder_5003_g/images/03_000010.png}
-                {figures/supp/questions_paper/folder_5003_g/images/04_000004.png}{figures/supp/questions_paper/folder_5003_g/images/05_000001.png}{figures/supp/questions_paper/folder_5003_g/images/06_000000.png}{figures/supp/questions_paper/folder_5003_g/images/07_000011.png}}
+    {\stripEight{figures/supp/questions_paper/folder_26089_g/images/00_000014.png}{figures/supp/questions_paper/folder_26089_g/images/01_000015.png}{figures/supp/questions_paper/folder_26089_g/images/02_000016.png}{figures/supp/questions_paper/folder_26089_g/images/03_000017.png}
+                {figures/supp/questions_paper/folder_26089_g/images/04_000018.png}{figures/supp/questions_paper/folder_26089_g/images/05_000011.png}{figures/supp/questions_paper/folder_26089_g/images/06_000006.png}{figures/supp/questions_paper/folder_26089_g/images/07_000005.png}}
     {\textbf{No question provided/possible}}
-    {Which individual frame (t5, t6, t7, or t8) is most likely to display an event that occurred after the provided frame sequence (t1, t2, t3, t4)? \opts{t5}{t6}{t7}{\textbf{t8}}}
+    {Which individual frame (t5, t6, t7, or t8) is most likely to display an event that occurred after the provided frame sequence (t1, t2, t3, t4)? \opts{\textbf{t5}}{t6}{t7}{t8}}
 
 % --- ENTRY F_TEMPORAL_PREDICTION_NEXT_IMAGE_GRANULARITY_2 ---
 \vqaSplitEntry{F\_TEMPORAL\_PREDICTION\_\allowbreak NEXT\_IMAGE\_GRANULARITY\_2}
     {Temporal}
     {Event Ordering}
     {}
-    {\stripEight{figures/supp/questions_paper/folder_4223_g/images/00_000004.png}{figures/supp/questions_paper/folder_4223_g/images/01_000006.png}{figures/supp/questions_paper/folder_4223_g/images/02_000008.png}{figures/supp/questions_paper/folder_4223_g/images/03_000010.png}
-                {figures/supp/questions_paper/folder_4223_g/images/04_000029.png}{figures/supp/questions_paper/folder_4223_g/images/05_000019.png}{figures/supp/questions_paper/folder_4223_g/images/06_000012.png}{figures/supp/questions_paper/folder_4223_g/images/07_000018.png}}
+    {\stripEight{figures/supp/questions_paper/folder_26466_g/images/00_000007.png}{figures/supp/questions_paper/folder_26466_g/images/01_000009.png}{figures/supp/questions_paper/folder_26466_g/images/02_000011.png}{figures/supp/questions_paper/folder_26466_g/images/03_000013.png}
+                {figures/supp/questions_paper/folder_26466_g/images/04_000005.png}{figures/supp/questions_paper/folder_26466_g/images/05_000006.png}{figures/supp/questions_paper/folder_26466_g/images/06_000015.png}{figures/supp/questions_paper/folder_26466_g/images/07_000019.png}}
     {\textbf{No question provided/possible}}
     {Which individual frame (t5, t6, t7, or t8) is most likely to display an event that occurred after the provided frame sequence (t1, t2, t3, t4)? \opts{t5}{t6}{\textbf{t7}}{t8}}
 
@@ -429,28 +429,28 @@
     {Temporal}
     {Event Ordering}
     {}
-    {\stripEight{figures/supp/questions_paper/folder_48167_g/images/00_000004.png}{figures/supp/questions_paper/folder_48167_g/images/01_000009.png}{figures/supp/questions_paper/folder_48167_g/images/02_000014.png}{figures/supp/questions_paper/folder_48167_g/images/03_000019.png}
-                {figures/supp/questions_paper/folder_48167_g/images/04_000030.png}{figures/supp/questions_paper/folder_48167_g/images/05_000024.png}{figures/supp/questions_paper/folder_48167_g/images/06_000029.png}{figures/supp/questions_paper/folder_48167_g/images/07_000033.png}}
+    {\stripEight{figures/supp/questions_paper/folder_48469_g/images/00_000032.png}{figures/supp/questions_paper/folder_48469_g/images/01_000037.png}{figures/supp/questions_paper/folder_48469_g/images/02_000042.png}{figures/supp/questions_paper/folder_48469_g/images/03_000047.png}
+                {figures/supp/questions_paper/folder_48469_g/images/04_000052.png}{figures/supp/questions_paper/folder_48469_g/images/05_000008.png}{figures/supp/questions_paper/folder_48469_g/images/06_000002.png}{figures/supp/questions_paper/folder_48469_g/images/07_000022.png}}
     {\textbf{No question provided/possible}}
-    {Which individual frame (t5, t6, t7, or t8) is most likely to display an event that occurred after the provided frame sequence (t1, t2, t3, t4)? \opts{t5}{\textbf{t6}}{t7}{t8}}
+    {Which individual frame (t5, t6, t7, or t8) is most likely to display an event that occurred after the provided frame sequence (t1, t2, t3, t4)? \opts{\textbf{t5}}{t6}{t7}{t8}}
 
 % --- ENTRY F_TEMPORAL_PREDICTION_PREVIOUS_IMAGE ---
 \vqaSplitEntry{F\_TEMPORAL\_\allowbreak PREDICTION\_PREVIOUS\_IMAGE}
     {Temporal}
     {Event Ordering}
     {}
-    {\stripEight{figures/supp/questions_paper/folder_84_g/images/image_01.png}{figures/supp/questions_paper/folder_84_g/images/image_02.png}{figures/supp/questions_paper/folder_84_g/images/image_03.png}{figures/supp/questions_paper/folder_84_g/images/image_04.png}
-                {figures/supp/questions_paper/folder_84_g/images/image_05.png}{figures/supp/questions_paper/folder_84_g/images/image_06.png}{figures/supp/questions_paper/folder_84_g/images/image_07.png}{figures/supp/questions_paper/folder_84_g/images/image_08.png}}
+    {\stripEight{figures/supp/questions_paper/folder_38585_g/images/00_000006.png}{figures/supp/questions_paper/folder_38585_g/images/01_000010.png}{figures/supp/questions_paper/folder_38585_g/images/02_000014.png}{figures/supp/questions_paper/folder_38585_g/images/03_000018.png}
+                {figures/supp/questions_paper/folder_38585_g/images/04_000025.png}{figures/supp/questions_paper/folder_38585_g/images/05_000022.png}{figures/supp/questions_paper/folder_38585_g/images/06_000002.png}{figures/supp/questions_paper/folder_38585_g/images/07_000024.png}}
     {\textbf{No question provided/possible}}
-    {Which individual frame (t5, t6, t7, or t8) is most likely to display an event that occurred before the provided frame sequence (t1, t2, t3, t4)? \opts{t5}{\textbf{t6}}{t7}{t8}}
+    {Which individual frame (t5, t6, t7, or t8) is most likely to display an event that occurred before the provided frame sequence (t1, t2, t3, t4)? \opts{t5}{t6}{\textbf{t7}}{t8}}
 
 % --- ENTRY F_TEMPORAL_PREDICTION_MISSING_IMAGE ---
 \vqaSplitEntry{F\_TEMPORAL\_\allowbreak PREDICTION\_MISSING\_IMAGE}
     {Temporal}
     {Event Ordering}
     {}
-    {\stripEight{figures/supp/questions_paper/folder_57621_g/images/00_000038.png}{figures/supp/questions_paper/folder_57621_g/images/01_000042.png}{figures/supp/questions_paper/folder_57621_g/images/02_000046.png}{figures/supp/questions_paper/folder_57621_g/images/03_000050.png}
-                {figures/supp/questions_paper/folder_57621_g/images/04_000034.png}{figures/supp/questions_paper/folder_57621_g/images/05_000016.png}{figures/supp/questions_paper/folder_57621_g/images/06_000080.png}{figures/supp/questions_paper/folder_57621_g/images/07_000078.png}}
+    {\stripEight{figures/supp/questions_paper/folder_78297_g/images/00_000006.png}{figures/supp/questions_paper/folder_78297_g/images/01_000010.png}{figures/supp/questions_paper/folder_78297_g/images/02_000018.png}{figures/supp/questions_paper/folder_78297_g/images/03_000022.png}
+                {figures/supp/questions_paper/folder_78297_g/images/04_000014.png}{figures/supp/questions_paper/folder_78297_g/images/05_000043.png}{figures/supp/questions_paper/folder_78297_g/images/06_000035.png}{figures/supp/questions_paper/folder_78297_g/images/07_000039.png}}
     {\textbf{No question provided/possible}}
     {Which individual frame (t5, t6, t7, or t8) is most likely to display an event that occurred during the time span of the provided frame sequence (t1, t2, t3, t4)? \opts{\textbf{t5}}{t6}{t7}{t8}}
 
@@ -479,30 +479,30 @@
     {Persistence}
     {Object Persistence}
     {}
-    {\stripEight{figures/supp/questions_paper/folder_11338_g/images/00_000000.png}{figures/supp/questions_paper/folder_11338_g/images/01_000001.png}{figures/supp/questions_paper/folder_11338_g/images/02_000002.png}{figures/supp/questions_paper/folder_11338_g/images/03_000003.png}
-                {figures/supp/questions_paper/folder_11338_g/images/04_000004.png}{figures/supp/questions_paper/folder_11338_g/images/05_000005.png}{figures/supp/questions_paper/folder_11338_g/images/06_000006.png}{figures/supp/questions_paper/folder_11338_g/images/07_000007.png}}
+    {\stripEight{figures/supp/questions_paper/folder_40184_g/images/00_000007.png}{figures/supp/questions_paper/folder_40184_g/images/01_000009.png}{figures/supp/questions_paper/folder_40184_g/images/02_000011.png}{figures/supp/questions_paper/folder_40184_g/images/03_000013.png}
+                {figures/supp/questions_paper/folder_40184_g/images/04_000015.png}{figures/supp/questions_paper/folder_40184_g/images/05_000017.png}{figures/supp/questions_paper/folder_40184_g/images/06_000019.png}{figures/supp/questions_paper/folder_40184_g/images/07_000021.png}}
     {\textbf{No question provided/possible}}
-    {Considering all frames, which object was visible but disappeared in the last frame? \opts{\textbf{white-striped purple pencil case}}{Teenage Mutant Ninja Turtles action figurine}{white soccer shoe}{small blue painted bucket}}
+    {Considering all frames, which object was visible but disappeared in the last frame? \opts{white soccer shoe}{\textbf{Spiderman figurine}}{small blue painted bucket}{Teenage Mutant Ninja Turtles action figurine}}
 
 % --- ENTRY F_PERSISTENCE_OBJECT_DISAPPEAR ---
 \vqaSplitEntry{F\_PERSISTENCE\_OBJECT\_DISAPPEAR}
     {Persistence}
     {Object Persistence}
     {}
-    {\stripEight{figures/supp/questions_paper/folder_28377_g/images/00_000000.png}{figures/supp/questions_paper/folder_28377_g/images/01_000003.png}{figures/supp/questions_paper/folder_28377_g/images/02_000006.png}{figures/supp/questions_paper/folder_28377_g/images/03_000009.png}
-                {figures/supp/questions_paper/folder_28377_g/images/04_000012.png}{figures/supp/questions_paper/folder_28377_g/images/05_000015.png}{figures/supp/questions_paper/folder_28377_g/images/06_000018.png}{figures/supp/questions_paper/folder_28377_g/images/07_000021.png}}
+    {\stripEight{figures/supp/questions_paper/folder_38228_g/images/00_000002.png}{figures/supp/questions_paper/folder_38228_g/images/01_000006.png}{figures/supp/questions_paper/folder_38228_g/images/02_000010.png}{figures/supp/questions_paper/folder_38228_g/images/03_000014.png}
+                {figures/supp/questions_paper/folder_38228_g/images/04_000018.png}{figures/supp/questions_paper/folder_38228_g/images/05_000022.png}{figures/supp/questions_paper/folder_38228_g/images/06_000026.png}{figures/supp/questions_paper/folder_38228_g/images/07_000030.png}}
     {\textbf{No question provided/possible}}
-    {Considering all frames, which visible object disappeared and does not reappear in the last frame? \opts{small blue painted bucket}{\textbf{white jar of proteins}}{Teenage Mutant Ninja Turtles action figurine}{white soccer shoe}}
+    {Considering all frames, which visible object disappeared and does not reappear in the last frame? \opts{small blue painted bucket}{white soccer shoe}{\textbf{274-piece LEGO Star Wars boxed set}}{Teenage Mutant Ninja Turtles action figurine}}
 
 % --- ENTRY F_PERSISTENCE_OBJECT_TOTAL_COUNT ---
 \vqaSplitEntry{F\_PERSISTENCE\_\allowbreak OBJECT\_TOTAL\_COUNT}
     {Persistence}
     {Object Persistence}
     {}
-    {\stripEight{figures/supp/questions_paper/folder_34_g/images/image_01.png}{figures/supp/questions_paper/folder_34_g/images/image_02.png}{figures/supp/questions_paper/folder_34_g/images/image_03.png}{figures/supp/questions_paper/folder_34_g/images/image_04.png}
-                {figures/supp/questions_paper/folder_34_g/images/image_05.png}{figures/supp/questions_paper/folder_34_g/images/image_06.png}{figures/supp/questions_paper/folder_34_g/images/image_07.png}{figures/supp/questions_paper/folder_34_g/images/image_08.png}}
+    {\stripEight{figures/supp/questions_paper/folder_40308_g/images/00_000005.png}{figures/supp/questions_paper/folder_40308_g/images/01_000006.png}{figures/supp/questions_paper/folder_40308_g/images/02_000007.png}{figures/supp/questions_paper/folder_40308_g/images/03_000008.png}
+                {figures/supp/questions_paper/folder_40308_g/images/04_000009.png}{figures/supp/questions_paper/folder_40308_g/images/05_000010.png}{figures/supp/questions_paper/folder_40308_g/images/06_000011.png}{figures/supp/questions_paper/folder_40308_g/images/07_000012.png}}
     {\textbf{No question provided/possible}}
-    {Considering all frames, how many objects are present at the time of the last frame, including those currently hidden or out of frame? \opts{0}{2}{\textbf{1}}{3}}
+    {Considering all frames, how many objects are present at the time of the last frame, including those currently hidden or out of frame? \opts{4}{\textbf{5}}{3}{6}}
 
 % --- ENTRY F_PERSISTENCE_OBJECT_TOTAL_COUNT_HIDDEN ---
 \vqaSplitEntry{F\_PERSISTENCE\_OBJECT\_\allowbreak TOTAL\_COUNT\_HIDDEN}

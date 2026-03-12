@@ -3,12 +3,14 @@ from __future__ import annotations
 
 import html
 import json
+import os
 import re
 import shutil
 from pathlib import Path
 from typing import Any
 
 from PIL import Image
+from tqdm import tqdm
 
 
 QUESTIONS_DIR = Path("/Users/sebastiancavada/Desktop/tmp_paris/tiny_vqa_creation/supp_material_scripts/questions_paper")
@@ -20,6 +22,7 @@ MEDIA_DIR_NAME = "media"
 MARKERS_DIR_NAME = "markers"
 GIF_DURATION_MS = 350
 VQA_PAGE_NAME = "vqa.html"
+IMAGE_DOWNSCALE_FACTOR = 4
 MAPPING_CAT_COLORS = {
     "mechanics": "#FF5733",
     "spatial_reasoning": "#3498DB",
@@ -83,7 +86,13 @@ def ask_override(path: Path) -> None:
         return
     answer = input(f"{path} exists. Override it? [y/N] ").strip().lower()
     assert answer == "y", "Aborted."
-    shutil.rmtree(path)
+    for root, dirs, files in os.walk(path, topdown=False):
+        root_path = Path(root)
+        for file_name in files:
+            (root_path / file_name).unlink()
+        for dir_name in dirs:
+            (root_path / dir_name).rmdir()
+    path.rmdir()
 
 
 def load_qid_order() -> tuple[list[str], dict[str, str], dict[str, str]]:
@@ -145,6 +154,16 @@ def create_gif(image_paths: list[Path], gif_path: Path) -> None:
     )
 
 
+def copy_image_resized(source: Path, destination: Path) -> None:
+    image = Image.open(source)
+    width, height = image.size
+    resized = image.resize(
+        (max(1, width // IMAGE_DOWNSCALE_FACTOR), max(1, height // IMAGE_DOWNSCALE_FACTOR)),
+        Image.Resampling.LANCZOS,
+    )
+    resized.save(destination)
+
+
 def extract_answer_letter(text: str) -> str | None:
     clean = str(text).strip()
     patterns = [
@@ -187,7 +206,8 @@ def load_entries() -> list[dict[str, Any]]:
     predictions_by_idx, invalid_by_idx, marker_by_model, label_by_model = load_model_predictions()
     qid_rank = {qid: i for i, qid in enumerate(qid_order)}
     entries: list[dict[str, Any]] = []
-    for question_file in QUESTIONS_DIR.glob("folder_*/question.json"):
+    question_files = sorted(QUESTIONS_DIR.glob("folder_*/question.json"))
+    for question_file in tqdm(question_files, desc="Adding questions", unit="question"):
         data = json.loads(question_file.read_text())
         idx = str(data["idx"])
         qid = str(data["question_id"])
@@ -227,7 +247,10 @@ def copy_media(entries: list[dict[str, Any]]) -> None:
         for source in entry["media"]:
             assert source.exists(), f"Missing source media: {source}"
             destination = entry_dir / source.name
-            shutil.copy2(source, destination)
+            if source.suffix.lower() in IMAGE_SUFFIXES:
+                copy_image_resized(source, destination)
+            else:
+                shutil.copy2(source, destination)
             assert destination.exists(), f"Failed to copy media: {destination}"
             copied.append(f"{MEDIA_DIR_NAME}/{entry['idx']}/{source.name}")
             copied_paths.append(destination)
@@ -258,12 +281,27 @@ def copy_media(entries: list[dict[str, Any]]) -> None:
 def render_media(entry: dict[str, Any]) -> str:
     paths = entry["copied_media"]
     gif_path = entry["copied_gif"]
+    if entry["qid"] == "F_TEMPORAL_SEQUENCE_IMAGES" and len(paths) == 4:
+        blocks: list[str] = []
+        for rel_path in paths:
+            suffix = Path(rel_path).suffix.lower()
+            safe_path = html.escape(rel_path)
+            if suffix in VIDEO_SUFFIXES:
+                blocks.append(f'<video class="media-main" controls preload="metadata" src="{safe_path}"></video>')
+            else:
+                blocks.append(f'<img class="media-main" src="{safe_path}" alt="" />')
+        labels = ["A", "B", "C", "D"]
+        labeled_blocks = [
+            f'<div class="media-box-grid-labeled"><div class="media-inner">{block}</div><div class="media-label">{labels[i]}</div></div>'
+            for i, block in enumerate(blocks)
+        ]
+        return '<div class="media-grid-wrap"><div class="media-grid-4">' + "".join(labeled_blocks) + "</div></div>"
     if gif_path is not None:
         image_id = f"gif-{entry['idx']}"
         still_path = html.escape(paths[0])
         anim_path = html.escape(gif_path)
         return (
-            '<div class="media-box">'
+            '<div class="media-box media-box-full">'
             f'<img class="media-main" id="{html.escape(image_id)}" src="{still_path}" alt="" />'
             "</div>"
             f'<div style="margin-top:6px;"><button class="media-button" type="button" data-state="still" data-still="{still_path}" data-anim="{anim_path}" '
@@ -278,7 +316,7 @@ def render_media(entry: dict[str, Any]) -> str:
         else:
             blocks.append(f'<img class="media-main" src="{safe_path}" alt="" />')
     if len(blocks) == 1:
-        return '<div class="media-box">' + blocks[0] + "</div>"
+        return '<div class="media-box media-box-full">' + blocks[0] + "</div>"
     if entry["has_image_choices"] and len(blocks) == 8:
         answer_blocks = []
         for i, block in enumerate(blocks[4:]):
@@ -386,12 +424,14 @@ def render_html(entries: list[dict[str, Any]]) -> str:
         ".media-grid-8{display:grid;grid-template-columns:repeat(4, 1fr);gap:6px;height:320px;}"
         ".media-grid-answers{display:grid;grid-template-columns:repeat(4, 1fr);gap:6px;height:160px;margin-top:6px;}"
         ".media-box{width:100%;height:320px;display:flex;align-items:center;justify-content:center;overflow:hidden;}"
+        ".media-box-full{justify-content:stretch;}"
         ".media-box-grid{width:100%;height:100%;display:flex;align-items:center;justify-content:center;overflow:hidden;}"
         ".media-box-grid-labeled{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;}"
         ".media-inner{flex:1;min-height:0;width:100%;display:flex;align-items:center;justify-content:center;overflow:hidden;}"
         ".media-label{padding-top:4px;font-weight:bold;line-height:1;}"
         ".media-label-empty{height:1em;padding-top:4px;}"
         ".media-main{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;}"
+        ".media-box-full .media-main{width:100%;height:100%;}"
         ".media-button{width:100%;padding:8px 0;}"
         ".filters{display:flex;gap:12px;align-items:center;margin:12px 0;}"
         ".choice-row{display:flex;justify-content:flex-start;gap:8px;align-items:center;margin:4px 0;}"
@@ -417,7 +457,7 @@ def render_html(entries: list[dict[str, Any]]) -> str:
         "</script></head><body>"
         "<p><a href='index.html'>Back to index</a></p>"
         "<h1>Questions Paper</h1>"
-        "<p>* GIFs may show small color differences due to website optimization. This visualization is only for browsing and is not exactly what the model sees.</p>"
+        "<div style='max-width: 800px;margin: 20px auto;padding: 16px 20px; border-left: 6px solid #e5533d;background: #fff4f2;color: #5a1a14;font-family: Arial, Helvetica, sans-serif;font-size: 15px;line-height: 1.5;box-shadow: 0 2px 6px rgba(0,0,0,0.08);border-radius: 6px;'><strong style='display:block; margin-bottom:6px;'>⚠️ Visualization Notice</strong>To reduce file size, visuals below are highly compressed which introduces color and compression artefacts. Our study however uses <strong>1000×562 uncompressed images</strong>.</div>"
         "<div class='filters'>"
         "<label>Category "
         f"<select id='category-filter' onchange='applyFilters()'><option value=''>All</option>{category_options}</select>"

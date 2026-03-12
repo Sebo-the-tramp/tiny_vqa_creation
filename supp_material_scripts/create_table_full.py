@@ -695,34 +695,35 @@ def main() -> None:
 
             if single_expected:
                 total += 1
-                single_mark = "✅" if single_idxs else "❌"
-                if single_idxs:
+                single_count = len(single_idxs)
+                if single_count >= 3:
+                    single_mark = "\033[32m3/3 YES\033[0m"
                     completed += 1
+                elif single_count > 0:
+                    single_mark = f"\033[33m{single_count}/3 ~\033[0m"
+                else:
+                    single_mark = "\033[31mX\033[0m"
             else:
                 single_mark = "—"
 
             if multi_expected:
                 total += 1
-                multi_mark = "✅" if multi_idxs else "❌"
-                if multi_idxs:
+                multi_count = len(multi_idxs)
+                if multi_count >= 3:
+                    multi_mark = "\033[32m3/3 YES\033[0m"
                     completed += 1
+                elif multi_count > 0:
+                    multi_mark = f"\033[33m{multi_count}/3 ~\033[0m"
+                else:
+                    multi_mark = "\033[31mX\033[0m"
             else:
                 multi_mark = "—"
 
-            def fmt_idx(idxs: list[str], expected: bool) -> str:
-                if not expected:
-                    return "—"
-                if not idxs:
-                    return ""
-                return ", ".join(idxs)
-
             scene_parts: list[str] = []
-            if single_expected:
-                if single_scenes:
-                    scene_parts.extend(single_scenes)
-            if multi_expected:
-                if multi_scenes:
-                    scene_parts.extend(multi_scenes)
+            if single_expected and single_scenes:
+                scene_parts.extend(single_scenes)
+            if multi_expected and multi_scenes:
+                scene_parts.extend(multi_scenes)
 
             unique_scenes = sorted(set(scene_parts))
             if not unique_scenes:
@@ -799,21 +800,15 @@ def main() -> None:
             row_line = (
                 f"{pad_right(qid, widths[0])} | "
                 f"{pad_right(color_scene(scene_cell), widths[1])} | "
-                f"{pad_center(s_mark, widths[2])} | "
+                f"{pad_right(s_mark, widths[2])} | "
                 f"{pad_right(s_idx, widths[3])} | "
-                f"{pad_center(m_mark, widths[4])} | "
+                f"{pad_right(m_mark, widths[4])} | "
                 f"{pad_right(m_idx, widths[5])} |"
             )
             print(row_line)
             print(row_sep)
         if total:
             print(f"Completed: {completed}/{total}")
-        used_scenes = sorted({s for s in scene_raw_values if s})
-        print(f"Scene IDs used: {len(used_scenes)}")
-        if used_scenes:
-            print("Scene IDs:")
-            for scene_id in used_scenes:
-                print(f"  {scene_id}")
 
 
 if __name__ == "__main__":

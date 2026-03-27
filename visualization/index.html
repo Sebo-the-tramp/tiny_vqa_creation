@@ -433,6 +433,36 @@
       color: var(--muted);
     }
 
+    .download-section {
+      padding: 0 24px 24px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .download-section button {
+      background: var(--accent-2);
+      color: #fff;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+      box-shadow: 0 2px 6px var(--shadow);
+      transition: all 0.2s ease;
+    }
+
+    .download-section button:hover {
+      background: color-mix(in srgb, var(--accent-2) 85%, black);
+      box-shadow: 0 4px 8px var(--shadow);
+      transform: translateY(-1px);
+    }
+
+    .download-section button:active {
+      transform: translateY(0);
+    }
+
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(8px); }
       to { opacity: 1; transform: translateY(0); }
@@ -507,6 +537,13 @@
   <div class="status" id="status">Loading data...</div>
   <div class="status" id="diagnostics"></div>
   <div class="status" id="summary"></div>
+  
+  <section class="download-section">
+    <button id="downloadJSON" onclick="downloadFilteredJSON()">⬇ Download Filtered (JSON)</button>
+    <button id="downloadCSV" onclick="downloadFilteredCSV()">⬇ Download Filtered (CSV)</button>
+    <button id="downloadAll" onclick="downloadAllJSON()">⬇ Download All (JSON)</button>
+  </section>
+
   <div class="table" id="table"></div>
   <div class="pager" id="pager"></div>
 
@@ -1656,6 +1693,119 @@
         option.textContent = run;
         elements.runSelect.appendChild(option);
       });
+    }
+
+    function enrichItemWithAnswers(item) {
+      const enrichedItem = { ...item };
+      const correctAnswer = state.correctByIdx.get(item.idx);
+      if (correctAnswer) {
+        enrichedItem.correct_answer = correctAnswer;
+      }
+      const modelAnswers = state.answersByIdx.get(item.idx);
+      if (modelAnswers) {
+        enrichedItem.model_answers = modelAnswers;
+      }
+      return enrichedItem;
+    }
+
+    function downloadBlob(blob, filename) {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function downloadFilteredJSON() {
+      if (!state.filtered || state.filtered.length === 0) {
+        alert("No data to download. Please load a run first.");
+        return;
+      }
+      
+      const dataToDownload = state.filtered.map(enrichItemWithAnswers);
+      const jsonStr = JSON.stringify(dataToDownload, null, 2);
+      const blob = new Blob([jsonStr], { type: "application/json" });
+      downloadBlob(blob, `${state.runName}_filtered_${state.filtered.length}_questions.json`);
+    }
+
+    function downloadAllJSON() {
+      if (!state.questions || state.questions.length === 0) {
+        alert("No data to download. Please load a run first.");
+        return;
+      }
+      
+      const dataToDownload = state.questions.map(enrichItemWithAnswers);
+      const jsonStr = JSON.stringify(dataToDownload, null, 2);
+      const blob = new Blob([jsonStr], { type: "application/json" });
+      downloadBlob(blob, `${state.runName}_all_${state.questions.length}_questions.json`);
+    }
+
+    function downloadFilteredCSV() {
+      if (!state.filtered || state.filtered.length === 0) {
+        alert("No data to download. Please load a run first.");
+        return;
+      }
+
+      // Prepare CSV headers
+      const headers = [
+        "idx",
+        "question_id", 
+        "question",
+        "choices",
+        "correct_answer",
+        "simulation_id",
+        "image"
+      ];
+
+      // Add model columns dynamically
+      const modelNames = modelFiles.map(f => f.replace(/\.json$/, ""));
+      modelNames.forEach(modelName => {
+        headers.push(`model_${modelName}`);
+      });
+
+      // Build CSV rows
+      const rows = [headers.join(",")];
+      
+      state.filtered.forEach(item => {
+        const row = [];
+        row.push(escapeCSV(item.idx));
+        row.push(escapeCSV(item.question_id));
+        row.push(escapeCSV(item.question));
+        row.push(escapeCSV(JSON.stringify(item.choices)));
+        
+        const correctAnswer = state.correctByIdx.get(item.idx) || "";
+        row.push(escapeCSV(correctAnswer));
+        
+        row.push(escapeCSV(item.simulation_id));
+        row.push(escapeCSV(item.image));
+
+        // Add model answers
+        const modelAnswers = state.answersByIdx.get(item.idx) || {};
+        modelNames.forEach(modelName => {
+          const answer = modelAnswers[modelName] || "";
+          row.push(escapeCSV(answer));
+        });
+
+        rows.push(row.join(","));
+      });
+
+      const csvStr = rows.join("\n");
+      const blob = new Blob([csvStr], { type: "text/csv" });
+      downloadBlob(blob, `${state.runName}_filtered_${state.filtered.length}_questions.csv`);
+    }
+
+    function escapeCSV(value) {
+      if (value === null || value === undefined) {
+        return "";
+      }
+      const str = String(value);
+      if (str.includes(",") || str.includes('"') || str.includes("\n")) {
+        return `"${str.replace(/"/g, '""')}"`;
+      }
+      return str;
     }
 
     async function init() {

@@ -52,7 +52,19 @@ def main() -> None:
                     y_limit_mode="",
                     group_by=group_by,
                     legend=True,
+                    legend_kwargs={"ncols": 1}
                 )
+
+            utils_graph_correlation.create_accuracy(
+                cur_df,
+                output_dir=cur_output_dir,
+                level="category",
+                filename=f"acc_{group}_legend.png",
+                y_limit_mode="",
+                group_by=group_by,
+                legend=True,
+                legend_kwargs={"ncols": 7, "legend_only": True}
+            )
             
             # Plot only physics categories for sub_category level
             level = "sub_category"

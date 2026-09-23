@@ -91,6 +91,8 @@ family_marker = {
     "Owl3":			    (7, 0, 0),  # tick-style (approx)
     "PaliGemma2":		(9, 0, 0),  # tick-style (approx)
     "VILAModel":		"o",  # circle
+    "GPT5":		        (4, 1, 45),  # plus
+    "Gemini3":		    (7, 1, 0),  # cross
 }
 
 _DEFAULT_MARKERS = [
@@ -283,7 +285,15 @@ def _build_model_style(
 
     model_style = {}
     for group_id, color, fam, size, mode in zip(group_ids, palette, families, sizes, modes):
-        model_style[str(group_id)] = (color, family_markers.get(fam, "o"), float(size), mode_to_edge.get(mode, "red"))
+        release_type = metadata_df[metadata_df["family"] == fam]["release_type"]
+        assert len(np.unique(release_type.to_numpy())) == 1, f"Multiple release types found for family {fam}"
+        if release_type.iloc[0] == "closed_source":
+            edge_color = "red"
+        else:
+            edge_color = mode_to_edge.get(mode, "red")
+        
+        model_style[str(group_id)] = (color, family_markers.get(fam, "o"), float(size), edge_color)
+            
 
     # Alphabetically sort family_map and model_style by keys for consistent ordering
     family_map = {k: family_map[k] for k in sorted(family_map)}

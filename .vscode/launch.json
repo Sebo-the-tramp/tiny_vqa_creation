@@ -3,18 +3,27 @@
     // Hover to view descriptions of existing attributes.
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
-    "configurations": [        
+    "configurations": [
+        {
+            "name": "Analysis Debug: Current File",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "cwd": "${workspaceFolder}/analysis",
+            "console": "integratedTerminal"
+        },
         {
             "name": "Main VQA answering",
             "type": "debugpy",
             "request": "launch",
             "program": "./main_parallel.py",
             "console": "integratedTerminal",
-            "cwd": "/data0/sebastian.cavada/compositional-physics/tiny_vqa_creation/answering_questions",
+            "cwd": "${workspaceFolder}/answering_questions",
             "args": [
                 // "--simulation_path", "/data0/sebastian.cavada/datasets/simulations_v4/dl3dv/random",
                 // "--simulation_path", "/scratch/project/eu-25-92/composite_physics/dataset/simulation_v4/dl3dv/random/",
-                "--simulation", "/data0/sebastian.cavada/datasets/simulations_v4/dl3dv/random/9/c-1_no-9_d-10_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-176_20251216_145257",
+                "--simulation",
+                "/data0/sebastian.cavada/datasets/simulations_v4/dl3dv/random/9/c-1_no-9_d-10_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-176_20251216_145257",
                 // "--simulation_path", "/data0/sebastian.cavada/datasets/simulations_v4/dl3dv/random/2/c-1_no-2_d-10_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-83_20251212_015551",
                 // "--simulation_path", "/data0/sebastian.cavada/datasets/simulations_v4/dl3dv/random/2/c-1_no-2_d-10_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-146_20251212_024816",
                 // "--simulation_path", "/data0/sebastian.cavada/datasets/simulations_v4/dl3dv/random/7/c-1_no-7_d-10_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-30_20251213_101500",
@@ -22,7 +31,8 @@
                 // "--verbose",
                 // "--simulation_path", "/data0/sebastian.cavada/datasets/simulations_v4/dl3dv/random/1/c-1_no-1_d-10_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-194_20251212_003616",
                 // "--simulation_path", "/data0/sebastian.cavada/datasets/simulations_v3/dl3dv/random-cam-stationary/1/c-1_no-1_d-4_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-45_20251102_165527",
-                "--n_scenes", "700",
+                "--n_scenes",
+                "700",
                 // "--questions_file", "/data0/sebastian.cavada/compositional-physics/tiny_vqa_deterministic/simple_vqa_test_pa.json",
                 // "--include_categories", "spatial_reasoning",
                 // "--exclude_question_ids", "F_MASS_HEAVIEST_OBJECT", "F_MASS_LIGHTEST_OBJECT", "F_PHYSICS_PROPERTY_DENSITY_OBJECT_RELATIVE", "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR", "F_PHYSICS_PROPERTY_YOUNG_MODULUS_OBJECT_SIMILAR_NON_TECHNICAL", "F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST", "F_PHYSICS_PROPERTY_YOUNG_MODULUS_HIGHEST_NON_TECHNICAL", "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR", "F_PHYSICS_PROPERTY_POISSON_RATIO_OBJECT_SIMILAR_NON_TECHNICAL", "F_MATERIAL_IDENTIFICATION_SIMILAR_OBJECT", "F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST", "F_PHYSICS_PROPERTY_POISSON_RATIO_HIGHEST_NON_TECHNICAL",
@@ -31,11 +41,14 @@
                 // "--masking", "1"
                 // "--scene_context", "1"
                 // "--include_categories", "spatial_reasoning",
-                "--print_errors", 
+                "--print_errors",
                 // "--include_categories", "temporal",
-                "--augmentation", "roi_circling_text",
-                "--n_proc", "1",
-                "--exclude_simulations_file", "/data0/sebastian.cavada/compositional-physics/tiny_vqa_deterministic/answering_questions/problematic_paths.txt"
+                "--augmentation",
+                "roi_circling_text",
+                "--n_proc",
+                "1",
+                "--exclude_simulations_file",
+                "/data0/sebastian.cavada/compositional-physics/tiny_vqa_deterministic/answering_questions/problematic_paths.txt"
             ]
         },
         {
@@ -44,7 +57,7 @@
             "request": "launch",
             "program": "./main_parallel_counterfactual.py",
             "console": "integratedTerminal",
-            "cwd": "/data0/sebastian.cavada/compositional-physics/tiny_vqa_creation/answering_questions",
+            "cwd": "${workspaceFolder}/answering_questions",
             "args": [
                 // "--simulation_path", "/data0/sebastian.cavada/datasets/simulations_v2",
                 "--verbose",
@@ -52,56 +65,63 @@
                 // "--simulation_path", "/data0/sebastian.cavada/datasets/simulations_v4/dl3dv-counterfact/shift-x/random/5/c-1_no-5_d-10_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-27_20251223_225559", //this changes the number of visible object in the counterfactual
                 // "--simulation_path", "/data0/sebastian.cavada/datasets/simulations_v4/dl3dv-counterfact/shift-x/random/4/c-1_no-4_d-10_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-39_20251224_070135",
                 // "--simulation_path", "/data0/sebastian.cavada/datasets/simulations_v4/dl3dv-counterfact/shift-x/random/2/c-1_no-2_d-10_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-38_20251224_062806",
-                "--simulation_path", "/data0/sebastian.cavada/datasets/simulations_v4/dl3dv-counterfact/shift-x/random/3/c-1_no-3_d-10_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-51_20251230_165313/",
+                "--simulation_path",
+                "/data0/sebastian.cavada/datasets/simulations_v4/dl3dv-counterfact/shift-x/random/3/c-1_no-3_d-10_s-dl3dv-all_models-hf-gso_MLP-10_smooth_h-10-40_seed-51_20251230_165313/",
                 // "--simulation_path", "/data0/sebastian.cavada/datasets/simulations_v4/dl3dv-counterfact/shift-x/random",
-                "--n_scenes", "20",
+                "--n_scenes",
+                "20",
                 // "--counterfactual_type", "shift",
-                "--n_proc", "1",
+                "--n_proc",
+                "1",
                 // "--augmentation", "roi_circling_no_text",
                 // "--roi_circling", "1",
                 // "--masking", "1"
                 // "--scene_context", "1"
-                "--augmentation", "roi_circling"
+                "--augmentation",
+                "roi_circling"
             ]
-        }, 
+        },
         {
             "name": "VISIBILITY",
             "type": "debugpy",
             "request": "launch",
             "program": "./experiments/check_simulations_visibility.py",
             "console": "integratedTerminal",
-            "cwd": "/data0/sebastian.cavada/compositional-physics/tiny_vqa_deterministic",
+            "cwd": "${workspaceFolder}/experiments",
         },
-
         {
             "name": "LEVELS",
             "type": "debugpy",
             "request": "launch",
             "program": "./answering_questions/level_difficulty/generate_levels_questions.py",
             "console": "integratedTerminal",
-            "cwd": "/data0/sebastian.cavada/compositional-physics/tiny_vqa_creation/",
+            "cwd": "${workspaceFolder}/answering_questions/level_difficulty",
             "args": [
-                "--input", "/data0/sebastian.cavada/compositional-physics/tiny_vqa_creation/output/run_25_general/test_run_25_general.json",
-                "--output", "/data0/sebastian.cavada/compositional-physics/tiny_vqa_creation/output/run_25_general_levels/test_run_25_general_levels_karo_5K.json",
-                "--max-questions", "1000"
+                "--input",
+                "/data0/sebastian.cavada/compositional-physics/tiny_vqa_creation/output/run_25_general/test_run_25_general.json",
+                "--output",
+                "/data0/sebastian.cavada/compositional-physics/tiny_vqa_creation/output/run_25_general_levels/test_run_25_general_levels_karo_5K.json",
+                "--max-questions",
+                "1000"
             ]
         },
-
         {
-            "name": "ANALYSIS",
+            "name": "Analysis categorical",
             "type": "debugpy",
             "request": "launch",
-            "program": "./analysis_material_stiffnes_seb.py",
+            "program": "./analysis_categorical.py",
             "console": "integratedTerminal",
-            "cwd": "/data0/sebastian.cavada/compositional-physics/tiny_vqa_creation/analysis",            
-        },
-        {
-            "name": "ANALYSIS Raoul",
-            "type": "debugpy",
-            "request": "launch",
-            "program": "${file}",
-            "console": "integratedTerminal",
-            "cwd": "${workspaceFolder}/analysis"
+            "cwd": "${workspaceFolder}/analysis",
+            "args": [
+                "--base-path",
+                "../output",
+                "--run-name",
+                "run_28_general",
+                "--vqa-set",
+                "150K-s17000-s6",
+                "--mode",
+                "all"
+            ]
         }
     ]
 }

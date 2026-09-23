@@ -571,6 +571,7 @@ def create_accuracy(
     filename: str = "accuracy_by_level.png",
     figsize: tuple[float, float] = None,
     legend: bool|str = False,
+    legend_kwargs: dict = {"ncols": 4},
     y_limit_mode: str = "fixed",
     group_by: str = "model_id",
 ) -> plt.Figure:
@@ -829,12 +830,19 @@ def create_accuracy(
 
     # Add legend if requested
     if legend:
+        bbox_to_anchor = (1.00, 1)
+        if legend_kwargs.get("legend_only", False):
+            del legend_kwargs["legend_only"]
+            ax.cla()
+            ax.axis("off")
+            bbox_to_anchor = (-0.05, 1.)
+
         legend_handles, legend_labels, legend_groups, title_str = utils_graph._build_group_legend_items(
             plot_df,
             group_by=group_by if isinstance(legend, bool) else legend,
             metadata_path=metadata_path
         )
-        ax.legend(legend_handles, legend_labels, title=title_str, bbox_to_anchor=(1.00, 1), loc='upper left', fontsize=8, title_fontsize=9, markerscale=0.9)
+        ax.legend(legend_handles, legend_labels, title=title_str, bbox_to_anchor=bbox_to_anchor, loc=legend_kwargs.get("loc", 'upper left'), fontsize=legend_kwargs.get("fontsize", 8), title_fontsize=legend_kwargs.get("title_fontsize", 9), markerscale=legend_kwargs.get("markerscale", 0.9), **legend_kwargs)
 
     plt.tight_layout()
 
@@ -864,8 +872,12 @@ def create_material_stiffness_violin(
 ) -> plt.Figure:
     plot_df = eval_df.copy()
 
-    mapping = {"soft": 0, "medium": 1, "stiff": 2}
-    plot_df["stiffness_level"] = plot_df[stiffness_col].map(mapping)
+    if stiffness_col == "object-yms":
+        mapping = {"soft": 0, "medium": 1, "stiff": 2}
+        plot_df["stiffness_level"] = plot_df[stiffness_col].map(mapping)
+    else:
+        plot_df["stiffness_level"] = plot_df[stiffness_col]
+    
     plot_df["accuracy"] = plot_df["accuracy"] * 100
 
     if category == "all":
@@ -882,11 +894,6 @@ def create_material_stiffness_violin(
     stiffness_to_pos = {value: idx for idx, value in enumerate(stiffness_values)}
     plot_df["stiffness_pos"] = plot_df["stiffness_level"].map(stiffness_to_pos)
 
-    stiffness_labels = ["Soft", "Medium", "Stiff"]
-    stiffness_sublabels = ["$\\text{yms} \leq 2e4$", 
-                        "$2e4 > \\text{yms} \leq 1e6$", 
-                        "$\\text{yms} > 1e6$"]
-    
     sns.violinplot(
         data=plot_df,
         x="stiffness_pos",
@@ -948,9 +955,15 @@ def create_material_stiffness_violin(
     ax.grid(axis="y")
 
     ax.set_xticks(range(len(stiffness_values)))
-    ax.set_xticklabels(stiffness_labels)
 
-    if True:
+    if stiffness_col == "object-yms":
+        stiffness_labels = ["Soft", "Medium", "Stiff"]
+        stiffness_sublabels = ["$\\text{yms} \leq 2e4$", 
+                            "$2e4 > \\text{yms} \leq 1e6$", 
+                            "$\\text{yms} > 1e6$"]
+        
+        ax.set_xticklabels(stiffness_labels)
+
         for x, sub in enumerate(stiffness_sublabels):
             ax.text(
                 x, -0.12,
@@ -959,6 +972,153 @@ def create_material_stiffness_violin(
                 ha="center", va="top",
                 fontsize=8, color="#666666"
             )
+
+    elif stiffness_col == "roi_yms_shift_log":
+        # ax.set_xticklabels([str(s) for s in stiffness_values])
+
+        labels = {0: "Less", len(stiffness_values)//2: "Original", len(stiffness_values)-1: "More"}
+        # ax.set_xticklabels([labels.get(i, "") for i, _ in enumerate(stiffness_values)])
+        ax.set_xticklabels([])
+        ax.tick_params(axis="x", pad=10, labelsize=16)
+
+        for x, val in enumerate(stiffness_values):
+            if x not in labels:
+                continue
+            ax.text(
+                x, -0.08,
+                labels[x] + "\n" + plot_df[plot_df["stiffness_level"] == val]["accuracy"].mean().round(1).astype(str) + "%",
+                transform=ax.get_xaxis_transform(),
+                ha="center", va="top",
+                fontsize=16, color="#000",
+                fontweight="bold",
+            )
+
+        from matplotlib.patches import Polygon
+        from matplotlib.collections import LineCollection
+
+        # Arrow geometry in axes fraction coordinates
+        x0, x1 = 0.08, 0.92
+        y = -0.05
+        n = 200
+        head_len = 0.050
+        head_w = 0.060
+
+        # Gradient shaft stops before the arrowheads so the tips stay visible.
+        xs = np.linspace(x0 + head_len, x1 - head_len, n)
+        points = np.array([xs, np.full_like(xs, y)]).T.reshape(-1, 1, 2)
+        segs = np.concatenate([points[:-1], points[1:]], axis=1)
+
+        t = np.linspace(0, 1, n - 1)
+        colors = np.column_stack([
+            np.piecewise(t, [t < 0.5, t >= 0.5], [lambda u: 1 - 2*u, 0]),   # red
+            np.piecewise(t, [t < 0.5, t >= 0.5], [lambda u: 2*u, lambda u: 2 - 2*u]),  # green
+            np.piecewise(t, [t < 0.5, t >= 0.5], [0, lambda u: 2*u - 1]),    # blue
+            np.ones_like(t),
+        ])
+
+        lc = LineCollection(
+            segs,
+            colors=colors,
+            linewidths=5,
+            transform=ax.transAxes,
+            clip_on=False,
+            capstyle="round",
+            zorder=2,
+        )
+        ax.add_collection(lc)
+
+        left_head = Polygon(
+            [[x0, y],
+            [x0 + head_len, y + head_w],
+            [x0 + head_len, y - head_w]],
+            closed=True,
+            transform=ax.transAxes,
+            facecolor="#ff0000",
+            edgecolor="none",
+            clip_on=False,
+            zorder=3,
+        )
+        right_head = Polygon(
+            [[x1, y],
+            [x1 - head_len, y + head_w],
+            [x1 - head_len, y - head_w]],
+            closed=True,
+            transform=ax.transAxes,
+            facecolor="#0000ff",
+            edgecolor="none",
+            clip_on=False,
+            zorder=3,
+        )
+
+        ax.add_patch(left_head)
+        ax.add_patch(right_head)
+    elif stiffness_col == "roi_scale":
+        # ax.set_xticklabels([str(s) for s in stiffness_values])
+
+        labels = {0: "Original", len(stiffness_values)-1: "2x bigger"}
+        # ax.set_xticklabels([labels.get(i, "") for i, _ in enumerate(stiffness_values)])
+        # ax.tick_params(axis="x", pad=10, labelsize=16)
+        ax.set_xticklabels([])
+
+        for x, val in enumerate(stiffness_values):
+            if x not in labels:
+                continue
+            ax.text(
+                x, -0.08,
+                labels[x] + "\n" + plot_df[plot_df["stiffness_level"] == val]["accuracy"].mean().round(1).astype(str) + "%",
+                transform=ax.get_xaxis_transform(),
+                ha="center", va="top",
+                fontsize=16, color="#333333",
+                fontweight="bold",
+            )
+
+        from matplotlib.patches import Polygon
+        from matplotlib.collections import LineCollection
+
+        # Arrow geometry in axes fraction coordinates
+        x0, x1 = 0.08, 0.92
+        y = -0.05
+        n = 200
+        head_len = 0.050
+        head_w = 0.060
+
+        # Gradient shaft ends before the right arrowhead so the tip stays visible.
+        xs = np.linspace(x0, x1 - head_len, n)
+        points = np.array([xs, np.full_like(xs, y)]).T.reshape(-1, 1, 2)
+        segs = np.concatenate([points[:-1], points[1:]], axis=1)
+
+        t = np.linspace(0, 1, n - 1)
+        colors = np.column_stack([
+            np.zeros_like(t),      # red
+            1.0 - t,               # green -> 0
+            t,                     # blue -> 1
+            np.ones_like(t),
+        ])
+
+        lc = LineCollection(
+            segs,
+            colors=colors,
+            linewidths=5,
+            transform=ax.transAxes,
+            clip_on=False,
+            capstyle="round",
+            zorder=2,
+        )
+        ax.add_collection(lc)
+
+        right_head = Polygon(
+            [[x1, y],
+            [x1 - head_len, y + head_w],
+            [x1 - head_len, y - head_w]],
+            closed=True,
+            transform=ax.transAxes,
+            facecolor="#0000ff",
+            edgecolor="none",
+            clip_on=False,
+            zorder=3,
+        )
+
+        ax.add_patch(right_head)
 
     return ax
 
@@ -1105,7 +1265,179 @@ def create_material_stiffness_violin_grid(
         utils_graph.paperformat(ax_cat)
         
         if cat != "all":
-            fname = f"yms_{_safe_filename(str(cat))}.png"
+            if stiffness_col == "object-yms":
+                fname = f"yms_{_safe_filename(str(cat))}.png"
+            else:
+                fname = f"{stiffness_col}_{_safe_filename(str(cat))}.png"
+        else:
+            fname = "all.png"
+        
+        fpath = per_cat_dir / fname
+        fpath.parent.mkdir(parents=True, exist_ok=True)
+        fig_cat.savefig(
+            fpath,
+            dpi=300,
+            bbox_inches="tight", 
+            pad_inches=0.05
+        )
+        print("Saved plot to:", fpath)
+        plt.close(fig_cat)
+
+    if show:
+        plt.show()
+    else:
+        plt.close(fig)
+
+    return fig
+
+
+def create_roi_material_yms_violin_grid(
+    eval_df: pd.DataFrame,
+    *,
+    metadata_path: str | Path | None = "utils/metadata.json",
+    stiffness_col: str = "object-yms",
+    n_cols: int = 4,
+    seed: int = 0,
+    show: bool = False,
+    output_dir: str | Path | None = None,
+    filename: str = "yms_violin.png",
+    group_by: str = "model_id",
+    save_grid: bool = False,
+    show_legend: bool = True,
+    grid_hspace: float | None = 0.5,
+    grid_wspace: float | None = None,
+    y_limit_mode: str = "zero_to_max",
+    category_col: str = "category",
+    family_marker_mode: str = "distinct"
+) -> plt.Figure:
+    if stiffness_col not in eval_df.columns:
+        raise KeyError(f"eval_df must include '{stiffness_col}'.")
+
+    categories = pd.unique(eval_df[category_col])
+    if categories.size == 0:
+        raise ValueError("No sub_category values found after filtering.")
+
+    model_style, family_map = utils_mapping._build_model_style(
+        metadata_path,
+        group_by=group_by,
+        family_marker_mode=family_marker_mode,
+    )
+
+    cols = max(1, n_cols)
+    rows = math.ceil(len(categories) / cols)
+
+    col_width = 3.5
+    row_height = 2.5
+    fig, axes = plt.subplots(
+        rows, cols, figsize=(col_width * cols, row_height * rows)
+    )
+    axes = np.array(axes).flatten()
+
+    for i, cat in enumerate(categories):
+        axes[i] = create_material_stiffness_violin(
+            ax=axes[i],
+            eval_df=eval_df,
+            stiffness_col=stiffness_col,
+            group_by=group_by,
+            model_style=model_style,
+            category=cat,
+            category_col=category_col,
+        )
+
+        utils_graph.paperformat(axes[i], figsize=None)
+
+    axes[len(categories)] = create_material_stiffness_violin(
+        ax=axes[len(categories)],
+        eval_df=eval_df,
+        stiffness_col=stiffness_col,
+        group_by=group_by,
+        model_style=model_style,
+        category="all",
+        category_col=category_col,
+    )
+    utils_graph.paperformat(axes[len(categories)], figsize=None)
+
+    for j in range(len(categories)+1, len(axes)):
+        axes[j].set_visible(False)
+
+    legend_handles, legend_labels, legend_groups, title_str = utils_graph._build_group_legend_items(
+        eval_df,
+        group_by=group_by,
+        metadata_path=metadata_path
+    )
+
+    if show_legend:
+        fig.legend(
+            legend_handles,
+            legend_labels,
+            title="Model",
+            loc="lower center",
+            ncol=5,
+            bbox_to_anchor=(0.5, 1.),
+        )
+    if grid_hspace is not None or grid_wspace is not None:
+        fig.subplots_adjust(
+            hspace=grid_hspace if grid_hspace is not None else 0.2,
+            wspace=grid_wspace if grid_wspace is not None else 0.2,
+        )
+
+    out_dir = Path(output_dir)
+    # out_dir = out_dir / category_col
+    out_dir.mkdir(parents=True, exist_ok=True)
+    if save_grid:
+        bbox = None if y_limit_mode == "fit" else "tight"
+        fname = filename.replace(".png", "_grid.png")
+        fpath = out_dir / fname
+        fig.savefig(
+            fpath,
+            dpi=300,
+            bbox_inches="tight", 
+            pad_inches=0.05
+        )
+        print("Saved grid plot to:", fpath)
+
+    # if save_legend:
+    #     fig_legend = plt.figure(figsize=legend_figsize or (5 * legend_cols, 1.0))
+    #     fig_legend.legend(
+    #         legend_handles,
+    #         legend_labels,
+    #         title="Model",
+    #         loc="center",
+    #         ncol=legend_cols,
+    #         frameon=False,
+    #     )
+    #     fig_legend.tight_layout()
+    #     legend_name = legend_filename or filename.replace(".png", f"_{category_col}_legend.png")
+    #     print("Saving legend to:", out_dir / legend_name)
+    #     fig_legend.savefig(
+    #         out_dir / legend_name,
+    #         dpi=300,
+    #         bbox_inches="tight",
+    #         pad_inches=0.05,
+    #     )
+    #     plt.close(fig_legend)
+
+    per_cat_dir = out_dir / Path(filename).stem
+    for cat in list(categories) + ["all"]:
+        fig_cat, ax_cat = plt.subplots(1, 1, figsize=(4, 3.1))
+        
+        create_material_stiffness_violin(
+            ax=ax_cat,
+            eval_df=eval_df,
+            stiffness_col=stiffness_col,
+            group_by=group_by,
+            model_style=model_style,
+            category=cat,
+            category_col=category_col,
+        )
+
+        utils_graph.paperformat(ax_cat)
+        
+        if cat != "all":
+            if stiffness_col == "object-yms":
+                fname = f"yms_{_safe_filename(str(cat))}.png"
+            else:
+                fname = f"{stiffness_col}_{_safe_filename(str(cat))}.png"
         else:
             fname = "all.png"
         

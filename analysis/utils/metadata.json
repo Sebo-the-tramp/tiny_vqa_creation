@@ -1660,9 +1660,9 @@
         "release_type": "closed_source"
     },
     {
-        "id": "gpt-5",
+        "id": "GPT-5",
         "family": "GPT5",
-        "versionname": "gpt-5",
+        "versionname": "GPT-5",
         "source": "openai/gpt-5",
         "params_b": "",
         "release_year": "",
@@ -1673,7 +1673,21 @@
         "release_type": "closed_source"
     },
     {
-        "id": "gemini-1.5-flash",
+        "id": "GPT-5.5",
+        "mode": "general",
+        "family": "GPT5",
+        "versionname": "GPT-5.5",
+        "source": "openai/gpt-5.5",
+        "params_b": "9700",
+        "release_year": "",
+        "license": "",
+        "notes": "",
+        "tags": [],
+        "updated_at": "2025-10-03T07:29:39.640616Z",
+        "release_type": "closed_source"
+    },
+    {
+        "id": "Gemini-1.5-flash",
         "family": "GeminiFlash",
         "versionname": "1.5",
         "source": "google/gemini-1.5-flash",
@@ -1686,7 +1700,21 @@
         "release_type": "closed_source"
     },
     {
-        "id": "gemini-1.5-pro",
+        "id": "Gemini-3.1",
+        "mode": "general",
+        "family": "Gemini3",
+        "versionname": "3.1",
+        "source": "google/gemini-3",
+        "params_b": "21538",
+        "release_year": "2026",
+        "license": "",
+        "notes": "",
+        "tags": [],
+        "updated_at": "2025-10-03T07:29:39.640616Z",
+        "release_type": "closed_source"
+    },
+    {
+        "id": "Gemini-1.5-pro",
         "family": "GeminiPro",
         "versionname": "1.5",
         "source": "google/gemini-1.5-pro",

@@ -77,6 +77,7 @@ def main() -> None:
                 y_limit_mode="",
                 group_by=group_by,
                 legend="model_family",
+                legend_kwargs={"ncols": 1}
             )
         
         utils_graph_correlation.create_model_rank(

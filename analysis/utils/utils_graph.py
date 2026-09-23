@@ -132,7 +132,6 @@ def _build_group_legend_items(
 
 
     model_style, family_map = utils.utils_mapping._build_model_style(
-        # metadata_path,
         group_by=group_by,
         family_marker_mode="distinct",
         metadata_path=metadata_path,
@@ -203,19 +202,23 @@ def sort_group_legend_items_posthoc(
         _, label, group = entry
         group_str = str(group)
 
-        # If plotting individual models, sort by family first, then by size, then alphabetical model
+        # If plotting individual models, sort by release_type, family first, then by size, then alphabetical model
         if group_by == "model_id":
             current_group = metadata_df[metadata_df[group_by] == group_str]
 
             family_name = str(current_group["family"].iloc[0])
             params_b = float(current_group["params_b"].iloc[0])
             model_id = str(current_group["model_id"].iloc[0])
+            release_type = metadata_df["release_type"][metadata_df["model_id"] == group_str].iloc[0]
 
-            return family_name, params_b, model_id
+            return release_type, family_name, params_b, model_id
         
-        # If plotting families, sort by family name
+        # If plotting families, sort by release_type, family name
         if group_by == "model_family":
-            return group_str, None, None
+            release_type = metadata_df["release_type"][metadata_df["family"] == group]
+            assert len(np.unique(release_type.to_numpy())) == 1, f"Multiple release types found for family {group}"
+            
+            return release_type.iloc[0], group_str, None, None
 
     ordered_entries = sorted(
         zip(legend_handles, legend_labels, legend_groups),

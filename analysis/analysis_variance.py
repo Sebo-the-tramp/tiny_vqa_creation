@@ -55,7 +55,7 @@ def main() -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
 
     mode_letter = args.vqa_split_mode[0]
-    path = Path(args.base_path) / args.run_name / f"test_{args.run_name}_{args.vqa_set}-{mode_letter}*.json"
+    path = Path(args.base_path) / args.run_name / f"test_{args.run_name}_{args.vqa_set}-{mode_letter}*.json"  # *.* used to select only float ranging -s0.1 not the one with fixed sample size ?
     merged_path = Path(args.base_path) / args.run_name / f"merged_results_{args.vqa_set}_vqa-split-{args.vqa_split_mode}.pkl"
     if not merged_path.exists():
         globbed_files = list(path.parent.glob(path.name))

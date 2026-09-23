@@ -37,9 +37,7 @@ def main() -> None:
         fname = f"yms_{group}.png"
         cur_df, group_by = utils.utils_read.apply_group(eval_df, group)
         
-        # for category_col in ["category", "sub_category"]:
         for category_col in ["category"]:
-            #  fig = create_material_stiffness_violin_grid(
             fig = create_material_stiffness_violin_grid(
                 cur_df,
                 output_dir=output_dir,
@@ -50,31 +48,6 @@ def main() -> None:
                 category_col=category_col,  # sub_category or category
                 filename=fname
             )
-
-    # eval_df_single_image = eval_df[eval_df["idx"].astype(str).str.contains("_i")]
-    # acc_mat_single, _ = create_graph_from_eval_balanced(
-    #     eval_base=eval_df_single_image,
-    #     index_to_use="question_id",
-    #     title="Balanced accuracy by question_id and general models - single-image task",
-    #     color_by_mode=True,
-    #     show=False,
-    #     include_counts=True,
-    #     color_question_id_by_subcategory=True,
-    # )
-
-    # eval_df_multi_image = eval_df[eval_df["idx"].astype(str).str.contains("_g")]
-    # eval_df_multi_image = eval_df_multi_image.groupby("model_id").filter(
-    #     lambda g: g["model_answer"].notna().any()
-    # )
-    # acc_mat_multi, _ = create_graph_from_eval_balanced(
-    #     eval_base=eval_df_multi_image,  # your row-level eval with is_correct
-    #     index_to_use="question_id",
-    #     title="Balanced accuracy by question_id and general models - multi-image task",
-    #     color_by_mode=True,
-    #     show=False,
-    #     include_counts=True,
-    #     color_question_id_by_subcategory=True,
-    # )
 
 
 if __name__ == "__main__":

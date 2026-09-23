@@ -73,6 +73,8 @@ def main() -> None:
         questions_idx[q] = df.loc[df["question_id"] == q, "idx"].unique()
         print(f"  '{q}' unique idxs ({len(questions_idx[q])}):")
     
+    assert args.vqa_split_mode == "sample", "Stopping if not 'sample' mode because there is probably a bug. We must shuffle the questions_idx because questions are ordered by num_objects"
+
     questions_idx_src = copy.deepcopy(questions_idx)
 
     for s in range(args.num):
@@ -84,7 +86,10 @@ def main() -> None:
         elif args.vqa_split_mode == 'cumulative':
             suffix = f"-c{args.num}-s{s}"
         elif args.vqa_split_mode == 'sample':
-            suffix = f"-s{args.sampling}-s{s}"
+            if int(args.sampling) == args.sampling:  # if sampling is an integer, interpret as absolute number of samples
+                suffix = f"-s{int(args.sampling)}-s{s}"
+            else:
+                suffix = f"-s{args.sampling}-s{s}"
 
         split_path = str(test_path.with_suffix("")) + suffix + ".json"
         pkl_path = test_path.parent / (f"merged_results_{args.vqa_set}" + suffix + ".pkl")
@@ -108,7 +113,11 @@ def main() -> None:
                 print(f"  '{q}' idxs cumulative up to {q_e} ({len(sampled_q_idxs)})")
                 # print({sampled_q_idxs})
             elif args.vqa_split_mode == 'sample':
-                n = int(args.sampling * len(questions_idx_src[q]))
+                if int(args.sampling) == args.sampling:  # if sampling is an integer, interpret as absolute number of samples
+                    n = int(args.sampling * len(questions_idx_src[q])/len(df))  # scale the absolute number by the fraction of available samples for this question to maintain the same relative sampling across questions
+                else:  # if sampling is a float, interpret as fraction of available samples
+                    n = int(args.sampling * len(questions_idx_src[q]))
+                
                 sampled_q_idxs = pd.Series(q_idxs).sample(n=n, random_state=s).tolist()
                 print(f"  '{q}' idxs sampled ({len(sampled_q_idxs)} / {len(q_idxs)})")
                 # print({sampled_q_idxs})

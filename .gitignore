@@ -23,4 +23,4 @@ main_parallel.dist/
 main_parallel.build/
 
 rsync*
-tmp_parallel.sh
+tmp_parallel.shanalysis/log_*.txt
